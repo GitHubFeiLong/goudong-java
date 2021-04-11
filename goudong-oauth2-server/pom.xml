@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.goudong</groupId>
+        <artifactId>goudong-java</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>goudong-oauth2-server</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-commons</artifactId>
+        </dependency>
+        <!--spring cloud Alibaba nacos-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <!--监控信息-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--mybatis-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--druid数据库连接池-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
+        <!--redis-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 构建项目需要的信息 -->
+    <build>
+        <!-- 子项目可以引用的默认插件信息。该插件配置项直到被引用时才会被解析或绑定到生命周期。给定插件的任何本地配置都会覆盖这里的配置 -->
+        <pluginManagement>
+            <!-- 使用的插件列表 。 -->
+            <plugins>
+                <!-- plugin元素包含描述插件所需要的信息。 -->
+                <plugin>
+                    <!-- 插件在仓库里的group ID -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <!-- 插件在仓库里的artifact ID -->
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <!-- 被使用的插件的版本（或版本范围） -->
+                    <version>3.8.1</version>
+                    <!-- 作为DOM对象的配置 -->
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <compilerArguments>
+                            <extdirs>${project.basedir}/lib</extdirs>
+                        </compilerArguments>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <!-- 这个元素描述了项目相关的所有资源路径列表，例如和项目相关的属性文件，这些资源被包含在
+             最终的打包文件里。 -->
+        <resources>
+            <!-- 这个元素描述了项目相关或测试相关的所有资源路径 -->
+            <resource>
+                <!-- 描述存放资源的目录，该路径相对POM路径 -->
+                <directory>lib</directory>
+                <!-- 描述了资源的目标路径。该路径相对target/classes目录（例如${project.build.outputDirectory}）。
+                     举个例子，如果你想资源在特定的包里(org.apache.maven.messages)，你就必须该元素设置为
+                    org/apache/maven/messages。然而，如果你只是想把资源放到源码目录结构里，就不需要该配置。 -->
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <!-- 包含的模式列表，例如**/*.xml. -->
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+                <!-- 排除的模式列表，例如**/*.xml -->
+                <excludes>
+                    <exclude></exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+</project>

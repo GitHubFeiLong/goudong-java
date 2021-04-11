@@ -1,0 +1,162 @@
+{
+	"info": {
+		"_postman_id": "38abbf28-4133-44f7-86a0-31fc1c9afd95",
+		"name": "GOUDONG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "登录",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8001/api/user/nonceLogin?username=admin&password=123456",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"user",
+						"nonceLogin"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "admin"
+						},
+						{
+							"key": "password",
+							"value": "123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "注册",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"1\",\r\n    \"password\":\"1\",\r\n    \"email\":\"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8001/api/user/user",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"user",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hello",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ7XCJhdXRob3JpdHlSb2xlRE9TXCI6W3tcInJvbGVOYW1lXCI6XCJST0xFX0FETUlOXCIsXCJyb2xlTmFtZUNOXCI6XCLnrqHnkIblkZhcIn1dLFwiY3JlYXRlVGltZVwiOjE2MTc0NjQ5MTkwMDAsXCJlbWFpbFwiOlwiMVwiLFwidXBkYXRlVGltZVwiOjE2MTc0NjQ5MTkwMDAsXCJ1c2VybmFtZVwiOlwiYWRtaW5cIixcInV1aWRcIjpcIjFcIixcInZhbGlkVGltZVwiOjE2MjA0ODkwODUwMDB9IiwiaXNzIjoiY2ZsIiwiZXhwIjoxNjE3NDYyODE1LCJpYXQiOjE2MTc0NTU2MTV9.I8h6b4tEz6xq6wAilrNM5_BYLmWJju5CS62cHSOhuRQ",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:8001/api/user/hello",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"user",
+						"hello"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "hello1",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ7XCJhdXRob3JpdHlSb2xlRE9TXCI6W3tcInJvbGVOYW1lXCI6XCJST0xFX0FETUlOXCIsXCJyb2xlTmFtZUNOXCI6XCLnrqHnkIblkZhcIn1dLFwiY3JlYXRlVGltZVwiOjE2MTc0NjQ5MTkwMDAsXCJlbWFpbFwiOlwiMVwiLFwidXBkYXRlVGltZVwiOjE2MTc0NjQ5MTkwMDAsXCJ1c2VybmFtZVwiOlwiYWRtaW5cIixcInV1aWRcIjpcIjFcIixcInZhbGlkVGltZVwiOjE2MjA0ODkwODUwMDB9IiwiaXNzIjoiY2ZsIiwiZXhwIjoxNjE4MDUzOTAzLCJpYXQiOjE2MTc0NDkxMDN9.GN4jCUK8BxX3663QW1KLRDA6wUwShM2YlZvKeiu_mGg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:8001/api/user/hello/1",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"user",
+						"hello",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "生成token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ7XCJhdXRob3JpdHlSb2xlRE9TXCI6W3tcInJvbGVOYW1lXCI6XCJST0xFX0FETUlOXCIsXCJyb2xlTmFtZUNOXCI6XCLnrqHnkIblkZhcIn1dLFwiY3JlYXRlVGltZVwiOjE2MTc0NjQ5MTkwMDAsXCJlbWFpbFwiOlwiMVwiLFwidXBkYXRlVGltZVwiOjE2MTc0NjQ5MTkwMDAsXCJ1c2VybmFtZVwiOlwiYWRtaW5cIixcInV1aWRcIjpcIjFcIixcInZhbGlkVGltZVwiOjE2MjA0ODkwODUwMDB9IiwiaXNzIjoiY2ZsIiwiZXhwIjoxNjE3NDU2MzAzLCJpYXQiOjE2MTc0NDkxMDN9.ffTtTWURULG1yrmW3Rzar5U8F2usoTQeT1eVFVdoP84",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:8001/api/user/token",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8001",
+					"path": [
+						"api",
+						"user",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

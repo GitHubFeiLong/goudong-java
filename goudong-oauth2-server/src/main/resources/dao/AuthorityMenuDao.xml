@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goudong.oauth2.dao.AuthorityMenuDao">
+
+    <resultMap id="listMenuAndRoleResultMap" type="com.goudong.oauth2.entity.AuthorityMenuDO">
+        <result property="menuName" column="menu_name"></result>
+        <result property="url" column="url"></result>
+        <result property="method" column="method"></result>
+        <result property="remark" column="remark"></result>
+        <collection property="authorityRoleDOS" ofType="com.goudong.oauth2.entity.AuthorityRoleDO">
+            <result property="roleName" column="role_name"></result>
+            <result property="roleNameCN" column="role_name_CN"></result>
+        </collection>
+    </resultMap>
+    <select id="listMenuAndRole" resultMap="listMenuAndRoleResultMap">
+        select 
+            am.menu_name,
+            am.url,
+            am.method,
+            am.remark,
+            ar.role_name,
+            ar.role_name_CN
+        from authority_menu am
+        inner join authority_role_menu arm on am.uuid = arm.menu_uuid
+        inner join authority_role ar on ar.uuid = arm.role_uuid
+        where am.is_delete=false and arm.is_delete=false and ar.is_delete=false
+    </select>
+</mapper>
