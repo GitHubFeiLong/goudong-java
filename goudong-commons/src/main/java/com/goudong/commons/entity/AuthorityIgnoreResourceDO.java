@@ -1,4 +1,4 @@
-package com.goudong.user.entity;
+package com.goudong.commons.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

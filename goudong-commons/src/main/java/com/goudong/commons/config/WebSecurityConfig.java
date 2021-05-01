@@ -1,9 +1,9 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
-import com.goudong.user.dao.AuthorityIgnoreResourceDao;
-import com.goudong.user.entity.AuthorityIgnoreResourceDO;
-import com.goudong.user.filter.JWTAuthorizationFilter;
-import com.goudong.user.handler.*;
+import com.goudong.commons.dao.AuthorityIgnoreResourceDao;
+import com.goudong.commons.entity.AuthorityIgnoreResourceDO;
+import com.goudong.commons.filter.JWTAuthorizationFilter;
+import com.goudong.commons.handler.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

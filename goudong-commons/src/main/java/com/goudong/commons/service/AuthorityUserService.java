@@ -1,4 +1,4 @@
-package com.goudong.user.service;
+package com.goudong.commons.service;
 
 /**
  * 接口描述：

@@ -1,4 +1,4 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;

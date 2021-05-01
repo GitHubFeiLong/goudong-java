@@ -1,9 +1,9 @@
-package com.goudong.user.handler;
+package com.goudong.commons.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.module.enumerate.ClientExceptionEnum;
-import com.goudong.module.exception.BasicException;
-import com.goudong.module.pojo.Result;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

@@ -1,8 +1,8 @@
-package com.goudong.user.service.impl;
+package com.goudong.commons.service.impl;
 
-import com.goudong.user.dao.AuthorityUserDao;
-import com.goudong.user.entity.AuthorityUserDO;
-import com.goudong.user.entity.SelfUserDetails;
+import com.goudong.commons.dao.AuthorityUserDao;
+import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.entity.SelfUserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

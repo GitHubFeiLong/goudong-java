@@ -1,6 +1,6 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
-import com.goudong.user.dao.AuthorityUserDao;
+import com.goudong.commons.dao.AuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;

@@ -1,7 +1,7 @@
-package com.goudong.user.entity;
+package com.goudong.commons.entity;
 
-import com.goudong.module.validated.Create;
-import com.goudong.module.validated.Update;
+import com.goudong.commons.validated.Create;
+import com.goudong.commons.validated.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

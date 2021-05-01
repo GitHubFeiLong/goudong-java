@@ -1,4 +1,4 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
  * @Date 2020/10/17 10:00
  * @Version 1.0
  */
-@Configuration
+//@Configuration
 public class Swagger3Config {
 
     @Bean

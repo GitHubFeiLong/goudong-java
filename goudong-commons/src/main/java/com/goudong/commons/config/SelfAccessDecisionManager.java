@@ -1,4 +1,4 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDecisionManager;

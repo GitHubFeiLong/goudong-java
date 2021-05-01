@@ -1,20 +1,15 @@
-package com.goudong.user.controller;
+package com.goudong.commons.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.module.pojo.Result;
-import com.goudong.module.validated.Create;
-import com.goudong.user.entity.AuthorityUserDO;
-import com.goudong.user.util.JwtTokenUtil;
+import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.JwtTokenUtil;
+import com.goudong.commons.validated.Create;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -37,10 +32,6 @@ import java.util.Map;
 @RequestMapping("/api/user")
 public class UserController {
 
-
-
-    @Resource
-    private DiscoveryClient client;
 
     @GetMapping("/hello")
     public String hello () {
@@ -77,32 +68,5 @@ public class UserController {
         map.put(JwtTokenUtil.REFRESH_TOKEN, longToken);
 
         return Result.ofSuccess(map);
-    }
-
-//    @Resource
-//    private RestOperations restTemplate;
-    @Resource
-    private RestTemplate restTemplate;
-
-    @Resource
-    private LoadBalancerClient loadBalancedClient;   // 注入LoadBalancerClient
-    @GetMapping("/demo1")
-    public String demo1 () {
-        // 获取服务中一个实例
-//        ServiceInstance instance = loadBalancedClient.choose("GOUDONG-OAUTH2-SERVER");
-//        String url = "http://" + instance.getHost() + ":" + instance.getPort() + "/oauth/we-chat/demo1";
-        return restTemplate.getForObject("http://GOUDONG-OAUTH2-SERVER"+"/oauth/we-chat/demo1", String.class);
-    }
-
-    @GetMapping("/client")
-    public Object dis () {
-        List<String> list = client.getServices();
-        log.info("list >> {}", list);
-        List<ServiceInstance> srvList = client.getInstances("GOUDONG-USER-SERVER");
-        srvList.forEach(s -> {
-            log.info("serviceId:{}, houst:{}, port:{}, uri:{}",s.getServiceId(), s.getHost(),s.getPort(), s.getUri());
-        });
-
-        return this.client;
     }
 }

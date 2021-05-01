@@ -1,4 +1,4 @@
-package com.goudong.user.entity;
+package com.goudong.commons.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

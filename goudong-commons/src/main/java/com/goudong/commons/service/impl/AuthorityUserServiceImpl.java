@@ -1,6 +1,6 @@
-package com.goudong.user.service.impl;
+package com.goudong.commons.service.impl;
 
-import com.goudong.user.service.AuthorityUserService;
+import com.goudong.commons.service.AuthorityUserService;
 import org.springframework.stereotype.Service;
 
 /**

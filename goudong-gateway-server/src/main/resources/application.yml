@@ -2,11 +2,11 @@ server:
   port: 8000
 spring:
   application:
-    name: education-promote-gateway-server
+    name: goudong-gateway-server
   cloud:
-#    nacos:
-#      discovery:
-#        server-addr: localhost:8888 #配置nacos地址
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8888 #配置nacos地址
     gateway:
       discovery:
         locator:
@@ -17,8 +17,8 @@ spring:
           uri: lb://education-promote-testapi-server
           predicates:
             - Path=/api/test/** #断言，路径相匹配的进行路由
-        - id: education-promote-oauth2-server
-          uri: lb://education-promote-oauth2-server
+        - id: goudong-oauth2-server
+          uri: lb://goudong-oauth2-server
           predicates:
             - Path=/api/oauth2/** #断言，路径相匹配的进行路由
 

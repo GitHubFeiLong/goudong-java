@@ -1,10 +1,9 @@
-package com.goudong.user.dao;
+package com.goudong.commons.dao;
 
-import com.goudong.user.entity.AuthorityIgnoreResourceDO;
-import com.goudong.user.entity.AuthorityUserDO;
+
+import com.goudong.commons.entity.AuthorityIgnoreResourceDO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 类描述：

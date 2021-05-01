@@ -1,7 +1,7 @@
-package com.goudong.user.handler;
+package com.goudong.commons.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.module.pojo.Result;
+import com.goudong.commons.pojo.Result;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;

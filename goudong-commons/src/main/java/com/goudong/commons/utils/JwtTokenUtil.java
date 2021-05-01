@@ -1,11 +1,11 @@
-package com.goudong.user.util;
+package com.goudong.commons.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.goudong.user.entity.AuthorityUserDO;
+import com.auth0.jwt.interfaces.JWTVerifier;
+import com.goudong.commons.entity.AuthorityUserDO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 

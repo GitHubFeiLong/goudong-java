@@ -10,7 +10,7 @@ spring:
   datasource: #数据库
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/education-promote?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: l(=8gp_04h*&
     druid:
@@ -60,7 +60,7 @@ spring:
     database: 0   # Redis数据库索引（默认为0）
     host: 127.0.0.1 # Redis服务器地址
     port: 6379
-    password: 123456
+    password: 123654
     timeout: 3000
 
   flyway: ## flyway数据迁移

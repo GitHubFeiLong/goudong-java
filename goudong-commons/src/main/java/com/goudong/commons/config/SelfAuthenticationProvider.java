@@ -1,8 +1,8 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.goudong.user.service.impl.SelfUserDetailsService;
+import com.goudong.commons.service.impl.SelfUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

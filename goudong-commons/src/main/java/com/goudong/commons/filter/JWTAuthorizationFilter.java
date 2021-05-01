@@ -1,8 +1,8 @@
-package com.goudong.user.filter;
+package com.goudong.commons.filter;
 
-import com.goudong.user.entity.AuthorityRoleDO;
-import com.goudong.user.entity.AuthorityUserDO;
-import com.goudong.user.util.JwtTokenUtil;
+import com.goudong.commons.entity.AuthorityRoleDO;
+import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.utils.JwtTokenUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

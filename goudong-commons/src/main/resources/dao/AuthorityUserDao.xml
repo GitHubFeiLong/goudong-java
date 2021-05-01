@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.goudong.user.dao.AuthorityUserDao">
+<mapper namespace="com.goudong.commons.dao.AuthorityUserDao">
 
     <select id="selectRoleNameByUserUuid" resultType="java.lang.String">
         SELECT
@@ -18,7 +18,7 @@
     <sql id="validTimeConditionSQL">
         (valid_time is null or now() &lt; valid_time)
     </sql>
-    <select id="selectUserByUsername" resultType="com.goudong.user.entity.AuthorityUserDO">
+    <select id="selectUserByUsername" resultType="com.goudong.commons.entity.AuthorityUserDO">
         select
             uuid,
             username,
@@ -35,7 +35,7 @@
         where <include refid="usernameConditionSQL"/>
         and <include refid="validTimeConditionSQL"/> and is_delete = false
     </select>
-    <resultMap id="userDetailResultMap" type="com.goudong.user.entity.AuthorityUserDO">
+    <resultMap id="userDetailResultMap" type="com.goudong.commons.entity.AuthorityUserDO">
         <result column="uuid" property="uuid"></result>
         <result column="username" property="username"></result>
         <result column="email" property="email"></result>
@@ -44,7 +44,7 @@
         <result column="valid_time" property="validTime"></result>
         <result column="update_time" property="updateTime"></result>
         <result column="create_time" property="createTime"></result>
-        <collection property="authorityRoleDOS" ofType="com.goudong.user.entity.AuthorityRoleDO">
+        <collection property="authorityRoleDOS" ofType="com.goudong.commons.entity.AuthorityRoleDO">
             <result column="ar_role_name" property="roleName"></result>
             <result column="ar_role_name_CN" property="roleNameCN"></result>
             <result column="ar_remark" property="remark"></result>

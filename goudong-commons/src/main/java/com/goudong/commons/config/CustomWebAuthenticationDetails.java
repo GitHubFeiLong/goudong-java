@@ -1,4 +1,4 @@
-package com.goudong.user.config;
+package com.goudong.commons.config;
 
 import lombok.Getter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
