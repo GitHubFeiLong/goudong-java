@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goudong.security.dao.AuthorityUserDao">
+
+    <select id="selectRoleNameByUserUuid" resultType="java.lang.String">
+        SELECT
+            ar.role_name
+        FROM authority_user au
+        inner join authority_user_role aur on au.uuid=aur.user_uuid
+        inner join authority_role ar on aur.role_uuid = ar.uuid
+        where au.uuid=#{uuid}
+    </select>
+    <sql id="usernameConditionSQL">
+        (username=#{username} or email=#{username} or phone=#{username})
+    </sql>
+    <sql id="validTimeConditionSQL">
+        (valid_time is null or now() &lt; valid_time)
+    </sql>
+    <select id="selectUserByUsername" resultType="com.goudong.commons.entity.AuthorityUserDO">
+        select
+            uuid,
+            username,
+            password,
+            email,
+            phone,
+            nickname,
+            remark,
+            valid_time,
+            is_delete,
+            update_time,
+            create_time
+        from authority_user
+        where <include refid="usernameConditionSQL"/>
+        and <include refid="validTimeConditionSQL"/> and is_delete = false
+    </select>
+    <resultMap id="userDetailResultMap" type="com.goudong.commons.entity.AuthorityUserDO">
+        <result column="uuid" property="uuid"></result>
+        <result column="username" property="username"></result>
+        <result column="email" property="email"></result>
+        <result column="nickname" property="nickname"></result>
+        <result column="remark" property="remark"></result>
+        <result column="valid_time" property="validTime"></result>
+        <result column="update_time" property="updateTime"></result>
+        <result column="create_time" property="createTime"></result>
+        <collection property="authorityRoleDOS" ofType="com.goudong.commons.entity.AuthorityRoleDO">
+            <result column="ar_role_name" property="roleName"></result>
+            <result column="ar_role_name_CN" property="roleNameCN"></result>
+            <result column="ar_remark" property="remark"></result>
+        </collection>
+    </resultMap>
+    <select id="selectUserDetailByUsername" resultMap="userDetailResultMap">
+        select
+            au.uuid,
+            au.username,
+            au.email,
+            au.phone,
+            au.nickname,
+            au.remark,
+            au.valid_time,
+            au.update_time,
+            au.create_time,
+            ar.role_name ar_role_name,
+            ar.role_name_CN ar_role_name_CN,
+            ar.remark ar_remark
+        from authority_user au
+        inner join authority_user_role aur on au.uuid=aur.user_uuid
+        inner join authority_role ar on aur.role_uuid = ar.uuid
+        where <include refid="usernameConditionSQL"/>
+        and <include refid="validTimeConditionSQL"/>
+        and au.is_delete = false and ar.is_delete = false
+    </select>
+    <select id="selectRoleNameByMenu" resultType="java.lang.String">
+        select
+            ar.role_name
+        from authority_menu am
+        inner join authority_role_menu arm on am.uuid = arm.menu_uuid
+        inner join authority_role ar on ar.uuid = arm.role_uuid
+        where am.url = #{requestUrl} and am.method like concat('%',#{requestMethod},'%')
+        and am.is_delete = false and ar.is_delete = false
+    </select>
+
+</mapper>
