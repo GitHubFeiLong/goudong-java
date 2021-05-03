@@ -38,6 +38,8 @@ public class AuthorityUserDO {
     private String phone;
     @ApiModelProperty(value = "昵称")
     private String nickname;
+    @ApiModelProperty(value = "qq登录后，系统获取腾讯的open_id")
+    private String qqOpenId;
     @ApiModelProperty(value = "备注")
     private String remark;
     @ApiModelProperty(value = "有效时间")

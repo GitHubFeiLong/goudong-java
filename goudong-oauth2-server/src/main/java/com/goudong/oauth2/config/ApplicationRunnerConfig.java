@@ -1,6 +1,5 @@
 package com.goudong.oauth2.config;
 
-import com.goudong.commons.utils.RedisValueUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -17,9 +16,6 @@ import javax.annotation.Resource;
 @Slf4j
 @Component
 public class ApplicationRunnerConfig implements ApplicationRunner {
-    @Resource
-    private RedisValueUtil redisValueUtil;
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("启动服务了");

@@ -1,0 +1,4 @@
+# 开发环境
+# qq登录后，需要注册账号跳转页面
+qq:
+  qqBindRedirectUri: http://goudong.shop/bindPage.html

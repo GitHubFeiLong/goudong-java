@@ -1,4 +1,4 @@
-package com.goudong.oauth2.wechat;
+package com.goudong.oauth2.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

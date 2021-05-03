@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goudong.oauth2.dao.UserDao">
+    <sql id="authority_user_column">
+        uuid,
+        username,
+        password,
+        email,
+        phone,
+        nickname,
+        qq_open_id,
+        remark,
+        valid_time,
+        is_delete,
+        update_time,
+        create_time
+    </sql>
+    <select id="selectUserByQQOpenId" resultType="com.goudong.commons.entity.AuthorityUserDO">
+        select
+            <include refid="authority_user_column"/>
+        from authority_user
+        where qq_open_id=#{openID}
+    </select>
+</mapper>
