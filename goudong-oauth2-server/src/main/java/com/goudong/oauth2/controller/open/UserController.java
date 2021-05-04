@@ -1,4 +1,4 @@
-package com.goudong.oauth2.controller;
+package com.goudong.oauth2.controller.open;
 
 import com.goudong.commons.pojo.Result;
 import com.goudong.oauth2.service.UserService;
@@ -34,13 +34,12 @@ public class UserController {
     @PostMapping("/user")
     @ApiOperation("注册账号")
     public Result register() {
-
+        log.info("hhh");
 
         return Result.ofSuccess();
     }
+    // 修改密码
+    // 绑定qq
+    // 登录
 
-    @PostMapping("/demo")
-    public void demo(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect("index.jsp");
-    }
 }

@@ -1,4 +1,4 @@
-package com.goudong.oauth2.controller;
+package com.goudong.oauth2.controller.qq;
 
 import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.oauth2.config.QQApplicationValue;

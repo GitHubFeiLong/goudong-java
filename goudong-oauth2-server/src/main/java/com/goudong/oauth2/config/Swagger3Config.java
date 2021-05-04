@@ -16,7 +16,7 @@ import java.util.LinkedHashSet;
 /**
  * 类描述：
  * 配置 swagger<br>
- * 访问 ip:port/swagger-ui/index.html#/
+ * 访问 ip:port/swagger-ui/index.html
  * ip:port/swagger-ui
  *
  * @ClassName Swagger3Config
@@ -26,6 +26,32 @@ import java.util.LinkedHashSet;
  */
 @Configuration
 public class Swagger3Config {
+
+    /**
+     * 开放接口组
+     * @return
+     */
+    @Bean
+    public Docket openDocket() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("open api")
+                .description("开放接口，不需要登录就能访问")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.open"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("openApi")
+                ;
+
+    }
 
     @Bean
     public Docket qqDocket() {
@@ -42,7 +68,7 @@ public class Swagger3Config {
                 .select()
                 // 全部扫描
                 //.apis(RequestHandlerSelectors.any())
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.qq"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.qq"))
                 .paths(PathSelectors.any())
                 .build()
                 // 支持的通讯协议集合
@@ -65,7 +91,7 @@ public class Swagger3Config {
                 .enable(true)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.wechat"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.wechat"))
                 .paths(PathSelectors.any())
                 .build()
                 // 支持的通讯协议集合
