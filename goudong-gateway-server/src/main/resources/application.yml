@@ -6,7 +6,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8888 #配置nacos地址
+        server-addr: 127.0.0.1:8888
     gateway:
       discovery:
         locator:

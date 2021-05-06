@@ -3,7 +3,7 @@ package com.goudong.message;
 import com.goudong.commons.exception.GlobalExceptionHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import springfox.documentation.oas.annotations.EnableOpenApi;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * 类描述：

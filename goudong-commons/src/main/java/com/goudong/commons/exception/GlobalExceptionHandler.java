@@ -32,7 +32,6 @@ import java.util.List;
  * @Date 2019/7/28 21:51
  */
 @Slf4j
-//@RestControllerAdvice(basePackages = "com.goudong")
 @ControllerAdvice
 @RestController
 public class GlobalExceptionHandler {

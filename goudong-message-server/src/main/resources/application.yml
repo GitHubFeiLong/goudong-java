@@ -2,11 +2,20 @@ server:
   port: 10003
 spring:
   application:
-    name: goudong-message-server #微服务名
+    name: goudong-message-server
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8888 # nacos服务集群
+  mvc:
+    throw-exception-if-no-handler-found: true #出现错误时, 直接抛出异常
+  resources:
+    add-mappings: false #不要为我们工程中的资源文件建立映射
+  # json日期格式化
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
   #############
   # rabbitMQ
   ##############

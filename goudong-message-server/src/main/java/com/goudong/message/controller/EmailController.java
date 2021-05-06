@@ -32,7 +32,7 @@ public class EmailController {
      */
     @PostMapping("/email-code")
     public Result sendEmailCode (@Email(message = "请输入正确邮箱格式") String email) {
-        rabbitTemplate.convertAndSend(EmailDirectRabbitConfig.EMAIL_DIRECT_EXCHANGE, "TestDirectRouting", UUID.randomUUID()+ email);
+        rabbitTemplate.convertAndSend(EmailDirectRabbitConfig.EMAIL_DIRECT_EXCHANGE, UUID.randomUUID()+ email);
         return Result.ofSuccess();
     }
 }
