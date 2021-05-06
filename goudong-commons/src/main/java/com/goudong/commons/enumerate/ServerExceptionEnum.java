@@ -13,7 +13,7 @@ import lombok.Getter;
  */
 @Getter
 public enum ServerExceptionEnum {
-    SERVER_ERROR(500, "500500", "服务器内部错误，请稍后再试", "未捕获的未知异常"),
+    SERVER_ERROR(500, "500", "服务器内部错误，请稍后再试", "未捕获的未知异常"),
 
     ;
     /**

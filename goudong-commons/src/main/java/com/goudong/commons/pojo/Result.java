@@ -1,10 +1,10 @@
 package com.goudong.commons.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
@@ -73,6 +73,12 @@ public class Result<T> implements Serializable {
         this.code = code;
         this.timestamp = new Date();
     }
+    public Result(String code, String clientMessage, String serverMessage) {
+        this.code = code;
+        this.clientMessage = clientMessage;
+        this.serverMessage = serverMessage;
+        this.timestamp = new Date();
+    }
     public Result(String code, String clientMessage, String serverMessage, T t) {
         this.code = code;
         this.clientMessage = clientMessage;
@@ -121,19 +127,27 @@ public class Result<T> implements Serializable {
     }
 
     /**
+     * 400 Bad Request
+     * @return
+     */
+    public static Result ofFailByNotFound(String clientMessage, String serverMessage) {
+        return  new Result("400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
+    }
+
+    /**
      * 404 Not Found
      * @return
      */
-    public static Result ofFailByNotFound(String url, Object t) {
-        return  new Result("404", "当前请求资源不存在，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url, t);
+    public static Result ofFailByNotFound(String url) {
+        return  new Result("404", "当前请求资源不存在，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
     /**
      * 405 Method Not Allowed
      * @return
      */
-    public static Result ofFailByMethodNotAllowed(String url, Object t) {
-        return  new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url, t);
+    public static Result ofFailByMethodNotAllowed(String url) {
+        return  new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
 }

@@ -71,39 +71,7 @@ public class GlobalExceptionHandler {
         return Result.ofFail(exception);
     }
 
-    /**
-     * Spring Validation 注解异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(value = {BindException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result<Throwable> ValidExceptionDispose(Exception e){
-        BasicException clientException = new BasicException.ClientException(ClientExceptionEnum.PARAMETER_ERROR);
-        this.response.setStatus(clientException.status);
-        List<String> messages = new ArrayList<>();
-        if (e instanceof BindException) {
-            List<ObjectError> list = ((BindException) e).getAllErrors();
-            for (ObjectError item : list) {
-                messages.add(item.getDefaultMessage());
-            }
-        } else if (e instanceof ConstraintViolationException) {
-            for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException)e).getConstraintViolations()) {
-                messages.add(constraintViolation.getMessage());
-            }
-        } else {
-            messages.add(((MethodArgumentNotValidException)e).getBindingResult().getFieldError().getDefaultMessage());
-        }
 
-        String message = String.join(",", messages);
-        // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 400, "VALIDATION", message, e.getMessage());
-        clientException.setClientMessage(message);
-        clientException.setServerMessage(e.getMessage());
-        // 堆栈跟踪
-        e.printStackTrace();
-        return Result.ofFail(clientException);
-    }
 
     /**
      * 捕获意料之外的异常Exception
@@ -127,6 +95,38 @@ public class GlobalExceptionHandler {
     ==========================================================================*/
 
     /**
+     * 400 Bad Request
+     * 因发送的请求语法错误,服务器无法正常读取.
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = {BindException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Throwable> ValidExceptionDispose(Exception e){
+        List<String> messages = new ArrayList<>();
+        if (e instanceof BindException) {
+            List<ObjectError> list = ((BindException) e).getAllErrors();
+            for (ObjectError item : list) {
+                messages.add(item.getDefaultMessage());
+            }
+        } else if (e instanceof ConstraintViolationException) {
+            for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException)e).getConstraintViolations()) {
+                messages.add(constraintViolation.getMessage());
+            }
+        } else {
+            messages.add(((MethodArgumentNotValidException)e).getBindingResult().getFieldError().getDefaultMessage());
+        }
+
+        String message = String.join(",", messages);
+        // 打印错误日志
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, HttpStatus.BAD_REQUEST.value(), "VALIDATION", message, e.getMessage());
+        // 堆栈跟踪
+        e.printStackTrace();
+
+        return Result.ofFailByNotFound(message, e.getMessage());
+    }
+
+    /**
      * 404 Not Found
      * 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。假如服务器知道情况的话，应当使用410状态码来告知旧资源因为某些内部的配置机制问题，已经永久的不可用，而且没有任何可以跳转的地址。404这个状态码被广泛应用于当服务器不想揭示到底为何请求被拒绝或者没有其他适合的响应可用的情况下。出现这个错误的最有可能的原因是服务器端没有这个页面。
      * @return
@@ -147,7 +147,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public Result methodNotAllowed() {
-        return Result.ofFailByMethodNotAllowed(request.getRequestURL().toString(), null);
+        return Result.ofFailByMethodNotAllowed(request.getRequestURL().toString());
     }
 
 }

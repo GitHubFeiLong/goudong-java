@@ -22,11 +22,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("进入网关过滤器");
-//        return exchange.getResponse().setComplete();
-
-
         return chain.filter(exchange);
-
     }
 
     @Override
