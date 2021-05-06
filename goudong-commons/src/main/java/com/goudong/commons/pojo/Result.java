@@ -133,7 +133,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByMethodNotAllowed(String url, Object t) {
-        return  new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url, t);
+        return  new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url, t);
     }
 
 }

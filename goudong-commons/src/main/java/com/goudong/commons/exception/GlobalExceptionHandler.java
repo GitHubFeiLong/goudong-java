@@ -77,6 +77,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = {BindException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Throwable> ValidExceptionDispose(Exception e){
         BasicException clientException = new BasicException.ClientException(ClientExceptionEnum.PARAMETER_ERROR);
         this.response.setStatus(clientException.status);
