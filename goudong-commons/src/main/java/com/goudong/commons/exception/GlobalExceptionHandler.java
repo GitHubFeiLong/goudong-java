@@ -1,13 +1,25 @@
 package com.goudong.commons.exception;
 
 
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 全局捕获异常
@@ -18,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2019/7/28 21:51
  */
 @Slf4j
-@RestControllerAdvice(basePackages = "com.zuopei")
+@RestControllerAdvice(basePackages = "com.goudong")
 public class GlobalExceptionHandler {
     /**
      * 错误日志模板
@@ -32,40 +44,65 @@ public class GlobalExceptionHandler {
     @Resource
     private HttpServletResponse response;
 
-
     /**
      * 全局处理客户端错误
-     * @param clientException      客户端异常
+     * @param exception      客户端异常
      * @return
      */
-    @ExceptionHandler(BasicException.ClientException.class)
-    public Result<BasicException.ClientException> clientExceptionDispose(BasicException.ClientException clientException){
+    @ExceptionHandler(BasicException.class)
+    public Result<BasicException> clientExceptionDispose(BasicException exception){
         // 设置响应码
-        response.setStatus(clientException.getStatus());
+        response.setStatus(exception.getStatus());
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, clientException.getStatus(), clientException.getCode(), clientException.getClientMessage(), clientException.getServerMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage());
         // 堆栈跟踪
-        clientException.printStackTrace();
+        exception.printStackTrace();
 
-        return Result.ofFail(clientException);
+        return Result.ofFail(exception);
     }
 
     /**
-     * 全局处理服务端错误
-     * @param serverException      服务端异常
+     * 请求方式错误
+     * @param exception
      * @return
      */
-    @ExceptionHandler(BasicException.ServerException.class)
-    public Result<BasicException.ServerException> serveExceptionDispose(BasicException.ServerException serverException){
-        // 设置响应码
-        response.setStatus(serverException.getStatus());
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<String> HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+        return Result.ofFail("请求方法错误");
+    }
 
+    /**
+     * Spring Validation 注解异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = {BindException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    public Result<Throwable> ValidExceptionDispose(Exception e){
+        BasicException clientException = new BasicException.ClientException(ClientExceptionEnum.PARAMETER_ERROR);
+        this.response.setStatus(clientException.status);
+        List<String> messages = new ArrayList<>();
+        if (e instanceof BindException) {
+            List<ObjectError> list = ((BindException) e).getAllErrors();
+            for (ObjectError item : list) {
+                messages.add(item.getDefaultMessage());
+            }
+        } else if (e instanceof ConstraintViolationException) {
+            for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException)e).getConstraintViolations()) {
+                messages.add(constraintViolation.getMessage());
+            }
+        } else {
+            messages.add(((MethodArgumentNotValidException)e).getBindingResult().getFieldError().getDefaultMessage());
+        }
+
+        String message = String.join(",", messages);
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.getStatus(), serverException.getCode(), serverException.getClientMessage(), serverException.getServerMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 400, "VALIDATION", message, e.getMessage());
+        clientException.setClientMessage(message);
+        clientException.setServerMessage(e.getMessage());
         // 堆栈跟踪
-        serverException.printStackTrace();
-
-        return Result.ofFail(serverException);
+        e.printStackTrace();
+        return Result.ofFail(clientException);
     }
 
     /**
@@ -75,13 +112,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Throwable.class)
     public Result<Throwable> otherErrorDispose(Throwable e){
-        this.response.setStatus(500);
+        BasicException serverException = new BasicException.ServerException(ServerExceptionEnum.SERVER_ERROR);
+        this.response.setStatus(serverException.status);
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 500, "ERROR", "未知异常", e.getMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, e.getMessage());
         // 堆栈跟踪
         e.printStackTrace();
-
-        return Result.ofFail(e);
+        serverException.setServerMessage(e.getMessage());
+        return Result.ofFail(serverException);
     }
 
 }

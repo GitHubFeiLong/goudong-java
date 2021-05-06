@@ -13,10 +13,12 @@ import lombok.Getter;
  */
 @Getter
 public enum ClientExceptionEnum {
+    PARAMETER_ERROR(400, "400400", "参数错误", "请求参数未满足validation注解"),
 
     NOT_AUTHENTICATION(401, "401000", "请登录", "用户未登录"),
     AUTHENTICATION_EXPIRES(401, "401001", "登录过期", "登录过期"),
     NOT_AUTHORIZATION(403, "403001", "无权访问", "用户没有权限"),
+    NAME_OR_PWD_ERROR(400, "400002", "无权访问", "用户名与密码错误"),
 
     ;
     /**

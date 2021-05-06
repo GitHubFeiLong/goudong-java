@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 10000
 spring:
   application:
     name: goudong-gateway-server
@@ -13,15 +13,14 @@ spring:
           enabled: true # 开启从注册中心动态创建路由的功能，利用微服务名进行路由
           #lower-case-service-id: true #使用小写服务名，默认是大写
       routes:
-        - id: education-promote-testapi-server
-          uri: lb://education-promote-testapi-server
-          predicates:
-            - Path=/api/test/** #断言，路径相匹配的进行路由
         - id: goudong-oauth2-server
           uri: lb://goudong-oauth2-server
           predicates:
             - Path=/api/oauth2/** #断言，路径相匹配的进行路由
-
+        - id: goudong-message-server
+            uri: lb://goudong-message-server
+            predicates:
+              - Path=/api/message/** #断言，路径相匹配的进行路由
 
 
 

@@ -5,6 +5,7 @@ import com.goudong.commons.enumerate.ServerExceptionEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,8 +18,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
+@Setter
 @ApiModel(value = "BasicException", description = "出现异常，返回的消息")
-public class BasicException extends Exception{
+public class BasicException extends RuntimeException{
     /**
      * http 响应码
      */
@@ -68,11 +70,27 @@ public class BasicException extends Exception{
      * 服务端异常
      * @param exceptionEnum
      */
-    public BasicException (ServerExceptionEnum exceptionEnum) {
+    public BasicException(ServerExceptionEnum exceptionEnum) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
     }
 
+    /**
+     * ServerExceptionEnum 枚举
+     * @param exceptionEnum
+     * @return
+     */
+    public static BasicException exception (ServerExceptionEnum exceptionEnum) {
+        throw new BasicException.ServerException(exceptionEnum);
+    }
 
+    /**
+     * ClientExceptionEnum枚举
+     * @param exceptionEnum
+     * @return
+     */
+    public static BasicException exception (ClientExceptionEnum exceptionEnum) {
+        throw new BasicException.ClientException(exceptionEnum);
+    }
 
     /**
      * 类描述：
@@ -83,10 +101,40 @@ public class BasicException extends Exception{
      * @Version 1.0
      */
     public static class ClientException extends BasicException {
+        public static final String serverMessage = "参数错误";
+
+        /**
+         * 资源不存在
+         * @return
+         */
+        public static BasicException noHandlerFoundException () {
+            throw new BasicException(404, "404404", "请求资源不存在", "请求的资源不存在");
+        }
+
+        /**
+         * 参数错误
+         * @param clientMessage 客户端提示信息
+         * @return
+         */
+        public static BasicException methodParamError(String clientMessage){
+            log.error("服务器内部方法传参错误：{}", clientMessage);
+            throw new BasicException(400, "400400", clientMessage, serverMessage);
+        }
+        /**
+         * 参数错误
+         * @param clientMessage 客户端错误信息
+         * @param e 服务端错误信息
+         * @return
+         */
+        public static BasicException methodParamError(String clientMessage, Exception e){
+            log.error("服务器内部方法传参错误：{}", clientMessage);
+            throw new BasicException(400, "400400", clientMessage, e.getMessage());
+        }
 
         public ClientException(ClientExceptionEnum clientExceptionEnum) {
             super(clientExceptionEnum);
         }
+
     }
 
     /**
@@ -105,9 +153,14 @@ public class BasicException extends Exception{
             super(serverExceptionEnum);
         }
 
+        public static BasicException exception(String serverMessage){
+            log.error("服务器内部错误：{}", serverMessage);
+            throw new BasicException(500, "500500", clientMessage, serverMessage);
+        }
+
         public static BasicException methodParamError(String serverMessage){
             log.error("服务器内部方法传参错误：{}", serverMessage);
-            return new BasicException(500, "500400", clientMessage, serverMessage);
+            throw new BasicException(400, "500400", clientMessage, serverMessage);
         }
     }
 

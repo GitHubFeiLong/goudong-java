@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 /**
  * 类描述：
@@ -30,6 +26,10 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    // 发送手机验证码
+    // 发送邮箱验证码
+
 
     @PostMapping("/user")
     @ApiOperation("注册账号")
