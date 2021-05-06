@@ -35,7 +35,7 @@ public class UserController {
     @ApiOperation("注册账号")
     public Result register() {
         log.info("hhh");
-
+        System.out.println("10 / 0 = " + 10 / 0);
         return Result.ofSuccess();
     }
     // 修改密码

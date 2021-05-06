@@ -104,11 +104,22 @@ public class BasicException extends RuntimeException{
         public static final String serverMessage = "参数错误";
 
         /**
-         * 资源不存在
+         * 404 Not Found
+         * 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。假如服务器知道情况的话，应当使用410状态码来告知旧资源因为某些内部的配置机制问题，已经永久的不可用，而且没有任何可以跳转的地址。404这个状态码被广泛应用于当服务器不想揭示到底为何请求被拒绝或者没有其他适合的响应可用的情况下。出现这个错误的最有可能的原因是服务器端没有这个页面。
          * @return
          */
-        public static BasicException noHandlerFoundException () {
-            throw new BasicException(404, "404404", "请求资源不存在", "请求的资源不存在");
+        public static BasicException noHandlerFoundException (String url) {
+            throw new BasicException(404, "404404", "请求资源不存在", "请求的资源不存在:" + url);
+        }
+
+        /**
+         * 405 Method Not Allowed
+         * 请求行中指定的请求方法不能被用于请求相应的资源。该响应必须返回一个Allow 头信息用以表示出当前资源能够接受的请求方法的列表。
+         * 鉴于 PUT，DELETE 方法会对服务器上的资源进行写操作，因而绝大部分的网页服务器都不支持或者在默认配置下不允许上述请求方法，对于此类请求均会返回405错误。
+         * @return
+         */
+        public static BasicException methodNotAllowedException (String url) {
+            throw new BasicException(405, "405405", "请求方法错误", "Method Not Allowed:" + url);
         }
 
         /**

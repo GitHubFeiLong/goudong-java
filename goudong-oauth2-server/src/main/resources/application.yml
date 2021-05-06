@@ -1,10 +1,19 @@
 server:
   port: 10002
+  error:
+    whitelabel:
+      enabled: false
 spring:
   profiles:
     active: dev
   application:
     name: goudong-oauth2-server #微服务名
+  #出现错误时, 直接抛出异常
+  mvc:
+    throw-exception-if-no-handler-found: true
+  #不要为我们工程中的资源文件建立映射
+  resources:
+    add-mappings: false
   cloud:
     nacos:
       discovery:

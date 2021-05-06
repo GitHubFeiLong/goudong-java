@@ -101,6 +101,19 @@
             <artifactId>java-jwt</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!--AOP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--apache 通用工具包-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->

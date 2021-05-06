@@ -37,6 +37,7 @@
         <fastjson.version>1.2.75</fastjson.version>
         <java-jwt.version>3.14.0</java-jwt.version>
         <hutool-all.version>5.6.4</hutool-all.version>
+        <tomcat-embed-core.version>9.0.41</tomcat-embed-core.version>
     </properties>
 
     <!--Spring Boot-->
@@ -216,6 +217,12 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool-all.version}</version>
             </dependency>
+            <!--tomcat-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tomcat.embed</groupId>-->
+<!--                <artifactId>tomcat-embed-core</artifactId>-->
+<!--                <version>${tomcat-embed-core.version}</version>-->
+<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
