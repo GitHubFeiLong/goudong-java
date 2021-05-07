@@ -28,6 +28,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+
     }
 
     /**
@@ -35,13 +36,14 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
      */
     private void initRabbitMQ(){
         RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
+
         //创建交换机,并用rabbitAdmin进行声明
-        DirectExchange directExchange = new DirectExchange(EmailDirectRabbitConfig.EMAIL_CODE_DIRECT_EXCHANGE);
+        DirectExchange directExchange = new DirectExchange(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE);
         rabbitAdmin.declareExchange(directExchange);
         //创建队列,设置消息的持久化存储为true
-        Queue queue = new Queue(EmailDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, true);
+        Queue queue = new Queue(CodeDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, true);
         //创建此队列与交换机的绑定关系,路由键为文章作者的id
-        Binding bind = BindingBuilder.bind(queue).to(directExchange).with(EmailDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY);
+        Binding bind = BindingBuilder.bind(queue).to(directExchange).with(CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY);
 
         //声明队列的使用
         rabbitAdmin.declareQueue(queue);

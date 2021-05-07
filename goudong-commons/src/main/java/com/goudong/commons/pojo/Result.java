@@ -128,14 +128,17 @@ public class Result<T> implements Serializable {
 
     /**
      * 400 Bad Request
+     * @param clientMessage 客户端显示错误
+     * @param serverMessage 服务端错误
      * @return
      */
-    public static Result ofFailByNotFound(String clientMessage, String serverMessage) {
+    public static Result ofFailByBadRequest(String clientMessage, String serverMessage) {
         return  new Result("400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
     }
 
     /**
      * 404 Not Found
+     * @param url 访问的资源地址
      * @return
      */
     public static Result ofFailByNotFound(String url) {
@@ -144,6 +147,7 @@ public class Result<T> implements Serializable {
 
     /**
      * 405 Method Not Allowed
+     * @param url 访问的资源地址
      * @return
      */
     public static Result ofFailByMethodNotAllowed(String url) {

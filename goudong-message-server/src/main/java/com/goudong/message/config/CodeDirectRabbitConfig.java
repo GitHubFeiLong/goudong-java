@@ -5,36 +5,43 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * 类描述：
- * 直连型交换机
+ * 验证码交换机及其队列 直连型交换机
  * @Author msi
  * @Date 2021-05-05 10:19
  * @Version 1.0
  */
 @Slf4j
 @Configuration
-public class EmailDirectRabbitConfig {
+public class CodeDirectRabbitConfig {
 
     /**
      * 邮箱验证码 直连型队列
      */
     public static final String EMAIL_CODE_DIRECT_QUEUE = "emailCodeDirectQueue";
-
     /**
-     * 邮箱交换机 直连型交换机
+     * 短信验证码 直连型队列
      */
-    public static final String EMAIL_CODE_DIRECT_EXCHANGE = "emailCodeDirectExchange";
+    public static final String PHONE_CODE_DIRECT_QUEUE = "phoneCodeDirectQueue";
 
     /**
-     * 邮箱交换机 直连型交换机
+     * 验证码交换机 直连型交换机
+     */
+    public static final String CODE_DIRECT_EXCHANGE = "codeDirectExchange";
+
+    /**
+     * 邮箱路由键
      */
     public static final String EMAIL_CODE_ROUTING_KEY = "email-code";
+
+    /**
+     * 短信路由键
+     */
+    public static final String PHONE_CODE_ROUTING_KEY = "phone-code";
 
     /**
      * 邮箱验证码队列
@@ -50,23 +57,38 @@ public class EmailDirectRabbitConfig {
         //一般设置一下队列的持久化就好,其余两个就是默认false
         return new Queue(EMAIL_CODE_DIRECT_QUEUE,true);
     }
+    /**
+     * 短信验证码队列
+     * @return
+     */
+    @Bean
+    public Queue phoneCodeDirectQueue() {
+        return new Queue(PHONE_CODE_DIRECT_QUEUE,true);
+    }
 
     /**
      * 交换机邮箱
      * @return
      */
     @Bean
-    public DirectExchange emailCodeDirectExchange() {
-        return new DirectExchange(EMAIL_CODE_DIRECT_EXCHANGE,true,false);
+    public DirectExchange codeDirectExchange() {
+        return new DirectExchange(CODE_DIRECT_EXCHANGE,true,false);
     }
 
     /**
-     * 绑定  将队列和交换机绑定,
+     * 绑定 将邮箱队列和交换机绑定,
      * @return
      */
-    @SuppressWarnings("ALL")
     @Bean
-    public Binding bindingDirect() {
-        return BindingBuilder.bind(emailCodeDirectQueue()).to(emailCodeDirectExchange()).with(EMAIL_CODE_ROUTING_KEY);
+    public Binding bindingEmailDirect() {
+        return BindingBuilder.bind(emailCodeDirectQueue()).to(codeDirectExchange()).with(EMAIL_CODE_ROUTING_KEY);
+    }
+    /**
+     * 绑定 将短信队列和交换机绑定,
+     * @return
+     */
+    @Bean
+    public Binding bindingPhoneDirect() {
+        return BindingBuilder.bind(phoneCodeDirectQueue()).to(codeDirectExchange()).with(PHONE_CODE_ROUTING_KEY);
     }
 }

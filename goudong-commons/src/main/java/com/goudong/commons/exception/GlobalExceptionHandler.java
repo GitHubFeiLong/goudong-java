@@ -120,7 +120,7 @@ public class GlobalExceptionHandler {
         // 堆栈跟踪
         e.printStackTrace();
 
-        return Result.ofFailByNotFound(message, e.getMessage());
+        return Result.ofFailByBadRequest(message, e.getMessage());
     }
 
     /**
@@ -131,7 +131,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result notFound() {
-        return Result.ofFailByNotFound(request.getRequestURL().toString(), null);
+        return Result.ofFailByNotFound(request.getRequestURL().toString());
     }
 
     /**

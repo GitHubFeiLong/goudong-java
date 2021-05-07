@@ -34,7 +34,7 @@ spring:
     port: 5672 # 端口 默认5672
     username: admin # 用户名
     password: 123456 # 密码
-    virtual-host: goudong-host
+    virtual-host: /goudong-host
 
   ##############
   # 发送邮件配置 #
@@ -52,3 +52,5 @@ spring:
       connectiontimeout: 5000
       timeout: 3000
       writetimeout: 5000
+
+
