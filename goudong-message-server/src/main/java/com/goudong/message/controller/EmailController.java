@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 /**
@@ -31,8 +32,8 @@ public class EmailController {
      * @return
      */
     @PostMapping("/email-code")
-    public Result sendEmailCode (@Email(message = "请输入正确邮箱格式") String email) {
-        rabbitTemplate.convertAndSend(EmailDirectRabbitConfig.EMAIL_DIRECT_EXCHANGE, UUID.randomUUID()+ email);
+    public Result sendEmailCode (@NotBlank(message = "邮箱不能为空") @Email(message = "请输入正确邮箱格式") String email) {
+        rabbitTemplate.convertAndSend(EmailDirectRabbitConfig.EMAIL_CODE_DIRECT_EXCHANGE, EmailDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
         return Result.ofSuccess();
     }
 }

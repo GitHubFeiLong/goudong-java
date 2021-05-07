@@ -1,9 +1,14 @@
 package com.goudong.message.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 类描述：
@@ -12,6 +17,8 @@ import org.springframework.context.annotation.Bean;
  * @Date 2021-05-05 10:19
  * @Version 1.0
  */
+@Slf4j
+@Configuration
 public class EmailDirectRabbitConfig {
 
     /**
@@ -22,7 +29,12 @@ public class EmailDirectRabbitConfig {
     /**
      * 邮箱交换机 直连型交换机
      */
-    public static final String EMAIL_DIRECT_EXCHANGE = "emailDirectExchange";
+    public static final String EMAIL_CODE_DIRECT_EXCHANGE = "emailCodeDirectExchange";
+
+    /**
+     * 邮箱交换机 直连型交换机
+     */
+    public static final String EMAIL_CODE_ROUTING_KEY = "email-code";
 
     /**
      * 邮箱验证码队列
@@ -45,7 +57,7 @@ public class EmailDirectRabbitConfig {
      */
     @Bean
     public DirectExchange emailCodeDirectExchange() {
-        return new DirectExchange(EMAIL_DIRECT_EXCHANGE,true,false);
+        return new DirectExchange(EMAIL_CODE_DIRECT_EXCHANGE,true,false);
     }
 
     /**
@@ -54,7 +66,7 @@ public class EmailDirectRabbitConfig {
      */
     @SuppressWarnings("ALL")
     @Bean
-    public BindingBuilder.DirectExchangeRoutingKeyConfigurer bindingDirect() {
-        return BindingBuilder.bind(emailCodeDirectQueue()).to(emailCodeDirectExchange());
+    public Binding bindingDirect() {
+        return BindingBuilder.bind(emailCodeDirectQueue()).to(emailCodeDirectExchange()).with(EMAIL_CODE_ROUTING_KEY);
     }
 }

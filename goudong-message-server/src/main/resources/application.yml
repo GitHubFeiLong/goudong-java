@@ -1,6 +1,8 @@
 server:
   port: 10003
 spring:
+  profiles:
+    active: dev
   application:
     name: goudong-message-server
   cloud:
@@ -15,6 +17,14 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+
+  ## Redis
+  redis:
+    database: 0   # Redis数据库索引（默认为0）
+    host: 127.0.0.1 # Redis服务器地址
+    port: 6379
+    password: 123456
+    timeout: 3000
 
   #############
   # rabbitMQ
@@ -31,10 +41,10 @@ spring:
   #############
   mail:
     host: smtp.qq.com
-    username: 1696741038@qq.com
-    password: fnlrignacikzcagc
-    #   username: 603088455@qq.com
-    #   password: jxhfoesryuafbdgh
+#    username: 1696741038@qq.com
+#    password: fnlrignacikzcagc
+    username: 603088455@qq.com
+    password: jxhfoesryuafbdgh
     port: 587 #端口号465或587
     protocol: smtp
     default-encoding: UTF-8

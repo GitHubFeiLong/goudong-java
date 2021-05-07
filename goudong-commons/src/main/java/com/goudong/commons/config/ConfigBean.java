@@ -1,8 +1,6 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.pojo.Url;
-import org.springframework.context.annotation.*;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @Author msi

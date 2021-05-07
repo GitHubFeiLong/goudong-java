@@ -4,11 +4,15 @@ import com.goudong.commons.validated.Create;
 import com.goudong.commons.validated.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +25,10 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @ApiModel
-public class AuthorityUserDO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AuthorityUserDO implements Serializable {
     @ApiModelProperty(value = "用户表主键uuid")
     private String uuid;
 

@@ -1,18 +1,17 @@
 package com.goudong.commons.exception;
 
 
-import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
-import com.goudong.commons.pojo.Url;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
@@ -32,8 +31,7 @@ import java.util.List;
  * @Date 2019/7/28 21:51
  */
 @Slf4j
-@ControllerAdvice
-@RestController
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     /**
      * 错误日志模板

@@ -2,7 +2,6 @@ package com.goudong.commons.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONType;
-import com.goudong.commons.pojo.Url;
 import com.goudong.commons.utils.IpAddressUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -47,10 +46,6 @@ public class LogAOP {
      */
     @Resource
     private HttpServletRequest request;
-
-    @Resource
-    private Url url;
-
     /**
      * 切点
      */
@@ -97,7 +92,6 @@ public class LogAOP {
      */
     @Around(value = "method()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
-        url.setUrl(request.getRequestURL().toString());
         long start = System.currentTimeMillis();
         // 设置日志的开始时间
         this.request.setAttribute(LogAOP.REQUEST_ATTRIBUTE_KEY, start);

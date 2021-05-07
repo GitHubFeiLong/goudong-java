@@ -1,4 +1,10 @@
 # 开发环境
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8847 # nacos单节点
+
 # qq登录后，需要注册账号跳转页面
 qq:
   qqBindRedirectUri: http://localhost:8080/bindPage.html

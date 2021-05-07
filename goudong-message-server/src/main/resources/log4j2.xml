@@ -5,7 +5,7 @@
 <configuration status="INFO" monitorInterval="30">
     <!-- 配置变量 -->
     <Properties>
-        <Property name="LOG_HOME">logs/goudong-oauth2-logs</Property>
+        <Property name="LOG_HOME">logs/goudong-message-server</Property>
 <!--        <Property name="LOG_HOME">/root/jd</Property>-->
     </Properties>
     <!--先定义所有的appender-->
