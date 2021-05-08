@@ -65,6 +65,7 @@ public class ReceptionCodeConfig {
         log.debug("phone:{}, code:{}", phone, code);
         redisValueUtil.setValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, phone);
         // 发送短信
+
     }
 
     /**

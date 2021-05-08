@@ -18,5 +18,10 @@ public interface UserService {
      */
     AuthorityUserDO getUserByQQOpenId(String openID);
 
-
+    /**
+     * 根据 手机号查询用户
+     * @param phone 手机号
+     * @return
+     */
+    AuthorityUserDO getUserByPhone(String phone);
 }

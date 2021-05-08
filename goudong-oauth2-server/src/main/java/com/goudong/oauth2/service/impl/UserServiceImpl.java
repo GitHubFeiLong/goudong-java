@@ -1,6 +1,7 @@
 package com.goudong.oauth2.service.impl;
 
 import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.utils.AssertUtil;
 import com.goudong.oauth2.dao.UserDao;
 import com.goudong.oauth2.service.UserService;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,19 @@ public class UserServiceImpl implements UserService {
     public AuthorityUserDO getUserByQQOpenId(String openID) {
 
         return userDao.selectUserByQQOpenId(openID);
+    }
+
+    /**
+     * 根据 手机号查询用户
+     *
+     * @param phone 手机号
+     * @return
+     */
+    @Override
+    public AuthorityUserDO getUserByPhone(String phone) {
+        // 检查手机号格式是否正确
+        AssertUtil.isPhone(phone, "手机号码格式不正确，获取用户失败");
+
+        return userDao.selectUserByPhone(phone);
     }
 }

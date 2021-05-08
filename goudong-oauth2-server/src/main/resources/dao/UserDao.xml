@@ -23,4 +23,10 @@
         from authority_user
         where qq_open_id=#{openID}
     </select>
+    <select id="selectUserByPhone" resultType="com.goudong.commons.entity.AuthorityUserDO">
+        select
+        <include refid="authority_user_column"/>
+        from authority_user
+        where phone=#{phone}
+    </select>
 </mapper>

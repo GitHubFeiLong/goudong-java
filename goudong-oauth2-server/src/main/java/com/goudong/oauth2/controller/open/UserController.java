@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.open;
 
+import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.oauth2.service.UserService;
 import io.swagger.annotations.Api;
@@ -7,8 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -22,16 +22,26 @@ import javax.validation.constraints.NotNull;
  */
 @Api(tags = "用户")
 @Slf4j
-@Controller
-@RequestMapping("/oauth/user")
 @Validated
+@RestController
+@RequestMapping("/api/oauth2/user")
 public class UserController {
 
     @Resource
     private UserService userService;
 
-    // 发送手机验证码
-    // 发送邮箱验证码
+    /**
+     * 根据手机号获取账号
+     * @param phone
+   @return
+     */
+    @GetMapping("/phone/{phone}")
+    public Result<AuthorityUserDO> getUserByPhone(@PathVariable String phone) {
+        AuthorityUserDO userByPhone = userService.getUserByPhone(phone);
+        userByPhone.setPassword(null);
+        return Result.ofSuccess(userByPhone);
+    }
+
 
 
     @PostMapping("/user")
