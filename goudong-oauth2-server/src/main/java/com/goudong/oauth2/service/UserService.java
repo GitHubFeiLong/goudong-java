@@ -2,6 +2,8 @@ package com.goudong.oauth2.service;
 
 import com.goudong.commons.entity.AuthorityUserDO;
 
+import java.util.List;
+
 /**
  * 接口描述：
  * 用户服务层
@@ -24,4 +26,19 @@ public interface UserService {
      * @return
      */
     AuthorityUserDO getUserByPhone(String phone);
+
+    /**
+     * 根据用户名查询用户
+     * @param username
+     * @return
+     */
+    AuthorityUserDO getUserByUsername(String username);
+
+    /**
+     * 根据指定的用户名，生成3个可以未被注册的用户名
+     * 当返回结果为空集合时，表示账号可以使用
+     * @param username
+     * @return
+     */
+    List<String> generateUserName(String username);
 }

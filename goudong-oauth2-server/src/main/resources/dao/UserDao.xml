@@ -6,7 +6,6 @@
     <sql id="authority_user_column">
         uuid,
         username,
-        password,
         email,
         phone,
         nickname,
@@ -28,5 +27,14 @@
         <include refid="authority_user_column"/>
         from authority_user
         where phone=#{phone}
+    </select>
+    <select id="selectUserByUsername" resultType="com.goudong.commons.entity.AuthorityUserDO">
+        select
+        <include refid="authority_user_column"/>
+        from authority_user
+        where username=#{username}
+    </select>
+    <select id="selectUserNameByLikeUsername" resultType="java.lang.String">
+        select username from authority_user where username like concat('%', #{username}, '%')
     </select>
 </mapper>
