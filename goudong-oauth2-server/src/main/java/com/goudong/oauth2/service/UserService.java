@@ -41,4 +41,11 @@ public interface UserService {
      * @return
      */
     List<String> generateUserName(String username);
+
+    /**
+     * 根据邮箱查询用户
+     * @param email 邮箱
+     * @return
+     */
+    AuthorityUserDO getUserByEmail(String email);
 }

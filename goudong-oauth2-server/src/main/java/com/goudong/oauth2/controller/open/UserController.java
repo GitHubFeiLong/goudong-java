@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -45,7 +46,7 @@ public class UserController {
     }
 
     /**
-     * 见擦汗用户名是否存在，存在就返回三条可使用的账号名
+     * 检查用户名是否存在，存在就返回三条可使用的账号名
      *
      * @param username
      * @return
@@ -54,6 +55,18 @@ public class UserController {
     public Result<List<String>> getUserByUsername(@PathVariable @NotBlank(message = "用户名不能为空") String username) {
         List<String> strings = userService.generateUserName(username);
         return Result.ofSuccess(strings);
+    }
+
+    /**
+     * 检查邮箱是否能使用，true 表示可以使用
+     *
+     * @param email
+     * @return
+     */
+    @GetMapping("/check-email/{email}")
+    public Result<Boolean> checkEmailInUse(@PathVariable @NotBlank(message = "邮箱不能为空") @Email(message = "邮箱格式不正确") String email) {
+        AuthorityUserDO authorityUserDO = userService.getUserByEmail(email);
+        return Result.ofSuccess(authorityUserDO == null);
     }
 
 

@@ -41,4 +41,11 @@ public interface UserDao {
      * @return
      */
     List<String> selectUserNameByLikeUsername(String username);
+
+    /**
+     * 根据邮箱查询用户
+     * @param email
+     * @return
+     */
+    AuthorityUserDO selectUserByEmail(String email);
 }

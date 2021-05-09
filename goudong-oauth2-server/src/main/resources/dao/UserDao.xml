@@ -37,4 +37,10 @@
     <select id="selectUserNameByLikeUsername" resultType="java.lang.String">
         select username from authority_user where username like concat('%', #{username}, '%')
     </select>
+    <select id="selectUserByEmail" resultType="com.goudong.commons.entity.AuthorityUserDO">
+        select
+        <include refid="authority_user_column"/>
+        from authority_user
+        where email=#{email}
+    </select>
 </mapper>

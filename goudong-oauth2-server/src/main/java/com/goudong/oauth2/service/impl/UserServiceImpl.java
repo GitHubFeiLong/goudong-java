@@ -91,8 +91,19 @@ public class UserServiceImpl implements UserService {
                 names.add(item);
                 result.add(item);
             }
-        } while (names.size() < 3);
+        } while (names.size() <= 3);
 
         return result;
+    }
+
+    /**
+     * 根据邮箱查询用户
+     *
+     * @param email 邮箱
+     * @return
+     */
+    @Override
+    public AuthorityUserDO getUserByEmail(String email) {
+        return userDao.selectUserByEmail(email);
     }
 }
