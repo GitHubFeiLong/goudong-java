@@ -32,7 +32,7 @@ public class AuthorityUserDO implements Serializable {
     @ApiModelProperty(value = "用户表主键uuid")
     private String uuid;
 
-    @NotBlank(message = "{username.empty}", groups = {Create.class, Update.class})
+    @NotBlank(message = "用户名不能为空", groups = {Create.class, Update.class})
     @ApiModelProperty(value = "用户名")
     private String username;
     @NotBlank(message = "密码不能为空", groups = {Create.class, Update.class})

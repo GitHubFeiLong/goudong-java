@@ -5,6 +5,7 @@ import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -97,7 +98,12 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(value = {BindException.class, ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler(value = {
+            BindException.class,
+            ConstraintViolationException.class,
+            MethodArgumentNotValidException.class,
+            HttpMessageNotReadableException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Throwable> ValidExceptionDispose(Exception e){
         List<String> messages = new ArrayList<>();
@@ -110,6 +116,8 @@ public class GlobalExceptionHandler {
             for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException)e).getConstraintViolations()) {
                 messages.add(constraintViolation.getMessage());
             }
+        } else if (e instanceof HttpMessageNotReadableException) {
+            messages.add("请求参数丢失");
         } else {
             messages.add(((MethodArgumentNotValidException)e).getBindingResult().getFieldError().getDefaultMessage());
         }

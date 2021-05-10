@@ -5,6 +5,7 @@ import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.entity.InvalidEmailDO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.validated.Create;
 import com.goudong.oauth2.service.InvalidEmailService;
 import com.goudong.oauth2.service.UserService;
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -92,12 +94,11 @@ public class UserController {
     }
 
 
-    @PostMapping("/user")
+    @PostMapping
     @ApiOperation("注册账号")
-    public Result register(@NotNull String name) {
-        log.info("hhh");
-        System.out.println("10 / 0 = " + 10 / 0);
-        return Result.ofSuccess();
+    public Result createUser(@RequestBody @Validated(Create.class) AuthorityUserDO authorityUserDO) {
+        log.info(authorityUserDO.toString());
+        return Result.ofSuccess(authorityUserDO);
     }
     // 修改密码
     // 绑定qq
