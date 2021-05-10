@@ -48,4 +48,11 @@ public interface UserDao {
      * @return
      */
     AuthorityUserDO selectUserByEmail(String email);
+
+    /**
+     * 新增用户
+     * @param authorityUserDO
+     * @return
+     */
+    int insert(AuthorityUserDO authorityUserDO);
 }

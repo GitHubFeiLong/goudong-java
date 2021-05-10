@@ -8,6 +8,7 @@ import com.goudong.message.util.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -92,8 +93,14 @@ public class ReceptionCodeConfig {
 
         try {
             javaMailSender.send(mimeMessage);
+        } catch (MailAuthenticationException e) {
+            // 邮箱登录失败
+            log.error("邮箱登录账号失败");
+            e.printStackTrace();
+            // 删除redis中的key
+            redisValueUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
         } catch (MailSendException e) {
-            log.error("发送邮件失败");
+            log.error("发送邮件失败: {}", email);
             // 添加到 无效邮箱表中
             invalidEmailClient.add(email);
             // 删除redis中的key

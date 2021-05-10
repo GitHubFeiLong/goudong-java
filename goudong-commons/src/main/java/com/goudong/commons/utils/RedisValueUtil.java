@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
@@ -33,8 +34,8 @@ public class RedisValueUtil {
 
     /**
      * 根据 redisKeyEnum 对象 保存redis数据
-     * @param redisKeyEnum    reids key枚举
-     * @param param    需要替换的参数
+     * @param redisKeyEnum reids key枚举
+     * @param param 需要替换的参数
      * @return
      */
     public <T> T getValue (RedisKeyEnum redisKeyEnum, String... param) {
@@ -52,9 +53,9 @@ public class RedisValueUtil {
 
     /**
      * 根据 redisKeyEnum 对象 保存redis数据
-     * @param redisKeyEnum    redis key枚举
-     * @param value     需要设置的值
-     * @param param     需要替换的参数
+     * @param redisKeyEnum redis key枚举
+     * @param value 需要设置的值
+     * @param param 需要替换的参数
      * @return
      */
     public void setValue (RedisKeyEnum redisKeyEnum, Object value, String... param) {
@@ -67,6 +68,26 @@ public class RedisValueUtil {
         } else {
             // 设置到 redis中
             redisTemplate.opsForValue().set(key, value, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
+        }
+    }
+
+    /**
+     * 根据 redisKeyEnum 对象 保存redis数据,不同的是，自定义时间和单位
+     * @param redisKeyEnum redis key枚举
+     * @param value 需要设置的值
+     * @param time 过期时间
+     * @param timeUnit 时间单位
+     * @param param 替换模板字符串
+     */
+    public void setValue (RedisKeyEnum redisKeyEnum, Object value, int time, TimeUnit timeUnit, String... param) {
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);;
+
+        if (time < 0) {
+            redisTemplate.opsForValue().set(key, value);
+        } else {
+            // 设置到 redis中
+            redisTemplate.opsForValue().set(key, value, time, timeUnit);
         }
     }
 

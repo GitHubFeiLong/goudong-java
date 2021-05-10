@@ -107,4 +107,16 @@ public class UserServiceImpl implements UserService {
         AssertUtil.isEmail(email, "邮箱格式错误");
         return userDao.selectUserByEmail(email);
     }
+
+    /**
+     * 新增用户
+     *
+     * @param authorityUserDO
+     * @return
+     */
+    @Override
+    public AuthorityUserDO createUser(AuthorityUserDO authorityUserDO) {
+        userDao.insert(authorityUserDO);
+        return authorityUserDO;
+    }
 }

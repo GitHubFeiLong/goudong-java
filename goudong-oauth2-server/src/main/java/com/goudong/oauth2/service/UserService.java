@@ -48,4 +48,11 @@ public interface UserService {
      * @return
      */
     AuthorityUserDO getUserByEmail(String email);
+
+    /**
+     * 新增用户
+     * @param authorityUserDO
+     * @return
+     */
+    AuthorityUserDO createUser(AuthorityUserDO authorityUserDO);
 }

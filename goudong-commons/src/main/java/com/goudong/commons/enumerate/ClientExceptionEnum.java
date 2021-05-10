@@ -1,6 +1,8 @@
 package com.goudong.commons.enumerate;
 
+import com.goudong.commons.utils.JwtTokenUtil;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 /**
  * 类描述：
@@ -13,12 +15,26 @@ import lombok.Getter;
  */
 @Getter
 public enum ClientExceptionEnum {
+
+
     PARAMETER_ERROR(400, "400400", "参数错误", "请求参数未满足validation注解"),
 
     NOT_AUTHENTICATION(401, "401000", "请登录", "用户未登录"),
     AUTHENTICATION_EXPIRES(401, "401001", "登录过期", "登录过期"),
     NOT_AUTHORIZATION(403, "403001", "无权访问", "用户没有权限"),
     NAME_OR_PWD_ERROR(400, "400002", "无权访问", "用户名与密码错误"),
+
+    /**
+     * 406 Not Acceptable
+     * 请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
+     */
+    TOKEN_ERROR(406, "406", "请您刷新页面", "Not Acceptable - 缺少请求头 " + JwtTokenUtil.TOKEN_HEADER + "或 token格式错误"),
+
+    /**
+     * 429 Too Many Requests
+     * 用户在给定的时间内发送了太多请求（“限制请求速率”）。
+     */
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS.value(), "429", "服务器繁忙，请稍后重试", "Too Many Requests - 该资源限制用户重复提交请求"),
 
     ;
     /**

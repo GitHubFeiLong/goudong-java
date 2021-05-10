@@ -6,6 +6,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,7 +71,8 @@ public class JwtTokenUtil {
      * @return
      */
     public static String generateToken (AuthorityUserDO authorityUserDO, int hour) {
-        Algorithm algorithm = Algorithm.HMAC256(JwtTokenUtil.SALT); // secret 密钥，只有服务器知道
+        // secret 密钥，只有服务器知道
+        Algorithm algorithm = Algorithm.HMAC256(JwtTokenUtil.SALT);
         // 当前时间
         LocalDateTime ldt = LocalDateTime.now();
 
@@ -95,12 +98,34 @@ public class JwtTokenUtil {
 
         Algorithm algorithm = Algorithm.HMAC256(JwtTokenUtil.SALT);
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(JwtTokenUtil.ISSUER) //匹配指定的token发布者
+                // //匹配指定的token发布者
+                .withIssuer(JwtTokenUtil.ISSUER)
                 .build();
         DecodedJWT jwt = verifier.verify(token);
         String result = jwt.getAudience().get(0);
         log.info("result:{}",result);
         return JSON.parseObject(result, AuthorityUserDO.class);
+    }
+
+    /**
+     * 根据token 返回用户uuid
+     * @param request
+     * @return
+     */
+    public static String getUserUuid(HttpServletRequest request) {
+        String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
+
+        // token 格式不对
+        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
+            BasicException.exception(ClientExceptionEnum.TOKEN_ERROR);
+        }
+
+        // 去掉前面的 "Bearer " 字符串
+        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_PREFIX, "");
+
+        AuthorityUserDO authorityUserDO = JwtTokenUtil.resolveToken(token);
+
+        return authorityUserDO.getUuid();
     }
 
     // 从token中获取用户名

@@ -15,11 +15,19 @@ import java.util.concurrent.TimeUnit;
  */
 @Getter
 public enum RedisKeyEnum {
+
+    /**
+     * 重复提交uri记录
+     * @param ${uri} 请求地址; ${userUuid} 用户uuid
+     */
+    REPEAT_URI("gd:repeat:${uri}:${userUuid}", 2, TimeUnit.SECONDS),
+
     /**
      * 消息服务中的验证码，保存邮箱验证码和短信验证码
      * @param ${email|phone} 邮箱或者手机号
      */
-    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES)
+    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES),
+
     ;
 
     /**

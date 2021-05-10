@@ -16,6 +16,10 @@
         update_time,
         create_time
     </sql>
+    <insert id="insert" useGeneratedKeys="true" keyColumn="uuid" keyProperty="uuid">
+        insert into authority_user (username, password, email, phone)
+        values (#{username}, #{password}, #{email}, #{phone})
+    </insert>
     <select id="selectUserByQQOpenId" resultType="com.goudong.commons.entity.AuthorityUserDO">
         select
             <include refid="authority_user_column"/>
