@@ -2,7 +2,10 @@ package com.goudong.oauth2.controller.open;
 
 import com.google.common.collect.Lists;
 import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.entity.InvalidEmailDO;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.AssertUtil;
+import com.goudong.oauth2.service.InvalidEmailService;
 import com.goudong.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +17,9 @@ import javax.annotation.Resource;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 类描述：
@@ -33,6 +38,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private InvalidEmailService invalidEmailService;
 
     /**
      * 根据手机号获取账号
@@ -64,9 +72,23 @@ public class UserController {
      * @return
      */
     @GetMapping("/check-email/{email}")
-    public Result<Boolean> checkEmailInUse(@PathVariable @NotBlank(message = "邮箱不能为空") @Email(message = "邮箱格式不正确") String email) {
+    public Result<Boolean> checkEmailInUse(@PathVariable String email) {
+        AssertUtil.isEmail(email, "邮箱格式错误");
+        InvalidEmailDO byEmail = invalidEmailService.getByEmail(email);
+        // 额外信息，status：0 -> 无效； status：1 -> 有效，但被使用了
+        Map<String, Integer> map = new HashMap<>();
+        // 邮箱不能使用
+        if (byEmail != null && !byEmail.getIsDelete()) {
+            Result<Boolean> result = Result.ofSuccess(false);
+            map.put("status", 0);
+            result.setDataMap(map);
+            return result;
+        }
         AuthorityUserDO authorityUserDO = userService.getUserByEmail(email);
-        return Result.ofSuccess(authorityUserDO == null);
+        Result<Boolean> result = Result.ofSuccess(authorityUserDO == null);
+        map.put("status", 1);
+        result.setDataMap(map);
+        return result;
     }
 
 

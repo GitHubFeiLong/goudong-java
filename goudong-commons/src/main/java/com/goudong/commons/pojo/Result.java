@@ -1,14 +1,15 @@
 package com.goudong.commons.pojo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,32 +60,29 @@ public class Result<T> implements Serializable {
      * 数据
      */
     @ApiModelProperty(value = "扩展额外的数据")
-    private Map dataMap;
+    private Map dataMap = new HashMap();
 
     /**
      * 时间戳
      */
     @ApiModelProperty(value = "时间戳")
-    private Date timestamp;
+    private Date timestamp = new Date();
 
     public Result() {
     }
     public Result(String code) {
         this.code = code;
-        this.timestamp = new Date();
     }
     public Result(String code, String clientMessage, String serverMessage) {
         this.code = code;
         this.clientMessage = clientMessage;
         this.serverMessage = serverMessage;
-        this.timestamp = new Date();
     }
     public Result(String code, String clientMessage, String serverMessage, T t) {
         this.code = code;
         this.clientMessage = clientMessage;
         this.serverMessage = serverMessage;
         this.data = t;
-        this.timestamp = new Date();
     }
 
 

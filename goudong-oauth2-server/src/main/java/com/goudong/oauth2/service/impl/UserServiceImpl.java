@@ -104,6 +104,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public AuthorityUserDO getUserByEmail(String email) {
+        AssertUtil.isEmail(email, "邮箱格式错误");
         return userDao.selectUserByEmail(email);
     }
 }

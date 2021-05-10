@@ -1,6 +1,8 @@
 package com.goudong.commons.enumerate;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
 

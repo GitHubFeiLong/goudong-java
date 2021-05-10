@@ -26,6 +26,7 @@ import javax.validation.constraints.Email;
 @RestController
 @RequestMapping("/api/message/code")
 public class CodeController {
+
     @Resource
     private RabbitTemplate rabbitTemplate;
 
@@ -67,5 +68,4 @@ public class CodeController {
         }
         return Result.ofSuccess(true);
     }
-
 }

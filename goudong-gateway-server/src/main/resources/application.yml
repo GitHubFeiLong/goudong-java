@@ -18,7 +18,7 @@ spring:
         - id: goudong-oauth2-server
           uri: lb://goudong-oauth2-server
           predicates:
-            - Path=/oauth/** #断言，路径相匹配的进行路由
+            - Path=/oauth/**,/api/oauth2/** #断言，路径相匹配的进行路由 多个用逗号分隔（或者）
         - id: goudong-message-server
           uri: lb://goudong-message-server
           predicates:

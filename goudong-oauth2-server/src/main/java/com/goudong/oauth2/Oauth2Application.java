@@ -1,5 +1,6 @@
 package com.goudong.oauth2;
 
+import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.oauth2.config.QQApplicationValue;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -9,8 +10,8 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * 类描述：
- * EnableOpenApi 开启Swagger
- * EnableConfigurationProperties
+ * 注解 @EnableOpenApi 开启Swagger
+ * 注解 @EnableConfigurationProperties 开启配置文件映射对象属性（自动转驼峰）
  * @ClassName Oauth2Service
  * @Author msi
  * @Date 2021/2/9 19:20
@@ -18,7 +19,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  */
 @EnableOpenApi
 @EnableConfigurationProperties({QQApplicationValue.class})
-@SpringBootApplication(scanBasePackages = {"com.goudong.oauth2", "com.goudong.commons"})
+@SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS})
 @MapperScan("com.goudong.oauth2.dao")
 public class Oauth2Application {
     public static void main(String[] args) {
