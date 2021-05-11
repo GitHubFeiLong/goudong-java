@@ -17,7 +17,10 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8888 # nacos服务集群
-  datasource: #数据库
+  ################
+  ## 数据库连接池 ##
+  ################
+  datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
@@ -65,7 +68,9 @@ spring:
         # 忽略过滤格式
         exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
 
-  ## Redis
+  ###########
+  ## redis ##
+  ###########
   redis:
     database: 0   # Redis数据库索引（默认为0）
     host: 127.0.0.1 # Redis服务器地址
@@ -73,14 +78,20 @@ spring:
     password: 123456
     timeout: 3000
 
-  flyway: ## flyway数据迁移
+  #############
+  ## flayway ##
+  #############
+  ## flyway数据迁移
+  flyway:
     #是否开启
-    enabled: false
+    enabled: true
     locations: classpath:db/migration #迁移脚本的位置，默认db/migration
     baseline-on-migrate: true
-    table: flyway_schema_history # 记录历史记录的表名称
     out-of-order: false
-## mybatis配置
+
+#################
+## mybatis配置 ##
+################
 mybatis:
   mapper-locations: classpath:dao/*.xml
   configuration:

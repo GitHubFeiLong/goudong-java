@@ -40,6 +40,7 @@
         <dysmsapi20170525.version>2.0.1</dysmsapi20170525.version>
         <aliyun-java-sdk-core.version>4.5.16</aliyun-java-sdk-core.version>
         <dnsjava.version>3.3.1</dnsjava.version>
+        <flyway-maven-plugin.version>7.2.1</flyway-maven-plugin.version>
     </properties>
 
     <!--Spring Boot-->
@@ -236,7 +237,6 @@
                 <artifactId>dnsjava</artifactId>
                 <version>${dnsjava.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -252,6 +252,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <!---->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

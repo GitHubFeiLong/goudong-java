@@ -1,6 +1,8 @@
 package com.goudong.oauth2.service;
 
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.entity.AuthorityUserDO;
+import com.goudong.commons.po.AuthorityUserPO;
 
 import java.util.List;
 
@@ -11,28 +13,14 @@ import java.util.List;
  * @Date 2021-05-02 13:53
  * @Version 1.0
  */
-public interface UserService {
+public interface AuthorityUserService {
 
     /**
-     * 根据qq的openID查询用户
-     * @param openID qq互联返回的openID
+     * 根据 authorityUserPO对象，查询 authority_user表
+     * @param authorityUserDTO 用户对象
      * @return
      */
-    AuthorityUserDO getUserByQQOpenId(String openID);
-
-    /**
-     * 根据 手机号查询用户
-     * @param phone 手机号
-     * @return
-     */
-    AuthorityUserDO getUserByPhone(String phone);
-
-    /**
-     * 根据用户名查询用户
-     * @param username
-     * @return
-     */
-    AuthorityUserDO getUserByUsername(String username);
+    List<AuthorityUserDTO> listByAuthorityUserDTO(AuthorityUserDTO authorityUserDTO);
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -41,13 +29,6 @@ public interface UserService {
      * @return
      */
     List<String> generateUserName(String username);
-
-    /**
-     * 根据邮箱查询用户
-     * @param email 邮箱
-     * @return
-     */
-    AuthorityUserDO getUserByEmail(String email);
 
     /**
      * 新增用户

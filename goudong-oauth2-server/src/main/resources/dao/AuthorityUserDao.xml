@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goudong.oauth2.dao.AuthorityUserDao">
+    <sql id="authority_user_column">
+        uuid,
+        username,
+        password,
+        email,
+        phone,
+        nickname,
+        qq_open_id,
+        remark,
+        valid_time,
+        is_delete,
+        update_time,
+        create_time
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="uuid" keyProperty="uuid">
+        insert into authority_user (username, password, email, phone)
+        values (#{username}, #{password}, #{email}, #{phone})
+    </insert>
+    <select id="selectUserNameByLikeUsername" resultType="java.lang.String">
+        select username from authority_user where username like concat('%', #{username}, '%')
+    </select>
+    <select id="select" resultType="com.goudong.commons.po.AuthorityUserPO">
+        select <include refid="authority_user_column"/>
+        from authority_user
+        <where>
+            <if test="uuid != null and uuid != ''">
+                and uuid=#{uuid}
+            </if>
+            <if test="username != null">
+                and username = #{username}
+            </if>
+            <if test="password != null">
+                and `password` = #{password}
+            </if>
+            <if test="email != null">
+                and email = #{email}
+            </if>
+            <if test="phone != null">
+                and phone = #{phone}
+            </if>
+            <if test="nickname != null">
+                and nickname = #{nickname}
+            </if>
+            <if test="remark != null">
+                and remark = #{remark}
+            </if>
+            <if test="validTime != null">
+                and valid_time = #{validTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="qqOpenId != null">
+                and qq_open_id = #{qqOpenId}
+            </if>
+        </where>
+    </select>
+</mapper>

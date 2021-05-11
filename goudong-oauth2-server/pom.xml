@@ -115,6 +115,11 @@
             <artifactId>commons-lang3</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--flyway-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->
@@ -139,6 +144,12 @@
                             <extdirs>${project.basedir}/lib</extdirs>
                         </compilerArguments>
                     </configuration>
+                </plugin>
+                 <!-- 数据库版本管理插件-->
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                    <version>${flyway-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

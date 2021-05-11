@@ -1,10 +1,7 @@
 package com.goudong.oauth2.controller.qq;
 
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.oauth2.config.QQApplicationValue;
-import com.goudong.oauth2.entity.OtherUserInfoBean;
-import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
-import com.goudong.oauth2.service.UserService;
+import com.goudong.oauth2.service.AuthorityUserService;
 import com.qq.connect.QQConnectException;
 import com.qq.connect.api.OpenID;
 import com.qq.connect.api.qzone.UserInfo;
@@ -16,14 +13,13 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * 类描述：
@@ -43,7 +39,7 @@ public class QQController {
     private QQApplicationValue qqApplicationValue;
 
     @Resource
-    private UserService userService;
+    private AuthorityUserService userService;
 
     /**
      * qq登录
@@ -84,14 +80,14 @@ public class QQController {
             log.info("UserInfoBean:{}", userInfoBean.toString());
 
             // 根据openId查询用户
-            AuthorityUserDO userByQQOpenId = userService.getUserByQQOpenId(openID);
-            // 需要注册
-            if (userByQQOpenId == null) {
-                OtherUserInfoBean otherUserInfoBean = new OtherUserInfoBean(openID, userInfoBean.getNickname(), userInfoBean.getAvatar().getAvatarURL30(), OtherUserTypeEnum.QQ.name());
-                String qqBindRedirectUriFull = qqApplicationValue.getQqBindRedirectUriFull(otherUserInfoBean);
-                log.info("qqBindRedirectUriFull:{}", qqBindRedirectUriFull);
-                response.sendRedirect(qqBindRedirectUriFull);
-            }
+//            AuthorityUserDO userByQQOpenId = userService.getUserByQQOpenId(openID);
+//            // 需要注册
+//            if (userByQQOpenId == null) {
+//                OtherUserInfoBean otherUserInfoBean = new OtherUserInfoBean(openID, userInfoBean.getNickname(), userInfoBean.getAvatar().getAvatarURL30(), OtherUserTypeEnum.QQ.name());
+//                String qqBindRedirectUriFull = qqApplicationValue.getQqBindRedirectUriFull(otherUserInfoBean);
+//                log.info("qqBindRedirectUriFull:{}", qqBindRedirectUriFull);
+//                response.sendRedirect(qqBindRedirectUriFull);
+//            }
         }
 
     }
