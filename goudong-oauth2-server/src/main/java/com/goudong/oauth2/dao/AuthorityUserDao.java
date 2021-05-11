@@ -31,8 +31,8 @@ public interface AuthorityUserDao {
 
     /**
      * 新增用户
-     * @param authorityUserDO
+     * @param authorityUserPO
      * @return
      */
-    int insert(AuthorityUserDO authorityUserDO);
+    int insert(AuthorityUserPO authorityUserPO);
 }

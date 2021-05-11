@@ -32,8 +32,8 @@ public interface AuthorityUserService {
 
     /**
      * 新增用户
-     * @param authorityUserDO
+     * @param authorityUserDTO
      * @return
      */
-    AuthorityUserDO createUser(AuthorityUserDO authorityUserDO);
+    AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO);
 }

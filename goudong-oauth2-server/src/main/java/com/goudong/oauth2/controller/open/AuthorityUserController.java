@@ -1,14 +1,13 @@
 package com.goudong.oauth2.controller.open;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.entity.InvalidEmailDO;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.validated.Create;
-import com.goudong.commons.vo.AuthorityUser2UpdateVO;
+import com.goudong.commons.vo.AuthorityUser2CreateVO;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.oauth2.service.AuthorityUserService;
 import com.goudong.oauth2.service.InvalidEmailService;
@@ -16,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -110,14 +110,17 @@ public class AuthorityUserController {
 
     /**
      * 新增或修改用户
-     * @param updateVO
+     * @param createVO
      * @return
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "创建普通账号", notes = "注册用户")
-    public Result createUser(@RequestBody @Validated(Create.class) AuthorityUser2UpdateVO updateVO) {
-        return Result.ofSuccess( authorityUserService.createUser(updateVO));
+    public Result createUser(@RequestBody @Validated AuthorityUser2CreateVO createVO) {
+        AuthorityUserDTO userDTO = (AuthorityUserDTO)BeanUtil.copyProperties(createVO, AuthorityUserDTO.class);
+        AuthorityUserDTO user = authorityUserService.createUser(userDTO);
+        AuthorityUserVO authorityUserVO = (AuthorityUserVO) BeanUtil.copyProperties(user, AuthorityUserVO.class);
+        return Result.ofSuccess(authorityUserVO);
     }
     // 修改密码
     // 绑定qq

@@ -85,12 +85,15 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
     /**
      * 新增用户
      *
-     * @param authorityUserDO
+     * @param authorityUserDTO
      * @return
      */
     @Override
-    public AuthorityUserDO createUser(AuthorityUserDO authorityUserDO) {
-        authorityUserDao.insert(authorityUserDO);
-        return authorityUserDO;
+    public AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO) {
+
+        AuthorityUserPO userPO = (AuthorityUserPO) BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
+        authorityUserDao.insert(userPO);
+
+        return (AuthorityUserDTO) BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
     }
 }
