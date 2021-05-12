@@ -5,7 +5,9 @@ import com.goudong.commons.openfeign.oauth2.InvalidEmailClient;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.message.util.CodeUtil;
+import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.mail.MailAuthenticationException;
@@ -21,6 +23,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * 消费 验证码交换机的队列消息
@@ -49,7 +53,18 @@ public class ReceptionCodeConfig {
      */
     @RabbitListener(queues = CodeDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, exclusive = true)
     @RabbitHandler
-    public void emailCode(@NotBlank(message = "邮箱不能为空") @Email(message = "请输入正确邮箱格式") @Payload String email) throws MessagingException {
+    public void emailCode(@NotBlank(message = "邮箱不能为空") @Email(message = "请输入正确邮箱格式") @Payload String email, Channel channel, Message message) throws MessagingException, IOException {
+        log.info("{} 队列收到消息。内容是：{}",CodeDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, email);
+        try {
+            // 告诉服务器收到这条消息 已经被我消费了 可以在队列删掉 这样以后就不会再发了 否则消息服务器以为这条消息没处理掉 后续还会在发
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (IOException e) {
+            log.error("{} 队列消费消息失败。内容是：{}",CodeDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, email);
+            e.printStackTrace();
+            //丢弃这条消息
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false,false);
+            System.out.println("receiver fail");
+        }
         // 验证码
         String code = CodeUtil.generate();
         log.debug("email:{}, code:{}", email, code);
@@ -64,7 +79,19 @@ public class ReceptionCodeConfig {
      */
     @RabbitListener(queues = CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE)
     @RabbitHandler
-    public void phoneCode(@Payload String phone) {
+    public void phoneCode(@Payload String phone, Channel channel, Message message) {
+        log.debug("{} 队列收到消息。内容是：{}", CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, phone);
+        System.out.println(CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE + " 队列收到消息。内容是：" + phone);
+        try {
+            // 告诉服务器收到这条消息 已经被我消费了 可以在队列删掉 这样以后就不会再发了 否则消息服务器以为这条消息没处理掉 后续还会在发
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (IOException e) {
+            log.error("{} 队列消费消息失败。内容是：{}",CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, phone);
+            e.printStackTrace();
+            //丢弃这条消息
+            //channel.basicNack(message.getMessageProperties().getDeliveryTag(), false,false);
+            System.out.println("receiver fail");
+        }
         AssertUtil.isPhone(phone, "消费消息，手机号格式错误");
         // 验证码
         String code = CodeUtil.generate();
@@ -101,8 +128,6 @@ public class ReceptionCodeConfig {
             redisValueUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
         } catch (MailSendException e) {
             log.error("发送邮件失败: {}", email);
-            // 添加到 无效邮箱表中
-            invalidEmailClient.add(email);
             // 删除redis中的key
             redisValueUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
             e.printStackTrace();

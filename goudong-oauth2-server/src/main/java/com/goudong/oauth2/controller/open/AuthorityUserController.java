@@ -1,30 +1,23 @@
 package com.goudong.oauth2.controller.open;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.InvalidEmailDO;
-import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.commons.validated.Create;
 import com.goudong.commons.vo.AuthorityUser2CreateVO;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.oauth2.service.AuthorityUserService;
-import com.goudong.oauth2.service.InvalidEmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 类描述：
@@ -43,9 +36,6 @@ public class AuthorityUserController {
 
     @Resource
     private AuthorityUserService authorityUserService;
-
-    @Resource
-    private InvalidEmailService invalidEmailService;
 
     /**
      * 根据手机号获取账号
@@ -89,22 +79,8 @@ public class AuthorityUserController {
     @ApiImplicitParam(name = "email", value = "邮箱")
     public Result<Boolean> checkEmailInUse(@PathVariable String email) {
         AssertUtil.isEmail(email, "邮箱格式错误");
-        InvalidEmailDO byEmail = invalidEmailService.getByEmail(email);
-        // 额外信息，status：0 -> 无效； status：1 -> 有效，但被使用了
-        Map<String, Integer> map = new HashMap<>();
-        // 邮箱不能使用
-        if (byEmail != null && !byEmail.getIsDelete()) {
-            Result<Boolean> result = Result.ofSuccess(false);
-            map.put("status", 0);
-            result.setDataMap(map);
-            return result;
-        }
-
         List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByAuthorityUserDTO(AuthorityUserDTO.builder().email(email).build());
-
         Result<Boolean> result = Result.ofSuccess(authorityUserDTOS.isEmpty());
-        map.put("status", 1);
-        result.setDataMap(map);
         return result;
     }
 

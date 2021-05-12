@@ -18,14 +18,15 @@
         create_time
     </sql>
 
-    <insert id="insert" useGeneratedKeys="true" keyColumn="uuid" keyProperty="uuid">
+    <insert id="updateInsert" useGeneratedKeys="true" keyColumn="uuid" keyProperty="uuid">
         insert into authority_user (username, password, email, phone)
         values (#{username}, #{password}, #{email}, #{phone})
+        ON DUPLICATE KEY UPDATE username=#{username}, password=#{password}, email=#{email}, phone=#{phone},update_time=now()
     </insert>
     <select id="selectUserNameByLikeUsername" resultType="java.lang.String">
         select username from authority_user where username like concat('%', #{username}, '%')
     </select>
-    <select id="select" resultType="com.goudong.commons.po.AuthorityUserPO">
+    <select id="selectByAnd" resultType="com.goudong.commons.po.AuthorityUserPO">
         select <include refid="authority_user_column"/>
         from authority_user
         <where>
@@ -64,6 +65,48 @@
             </if>
             <if test="qqOpenId != null">
                 and qq_open_id = #{qqOpenId}
+            </if>
+        </where>
+    </select>
+    <select id="selectByOr" resultType="com.goudong.commons.po.AuthorityUserPO">
+        select <include refid="authority_user_column"/>
+        from authority_user
+        <where>
+            <if test="uuid != null and uuid != ''">
+                or uuid=#{uuid}
+            </if>
+            <if test="username != null">
+                or username = #{username}
+            </if>
+            <if test="password != null">
+                or `password` = #{password}
+            </if>
+            <if test="email != null">
+                or email = #{email}
+            </if>
+            <if test="phone != null">
+                or phone = #{phone}
+            </if>
+            <if test="nickname != null">
+                or nickname = #{nickname}
+            </if>
+            <if test="remark != null">
+                or remark = #{remark}
+            </if>
+            <if test="validTime != null">
+                or valid_time = #{validTime}
+            </if>
+            <if test="isDelete != null">
+                or is_delete = #{isDelete}
+            </if>
+            <if test="updateTime != null">
+                or update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                or create_time = #{createTime}
+            </if>
+            <if test="qqOpenId != null">
+                or qq_open_id = #{qqOpenId}
             </if>
         </where>
     </select>

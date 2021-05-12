@@ -17,7 +17,14 @@ import org.springframework.http.HttpStatus;
 public enum ClientExceptionEnum {
 
 
-    PARAMETER_ERROR(400, "400400", "参数错误", "请求参数未满足validation注解"),
+
+
+    /**
+     * 400 Bad Request
+     * 1、语义有误，当前请求无法被服务器理解。除非进行修改，否则客户端不应该重复提交这个请求。
+     * 2、请求参数有误。
+     */
+    BAD_REQUEST(400, "400", "参数错误", "Bad Request - 语义有误，当前请求无法被服务器理解。除非进行修改，否则客户端不应该重复提交这个请求;请求参数有误"),
 
     NOT_AUTHENTICATION(401, "401000", "请登录", "用户未登录"),
     AUTHENTICATION_EXPIRES(401, "401001", "登录过期", "登录过期"),

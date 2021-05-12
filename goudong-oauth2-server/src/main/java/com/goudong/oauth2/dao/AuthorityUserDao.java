@@ -15,11 +15,18 @@ import java.util.List;
 public interface AuthorityUserDao {
 
     /**
-     * 根据实体对象条件查询用户表
+     * 根据实体对象条件查询用户表，并且条件拼接
      * @param authorityUserPO
      * @return
      */
-    List<AuthorityUserPO> select(AuthorityUserPO authorityUserPO);
+    List<AuthorityUserPO> selectByAnd(AuthorityUserPO authorityUserPO);
+
+    /**
+     * 根据实体对象条件查询用户表，或者条件拼接
+     * @param authorityUserPO
+     * @return
+     */
+    List<AuthorityUserPO> selectByOr(AuthorityUserPO authorityUserPO);
 
     /**
      * 根据用户名 模糊查询已存在的账号名称
@@ -30,9 +37,10 @@ public interface AuthorityUserDao {
 
 
     /**
-     * 新增用户
+     * 新增/修改 用户
      * @param authorityUserPO
      * @return
      */
-    int insert(AuthorityUserPO authorityUserPO);
+    int updateInsert(AuthorityUserPO authorityUserPO);
+
 }

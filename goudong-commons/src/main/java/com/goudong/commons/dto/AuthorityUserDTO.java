@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -93,4 +94,8 @@ public class AuthorityUserDTO implements Serializable {
     @ApiModelProperty(value="qq登录后，系统获取腾讯的open_id")
     private String qqOpenId;
 
+    /**
+     * 账号单选框值：空字符串、MY_SELF、NOT_MY_SELF
+     */
+    private String accountRadio;
 }

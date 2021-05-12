@@ -35,6 +35,20 @@ spring:
     username: admin # 用户名
     password: 123456 # 密码
     virtual-host: /goudong-host
+    # 开启ACK
+    listener:
+      direct:
+        acknowledge-mode: manual
+        retry:
+          enabled: true # 是否支持重试
+      simple:
+        acknowledge-mode: manual
+        retry:
+          enabled: true # 是否支持重试
+    publisher-confirm-type: simple # 开启发送确认
+    publisher-returns: true #开启发送失败退回
+    template:
+      mandatory: true
 
   ##############
   # 发送邮件配置 #

@@ -17,11 +17,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(name="goudong-oauth2-server")
 public interface InvalidEmailClient {
 
-    /**
-     * 添加无效邮箱
-     * @param email
-     * @return
-     */
-    @PostMapping("/email/{email}")
-    Result add(@PathVariable String email);
+
 }

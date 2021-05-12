@@ -5,6 +5,7 @@ import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.message.config.CodeDirectRabbitConfig;
+import com.goudong.message.sender.EmailCodeRoutingKeySender;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,9 @@ public class CodeController {
     @Resource
     private RedisValueUtil redisValueUtil;
 
+    @Resource
+    private EmailCodeRoutingKeySender emailCodeRoutingKeySender;
+
     /**
      * 发送邮箱验证码
      * @return
@@ -40,6 +44,7 @@ public class CodeController {
     @GetMapping("/email-code/{email}")
     public Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email) {
         rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
+//        emailCodeRoutingKeySender.send(email);
         return Result.ofSuccess();
     }
 
