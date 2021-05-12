@@ -46,6 +46,7 @@ public class AuthorityUserController {
 
     @PostMapping("/login")
     public Result login (String username, String password) {
+        log.info("123123");
         return Result.ofSuccess();
     }
 
