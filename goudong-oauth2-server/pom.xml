@@ -18,6 +18,11 @@
             <groupId>com.goudong</groupId>
             <artifactId>goudong-commons</artifactId>
         </dependency>
+        <!--security-->
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-security-server</artifactId>
+        </dependency>
         <!--spring cloud Alibaba nacos-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

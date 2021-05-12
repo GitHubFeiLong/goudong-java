@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * @Date 2021-04-01 20:58
  * @Version 1.0
  */
-@Service
+//@Service
 public class AuthorityUserServiceImpl implements AuthorityUserService {
 
 }
