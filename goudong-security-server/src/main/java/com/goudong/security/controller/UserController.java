@@ -37,6 +37,11 @@ public class UserController {
         return "hello world";
     }
 
+    @PostMapping("/nonceLogin")
+    public Result login (String username, String password) {
+        return Result.ofSuccess();
+    }
+
     @PostMapping("/user")
     @ApiOperation(value = "创建用户", notes = "注册用户")
     public Result createUser(@RequestBody @Validated({Create.class}) AuthorityUserDO authorityUser){
@@ -61,8 +66,8 @@ public class UserController {
 
         // 返回对象
         Map<String, String> map = new HashMap();
-        map.put(JwtTokenUtil.TOKEN, shortToken);
-        map.put(JwtTokenUtil.REFRESH_TOKEN, longToken);
+        map.put(JwtTokenUtil.TOKEN_HEADER, shortToken);
+        map.put(JwtTokenUtil.REFRESH_TOKEN_HEADER, longToken);
 
         return Result.ofSuccess(map);
     }

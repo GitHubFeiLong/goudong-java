@@ -48,7 +48,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         httpServletResponse.setContentType("text/html;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(Result.ofSuccess(authorityUserDO)));
         // 设置到响应头里
-        httpServletResponse.setHeader(JwtTokenUtil.TOKEN, JwtTokenUtil.TOKEN_PREFIX + shortToken);
-        httpServletResponse.setHeader(JwtTokenUtil.REFRESH_TOKEN, JwtTokenUtil.TOKEN_PREFIX + longToken);
+        httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + shortToken);
+        httpServletResponse.setHeader(JwtTokenUtil.REFRESH_TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + longToken);
     }
 }

@@ -27,15 +27,11 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenUtil {
     /**
-     * 短期token的响应头
-     */
-    public static final String TOKEN = "token";
-    /**
      * 长期token的响应头
      */
-    public static final String REFRESH_TOKEN = "refreshToken";
+    public static final String REFRESH_TOKEN_HEADER = "Refresh-Token";
     /**
-     * 请求携带的请求头
+     * 请求携带的token的请求头
      */
     public static final String TOKEN_HEADER = "Authorization";
     /**

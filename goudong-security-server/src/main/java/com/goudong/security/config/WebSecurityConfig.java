@@ -175,7 +175,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 开启自动配置的登录功能
         http.formLogin() //开启登录
-                .loginProcessingUrl("/api/user/nonceLogin") //自定义登录请求路径(post)
+                .loginProcessingUrl("/api/oauth2/user/login") //自定义登录请求路径(post)
                 .usernameParameter("username").passwordParameter("password") //自定义登录用户名密码属性名,默认为username和password
                 .successHandler(authenticationSuccessHandler) //验证成功处理器(前后端分离)：返回状态码200
                 .failureHandler(authenticationFailureHandler) //验证失败处理器(前后端分离)：返回状态码402
