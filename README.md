@@ -21,3 +21,10 @@
 | 更新记录   | UT<br />UPDATE tablename SET filed1=value1,filed2=value2,...,filedn=valuen [WHERE CONDITION] | `v1.0__UT_user.sql`                                 | user表更新记录                          |
 | 删除记录   | dt<br />DELETE FROM tablename [WHERE CONDITION]              | `v1.0__dt_user.sql`                                 | user表删除记录                          |
 
+
+
+## POJO
+
+### 简介
+
+[简介](https://blog.csdn.net/uestcyms/article/details/80244407)
