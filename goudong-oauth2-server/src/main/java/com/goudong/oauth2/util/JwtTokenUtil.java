@@ -1,4 +1,4 @@
-package com.goudong.commons.utils;
+package com.goudong.oauth2.util;
 
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;

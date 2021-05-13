@@ -1,6 +1,6 @@
 package com.goudong.security.config;
 
-import com.goudong.security.dao.AuthorityUserDao;
+import com.goudong.security.dao.SelfAuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -26,7 +26,7 @@ import java.util.Set;
 public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     @Resource
-    private AuthorityUserDao authorityUserDao;
+    private SelfAuthorityUserDao selfAuthorityUserDao;
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
@@ -38,7 +38,7 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
         String requestMethod = ((FilterInvocation) o).getHttpRequest().getMethod();
         log.info("requestUrl >> {}，requestMethod >> {}", requestUrl, requestMethod);
         // 查询 请求方式的url 需要哪些权限
-        List<String> roleNames = authorityUserDao.selectRoleNameByMenu(requestUrl, requestMethod);
+        List<String> roleNames = selfAuthorityUserDao.selectRoleNameByMenu(requestUrl, requestMethod);
         // 没有角色匹配
         if (roleNames.isEmpty()) {
             return SecurityConfig.createList("ROLE_LOGIN");

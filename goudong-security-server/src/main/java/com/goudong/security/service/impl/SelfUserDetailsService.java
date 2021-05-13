@@ -1,8 +1,8 @@
 package com.goudong.security.service.impl;
 
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.entity.SelfUserDetails;
-import com.goudong.security.dao.AuthorityUserDao;
+import com.goudong.commons.po.AuthorityUserPO;
+import com.goudong.security.dao.SelfAuthorityUserDao;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +24,7 @@ import java.util.Set;
 public class SelfUserDetailsService implements UserDetailsService {
 
     @Resource
-    private AuthorityUserDao authorityUserDao;
+    private SelfAuthorityUserDao selfAuthorityUserDao;
 
     /**
      * 根据用户登录名查询用户信息
@@ -37,7 +37,7 @@ public class SelfUserDetailsService implements UserDetailsService {
 
         SelfUserDetails userInfo = new SelfUserDetails();
         // 查询用户信息
-        AuthorityUserDO user = authorityUserDao.selectUserByUsername(username);
+        AuthorityUserPO user = selfAuthorityUserDao.selectUserByUsername(username);
         if (user != null) {
             userInfo.setUsername(user.getUsername());
             userInfo.setPassword(user.getPassword());
@@ -47,7 +47,7 @@ public class SelfUserDetailsService implements UserDetailsService {
 
         Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();
         // 查询用户权限
-        List<String> roles = authorityUserDao.selectRoleNameByUserUuid(user.getUuid());
+        List<String> roles = selfAuthorityUserDao.selectRoleNameByUserUuid(user.getUuid());
         for (String roleName : roles) {
             SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleName); //用户拥有的角色
             authoritiesSet.add(simpleGrantedAuthority);

@@ -1,7 +1,7 @@
 package com.goudong.security.config;
 
-import com.goudong.commons.entity.AuthorityIgnoreResourceDO;
-import com.goudong.security.dao.AuthorityIgnoreResourceDao;
+import com.goudong.commons.po.AuthorityIgnoreResourcePO;
+import com.goudong.security.dao.SelfAuthorityIgnoreResourceDao;
 import com.goudong.security.filter.JWTAuthorizationFilter;
 import com.goudong.security.handler.*;
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 拦截白名单查询
      */
     @Resource
-    private AuthorityIgnoreResourceDao authorityIgnoreResourceDao;
+    private SelfAuthorityIgnoreResourceDao selfAuthorityIgnoreResourceDao;
 
     /**
      * 加密方式
@@ -115,9 +115,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) {
-        List<AuthorityIgnoreResourceDO> authorityIgnoreResourceDOS = authorityIgnoreResourceDao.selectAll();
-        if (!authorityIgnoreResourceDOS.isEmpty()) {
-            authorityIgnoreResourceDOS.stream()
+        List<AuthorityIgnoreResourcePO> authorityIgnoreResourcePOS = selfAuthorityIgnoreResourceDao.selectAll();
+        if (!authorityIgnoreResourcePOS.isEmpty()) {
+            authorityIgnoreResourcePOS.stream()
                     .filter(f->!f.getIsDelete())
                     .forEach(p1->{
                         // 数据库设置的该路径的请求方式用逗号进行分割

@@ -1,9 +1,7 @@
 package com.goudong.security.dao;
 
 
-
-
-import com.goudong.commons.entity.AuthorityIgnoreResourceDO;
+import com.goudong.commons.po.AuthorityIgnoreResourcePO;
 
 import java.util.List;
 
@@ -14,10 +12,10 @@ import java.util.List;
  * @Date 2021-04-03 20:18
  * @Version 1.0
  */
-public interface AuthorityIgnoreResourceDao {
+public interface SelfAuthorityIgnoreResourceDao {
     /**
      * 查询全部
      * @return
      */
-    List<AuthorityIgnoreResourceDO> selectAll();
+    List<AuthorityIgnoreResourcePO> selectAll();
 }

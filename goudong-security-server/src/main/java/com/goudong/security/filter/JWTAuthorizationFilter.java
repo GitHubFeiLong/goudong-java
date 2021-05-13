@@ -1,7 +1,8 @@
 package com.goudong.security.filter;
 
+import com.goudong.commons.dto.AuthorityRoleDTO;
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.entity.AuthorityRoleDO;
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.utils.JwtTokenUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,11 +60,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         // 去掉前面的 "Bearer " 字符串
         String token = tokenHeader.replace(JwtTokenUtil.TOKEN_PREFIX, "");
         // 解析token为对象
-        AuthorityUserDO authorityUserDO = JwtTokenUtil.resolveToken(token);
+        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
 
         // 放置权限
         Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();
-        List<AuthorityRoleDO> authorityRoleDOS = authorityUserDO.getAuthorityRoleDOS();
+        List<AuthorityRoleDTO> authorityRoleDOS = authorityUserDTO.getAuthorityRoleDTOS();
         if (authorityRoleDOS != null && !authorityRoleDOS.isEmpty()) {
             authorityRoleDOS.parallelStream().forEach(f1->{
                 SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(f1.getRoleName());
@@ -71,7 +72,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             });
 
         }
-        String username = authorityUserDO.getUsername();
+        String username = authorityUserDTO.getUsername();
         if (username != null){
             // 用户名 密码 角色
             return new UsernamePasswordAuthenticationToken(username, null, authoritiesSet);

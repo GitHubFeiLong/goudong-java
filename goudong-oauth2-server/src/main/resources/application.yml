@@ -93,7 +93,8 @@ spring:
 ## mybatis配置 ##
 ################
 mybatis:
-  mapper-locations: classpath:dao/*.xml
+#  mapper-locations: classpath:dao/*.xml
+  mapper-locations: classpath*:/dao/*.xml #其他包的也能扫描到
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出sql语句
     map-underscore-to-camel-case: true #开启驼峰命名转换

@@ -1,5 +1,6 @@
 package com.goudong.commons.dto;
 
+import com.goudong.commons.entity.AuthorityRoleDO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * authority_user
@@ -98,4 +100,7 @@ public class AuthorityUserDTO implements Serializable {
      * 账号单选框值：空字符串、MY_SELF、NOT_MY_SELF
      */
     private String accountRadio;
+
+    @ApiModelProperty(value = "角色")
+    private List<AuthorityRoleDTO> authorityRoleDTOS;
 }

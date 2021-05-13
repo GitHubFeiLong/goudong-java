@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.goudong.security.dao.AuthorityUserDao">
+<mapper namespace="com.goudong.security.dao.SelfAuthorityUserDao">
 
     <select id="selectRoleNameByUserUuid" resultType="java.lang.String">
         SELECT
@@ -18,7 +18,7 @@
     <sql id="validTimeConditionSQL">
         (valid_time is null or now() &lt; valid_time)
     </sql>
-    <select id="selectUserByUsername" resultType="com.goudong.commons.entity.AuthorityUserDO">
+    <select id="selectUserByUsername" resultType="com.goudong.commons.po.AuthorityUserPO">
         select
             uuid,
             username,
@@ -35,7 +35,7 @@
         where <include refid="usernameConditionSQL"/>
         and <include refid="validTimeConditionSQL"/> and is_delete = false
     </select>
-    <resultMap id="userDetailResultMap" type="com.goudong.commons.entity.AuthorityUserDO">
+    <resultMap id="userDetailResultMap" type="com.goudong.commons.dto.AuthorityUserDTO">
         <result column="uuid" property="uuid"></result>
         <result column="username" property="username"></result>
         <result column="email" property="email"></result>
@@ -44,9 +44,9 @@
         <result column="valid_time" property="validTime"></result>
         <result column="update_time" property="updateTime"></result>
         <result column="create_time" property="createTime"></result>
-        <collection property="authorityRoleDOS" ofType="com.goudong.commons.entity.AuthorityRoleDO">
+        <collection property="authorityRoleDTOS" ofType="com.goudong.commons.dto.AuthorityRoleDTO">
             <result column="ar_role_name" property="roleName"></result>
-            <result column="ar_role_name_CN" property="roleNameCN"></result>
+            <result column="ar_role_name_CN" property="roleNameCn"></result>
             <result column="ar_remark" property="remark"></result>
         </collection>
     </resultMap>
@@ -80,5 +80,31 @@
         where am.url = #{requestUrl} and am.method like concat('%',#{requestMethod},'%')
         and am.is_delete = false and ar.is_delete = false
     </select>
-
+    <select id="selectUser" resultType="com.goudong.commons.po.AuthorityUserPO">
+        select
+            uuid,
+            username,
+            password,
+            email,
+            phone,
+            nickname,
+            remark,
+            valid_time,
+            is_delete,
+            update_time,
+            create_time
+        from authority_user
+        <where>
+            <if test="username != null and username != ''">
+                and username=#{username}
+            </if>
+            <if test="email != null and email != ''">
+                and email=#{email}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone=#{phone}
+            </if>
+        </where>
+        and <include refid="validTimeConditionSQL"/> and is_delete = false
+    </select>
 </mapper>
