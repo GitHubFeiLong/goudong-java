@@ -28,11 +28,7 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenUtil {
     /**
-     * 长期token的响应头
-     */
-    public static final String REFRESH_TOKEN_HEADER = "Refresh-Token";
-    /**
-     * 请求携带的token的请求头
+     * 请求携带的token的请求头/响应头
      */
     public static final String TOKEN_HEADER = "Authorization";
     /**
@@ -45,13 +41,9 @@ public class JwtTokenUtil {
      */
     public static final String ISSUER = "cfl";
     /**
-     * 短期有效时长单位小时
+     * 有效时长单位小时
      */
-    public static final int VALID_SHORT_TERM_HOUR = 2;
-    /**
-     * 长期有效时长单位小时
-     */
-    public static final int VALID_LONG_TERM_HOUR = 24*7;
+    public static final int VALID_HOUR = 7 * 24;
 
     /**
      * 生产token的盐
@@ -85,9 +77,9 @@ public class JwtTokenUtil {
                 // 绑定用户数据
                 .withAudience(JSON.toJSONString(authorityUserDTO))
                 // 主题
-                .withSubject("")
+                .withSubject("狗东")
                 // 签发的目标
-                .withAudience("")
+                .withAudience("登录验证")
                 .sign(algorithm);
     }
 

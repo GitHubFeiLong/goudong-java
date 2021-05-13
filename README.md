@@ -46,3 +46,8 @@
 6. 业务层将DTO返回给视图层。
 7. 控制层将服务层返回的DTO，进行转换成前端需要的数据及VO
 
+
+
+## HTTP 响应代码
+
+项目基本参照 [规范](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status) 来正确返回响应码

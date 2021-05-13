@@ -40,15 +40,12 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserDao.selectUserDetailByUsername(username);
 
         // 短期有效
-        String shortToken = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_SHORT_TERM_HOUR);
-        // 长期有效
-        String longToken = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_LONG_TERM_HOUR);
+        String shortToken = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("text/html;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(Result.ofSuccess(authorityUserDTO)));
         // 设置到响应头里
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + shortToken);
-        httpServletResponse.setHeader(JwtTokenUtil.REFRESH_TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + longToken);
     }
 }

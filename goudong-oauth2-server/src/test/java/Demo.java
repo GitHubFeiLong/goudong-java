@@ -1,5 +1,5 @@
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.oauth2.util.JwtTokenUtil;
+import com.goudong.commons.utils.JwtTokenUtil;
 import lombok.Data;
 
 /**

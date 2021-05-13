@@ -1,13 +1,14 @@
 package com.goudong.oauth2.controller.open;
 
+import cn.hutool.core.util.IdUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.vo.AuthorityUser2CreateVO;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.oauth2.service.AuthorityUserService;
-import com.goudong.oauth2.util.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -49,39 +50,8 @@ public class AuthorityUserController {
         log.info("123123");
         return Result.ofSuccess();
     }
-    @GetMapping("/demo")
-    public Result demo () {
-        ClassLoader classLoader = AuthorityUserController.class.getClassLoader();
-        URL resource = classLoader.getResource(" org/apache/commons/codec/binary/Base64.class");
-        log.info("Resource: {}", resource);
-        return Result.ofSuccess(JwtTokenUtil.generateToken(new AuthorityUserDTO(), JwtTokenUtil.VALID_SHORT_TERM_HOUR));
-    }
 
-//    @GetMapping("/token")
-//    @ApiOperation(value = "获取新的token")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public Result createToken(HttpServletRequest request, HttpServletResponse response) {
-//        // 请求头中的token字符串（包含 Bearer）
-//        String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
-//        // 去掉前面的 "Bearer " 字符串
-//        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_PREFIX, "");
-//        // 解析token为对象
-//        AuthorityUserDTO authorityUserDO = JwtTokenUtil.resolveToken(token);
-//
-//        // 短期有效
-//        String shortToken = JwtTokenUtil.generateToken(authorityUserDO, JwtTokenUtil.VALID_SHORT_TERM_HOUR);
-//        // 长期有效
-//        String longToken = JwtTokenUtil.generateToken(authorityUserDO, JwtTokenUtil.VALID_LONG_TERM_HOUR);
-//
-//        response.setHeader(JwtTokenUtil.TOKEN_HEADER, shortToken);
-//        response.setHeader(JwtTokenUtil.REFRESH_TOKEN_HEADER, longToken);
-//        // 返回对象
-//        Map<String, String> map = new HashMap();
-//        map.put(JwtTokenUtil.TOKEN_HEADER, shortToken);
-//        map.put(JwtTokenUtil.REFRESH_TOKEN_HEADER, longToken);
-//
-//        return Result.ofSuccess(map);
-//    }
+
     /**
      * 根据手机号获取账号
      *
@@ -147,4 +117,39 @@ public class AuthorityUserController {
     // 绑定qq
     // 登录
 
+    /**
+     * 生成token字符串，保存到响应头中
+     * @param request
+     * @param response
+     * @return
+     */
+    @GetMapping("/token")
+    @ApiOperation(value = "获取新的token", notes = "n")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Result createToken(HttpServletRequest request, HttpServletResponse response) {
+        // 请求头中的token字符串（包含 Bearer）
+        String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
+
+        // 没有token，那么就给一个 匿名的token
+        if (tokenHeader == null) {
+            AuthorityUserDTO authorityUserDTO = new AuthorityUserDTO();
+            authorityUserDTO.setUuid(IdUtil.randomUUID());
+            String shortToken = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+
+            response.setHeader(JwtTokenUtil.TOKEN_HEADER, shortToken);
+
+            return Result.ofSuccess();
+        }
+
+        // 去掉前面的 "Bearer " 字符串
+        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_PREFIX, "");
+        // 解析token为对象
+        AuthorityUserDTO authorityUserDO = JwtTokenUtil.resolveToken(token);
+
+        String shortToken = JwtTokenUtil.generateToken(authorityUserDO, JwtTokenUtil.VALID_HOUR);
+
+        response.setHeader(JwtTokenUtil.TOKEN_HEADER, shortToken);
+
+        return Result.ofSuccess();
+    }
 }
