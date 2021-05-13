@@ -1,19 +1,22 @@
 package com.goudong.oauth2.service.impl;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.po.AuthorityRolePO;
 import com.goudong.commons.po.AuthorityUserPO;
+import com.goudong.commons.po.AuthorityUserRolePO;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.oauth2.dao.AuthorityRoleDao;
 import com.goudong.oauth2.dao.AuthorityUserDao;
+import com.goudong.oauth2.dao.AuthorityUserRoleDao;
 import com.goudong.oauth2.service.AuthorityUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -33,7 +36,10 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
 
     @Resource
     private AuthorityUserDao authorityUserDao;
-
+    @Resource
+    private AuthorityRoleDao authorityRoleDao;
+    @Resource
+    private AuthorityUserRoleDao authorityUserRoleDao;
 
     /**
      * 根据 authorityUserPO对象，查询 authority_user表
@@ -94,6 +100,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
      * @param authorityUserDTO
      * @return
      */
+    @Transactional
     @Override
     public AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO) {
 
@@ -107,30 +114,39 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
             // 2. 注册时间过长，账号被别人注册了
             BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
         }
+        String accountRadio = authorityUserDTO.getAccountRadio();
+        // 为空，插入
+        if (userPOList.isEmpty() && "".equals(accountRadio)) {
+            userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
+            AuthorityUserPO userPO1 = new AuthorityUserPO();
+            userPO1.setUsername("1");
+            userPO1.setEmail("1");
+            userPO1.setPassword("1");
+            userPO1.setPhone("1");
+            authorityUserDao.insert(userPO1);
 
-        // 数据库没有相关用户或只有一条数据
-        // 加密
-        userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-        authorityUserDao.updateInsert(userPO);
+            AuthorityRolePO rolePO = authorityRoleDao.select(AuthorityRolePO.builder().roleName("ROLE_ORDINARY").build()).get(0);
+            // 绑定角色
+            AuthorityUserRolePO userRolePO = AuthorityUserRolePO.builder().roleUuid(rolePO.getUuid()).userUuid(userPO.getUuid()).build();
 
-        // 只有一条，根据用户选中的单选 accountRadio 进行用户信息管理（空字符串、MY_SELF、NOT_MY_SELF）
-        switch (authorityUserDTO.getAccountRadio()) {
-            case "":
-                // 没有出现弹框
-                log.info("账户未选择单选框：{}", authorityUserDTO.toString());
-                break;
-            case "MY_SELF":
-                // 选中账号是我的，清除一些旧数据
+            authorityUserRoleDao.insert(userRolePO);
 
-                break;
-            case "NOT_MY_SELF":
-                // 选中账号不是我的
-
-                break;
-            default:
-                BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
+            return (AuthorityUserDTO) BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
         }
 
-        return (AuthorityUserDTO) BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
+        if ("MY_SELF".equals(accountRadio) || "NOT_MY_SELF".equals(accountRadio)) {
+            // 数据库没有相关用户有一条数据
+            userPO.setUuid(userPOList.get(0).getUuid());
+
+            // 加密
+            userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
+            authorityUserDao.updateInsert(userPO);
+
+            return (AuthorityUserDTO) BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
+        }
+
+        BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
+
+        return null;
     }
 }

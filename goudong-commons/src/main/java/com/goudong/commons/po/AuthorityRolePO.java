@@ -2,7 +2,10 @@ package com.goudong.commons.po;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +15,9 @@ import java.util.Date;
  * authority_role
  * @author
  */
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Data
 public class AuthorityRolePO implements Serializable {
     private static final long serialVersionUID = -6905985572474217281L;

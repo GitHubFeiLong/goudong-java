@@ -23,6 +23,10 @@
         values (#{username}, #{password}, #{email}, #{phone})
         ON DUPLICATE KEY UPDATE username=#{username}, password=#{password}, email=#{email}, phone=#{phone},update_time=now()
     </insert>
+    <insert id="insert" parameterType="com.goudong.commons.po.AuthorityUserPO" useGeneratedKeys="true" keyColumn="uuid" keyProperty="uuid">
+        insert into authority_user (username, password, email, phone)
+        values (#{username}, #{password}, #{email}, #{phone})
+    </insert>
     <select id="selectUserNameByLikeUsername" resultType="java.lang.String">
         select username from authority_user where username like concat('%', #{username}, '%')
     </select>

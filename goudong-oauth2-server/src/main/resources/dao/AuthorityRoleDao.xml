@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goudong.oauth2.dao.AuthorityRoleDao">
+
+    <sql id="authority_role_column">
+        uuid,
+        role_name,
+        role_name_CN
+        remark,
+        is_delete,
+        update_time,
+        create_time
+    </sql>
+    <select id="select" resultType="com.goudong.commons.po.AuthorityRolePO">
+        select
+        <include refid="authority_role_column"/>
+        from authority_role
+        <where>
+            <if test="uuid != null and uuid != ''">
+                and uuid=#{uuid}
+            </if>
+            <if test="roleName != null and roleName != ''">
+                and role_name=#{roleName}
+            </if>
+            <if test="roleNameCn != null and roleNameCn != ''">
+                and role_name_CN=#{roleNameCn}
+            </if>
+        </where>
+    </select>
+    <insert id="insert"></insert>
+
+</mapper>

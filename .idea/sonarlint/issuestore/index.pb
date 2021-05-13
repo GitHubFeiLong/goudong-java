@@ -106,8 +106,6 @@ Wgoudong-oauth2-server/src/main/java/com/goudong/oauth2/enumerate/OtherUserTypeE
 Xgoudong-oauth2-server/src/main/java/com/goudong/oauth2/service/impl/UserServiceImpl.java,c\e\ce4dd328d88c2569a839884e4a67ccc1668a1301
 
 Ogoudong-oauth2-server/src/main/java/com/goudong/oauth2/service/UserService.java,b\b\bb1ca76cbaffc527a81665218d073b379a6799aa
-l
-<goudong-oauth2-server/src/main/resources/application-dev.yml,5\9\59584586f23c62e23300a6a11af7f2a11fb2bd70
 m
 =goudong-oauth2-server/src/main/resources/application-prod.yml,c\a\cabc86d5679f4ea03211ab7458eaf2a0c2a55d4a
 …
@@ -132,8 +130,6 @@ N
 Pgoudong-message-server/src/main/java/com/goudong/message/MessageApplication.java,2\1\21edaee962a6db94fdf2a8d7e5a34b092fbd16e8
 c
 3goudong-message-server/src/main/resources/README.md,e\0\e09c051bdd6c23883ea09e0973b51ff63b7d1125
-j
-:goudong-security-server/src/main/resources/application.yml,d\e\de57cfd0c2e6fffb2e230dc3289dee751fed98b1
 z
 Jgoudong-commons/src/main/java/com/goudong/commons/utils/IpAddressUtil.java,b\0\b0070a8e2222d291ed41acafdfaa22e5550eb9ea
 

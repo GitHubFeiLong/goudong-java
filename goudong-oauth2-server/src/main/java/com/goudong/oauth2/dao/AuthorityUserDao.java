@@ -2,6 +2,7 @@ package com.goudong.oauth2.dao;
 
 import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.po.AuthorityUserPO;
+import lombok.experimental.Tolerate;
 
 import java.util.List;
 
@@ -42,5 +43,11 @@ public interface AuthorityUserDao {
      * @return
      */
     int updateInsert(AuthorityUserPO authorityUserPO);
+
+    /**
+     * 新增
+     * @param userPO
+     */
+    void insert(AuthorityUserPO userPO);
 
 }

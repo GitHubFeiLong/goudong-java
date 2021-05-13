@@ -1,17 +1,17 @@
-server:
-  port: 10001
-spring:
-  application:
-    name: goudong-security-server
-  datasource: #数据库
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/security?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: l(=8gp_04h*&
-## mybatis配置
-mybatis:
-  mapper-locations: classpath:dao/*.xml
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出sql语句
-    map-underscore-to-camel-case: true #开启驼峰命名转换
-
+#server:
+#  port: 10001
+#spring:
+#  application:
+#    name: goudong-security-server
+#  datasource: #数据库
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1:3306/security?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+#    username: root
+#    password: l(=8gp_04h*&
+### mybatis配置
+#mybatis:
+#  mapper-locations: classpath:dao/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出sql语句
+#    map-underscore-to-camel-case: true #开启驼峰命名转换
+#

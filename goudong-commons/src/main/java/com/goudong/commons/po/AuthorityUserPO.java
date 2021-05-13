@@ -9,17 +9,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Tolerate;
 
 /**
  * authority_user
  * @author
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Builder
 @Data
 public class AuthorityUserPO implements Serializable {
-    private static final long serialVersionUID = -6147408154544596138L;
+    private static final long serialVersionUID = -8673423406924099991L;
     /**
      * uuid
      */
@@ -79,5 +80,4 @@ public class AuthorityUserPO implements Serializable {
      * qq登录后，系统获取腾讯的open_id
      */
     private String qqOpenId;
-
 }

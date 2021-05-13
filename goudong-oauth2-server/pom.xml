@@ -18,16 +18,19 @@
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>goudong-commons</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--security-->
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>goudong-security-server</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--spring cloud Alibaba nacos-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--spring boot starter-->
         <dependency>
@@ -55,6 +58,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--监控信息-->
         <dependency>

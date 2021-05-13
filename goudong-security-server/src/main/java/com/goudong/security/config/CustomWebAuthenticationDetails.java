@@ -33,8 +33,8 @@ public class CustomWebAuthenticationDetails extends WebAuthenticationDetails imp
 //            String header = httpServletRequest.getHeader(s);
 //            System.out.println(s + ": " + header);
 //        }
-        phone = httpServletRequest.getParameter("phone");
-        email = httpServletRequest.getParameter("email");
+//        phone = httpServletRequest.getParameter("phone");
+//        email = httpServletRequest.getParameter("email");
     }
 
 }
