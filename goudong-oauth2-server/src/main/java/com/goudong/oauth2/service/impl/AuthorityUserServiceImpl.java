@@ -1,5 +1,6 @@
 package com.goudong.oauth2.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
@@ -118,12 +119,8 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
         // 为空，插入
         if (userPOList.isEmpty() && "".equals(accountRadio)) {
             userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-            AuthorityUserPO userPO1 = new AuthorityUserPO();
-            userPO1.setUsername("1");
-            userPO1.setEmail("1");
-            userPO1.setPassword("1");
-            userPO1.setPhone("1");
-            authorityUserDao.insert(userPO1);
+            userPO.setUuid(IdUtil.randomUUID());
+            authorityUserDao.insert(userPO);
 
             AuthorityRolePO rolePO = authorityRoleDao.select(AuthorityRolePO.builder().roleName("ROLE_ORDINARY").build()).get(0);
             // 绑定角色

@@ -1,6 +1,7 @@
 package com.goudong.security.service.impl;
 
 import com.goudong.commons.entity.SelfUserDetails;
+import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.security.dao.SelfAuthorityUserDao;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,7 +43,7 @@ public class SelfUserDetailsService implements UserDetailsService {
             userInfo.setUsername(user.getUsername());
             userInfo.setPassword(user.getPassword());
         } else {
-            throw new UsernameNotFoundException("用户:" + username + "不存在");
+            BasicException.ClientException.resourceNotFound("用户:" + username + "不存在");
         }
 
         Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();

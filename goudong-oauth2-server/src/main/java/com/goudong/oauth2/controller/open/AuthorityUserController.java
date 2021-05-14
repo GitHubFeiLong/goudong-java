@@ -1,30 +1,10 @@
 package com.goudong.oauth2.controller.open;
 
-import cn.hutool.core.util.IdUtil;
-import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.pojo.Result;
-import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.BeanUtil;
-import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.vo.AuthorityUser2CreateVO;
-import com.goudong.commons.vo.AuthorityUserVO;
-import com.goudong.oauth2.service.AuthorityUserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 类描述：

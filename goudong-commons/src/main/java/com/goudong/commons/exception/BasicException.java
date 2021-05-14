@@ -102,30 +102,16 @@ public class BasicException extends RuntimeException{
      * @Version 1.0
      */
     public static class ClientException extends BasicException {
-        public static final String serverMessage = "参数错误";
-
-
-
-
 
         /**
-         * 参数错误
+         * 资源不存在
+         * 404 Not Found
          * @param clientMessage 客户端提示信息
          * @return
          */
-        public static BasicException methodParamError(String clientMessage){
-            log.error("服务器内部方法传参错误：{}", clientMessage);
-            throw new BasicException(400, "400400", clientMessage, serverMessage);
-        }
-        /**
-         * 参数错误
-         * @param clientMessage 客户端错误信息
-         * @param e 服务端错误信息
-         * @return
-         */
-        public static BasicException methodParamError(String clientMessage, Exception e){
-            log.error("服务器内部方法传参错误：{}", clientMessage);
-            throw new BasicException(400, "400400", clientMessage, e.getMessage());
+        public static BasicException resourceNotFound(String clientMessage){
+            log.error("资源不存在：{}", clientMessage);
+            throw new BasicException(404, "404", clientMessage, "Not Found - 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。");
         }
 
         public ClientException(ClientExceptionEnum clientExceptionEnum) {

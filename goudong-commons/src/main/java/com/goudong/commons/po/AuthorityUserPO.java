@@ -15,9 +15,9 @@ import lombok.experimental.Tolerate;
  * authority_user
  * @author
  */
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Data
 public class AuthorityUserPO implements Serializable {
     private static final long serialVersionUID = -8673423406924099991L;
