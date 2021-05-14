@@ -34,7 +34,7 @@ public class SelfUserDetailsService implements UserDetailsService {
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
 
         SelfUserDetails userInfo = new SelfUserDetails();
         // 查询用户信息
@@ -44,6 +44,7 @@ public class SelfUserDetailsService implements UserDetailsService {
             userInfo.setPassword(user.getPassword());
         } else {
             BasicException.ClientException.resourceNotFound("用户:" + username + "不存在");
+            throw new RuntimeException("异常");
         }
 
         Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();

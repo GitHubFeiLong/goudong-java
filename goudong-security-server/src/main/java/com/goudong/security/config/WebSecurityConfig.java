@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -23,7 +26,11 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -166,7 +173,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // url权限认证处理
         http
             .authorizeRequests()
-            .anyRequest().authenticated()//所有请求都需要认证
+            .antMatchers("/api/oauth2/open/user/login").anonymous()
+            //所有请求都需要认证
+            .anyRequest()
+            .authenticated()
             .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                 @Override
                 public <O extends FilterSecurityInterceptor> O postProcess(O o) {
@@ -181,19 +191,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 开启自动配置的登录功能
         http.formLogin() //开启登录
-                .loginProcessingUrl("/api/oauth2/open/user/login") //自定义登录请求路径(post)
-                .usernameParameter("username").passwordParameter("password") //自定义登录用户名密码属性名,默认为username和password
-                .successHandler(authenticationSuccessHandler) //验证成功处理器(前后端分离)：返回状态码200
-                .failureHandler(authenticationFailureHandler) //验证失败处理器(前后端分离)：返回状态码402
-                .authenticationDetailsSource(authenticationDetailsSource) //身份验证详细信息源(登录验证中增加额外字段)
+                //自定义登录请求路径(post)
+                .loginProcessingUrl("/api/oauth2/open/user/login")
+                //自定义登录用户名密码属性名,默认为username和password
+                .usernameParameter("username").passwordParameter("password")
+                //验证成功处理器(前后端分离)：返回状态码200
+                .successHandler(authenticationSuccessHandler)
+                //验证失败处理器(前后端分离)：返回状态码402
+                .failureHandler(authenticationFailureHandler)
+                //身份验证详细信息源(登录验证中增加额外字段)
+                .authenticationDetailsSource(authenticationDetailsSource)
                 .permitAll();
         // 开启自动配置的注销功能
         http.logout() //用户注销, 清空session
-                .logoutUrl("/nonceLogout") //自定义注销请求路径
-                .logoutSuccessHandler(logoutSuccessHandler); //注销成功处理器(前后端分离)：返回状态码200
+                //自定义注销请求路径
+                .logoutUrl("/nonceLogout")
+                //注销成功处理器(前后端分离)：返回状态码200
+                .logoutSuccessHandler(logoutSuccessHandler);
 
         // 添加Jwt过滤器
         http.addFilter(new JWTAuthorizationFilter(authenticationManager()));
+
+        // 禁用csrf防御机制(跨域请求伪造)，这么做在测试和开发会比较方便。
+        http.csrf().disable();
     }
 
 

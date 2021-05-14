@@ -1,6 +1,7 @@
 package com.goudong.oauth2.controller.open;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
@@ -37,6 +38,12 @@ public class OpenUerController {
     @Resource
     private AuthorityUserService authorityUserService;
 
+
+    @GetMapping("/demo")
+    public Result demo () {
+        BasicException.ClientException.resourceNotFound("用户:" + "demo" + "不存在");
+        throw new RuntimeException("异常");
+    }
 
     /**
      * 登录

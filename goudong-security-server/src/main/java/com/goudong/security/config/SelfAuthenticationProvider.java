@@ -29,7 +29,7 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
     private SelfUserDetailsService selfUserDetailsService;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
 
         log.info("authentication >> {}", authentication.toString());
         // 登录请求中的其他参数

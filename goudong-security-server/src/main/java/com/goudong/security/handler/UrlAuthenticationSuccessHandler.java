@@ -43,7 +43,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         String shortToken = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
 
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("text/html;charset=UTF-8");
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(Result.ofSuccess(authorityUserDTO)));
         // 设置到响应头里
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + shortToken);
