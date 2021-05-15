@@ -56,6 +56,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         out.write(JSON.toJSONString(Result.ofSuccess(authorityUserDTO)));
         // 设置到响应头里
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + token);
+        // 添加信息到redis中
+
         out.flush();
         out.close();
     }
