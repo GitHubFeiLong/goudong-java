@@ -161,9 +161,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // 关闭csrf验证(防止跨站请求伪造攻击)
-        http.csrf().disable();
-
         // 未登录时：返回状态码401
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
 
@@ -173,7 +170,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // url权限认证处理
         http
             .authorizeRequests()
-            .antMatchers("/api/oauth2/open/user/login").anonymous()
             //所有请求都需要认证
             .anyRequest()
             .authenticated()

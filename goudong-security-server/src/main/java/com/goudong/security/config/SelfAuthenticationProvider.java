@@ -48,10 +48,10 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
         UserDetails userInfo = selfUserDetailsService.loadUserByUsername(username);
 
         // 使用 BCrypt 加密的方式进行匹配
-        boolean matches = new BCryptPasswordEncoder().matches(password, userInfo.getPassword()); //校验用户名密码
+        boolean matches = new BCryptPasswordEncoder().matches(password, userInfo.getPassword());
         // 密码不正确，抛出异常
         if (!matches) {
-            throw new BadCredentialsException("密码错误");
+            throw new BadCredentialsException("账户名与密码不匹配，请重新输入");
         }
         // 验证通过，返回用户信息
         return new UsernamePasswordAuthenticationToken(username, userInfo.getPassword(), userInfo.getAuthorities());

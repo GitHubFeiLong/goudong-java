@@ -1,7 +1,7 @@
 package com.goudong.security.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import org.springframework.security.core.AuthenticationException;
@@ -20,18 +20,17 @@ import java.io.IOException;
  * @Date 2021-04-03 9:01
  * @Version 1.0
  */
-@SuppressWarnings("Duplicates")
 @Component
 public class UrlAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+        ClientExceptionEnumInterface notAuthentication = ClientExceptionEnumInterface.NOT_AUTHENTICATION;
+        Result result = Result.ofFail(new BasicException.ClientException(notAuthentication));
 
-        Result result = Result.ofFail(new BasicException.ClientException(ClientExceptionEnum.NOT_AUTHENTICATION));
-
-        httpServletResponse.setStatus(401);
+        httpServletResponse.setStatus(notAuthentication.getStatus());
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("text/html;charset=UTF-8");
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(result));
     }
 }

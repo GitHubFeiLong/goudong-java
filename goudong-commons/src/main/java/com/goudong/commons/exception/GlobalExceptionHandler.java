@@ -1,7 +1,7 @@
 package com.goudong.commons.exception;
 
 
-import com.goudong.commons.enumerate.ServerExceptionEnum;
+import com.goudong.commons.enumerate.ServerExceptionEnumInterface;
 import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Throwable.class)
     public Result<Throwable> otherErrorDispose(Throwable e){
-        BasicException serverException = new BasicException.ServerException(ServerExceptionEnum.SERVER_ERROR);
+        BasicException serverException = new BasicException.ServerException(ServerExceptionEnumInterface.SERVER_ERROR);
         this.response.setStatus(serverException.status);
         // 打印错误日志
         log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, e.getMessage());

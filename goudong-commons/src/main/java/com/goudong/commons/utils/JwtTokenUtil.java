@@ -7,7 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +112,7 @@ public class JwtTokenUtil {
 
         // token 格式不对
         if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
-            BasicException.exception(ClientExceptionEnum.TOKEN_ERROR);
+            BasicException.exception(ClientExceptionEnumInterface.TOKEN_ERROR);
         }
 
         // 去掉前面的 "Bearer " 字符串

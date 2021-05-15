@@ -21,7 +21,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
  */
 @EnableOpenApi
 @EnableConfigurationProperties({QQApplicationValue.class})
-@SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS, BasePackageConst.SECURITY},exclude = {SecurityAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS, BasePackageConst.SECURITY})
 @MapperScan(basePackages = {"com.goudong.oauth2.dao", BasePackageConst.SECURITY_DAO})
 public class Oauth2Application {
     public static void main(String[] args) {

@@ -1,8 +1,7 @@
 package com.goudong.commons.exception;
 
-import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.enumerate.ServerExceptionEnum;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
+import com.goudong.commons.enumerate.ServerExceptionEnumInterface;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -63,7 +62,7 @@ public class BasicException extends RuntimeException{
      * 客户端误操作造成异常
      * @param exceptionEnum
      */
-    public BasicException(ClientExceptionEnum exceptionEnum) {
+    public BasicException(ClientExceptionEnumInterface exceptionEnum) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
     }
 
@@ -71,7 +70,7 @@ public class BasicException extends RuntimeException{
      * 服务端异常
      * @param exceptionEnum
      */
-    public BasicException(ServerExceptionEnum exceptionEnum) {
+    public BasicException(ServerExceptionEnumInterface exceptionEnum) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
     }
 
@@ -80,7 +79,7 @@ public class BasicException extends RuntimeException{
      * @param exceptionEnum
      * @return
      */
-    public static BasicException exception (ServerExceptionEnum exceptionEnum) {
+    public static BasicException exception (ServerExceptionEnumInterface exceptionEnum) {
         throw new BasicException.ServerException(exceptionEnum);
     }
 
@@ -89,7 +88,7 @@ public class BasicException extends RuntimeException{
      * @param exceptionEnum
      * @return
      */
-    public static BasicException exception (ClientExceptionEnum exceptionEnum) {
+    public static BasicException exception (ClientExceptionEnumInterface exceptionEnum) {
         throw new BasicException.ClientException(exceptionEnum);
     }
 
@@ -114,7 +113,7 @@ public class BasicException extends RuntimeException{
             throw new BasicException(404, "404", clientMessage, "Not Found - 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。");
         }
 
-        public ClientException(ClientExceptionEnum clientExceptionEnum) {
+        public ClientException(ClientExceptionEnumInterface clientExceptionEnum) {
             super(clientExceptionEnum);
         }
 
@@ -132,7 +131,7 @@ public class BasicException extends RuntimeException{
 
         public static final String clientMessage = "服务器内部错误";
 
-        public ServerException(ServerExceptionEnum serverExceptionEnum) {
+        public ServerException(ServerExceptionEnumInterface serverExceptionEnum) {
             super(serverExceptionEnum);
         }
 

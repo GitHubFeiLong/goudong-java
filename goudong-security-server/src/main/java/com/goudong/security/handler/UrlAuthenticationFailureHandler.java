@@ -1,6 +1,8 @@
 package com.goudong.security.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
+import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -10,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * @author Andon
@@ -22,13 +25,17 @@ import java.io.IOException;
 public class UrlAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
+        ClientExceptionEnumInterface badRequest = ClientExceptionEnumInterface.NOT_FOUND;
+        Result<BasicException> result = Result.ofFail(badRequest);
+        result.setClientMessage(e.getMessage());
 
-        Result<String> result = Result.ofFail(e.getMessage());
-
-        httpServletResponse.setStatus(402);
+        httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("text/html;charset=UTF-8");
-        httpServletResponse.getWriter().write(JSON.toJSONString(result));
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = httpServletResponse.getWriter();
+        out.write(JSON.toJSONString(result));
+        out.flush();
+        out.close();
     }
 }

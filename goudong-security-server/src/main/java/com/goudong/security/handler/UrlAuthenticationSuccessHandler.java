@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 登录成功处理器
@@ -29,6 +30,14 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Resource
     private SelfAuthorityUserDao selfAuthorityUserDao;
 
+    /**
+     *
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param authentication 保存当前用户的登录信息
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
 
@@ -39,13 +48,15 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 查询用户信息
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserDao.selectUserDetailByUsername(username);
 
-        // 短期有效
-        String shortToken = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+        String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        httpServletResponse.getWriter().write(JSON.toJSONString(Result.ofSuccess(authorityUserDTO)));
+        PrintWriter out = httpServletResponse.getWriter();
+        out.write(JSON.toJSONString(Result.ofSuccess(authorityUserDTO)));
         // 设置到响应头里
-        httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + shortToken);
+        httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + token);
+        out.flush();
+        out.close();
     }
 }

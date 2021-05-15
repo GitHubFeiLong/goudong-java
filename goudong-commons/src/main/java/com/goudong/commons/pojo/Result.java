@@ -1,9 +1,9 @@
 package com.goudong.commons.pojo;
 
+import com.goudong.commons.enumerate.ExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -117,7 +117,15 @@ public class Result<T> implements Serializable {
     }
 
     /**
-     * 返回失败，带错误信息
+     * 只返回失败信息，不抛额异常
+     * @return
+     */
+    public static Result ofFail(ExceptionEnumInterface enumInterface) {
+        return  new Result(enumInterface.getCode(), enumInterface.getClientMessage(), enumInterface.getServerMessage(), null);
+    }
+
+    /**
+     * 只返回失败信息，不抛额异常
      * @return
      */
     public static Result ofFail(BasicException basicException) {

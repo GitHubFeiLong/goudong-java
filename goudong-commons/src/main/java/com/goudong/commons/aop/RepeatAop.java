@@ -1,7 +1,7 @@
 package com.goudong.commons.aop;
 
 import com.goudong.commons.annotation.Repeat;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.utils.JwtTokenUtil;
@@ -12,7 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -20,7 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -78,7 +76,7 @@ public class RepeatAop {
 		} else {
 			log.info("防止了 {} 重复提交",request.getRequestURI());
 			// 429
-			BasicException.exception(ClientExceptionEnum.TOO_MANY_REQUESTS);
+			BasicException.exception(ClientExceptionEnumInterface.TOO_MANY_REQUESTS);
 		}
 		// 停止执行
 		return ret;

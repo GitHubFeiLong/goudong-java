@@ -12,7 +12,7 @@ import lombok.Getter;
  * @Version 1.0
  */
 @Getter
-public enum ServerExceptionEnum {
+public enum ServerExceptionEnumInterface implements ExceptionEnumInterface {
     SERVER_ERROR(500, "500", "服务器内部错误，请稍后再试", "未捕获的未知异常"),
 
     ;
@@ -34,7 +34,7 @@ public enum ServerExceptionEnum {
      */
     private String serverMessage;
 
-    ServerExceptionEnum(int status, String code, String clientMessage, String serverMessage){
+    ServerExceptionEnumInterface(int status, String code, String clientMessage, String serverMessage){
         this.status = status;
         this.code = code;
         this.clientMessage = clientMessage;
