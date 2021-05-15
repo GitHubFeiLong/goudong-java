@@ -39,7 +39,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
      * @throws ServletException
      */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
 
         httpServletResponse.setCharacterEncoding("UTF-8");
 
@@ -49,7 +49,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserDao.selectUserDetailByUsername(username);
 
         String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
-
+        httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         PrintWriter out = httpServletResponse.getWriter();

@@ -22,9 +22,9 @@ public enum ClientExceptionEnumInterface implements ExceptionEnumInterface {
      */
     BAD_REQUEST(400, "400", "参数错误", "Bad Request - 语义有误，当前请求无法被服务器理解。除非进行修改，否则客户端不应该重复提交这个请求;请求参数有误"),
 
-    NOT_AUTHENTICATION(401, "401000", "请登录", "用户未登录"),
+    NOT_AUTHENTICATION(401, "401", "请登录", "用户未登录"),
     AUTHENTICATION_EXPIRES(401, "401001", "登录过期", "登录过期"),
-    NOT_AUTHORIZATION(403, "403001", "无权访问", "用户没有权限"),
+    NOT_AUTHORIZATION(403, "403", "无权访问", "用户没有权限"),
     NAME_OR_PWD_ERROR(400, "400002", "无权访问", "用户名与密码错误"),
 
 

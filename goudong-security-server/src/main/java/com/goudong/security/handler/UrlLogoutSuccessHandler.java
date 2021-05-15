@@ -24,7 +24,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
 
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("text/html;charset=UTF-8");
+        httpServletResponse.setContentType("application/json;;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(Result.ofSuccess("退出成功")));
     }
 }
