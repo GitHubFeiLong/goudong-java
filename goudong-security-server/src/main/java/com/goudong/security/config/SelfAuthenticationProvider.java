@@ -33,7 +33,8 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
 
         log.info("authentication >> {}", authentication.toString());
         // 登录请求中的其他参数
-        CustomWebAuthenticationDetails customWebAuthenticationDetails = (CustomWebAuthenticationDetails) authentication.getDetails(); //获取身份验证详细信息
+        //获取身份验证详细信息
+        CustomWebAuthenticationDetails customWebAuthenticationDetails = (CustomWebAuthenticationDetails) authentication.getDetails();
         String phone = customWebAuthenticationDetails.getPhone();
         String email = customWebAuthenticationDetails.getEmail();
 

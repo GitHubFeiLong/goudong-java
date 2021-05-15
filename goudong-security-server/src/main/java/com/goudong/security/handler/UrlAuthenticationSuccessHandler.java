@@ -2,8 +2,10 @@ package com.goudong.security.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
+import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.security.dao.SelfAuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Resource
     private SelfAuthorityUserDao selfAuthorityUserDao;
 
+    @Resource
+    private RedisValueUtil redisValueUtil;
     /**
      *
      * @param httpServletRequest
@@ -57,7 +61,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 设置到响应头里
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + token);
         // 添加信息到redis中
-
+        redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
         out.flush();
         out.close();
     }

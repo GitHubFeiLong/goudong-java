@@ -28,6 +28,11 @@ public enum RedisKeyEnum {
      */
     MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES),
 
+    /**
+     * 认证服务中的登录信息，保存登录用户的token
+     * @param ${uuid} 登录人的主键
+     */
+    OAUTH2_LOGIN_INFO("gd:oauth2:login-info:token:${uuid}"),
     ;
 
     /**
@@ -44,6 +49,9 @@ public enum RedisKeyEnum {
      */
     private TimeUnit timeUnit = TimeUnit.HOURS;
 
+    RedisKeyEnum(String key){
+        this.key = key;
+    }
     RedisKeyEnum(String key, int time, TimeUnit timeUnit) {
         this.key = key;
         this.time = time;

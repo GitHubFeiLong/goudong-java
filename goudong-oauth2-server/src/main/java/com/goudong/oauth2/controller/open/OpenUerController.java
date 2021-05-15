@@ -38,31 +38,6 @@ public class OpenUerController {
     @Resource
     private AuthorityUserService authorityUserService;
 
-
-    @GetMapping("/demo")
-    public Result demo () {
-        BasicException.ClientException.resourceNotFound("用户:" + "demo" + "不存在");
-        throw new RuntimeException("异常");
-    }
-
-    /**
-     * 登录
-     * @param username
-     * @param password
-     * @return
-     */
-    @PostMapping("/login")
-    @ApiOperation(value = "登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", required = true),
-            @ApiImplicitParam(name = "password", value = "密码", required = true),
-    })
-    public Result login (String username, String password) {
-        log.info("123123");
-        return Result.ofSuccess();
-    }
-
-
     /**
      * 根据手机号获取账号
      *

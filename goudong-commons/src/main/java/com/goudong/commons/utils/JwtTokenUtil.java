@@ -79,7 +79,6 @@ public class JwtTokenUtil {
                 // 主题
                 .withSubject("狗东")
                 // 签发的目标
-                .withAudience("登录验证")
                 .sign(algorithm);
     }
 
