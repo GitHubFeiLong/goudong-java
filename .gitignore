@@ -27,5 +27,7 @@ hs_err_pid*
 # iml
 *.iml
 target/
-.idea/
 
+.idea
+
+logs

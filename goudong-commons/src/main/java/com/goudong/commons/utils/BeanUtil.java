@@ -15,7 +15,7 @@ import java.util.List;
 public class BeanUtil {
 
     @SneakyThrows
-    public static Object copyProperties(Object source, Class<?> clazz) {
+    public static <T> T copyProperties(Object source, Class<?> clazz) {
         if (source == null) {
             return null;
         }
@@ -24,7 +24,7 @@ public class BeanUtil {
         // 复制
         BeanUtils.copyProperties(source, o);
 
-        return clazz.cast(o);
+        return (T)o;
     }
 
     @SneakyThrows

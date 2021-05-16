@@ -68,7 +68,7 @@ public class CodeController {
     @GetMapping("/check-code/{number}/{code}")
     public Result<Boolean> checkCode (@PathVariable String number, @PathVariable String code) {
         String redisValue = redisValueUtil.getValue(RedisKeyEnum.MESSAGE_AUTH_CODE, number);
-        if (redisValue == null || !redisValue.equals(code)) {
+        if (redisValue == null || !code.equals(redisValue)) {
             return Result.ofSuccess(false);
         }
         return Result.ofSuccess(true);

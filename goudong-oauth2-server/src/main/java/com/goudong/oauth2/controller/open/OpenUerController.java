@@ -6,6 +6,7 @@ import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.vo.AuthorityUser2CreateVO;
+import com.goudong.commons.vo.AuthorityUser2UpdatePasswordVO;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.oauth2.service.AuthorityUserService;
 import io.swagger.annotations.Api;
@@ -49,9 +50,9 @@ public class OpenUerController {
     @ApiImplicitParam(name = "phone", value = "手机号")
     public Result<AuthorityUserVO> getUserByPhone(@PathVariable String phone) {
         AssertUtil.isPhone(phone, "手机号码格式不正确，获取用户失败");
-        List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByAuthorityUserDTO(AuthorityUserDTO.builder().phone(phone).build());
+        List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByAndAuthorityUserDTO(AuthorityUserDTO.builder().phone(phone).build());
 
-        AuthorityUserVO authorityUserVO = authorityUserDTOS.isEmpty() ? null : (AuthorityUserVO)BeanUtil.copyProperties(authorityUserDTOS.get(0), AuthorityUserVO.class);
+        AuthorityUserVO authorityUserVO = authorityUserDTOS.isEmpty() ? null : BeanUtil.copyProperties(authorityUserDTOS.get(0), AuthorityUserVO.class);
         return Result.ofSuccess(authorityUserVO);
     }
 
@@ -80,7 +81,7 @@ public class OpenUerController {
     @ApiImplicitParam(name = "email", value = "邮箱")
     public Result<Boolean> checkEmailInUse(@PathVariable String email) {
         AssertUtil.isEmail(email, "邮箱格式错误");
-        List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByAuthorityUserDTO(AuthorityUserDTO.builder().email(email).build());
+        List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByAndAuthorityUserDTO(AuthorityUserDTO.builder().email(email).build());
         Result<Boolean> result = Result.ofSuccess(authorityUserDTOS.isEmpty());
         return result;
     }
@@ -96,10 +97,40 @@ public class OpenUerController {
     public Result createUser(@RequestBody @Validated AuthorityUser2CreateVO createVO) {
         AssertUtil.isPhone(createVO.getPhone(), "手机号格式错误");
 
-        AuthorityUserDTO userDTO = (AuthorityUserDTO)BeanUtil.copyProperties(createVO, AuthorityUserDTO.class);
+        AuthorityUserDTO userDTO = BeanUtil.copyProperties(createVO, AuthorityUserDTO.class);
         AuthorityUserDTO user = authorityUserService.createUser(userDTO);
-        AuthorityUserVO authorityUserVO = (AuthorityUserVO) BeanUtil.copyProperties(user, AuthorityUserVO.class);
+        AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(user, AuthorityUserVO.class);
         return Result.ofSuccess(authorityUserVO);
+    }
+
+    /**
+     * 根据登录用户名、手机号、邮箱 查询用户基本信息
+     * @param loginName 用户名、手机号、邮箱
+     * @return
+     */
+    @GetMapping("/info/{login-name}")
+    @ApiOperation(value = "根据登录用户名获取用户信息", notes = "登陆用户名包括，用户名，邮箱及密码")
+    @ApiImplicitParam(name = "login-name", value = "登陆用户名")
+    public Result getUserByLoginName(@PathVariable("login-name") String loginName){
+        AuthorityUserDTO build = AuthorityUserDTO.builder().username(loginName).phone(loginName).email(loginName).build();
+        List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByOrAuthorityUserDTO(build);
+        if (authorityUserDTOS.isEmpty()) {
+            return Result.ofFail(BasicException.ClientException.resourceNotFound("用户不存在"));
+        }
+        return Result.ofSuccess(authorityUserDTOS.get(0));
+    }
+
+    /**
+     * 修改用户密码
+     * @param updatePasswordVO
+     * @return
+     */
+    @PatchMapping("/password")
+    public Result updatePassword(@RequestBody @Validated AuthorityUser2UpdatePasswordVO updatePasswordVO){
+        AuthorityUserDTO userDTO = BeanUtil.copyProperties(updatePasswordVO, AuthorityUserDTO.class);
+        userDTO =  authorityUserService.updateByPatch(userDTO);
+
+        return Result.ofSuccess(userDTO);
     }
 
 }

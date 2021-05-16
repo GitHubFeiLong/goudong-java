@@ -27,6 +27,42 @@
         insert into authority_user (uuid, username, password, email, phone)
         values (#{uuid}, #{username}, #{password}, #{email}, #{phone})
     </insert>
+    <update id="updateByPatch">
+        update authority_user
+        <set>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="nickname!=null and nickname!=''">
+                nickname=#{nickname},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark},
+            </if>
+            <if test="validTime!=null">
+                valid_time=#{validTime},
+            </if>
+            <if test="isDelete!=null">
+                is_delete=#{isDelete},
+            </if>
+            <if test="qqOpenId!=null and qqOpenId!=''">
+                qq_open_id=#{qqOpenId},
+            </if>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+        </set>
+        where uuid = #{uuid}
+    </update>
     <select id="selectUserNameByLikeUsername" resultType="java.lang.String">
         select username from authority_user where username like concat('%', #{username}, '%')
     </select>

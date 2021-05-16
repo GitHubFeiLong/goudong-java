@@ -16,11 +16,11 @@ import java.util.List;
 public interface AuthorityUserService {
 
     /**
-     * 根据 authorityUserPO对象，查询 authority_user表
+     * 根据 AuthorityUserDTO对象，使用逻辑与条件 查询 authority_user表
      * @param authorityUserDTO 用户对象
      * @return
      */
-    List<AuthorityUserDTO> listByAuthorityUserDTO(AuthorityUserDTO authorityUserDTO);
+    List<AuthorityUserDTO> listByAndAuthorityUserDTO(AuthorityUserDTO authorityUserDTO);
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -36,4 +36,18 @@ public interface AuthorityUserService {
      * @return
      */
     AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO);
+
+    /**
+     * 根据 AuthorityUserDTO对象，使用逻辑或条件 查询 authority_user表
+     * @param authorityUserDTO 用户对象
+     * @return
+     */
+    List<AuthorityUserDTO> listByOrAuthorityUserDTO(AuthorityUserDTO authorityUserDTO);
+
+    /**
+     * patch方式修改用户信息，只有有值才进行修改
+     * @param userDTO
+     * @return
+     */
+    AuthorityUserDTO updateByPatch(AuthorityUserDTO userDTO);
 }

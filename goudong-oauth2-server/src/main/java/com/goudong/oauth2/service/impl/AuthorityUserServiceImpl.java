@@ -14,6 +14,7 @@ import com.goudong.oauth2.dao.AuthorityUserDao;
 import com.goudong.oauth2.dao.AuthorityUserRoleDao;
 import com.goudong.oauth2.service.AuthorityUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -43,13 +44,12 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
     private AuthorityUserRoleDao authorityUserRoleDao;
 
     /**
-     * 根据 authorityUserPO对象，查询 authority_user表
-     *
+     * 根据 AuthorityUserDTO对象，使用逻辑与条件 查询 authority_user表
      * @param authorityUserDTO 用户对象
      * @return
      */
     @Override
-    public List<AuthorityUserDTO> listByAuthorityUserDTO(AuthorityUserDTO authorityUserDTO) {
+    public List<AuthorityUserDTO> listByAndAuthorityUserDTO(AuthorityUserDTO authorityUserDTO) {
         AuthorityUserPO authorityUserPO = new AuthorityUserPO();
         // 转换对象
         BeanUtils.copyProperties(authorityUserDTO, authorityUserPO);
@@ -105,7 +105,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
     @Override
     public AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO) {
 
-        AuthorityUserPO userPO = (AuthorityUserPO) BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
+        AuthorityUserPO userPO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
 
         List<AuthorityUserPO> userPOList = authorityUserDao.selectByOr(userPO);
 
@@ -128,7 +128,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
 
             authorityUserRoleDao.insert(userRolePO);
 
-            return (AuthorityUserDTO) BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
+            return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
         }
 
         if ("MY_SELF".equals(accountRadio) || "NOT_MY_SELF".equals(accountRadio)) {
@@ -139,11 +139,42 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
             userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
             authorityUserDao.updateInsert(userPO);
 
-            return (AuthorityUserDTO) BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
+            return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
         }
 
         BasicException.exception(ClientExceptionEnumInterface.BAD_REQUEST);
 
         return null;
+    }
+
+    /**
+     * 根据 AuthorityUserDTO对象，使用逻辑或条件 查询 authority_user表
+     *
+     * @param authorityUserDTO 用户对象
+     * @return
+     */
+    @Override
+    public List<AuthorityUserDTO> listByOrAuthorityUserDTO(AuthorityUserDTO authorityUserDTO) {
+        AuthorityUserPO authorityUserPO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
+        List<AuthorityUserPO> authorityUserPOS = authorityUserDao.selectByOr(authorityUserPO);
+        return BeanUtil.copyList(authorityUserPOS, AuthorityUserDTO.class);
+    }
+
+    /**
+     * patch方式修改用户信息，只有有值才进行修改
+     *
+     * @param userDTO
+     * @return
+     */
+    @Override
+    public AuthorityUserDTO updateByPatch(AuthorityUserDTO userDTO) {
+        // 修改密码
+        AuthorityUserPO userPO = BeanUtil.copyProperties(userDTO, AuthorityUserPO.class);
+        if (StringUtils.isNotBlank(userPO.getPassword())) {
+            userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
+        }
+        int result = authorityUserDao.updateByPatch(userPO);
+
+        return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
     }
 }

@@ -50,4 +50,10 @@ public interface AuthorityUserDao {
      */
     void insert(AuthorityUserPO userPO);
 
+    /**
+     * 只修改对象中有效值
+     * @param userPO 用户对象
+     * @return
+     */
+    int updateByPatch(AuthorityUserPO userPO);
 }
