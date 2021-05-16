@@ -22,6 +22,7 @@ import java.util.Date;
 @ApiModel
 public class AuthorityUser2CreateVO implements Serializable {
 
+    private static final long serialVersionUID = -6516564683484609510L;
     @NotBlank(message = "用户名不能为空")
     @ApiModelProperty(value="用户名")
     private String username;

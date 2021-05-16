@@ -41,7 +41,7 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
         List<String> roleNames = selfAuthorityUserDao.selectRoleNameByMenu(requestUrl, requestMethod);
         // 没有角色匹配
         if (roleNames.isEmpty()) {
-            return SecurityConfig.createList("ROLE_LOGIN");
+            return SecurityConfig.createList("ROLE_ANONYMOUS");
         }
 
         // 将能访问地址的角色添加到集合

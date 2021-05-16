@@ -22,14 +22,19 @@ public class QQApplicationValue {
     /**
      * qq登陆成功需要绑定账号跳转页面
      */
-    private String qqBindRedirectUri;
+    private String qqBindRedirectUrl;
+
+    /**
+     * qq已经绑定过用户了，跳到主页面
+     */
+    private String index;
 
     /**
      * 获取qq跳转的地址
      * @return
      */
     public String getQqBindRedirectUriFull(@Validated OtherUserInfoBean userInfoBean){
-        StringBuilder sb = new StringBuilder(qqBindRedirectUri);
+        StringBuilder sb = new StringBuilder(qqBindRedirectUrl);
         // 当前时间戳
         sb.append("?current=" + new Date().getTime());
         // 页面的qqopenId

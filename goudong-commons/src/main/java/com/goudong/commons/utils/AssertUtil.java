@@ -40,4 +40,20 @@ public class AssertUtil extends Assert{
         Assert.hasLength(email, "邮箱不能为空");
         Assert.isTrue(email.matches(EMAIL_REGEX), message);
     }
+
+    /**
+     * 断言，name是枚举clazz的成员
+     * @param name 成员名称
+     * @param clazz 枚举class对象
+     * @param message 错误信息
+     */
+    public static void isEnum (String name, Class clazz, String message) {
+        Assert.hasLength(name, "枚举成员不能是null");
+        try {
+            Enum.valueOf(clazz, name);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(message);
+        }
+
+    }
 }

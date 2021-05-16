@@ -6,6 +6,7 @@ import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.vo.AuthorityUser2CreateVO;
+import com.goudong.commons.vo.AuthorityUser2UpdateOpenIdVO;
 import com.goudong.commons.vo.AuthorityUser2UpdatePasswordVO;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.oauth2.service.AuthorityUserService;
@@ -133,4 +134,17 @@ public class OpenUerController {
         return Result.ofSuccess(userDTO);
     }
 
+    /**
+     * 绑定openId
+     * @param updateOpenIdVO
+     * @return
+     */
+    @PatchMapping("/bind-open-id")
+    public Result updateOpenId(@RequestBody @Validated AuthorityUser2UpdateOpenIdVO updateOpenIdVO){
+        AuthorityUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdVO, AuthorityUserDTO.class);
+
+        AuthorityUserDTO userDTO1 = authorityUserService.updateOpenId(userDTO);
+        AuthorityUserVO userVO = BeanUtil.copyProperties(userDTO1, AuthorityUserVO.class);
+        return Result.ofSuccess(userVO);
+    }
 }

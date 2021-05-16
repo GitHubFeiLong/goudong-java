@@ -38,8 +38,10 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
         String phone = customWebAuthenticationDetails.getPhone();
         String email = customWebAuthenticationDetails.getEmail();
 
-        String username = (String) authentication.getPrincipal(); //表单输入的用户名
-        String password = (String) authentication.getCredentials(); //表单输入的密码
+        //表单输入的用户名
+        String username = (String) authentication.getPrincipal();
+        //表单输入的密码
+        String password = (String) authentication.getCredentials();
 
         // 用户名/电话/邮箱不传时直接抛出异常
         if (!StringUtils.hasText(username)) {

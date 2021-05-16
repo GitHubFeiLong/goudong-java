@@ -60,6 +60,7 @@
             <if test="username!=null and username!=''">
                 username=#{username},
             </if>
+            update_time = now()
         </set>
         where uuid = #{uuid}
     </update>

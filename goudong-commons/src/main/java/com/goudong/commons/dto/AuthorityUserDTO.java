@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -21,79 +22,66 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value="generate.AuthorityUserPO用户基本信息表")
 public class AuthorityUserDTO implements Serializable {
     private static final long serialVersionUID = -6147408154544596138L;
     /**
      * uuid
      */
-    @ApiModelProperty(value="uuid")
     private String uuid;
 
     /**
      * 用户名
      */
-    @ApiModelProperty(value="用户名")
     private String username;
 
     /**
      * 密码
      */
-    @ApiModelProperty(value="密码")
     private String password;
 
     /**
      * 邮箱
      */
-    @ApiModelProperty(value="邮箱")
     private String email;
 
     /**
      * 手机号
      */
-    @ApiModelProperty(value="手机号")
     private String phone;
 
     /**
      * 昵称
      */
-    @ApiModelProperty(value="昵称")
     private String nickname;
 
     /**
      * 备注
      */
-    @ApiModelProperty(value="备注")
     private String remark;
 
     /**
      * 有效截止时间
      */
-    @ApiModelProperty(value="有效截止时间")
     private Date validTime;
 
     /**
      * 是否被删除
      */
-    @ApiModelProperty(value="是否被删除")
     private Boolean isDelete;
 
     /**
      * 更新时间
      */
-    @ApiModelProperty(value="更新时间")
     private Date updateTime;
 
     /**
      * 创建时间
      */
-    @ApiModelProperty(value="创建时间")
     private Date createTime;
 
     /**
      * qq登录后，系统获取腾讯的open_id
      */
-    @ApiModelProperty(value="qq登录后，系统获取腾讯的open_id")
     private String qqOpenId;
 
     /**
@@ -101,6 +89,18 @@ public class AuthorityUserDTO implements Serializable {
      */
     private String accountRadio;
 
-    @ApiModelProperty(value = "角色")
+    /**
+     * 角色
+     */
     private List<AuthorityRoleDTO> authorityRoleDTOS;
+
+    /**
+     * 用户名、电话或邮箱
+     */
+    private String loginName;
+
+    /**
+     * 绑定的openId类型：QQ，WE_CHAT
+     */
+    private String userType;
 }

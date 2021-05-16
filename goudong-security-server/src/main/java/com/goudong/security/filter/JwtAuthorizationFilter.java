@@ -23,15 +23,13 @@ import java.util.Set;
  * 类描述：
  * 过滤器，用户请求时，获取请求头的token，并将其解析后设置到Authentication认证信息中去
  * 使用JWT token进行验证用户
- * @ClassName JWTAuthorizationFilter
- * @Description TODO
  * @Author msi
  * @Date 2021-04-03 18:14
  * @Version 1.0
  */
-public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 

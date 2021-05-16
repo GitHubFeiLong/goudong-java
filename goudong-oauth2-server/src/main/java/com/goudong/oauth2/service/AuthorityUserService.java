@@ -50,4 +50,11 @@ public interface AuthorityUserService {
      * @return
      */
     AuthorityUserDTO updateByPatch(AuthorityUserDTO userDTO);
+
+    /**
+     * 绑定opendId
+     * @param userDTO
+     */
+    AuthorityUserDTO updateOpenId(AuthorityUserDTO userDTO);
+
 }

@@ -2,15 +2,13 @@ package com.goudong.security.config;
 
 import com.goudong.commons.po.AuthorityIgnoreResourcePO;
 import com.goudong.security.dao.SelfAuthorityIgnoreResourceDao;
-import com.goudong.security.filter.JWTAuthorizationFilter;
+import com.goudong.security.filter.JwtAuthorizationFilter;
 import com.goudong.security.handler.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -18,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -26,11 +23,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -206,7 +199,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(logoutSuccessHandler);
 
         // 添加Jwt过滤器
-        http.addFilter(new JWTAuthorizationFilter(authenticationManager()));
+        http.addFilter(new JwtAuthorizationFilter(authenticationManager()));
 
         // 禁用csrf防御机制(跨域请求伪造)，这么做在测试和开发会比较方便。
         http.csrf().disable();

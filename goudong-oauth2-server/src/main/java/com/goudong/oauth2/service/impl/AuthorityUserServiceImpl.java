@@ -12,11 +12,13 @@ import com.goudong.commons.utils.BeanUtil;
 import com.goudong.oauth2.dao.AuthorityRoleDao;
 import com.goudong.oauth2.dao.AuthorityUserDao;
 import com.goudong.oauth2.dao.AuthorityUserRoleDao;
+import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
 import com.goudong.oauth2.service.AuthorityUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -176,5 +178,39 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
         int result = authorityUserDao.updateByPatch(userPO);
 
         return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
+    }
+
+    /**
+     * 绑定opendId
+     *
+     * @param userDTO
+     */
+    @Override
+    public AuthorityUserDTO updateOpenId(AuthorityUserDTO userDTO) {
+        AssertUtil.isEnum(userDTO.getUserType(), OtherUserTypeEnum.class, "绑定账号openId的类型无效");
+        // 判断用户名和密码是否匹配
+        AuthorityUserPO userPO = AuthorityUserPO.builder()
+                .username(userDTO.getLoginName())
+                .email(userDTO.getLoginName())
+                .phone(userDTO.getLoginName())
+                .build();
+        List<AuthorityUserPO> authorityUserPOS = authorityUserDao.selectByOr(userPO);
+
+        boolean error = authorityUserPOS.isEmpty() || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), authorityUserPOS.get(0).getPassword());
+        if (error) {
+            BasicException.ClientException.resourceNotFound("账户名与密码不匹配，请重新输入");
+        }
+        // 修改openId
+        // qq
+        if (OtherUserTypeEnum.QQ.name().equals(userDTO.getUserType())) {
+            AuthorityUserPO build = AuthorityUserPO.builder()
+                    .uuid(authorityUserPOS.get(0).getUuid())
+                    .qqOpenId(userDTO.getQqOpenId())
+                    .build();
+            authorityUserDao.updateByPatch(build);
+        }
+        // 查询返回
+        authorityUserPOS.get(0).setQqOpenId(userDTO.getQqOpenId());
+        return BeanUtil.copyProperties(authorityUserPOS.get(0), AuthorityUserDTO.class);
     }
 }

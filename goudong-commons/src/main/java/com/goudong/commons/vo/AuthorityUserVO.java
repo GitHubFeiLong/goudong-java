@@ -14,7 +14,7 @@ import java.util.Date;
 @ApiModel(value="generate.AuthorityUserVO用户基本信息表")
 @Data
 public class AuthorityUserVO implements Serializable {
-    private static final long serialVersionUID = 2835077371402785965L;
+    private static final long serialVersionUID = -4475232281689486236L;
     /**
      * uuid
      */
