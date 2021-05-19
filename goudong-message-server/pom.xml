@@ -29,10 +29,6 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-        </dependency>
         <!--openfeign-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
