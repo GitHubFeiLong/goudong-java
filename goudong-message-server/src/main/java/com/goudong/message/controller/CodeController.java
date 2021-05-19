@@ -7,6 +7,8 @@ import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.message.config.CodeDirectRabbitConfig;
 import com.goudong.message.sender.EmailCodeRoutingKeySender;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import javax.validation.constraints.Email;
 /**
  * 类描述：
  * 邮箱控制器
+ * @RefreshScope  可以使当前类下的配置支持动态更新。
  * @Author msi
  * @Date 2021-05-05 10:59
  * @Version 1.0
@@ -26,6 +29,7 @@ import javax.validation.constraints.Email;
 @Validated
 @RestController
 @RequestMapping("/api/message/code")
+@RefreshScope
 public class CodeController {
 
     @Resource
@@ -72,5 +76,13 @@ public class CodeController {
             return Result.ofSuccess(false);
         }
         return Result.ofSuccess(true);
+    }
+
+    @Value("${nacos.config}")
+    private String config;
+
+    @RequestMapping("/getValue")
+    public String getValue() {
+        return this.config;
     }
 }

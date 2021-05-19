@@ -1,0 +1,21 @@
+server:
+  port: 10003
+spring:
+  profiles:
+    active: dev
+  application:
+    name: goudong-message-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8847 # nacos服务集群
+#        namespace: 9e509ea9-70c5-40fa-aa00-95e30f4fff4b # 服务注册到该命名空间下，默认是public
+      config:
+        server-addr: localhost:8847 # nacos服务集群
+#        namespace: 9e509ea9-70c5-40fa-aa00-95e30f4fff4b # 从该命名空间下拿配置，默认是public
+#        group: DEFAULT_GROUP # 该组下，默认是 DEFAULT_GROUP
+#        prefix: goudong-message-server # 配置中心的data-id 前缀，默认是应用名称${spring.application.name}
+        file-extension: yml # 配置中心的data-id后缀 （properties | yml）
+
+nacos:
+  config: 1
