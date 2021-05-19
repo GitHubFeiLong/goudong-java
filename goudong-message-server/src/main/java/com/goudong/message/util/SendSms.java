@@ -3,17 +3,28 @@ package com.goudong.message.util;
 import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.*;
 import com.aliyun.teaopenapi.models.*;
+import com.goudong.commons.utils.AssertUtil;
 
 public class SendSms {
 
     /**
      * AK
      */
-    private static final String ACCESS_KEY_ID = "LTAI5tQPPaJJKAWUJ454Y8QX";
+    private static final String ACCESS_KEY_ID = "LTAI5tJj15oz8yKAsYybgyT3";
     /**
      * SK
      */
-    private static final String ACCESS_KEY_SECRET = "OIoXAh9GdJLh9yHJimxXf5GYB3LSYf";
+    private static final String ACCESS_KEY_SECRET = "9wxNyPg3p9sb5hYFCx1h7MY6PUWWC2";
+
+    /**
+     * 签名名称
+     */
+    public static final String SIGN_NAME = "陈飞龙的网上学习";
+
+    /**
+     * 模版CODE
+     */
+    public static final String TEMPLATE_CODE = "SMS_217235527";
 
     /**
      * 使用AK&SK初始化账号Client
@@ -31,15 +42,26 @@ public class SendSms {
         return new Client(config);
     }
 
-    public static void main(String[] args_) throws Exception {
-        java.util.List<String> args = java.util.Arrays.asList(args_);
+    /**
+     * 发送注册验证码
+     * @param phone 手机号
+     * @param code 验证码
+     * @throws Exception
+     */
+    public static void  sendCode(String phone, String code) throws Exception {
+        AssertUtil.isPhone(phone, "手机号格式错误");
+        AssertUtil.hasLength(code, "验证码错误");
         Client client = SendSms.createClient();
-        AddSmsSignRequest addSmsSignRequest = new AddSmsSignRequest()
-                .setResourceOwnerAccount("test")
-                .setResourceOwnerId(1L)
-                .setSignName("test")
-                .setRemark("test");
+        SendSmsRequest sendSmsRequest = new SendSmsRequest()
+                .setPhoneNumbers(phone)
+                // 签名名称
+                .setSignName(SIGN_NAME)
+                // 变量替换
+                .setTemplateParam("{code:'"+ code +"'}")
+                // 模版CODE
+                .setTemplateCode(TEMPLATE_CODE);
         // 复制代码运行请自行打印 API 的返回值
-        client.addSmsSign(addSmsSignRequest);
+        client.sendSms(sendSmsRequest);
     }
+
 }

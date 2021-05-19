@@ -5,6 +5,7 @@ import com.goudong.commons.openfeign.oauth2.InvalidEmailClient;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.message.util.CodeUtil;
+import com.goudong.message.util.SendSms;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -79,7 +80,7 @@ public class ReceptionCodeConfig {
      */
     @RabbitListener(queues = CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE)
     @RabbitHandler
-    public void phoneCode(@Payload String phone, Channel channel, Message message) {
+    public void phoneCode(@Payload String phone, Channel channel, Message message) throws Exception {
         log.debug("{} 队列收到消息。内容是：{}", CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, phone);
         System.out.println(CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE + " 队列收到消息。内容是：" + phone);
         try {
@@ -98,7 +99,7 @@ public class ReceptionCodeConfig {
         log.debug("phone:{}, code:{}", phone, code);
         redisValueUtil.setValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, phone);
         // 发送短信
-
+        SendSms.sendCode(phone, code);
     }
 
     /**
