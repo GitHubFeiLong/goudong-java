@@ -10,11 +10,11 @@ public class SendSms {
     /**
      * AK
      */
-    private static final String ACCESS_KEY_ID = "LTAI5tJj15oz8yKAsYybgyT3";
+    private static final String ACCESS_KEY_ID = "LTAI5tDix2BMTZ8subRPhsEa";
     /**
      * SK
      */
-    private static final String ACCESS_KEY_SECRET = "9wxNyPg3p9sb5hYFCx1h7MY6PUWWC2";
+    private static final String ACCESS_KEY_SECRET = "6qwJVILYqsikErXkCk3vozxrfZrcgx";
 
     /**
      * 签名名称
