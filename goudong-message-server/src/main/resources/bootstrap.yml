@@ -26,6 +26,18 @@ spring:
 #        group: DEFAULT_GROUP # 该组下，默认是 DEFAULT_GROUP
 #        prefix: goudong-message-server # 配置中心的data-id 前缀，默认是应用名称${spring.application.name}
         file-extension: yml # 配置中心的data-id后缀 （properties | yml）
+    sentinel:
+      transport:
+        dashboard: localhost:8080 #配置Sentinel dashboard地址
+        port: 8719 #默认端口，加入被占用会加一
+#      datasource:
+#        dsl:
+#          nacos:
+#            server-addr: localhost:8848
+#            dataId: cloudalibaba-sentinel-service
+#            groupId: DEFAULT_GROUP
+#            data-type: json
+#            rule-type: flow
   ## Redis
   redis:
     database: 0   # Redis数据库索引（默认为0）
