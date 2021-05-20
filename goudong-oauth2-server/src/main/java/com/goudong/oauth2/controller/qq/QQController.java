@@ -1,11 +1,10 @@
 package com.goudong.oauth2.controller.qq;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisValueUtil;
-import com.goudong.oauth2.config.QQApplicationValue;
+import com.goudong.oauth2.config.UIPageValue;
 import com.goudong.oauth2.entity.OtherUserInfoBean;
 import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
 import com.goudong.oauth2.service.AuthorityUserService;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
@@ -45,7 +43,7 @@ import java.util.List;
 @RequestMapping("/qq")
 public class QQController {
     @Resource
-    private QQApplicationValue qqApplicationValue;
+    private UIPageValue uiPageValue;
 
     @Resource
     private AuthorityUserService userService;
@@ -97,7 +95,7 @@ public class QQController {
             // openId未使用，可以绑定
             if (authorityUserDTOS.isEmpty()) {
                 OtherUserInfoBean otherUserInfoBean = new OtherUserInfoBean(openID, userInfoBean.getNickname(), userInfoBean.getAvatar().getAvatarURL30(), OtherUserTypeEnum.QQ.name());
-                String qqBindRedirectUriFull = qqApplicationValue.getQqBindRedirectUriFull(otherUserInfoBean);
+                String qqBindRedirectUriFull = uiPageValue.getBindPageUrl(otherUserInfoBean);
                 log.info("qqBindRedirectUriFull:{}", qqBindRedirectUriFull);
                 response.sendRedirect(qqBindRedirectUriFull);
             } else {
@@ -108,7 +106,7 @@ public class QQController {
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_PREFIX + token);
                 // 添加信息到redis中
                 redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
-                response.sendRedirect(qqApplicationValue.getIndex());
+                response.sendRedirect(uiPageValue.getIndex());
             }
         }
 

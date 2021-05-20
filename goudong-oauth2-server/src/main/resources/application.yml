@@ -108,10 +108,18 @@ mybatis:
     params: count=countSql
 
 ---
-
 spring:
-  profiles: dev
+  profiles: dev # 开发环境
+
+# UI 页面地址
+ui:
+  bind-page: http://localhost:9998/bindPage.html
+  index: http://localhost:9998/index.html
 
 ---
 spring:
-  profiles: prod
+  profiles: prod # 生产环境
+
+ui:
+  bind-page: http://www.goudong.shop/bindPage.html
+  index: http://www.goudong.shop/index.html

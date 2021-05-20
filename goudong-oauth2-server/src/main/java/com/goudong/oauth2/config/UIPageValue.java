@@ -9,20 +9,20 @@ import java.util.Date;
 
 /**
  * 类描述：
- *
+ * 前端ui 页面属性
  * @Author msi
  * @Date 2021-05-03 11:55
  * @Version 1.0
  */
 @Data
 @SuppressWarnings("ALL")
-@ConfigurationProperties(prefix = "qq")
-public class QQApplicationValue {
+@ConfigurationProperties(prefix = "ui")
+public class UIPageValue {
 
     /**
      * qq登陆成功需要绑定账号跳转页面
      */
-    private String qqBindRedirectUrl;
+    private String bindPage;
 
     /**
      * qq已经绑定过用户了，跳到主页面
@@ -33,8 +33,8 @@ public class QQApplicationValue {
      * 获取qq跳转的地址
      * @return
      */
-    public String getQqBindRedirectUriFull(@Validated OtherUserInfoBean userInfoBean){
-        StringBuilder sb = new StringBuilder(qqBindRedirectUrl);
+    public String getBindPageUrl(@Validated OtherUserInfoBean userInfoBean){
+        StringBuilder sb = new StringBuilder(bindPage);
         // 当前时间戳
         sb.append("?current=" + new Date().getTime());
         // 页面的qqopenId
