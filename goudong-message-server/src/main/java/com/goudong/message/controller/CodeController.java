@@ -28,7 +28,7 @@ import javax.validation.constraints.Email;
  */
 @Validated
 @RestController
-@RequestMapping("/api/message/code")
+@RequestMapping("/code")
 @RefreshScope
 public class CodeController {
 

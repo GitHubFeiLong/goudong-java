@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/api/oauth2/user")
+@RequestMapping("/user")
 public class AuthorityUserController {
 
     /**

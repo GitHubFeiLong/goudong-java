@@ -23,7 +23,7 @@ import java.io.IOException;
 @Api(tags = "WeChat")
 @Slf4j
 @Controller
-@RequestMapping("/oauth/we-chat")
+@RequestMapping("/we-chat")
 public class WeChatController {
 
     @ApiOperation(value = "微信登录", notes = "")

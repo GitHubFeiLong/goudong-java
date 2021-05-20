@@ -42,7 +42,7 @@ import java.util.List;
 @Api(tags = "QQ")
 @Slf4j
 @Controller
-@RequestMapping("/oauth/qq")
+@RequestMapping("/qq")
 public class QQController {
     @Resource
     private QQApplicationValue qqApplicationValue;

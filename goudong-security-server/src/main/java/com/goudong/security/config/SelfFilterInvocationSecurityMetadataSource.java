@@ -33,7 +33,7 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
 
         Set<ConfigAttribute> set = new HashSet<>();
         // 获取请求地址
-        String requestUrl = ((FilterInvocation) o).getRequestUrl();
+        String requestUrl = ((FilterInvocation) o).getHttpRequest().getRequestURI();
         // 获取请求的方法
         String requestMethod = ((FilterInvocation) o).getHttpRequest().getMethod();
         log.info("requestUrl >> {}，requestMethod >> {}", requestUrl, requestMethod);

@@ -34,7 +34,7 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/api/oauth2/open/user")
+@RequestMapping("/open/user")
 public class OpenUerController {
 
     @Resource
