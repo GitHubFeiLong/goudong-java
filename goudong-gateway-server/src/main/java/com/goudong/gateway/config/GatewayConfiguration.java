@@ -123,14 +123,35 @@ public class GatewayConfiguration {
 //                .setParamItem(new GatewayParamFlowItem().setParseStrategy(SentinelGatewayConstants.PARAM_PARSE_STRATEGY_CLIENT_IP)
 //                )
 //        );
+        // 资源名称，可以是网关中的 route 名称或者用户自定义的 API 分组名称。
         rules.add(new GatewayFlowRule("goudong-oauth2-server")
+                // resourceMode：规则是针对 API Gateway 的 route（RESOURCE_MODE_ROUTE_ID）还是用户在 Sentinel 中定义的 API 分组（RESOURCE_MODE_CUSTOM_API_NAME），默认是 route。
+                .setResourceMode(SentinelGatewayConstants.RESOURCE_MODE_ROUTE_ID)
+                // grade：限流指标维度，同限流规则的 grade 字段。(限流阈值类型，QPS 或线程数模式)
+                .setGrade(RuleConstant.FLOW_GRADE_QPS)
+                // count：限流阈值
                 .setCount(1)
+                // intervalSec：统计时间窗口，单位是秒，默认是 1 秒。
                 .setIntervalSec(1)
+                // controlBehavior：流量整形的控制效果，同限流规则的 controlBehavior 字段，目前支持快速失败和匀速排队两种模式，默认是快速失败。
+                .setControlBehavior(RuleConstant.CONTROL_BEHAVIOR_DEFAULT)
+                // burst：应对突发请求时额外允许的请求数目。
                 .setBurst(2)
+                // maxQueueingTimeoutMs：匀速排队模式下的最长排队时间，单位是毫秒，仅在匀速排队模式下生效。默认500ms
+                .setMaxQueueingTimeoutMs(500)
+                // paramItem：参数限流配置。若不提供，则代表不针对参数进行限流，该网关规则将会被转换成普通流控规则；否则会转换成热点规则。其中的字段：
                 .setParamItem(new GatewayParamFlowItem()
+                        // parseStrategy：从请求中提取参数的策略，目前支持提取来源 IP(PARAM_PARSE_STRATEGY_CLIENT_IP）、Host（PARAM_PARSE_STRATEGY_HOST）、任意 Header（PARAM_PARSE_STRATEGY_HEADER）和任意 URL 参数（PARAM_PARSE_STRATEGY_URL_PARAM）四种模式。
                         .setParseStrategy(SentinelGatewayConstants.PARAM_PARSE_STRATEGY_CLIENT_IP)
+                        // fieldName：若提取策略选择 Header 模式或 URL 参数模式，则需要指定对应的 header 名称或 URL 参数名称。
+                        .setFieldName("username")
+                        // pattern：参数值的匹配模式，只有匹配该模式的请求属性值会纳入统计和流控；若为空则统计该请求属性的所有值。（1.6.2 版本开始支持）
+                        .setPattern("admin")
+                        // matchStrategy：参数值的匹配策略，目前支持精确匹配（PARAM_MATCH_STRATEGY_EXACT）、子串匹配（PARAM_MATCH_STRATEGY_CONTAINS）和正则匹配（PARAM_MATCH_STRATEGY_REGEX）。（1.6.2 版本开始支持）
+                        .setMatchStrategy(SentinelGatewayConstants.PARAM_MATCH_STRATEGY_EXACT)
                 )
         );
+        // 手动加载网关规则
         GatewayRuleManager.loadRules(rules);
     }
 
@@ -138,6 +159,7 @@ public class GatewayConfiguration {
      * 自定义限流异常处理
      * ResultSupport 为自定义的消息封装类，代码略
      */
+    @SuppressWarnings("ALL")
     private void initBlockHandler() {
         GatewayCallbackManager.setBlockHandler(new BlockRequestHandler() {
             @Override
