@@ -1,6 +1,7 @@
 package com.goudong.commons.exception;
 
 
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.goudong.commons.enumerate.ServerExceptionEnumInterface;
 import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +53,21 @@ public class GlobalExceptionHandler {
     @Resource
     private HttpServletResponse response;
 
+    /**
+     * sentinel 异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(UndeclaredThrowableException.class)
+    public Result<Throwable> blockExceptionDispose(BlockException e){
+        e.printStackTrace();
+        return Result.ofFail();
+    }
+
 
     /**
-     * 全局处理客户端错误
-     * @param exception      客户端异常
+     * 全局处理自定义异常
+     * @param exception
      * @return
      */
     @ExceptionHandler(BasicException.class)
@@ -68,8 +81,6 @@ public class GlobalExceptionHandler {
 
         return Result.ofFail(exception);
     }
-
-
 
     /**
      * 捕获意料之外的异常Exception

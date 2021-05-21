@@ -41,7 +41,7 @@
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--后续做持久化用到-->
+        <!--动态规则扩展 推模式：使用 Nacos 配置规则-->
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-datasource-nacos</artifactId>

@@ -13,6 +13,11 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
+        <!--commons-->
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-commons</artifactId>
+        </dependency>
         <!--spring cloud Alibaba nacos-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -22,6 +27,15 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+        <!--sentinel-spring-cloud-gateway-adapter-->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-spring-cloud-gateway-adapter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-transport-simple-http</artifactId>
         </dependency>
         <!--openFeign-->
         <dependency>

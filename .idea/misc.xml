@@ -28,6 +28,9 @@
         <option value="$PROJECT_DIR$/goudong-commons/pom.xml" />
         <option value="$PROJECT_DIR$/education-promote-gateway-server/pom.xml" />
         <option value="$PROJECT_DIR$/goudong-oauth2-server/pom.xml" />
+        <option value="$PROJECT_DIR$/goudong-sentinel-server/pom.xml" />
+        <option value="$PROJECT_DIR$/goudong-sentinel-dashboard-server/pom.xml" />
+        <option value="$PROJECT_DIR$/sentinel-dashboard/pom.xml" />
       </list>
     </option>
   </component>

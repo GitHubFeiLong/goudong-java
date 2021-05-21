@@ -1,5 +1,7 @@
 package com.goudong.message.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
@@ -46,8 +48,9 @@ public class CodeController {
      * @return
      */
     @GetMapping("/email-code/{email}")
+    @SentinelResource(value = "sendEmailCode")
     public Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email) {
-        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
+//        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
 //        emailCodeRoutingKeySender.send(email);
         return Result.ofSuccess();
     }
@@ -59,7 +62,7 @@ public class CodeController {
     @GetMapping("/phone-code/{phone}")
     public Result sendPhoneCode (@PathVariable("phone") String phone) {
         AssertUtil.isPhone(phone, "手机号格式错误：" + phone);
-        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.PHONE_CODE_ROUTING_KEY, phone);
+//        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.PHONE_CODE_ROUTING_KEY, phone);
         return Result.ofSuccess();
     }
 
@@ -76,13 +79,5 @@ public class CodeController {
             return Result.ofSuccess(false);
         }
         return Result.ofSuccess(true);
-    }
-
-    @Value("${nacos.config}")
-    private String config;
-
-    @RequestMapping("/getValue")
-    public String getValue() {
-        return this.config;
     }
 }
