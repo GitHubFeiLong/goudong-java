@@ -54,13 +54,14 @@ public class GlobalExceptionHandler {
     private HttpServletResponse response;
 
     /**
-     * sentinel 异常
+     * 当sentinel资源未配置 blockHandler、fallback 和 defaultFallback   异常
      * @param e
      * @return
      */
     @ExceptionHandler(UndeclaredThrowableException.class)
     public Result<Throwable> blockExceptionDispose(BlockException e){
         e.printStackTrace();
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 200, 200, "服务器繁忙，请重试", e.getRule().toString());
         return Result.ofFail();
     }
 
