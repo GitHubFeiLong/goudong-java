@@ -43,15 +43,18 @@ public class CodeController {
     @Resource
     private EmailCodeRoutingKeySender emailCodeRoutingKeySender;
 
+    @GetMapping("/demo")
+    @SentinelResource(value = "demo")
+    public Result demo () {
+        return Result.ofSuccess();
+    }
     /**
      * 发送邮箱验证码
      * @return
      */
     @GetMapping("/email-code/{email}")
-    @SentinelResource(value = "sendEmailCode")
     public Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email) {
-//        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
-//        emailCodeRoutingKeySender.send(email);
+        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
         return Result.ofSuccess();
     }
 
@@ -62,7 +65,7 @@ public class CodeController {
     @GetMapping("/phone-code/{phone}")
     public Result sendPhoneCode (@PathVariable("phone") String phone) {
         AssertUtil.isPhone(phone, "手机号格式错误：" + phone);
-//        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.PHONE_CODE_ROUTING_KEY, phone);
+        rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.PHONE_CODE_ROUTING_KEY, phone);
         return Result.ofSuccess();
     }
 
