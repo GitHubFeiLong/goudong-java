@@ -3,15 +3,15 @@ package com.goudong.oauth2.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.OAuthBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 /**
  * 类描述：
@@ -49,8 +49,52 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("openApi")
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts())
                 ;
 
+    }
+    private List<SecurityContext> securityContexts() {
+        List<SecurityContext> securityContextList = new ArrayList<>();
+        List<SecurityReference> securityReferenceList = new ArrayList<>();
+        securityReferenceList.add(new SecurityReference("Authorization", scopes()));
+        securityContextList.add(SecurityContext
+                .builder()
+                .securityReferences(securityReferenceList)
+                .forPaths(PathSelectors.any())
+                .build()
+        );
+        return securityContextList;
+    }
+
+    private AuthorizationScope[] scopes() {
+        return new AuthorizationScope[]{new AuthorizationScope("global", "accessAnything")};
+    }
+
+    /**
+     * 这个类决定了你使用哪种认证方式，我这里使用密码模式
+     * 其他方式自己摸索一下，完全莫问题啊
+     * SecurityScheme 子类 BasicAuth OAuth ApiKey
+     */
+    private List<SecurityScheme> securitySchemes() {
+        List<SecurityScheme> list = new ArrayList<>();
+
+        // Apikey
+        list.add(new ApiKey("Authorization", "Authorization", "header"));
+
+        // BasicAuth
+        list.add(new BasicAuth("Authorization"));
+
+        // OAuth
+        // 验证账号密码登录的接口
+//        GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/user/login");
+//        OAuth spring_oauth = new OAuthBuilder()
+//                .name("spring_oauth")
+//                .grantTypes(Collections.singletonList(grantType))
+//                .scopes(Arrays.asList(scopes()))
+//                .build();
+//        list.add(spring_oauth);
+        return list;
     }
 
     @Bean

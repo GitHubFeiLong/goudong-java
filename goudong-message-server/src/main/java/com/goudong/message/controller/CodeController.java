@@ -43,11 +43,6 @@ public class CodeController {
     @Resource
     private EmailCodeRoutingKeySender emailCodeRoutingKeySender;
 
-    @GetMapping("/demo")
-    @SentinelResource(value = "demo")
-    public Result demo () {
-        return Result.ofSuccess();
-    }
     /**
      * 发送邮箱验证码
      * @return
