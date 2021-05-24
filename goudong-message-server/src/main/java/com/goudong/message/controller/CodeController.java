@@ -1,6 +1,8 @@
 package com.goudong.message.controller;
 
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisValueUtil;
@@ -44,6 +46,13 @@ public class CodeController {
 
     @Resource
     private EmailCodeRoutingKeySender emailCodeRoutingKeySender;
+
+    @GetMapping("/demo")
+    @ApiOperation("测试")
+    public Result demo () {
+        BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
+        return Result.ofSuccess();
+    }
 
     /**
      * 发送邮箱验证码

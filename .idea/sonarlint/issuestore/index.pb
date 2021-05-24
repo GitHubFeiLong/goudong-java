@@ -7,10 +7,6 @@
 Mgoudong-oauth2-server/src/main/java/com/goudong/oauth2/Oauth2Application.java,9\0\908e5ce463fa99e0cbf2cef3338a45fad600ad54
 y
 Igoudong-commons/src/main/java/com/goudong/commons/config/RedisConfig.java,5\9\59e8d71ba01664f75930516afe42d159cfa58f50
-Ñ
-Tgoudong-commons/src/main/java/com/goudong/commons/enumerate/ClientExceptionEnum.java,6\1\61ea5384ee86ece9808692731f122b95ce233f0a
-Ñ
-Tgoudong-commons/src/main/java/com/goudong/commons/enumerate/ServerExceptionEnum.java,1\c\1c87224036690bfce6110235c036217c5e6cc981
 M
 goudong-oauth2-server/pom.xml,a\4\a4a045e0d8057419bf18d0f2bbe919fad50b8bb3
 |
@@ -86,10 +82,6 @@ e
 Tgoudong-oauth2-server/src/main/java/com/goudong/oauth2/entity/OtherUserInfoBean.java,7\b\7b9555e370146cab409c5177d78ab6802933394e
 á
 Wgoudong-oauth2-server/src/main/java/com/goudong/oauth2/enumerate/OtherUserTypeEnum.java,6\c\6c4d6980dc651d0d47b3fd3c3e803d375f923c68
-m
-=goudong-oauth2-server/src/main/resources/application-prod.yml,c\a\cabc86d5679f4ea03211ab7458eaf2a0c2a55d4a
-Ö
-Ugoudong-oauth2-server/src/main/java/com/goudong/oauth2/config/QQApplicationValue.java,8\0\802822954e4841884e7f212c9ab803706b7a007d
 R
 "logs/goudong-oauth2-logs/error.log,9\2\92baa1c98ae0cea7830558dec68549f74bdbeff1
 Q
@@ -130,3 +122,11 @@ Ggoudong-commons/src/main/java/com/goudong/commons/utils/AssertUtil.java,d\f\df
 Kgoudong-message-server/src/main/java/com/goudong/message/util/CodeUtil.java,0\a\0aa003d458c261be126b949140074e1d251785c9
 ^
 .goudong-message-server/src/test/java/Demo.java,4\b\4b6405445a800393c7ba994eb6d26996d9edcf88
+9
+	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+ç
+]goudong-oauth2-server/src/main/java/com/goudong/oauth2/controller/open/OpenUerController.java,8\c\8c92b97886b54326418862a1a88a829589c868b0
+é
+^goudong-message-server/src/main/java/com/goudong/message/sender/EmailCodeRoutingKeySender.java,4\0\404e903b495ec450ab196882e141e8742e6191d6
+ç
+]goudong-security-server/src/main/java/com/goudong/security/filter/JwtAuthorizationFilter.java,0\2\02f01272d224c9f973d9e39af10de132a0477b74

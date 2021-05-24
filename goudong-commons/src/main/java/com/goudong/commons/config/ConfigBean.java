@@ -1,6 +1,12 @@
 package com.goudong.commons.config;
 
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+import javax.annotation.Resource;
 
 /**
  * @Author msi
@@ -9,5 +15,21 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ConfigBean {
+
+    @Bean
+    @Primary
+    public ResourceProperties resourceProperties() {
+        ResourceProperties resourceProperties = new ResourceProperties();
+        resourceProperties.setAddMappings(false);
+        return resourceProperties;
+    }
+    @Bean
+    @Primary
+    public WebMvcProperties webMvcProperties() {
+        WebMvcProperties webMvcProperties = new WebMvcProperties();
+        webMvcProperties.setThrowExceptionIfNoHandlerFound(true);
+        return webMvcProperties;
+    }
+
 
 }

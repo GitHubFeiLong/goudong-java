@@ -4,7 +4,9 @@ import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.oauth2.config.UIPageValue;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
@@ -18,7 +20,8 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableConfigurationProperties({UIPageValue.class})
 @SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS, BasePackageConst.SECURITY})
 @MapperScan(basePackages = {"com.goudong.oauth2.dao", BasePackageConst.SECURITY_DAO})
-public class Oauth2Application {
+public class
+Oauth2Application {
     public static void main(String[] args) {
         SpringApplication.run(Oauth2Application.class, args);
     }

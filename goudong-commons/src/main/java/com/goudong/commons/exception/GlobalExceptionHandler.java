@@ -2,9 +2,6 @@ package com.goudong.commons.exception;
 
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
