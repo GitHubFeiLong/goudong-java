@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.goudong.commons.dto.AuthorityUserDTO;
@@ -106,7 +107,14 @@ public class JwtTokenUtil {
                 // //匹配指定的token发布者
                 .withIssuer(JwtTokenUtil.ISSUER)
                 .build();
-        DecodedJWT jwt = verifier.verify(nativeToken);
+
+        DecodedJWT jwt = null;
+        try {
+            jwt = verifier.verify(nativeToken);
+        } catch (TokenExpiredException e) {
+            BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
+        }
+
         String result = jwt.getAudience().get(0);
         log.info("result:{}",result);
         return JSON.parseObject(result, AuthorityUserDTO.class);

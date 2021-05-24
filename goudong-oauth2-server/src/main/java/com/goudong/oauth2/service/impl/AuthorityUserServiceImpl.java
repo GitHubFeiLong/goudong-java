@@ -2,7 +2,7 @@ package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.po.AuthorityRolePO;
 import com.goudong.commons.po.AuthorityUserPO;
@@ -115,7 +115,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
             // 有多条，表示提交的数据有问题
             // 1. 使用postman 类似工具，提交未经校验的内容
             // 2. 注册时间过长，账号被别人注册了
-            BasicException.exception(ClientExceptionEnumInterface.BAD_REQUEST);
+            BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
         }
         String accountRadio = authorityUserDTO.getAccountRadio();
         // 为空，插入
@@ -144,7 +144,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
             return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
         }
 
-        BasicException.exception(ClientExceptionEnumInterface.BAD_REQUEST);
+        BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
 
         return null;
     }

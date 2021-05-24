@@ -2,6 +2,7 @@ package com.goudong.commons.exception;
 
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
@@ -66,21 +67,6 @@ public class GlobalExceptionHandler {
         log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 200, 200, "服务器繁忙，请重试", e.getRule().toString());
         return Result.ofFail();
     }
-
-    /**
-     * token 过期的异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(TokenExpiredException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Result tokenExpiredExceptionDispose(TokenExpiredException e){
-        e.printStackTrace();
-        ClientExceptionEnum unauthorized = ClientExceptionEnum.UNAUTHORIZED;
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, unauthorized.getStatus(), unauthorized.getCode(), unauthorized.getClientMessage(), e.getMessage());
-        return Result.ofFail(unauthorized);
-    }
-
 
     /**
      * 全局处理自定义异常
