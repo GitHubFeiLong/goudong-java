@@ -31,10 +31,16 @@ public class JwtTokenUtil {
      * 请求携带的token的请求头/响应头
      */
     public static final String TOKEN_HEADER = "Authorization";
+
     /**
-     * token字符串前缀
+     * Bearer token字符串前缀
      */
-    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String TOKEN_BEARER_PREFIX = "Bearer ";
+
+    /**
+     * Basic Base64字符串前缀
+     */
+    public static final String TOKEN_BASIC_PREFIX = "Basic ";
 
     /**
      * 作者
@@ -110,12 +116,12 @@ public class JwtTokenUtil {
         String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
 
         // token 格式不对
-        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
+        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
             BasicException.exception(ClientExceptionEnumInterface.TOKEN_ERROR);
         }
 
         // 去掉前面的 "Bearer " 字符串
-        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_PREFIX, "");
+        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
 
         AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
 

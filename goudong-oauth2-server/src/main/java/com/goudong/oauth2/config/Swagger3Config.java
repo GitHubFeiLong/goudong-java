@@ -1,5 +1,7 @@
 package com.goudong.oauth2.config;
 
+import com.goudong.commons.config.Swagger3AuthorizedConfig;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -44,58 +46,19 @@ public class Swagger3Config {
                 .apiInfo(apiInfo)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.open"))
+                //只有标记了@ApiOperation的方法才会暴露出给swagger
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("openApi")
-                .securitySchemes(securitySchemes())
-                .securityContexts(securityContexts())
+                .securitySchemes(Swagger3AuthorizedConfig.securitySchemes())
+                .securityContexts(Swagger3AuthorizedConfig.securityContexts())
                 ;
-
-    }
-    private List<SecurityContext> securityContexts() {
-        List<SecurityContext> securityContextList = new ArrayList<>();
-        List<SecurityReference> securityReferenceList = new ArrayList<>();
-        securityReferenceList.add(new SecurityReference("Authorization", scopes()));
-        securityContextList.add(SecurityContext
-                .builder()
-                .securityReferences(securityReferenceList)
-                .forPaths(PathSelectors.any())
-                .build()
-        );
-        return securityContextList;
     }
 
-    private AuthorizationScope[] scopes() {
-        return new AuthorizationScope[]{new AuthorizationScope("global", "accessAnything")};
-    }
 
-    /**
-     * 这个类决定了你使用哪种认证方式，我这里使用密码模式
-     * 其他方式自己摸索一下，完全莫问题啊
-     * SecurityScheme 子类 BasicAuth OAuth ApiKey
-     */
-    private List<SecurityScheme> securitySchemes() {
-        List<SecurityScheme> list = new ArrayList<>();
-
-        // Apikey
-        list.add(new ApiKey("Authorization", "Authorization", "header"));
-
-        // BasicAuth
-        list.add(new BasicAuth("Authorization"));
-
-        // OAuth
-        // 验证账号密码登录的接口
-//        GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/user/login");
-//        OAuth spring_oauth = new OAuthBuilder()
-//                .name("spring_oauth")
-//                .grantTypes(Collections.singletonList(grantType))
-//                .scopes(Arrays.asList(scopes()))
-//                .build();
-//        list.add(spring_oauth);
-        return list;
-    }
 
     @Bean
     public Docket qqDocket() {
@@ -119,6 +82,8 @@ public class Swagger3Config {
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 // 在子模块中使用groupName 可以使用右上的下拉功能
                 .groupName("QQ")
+                .securitySchemes(Swagger3AuthorizedConfig.securitySchemes())
+                .securityContexts(Swagger3AuthorizedConfig.securityContexts())
                 ;
 
     }
@@ -141,7 +106,11 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("WeChat")
+                .securitySchemes(Swagger3AuthorizedConfig.securitySchemes())
+                .securityContexts(Swagger3AuthorizedConfig.securityContexts())
                 ;
 
     }
+
+
 }

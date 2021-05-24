@@ -107,7 +107,17 @@ mybatis:
     supportMethodsArguments: true
     params: count=countSql
 
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: false
+
+
+
 ---
+##############
+# dev 环境 ##
+#############
 spring:
   profiles: dev # 开发环境
 
@@ -117,9 +127,18 @@ ui:
   index: http://localhost:9998/index.html
 
 ---
+##############
+# prod 环境 ##
+#############
 spring:
   profiles: prod # 生产环境
 
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true # swagger 不显示
+
+# 自定义配置
 ui:
   bind-page: http://www.goudong.shop/bindPage.html
   index: http://www.goudong.shop/index.html

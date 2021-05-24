@@ -10,13 +10,11 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * 类描述：
- * 注解 @EnableOpenApi 开启Swagger
  * 注解 @EnableConfigurationProperties 开启配置文件映射对象属性（自动转驼峰）
  * @Author msi
  * @Date 2021/2/9 19:20
  * @Version 1.0
  */
-@EnableOpenApi
 @EnableConfigurationProperties({UIPageValue.class})
 @SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS, BasePackageConst.SECURITY})
 @MapperScan(basePackages = {"com.goudong.oauth2.dao", BasePackageConst.SECURITY_DAO})
