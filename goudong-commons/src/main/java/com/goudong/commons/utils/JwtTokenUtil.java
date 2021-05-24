@@ -71,7 +71,7 @@ public class JwtTokenUtil {
         // 当前时间
         LocalDateTime ldt = LocalDateTime.now();
 
-        return JWT.create()
+        String token = JWT.create()
                 // jwt唯一id
                 .withJWTId(IdUtil.randomUUID())
                 // 发布者
@@ -86,6 +86,8 @@ public class JwtTokenUtil {
                 .withSubject("狗东")
                 // 签发的目标
                 .sign(algorithm);
+
+        return TOKEN_BEARER_PREFIX + token;
     }
 
 
@@ -116,12 +118,23 @@ public class JwtTokenUtil {
         String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
 
         // token 格式不对
-        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
+        boolean isFormatError = tokenHeader == null
+                || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)
+                || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX);
+        if (isFormatError) {
             BasicException.exception(ClientExceptionEnumInterface.TOKEN_ERROR);
         }
 
+        String token = null;
         // 去掉前面的 "Bearer " 字符串
-        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+        if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
+            token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+        } else if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
+            token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+        } else {
+            // 兜底方法
+        }
+
 
         AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
 

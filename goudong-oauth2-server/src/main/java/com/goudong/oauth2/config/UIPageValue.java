@@ -1,10 +1,12 @@
 package com.goudong.oauth2.config;
 
+import com.goudong.commons.utils.AssertUtil;
 import com.goudong.oauth2.entity.OtherUserInfoBean;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -30,7 +32,7 @@ public class UIPageValue {
     private String index;
 
     /**
-     * 获取qq跳转的地址
+     * 获取qq跳转到绑定账号页面的地址
      * @return
      */
     public String getBindPageUrl(@Validated OtherUserInfoBean userInfoBean){
@@ -45,6 +47,20 @@ public class UIPageValue {
         sb.append("&headPortrait30=" + userInfoBean.getHeadPortrait30());
         // 账号类型
         sb.append("&userType=" + userInfoBean.getUserType());
+        return sb.toString();
+    }
+
+    /**
+     * 获取qq登录成功跳转到首页的地址
+     * @return
+     */
+    public String getIndexUrl(String token){
+        AssertUtil.hasLength(token, "token参数不能为空");
+
+        StringBuilder sb = new StringBuilder(index);
+        // token参数
+        sb.append("?token=" + token);
+
         return sb.toString();
     }
 }

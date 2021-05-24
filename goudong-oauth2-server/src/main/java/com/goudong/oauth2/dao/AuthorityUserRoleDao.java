@@ -1,9 +1,6 @@
 package com.goudong.oauth2.dao;
 
-import java.util.List;
-
 import com.goudong.commons.po.AuthorityUserRolePO;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * 类描述：

@@ -103,10 +103,12 @@ public class QQController {
                 // 生成token
                 String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
                 // 设置到响应头里
-                response.setHeader(JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX + token);
+                response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
                 // 添加信息到redis中
                 redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
-                response.sendRedirect(uiPageValue.getIndex());
+
+                // 重定向首页，并带上token参数
+                response.sendRedirect(uiPageValue.getIndexUrl(token));
             }
         }
 

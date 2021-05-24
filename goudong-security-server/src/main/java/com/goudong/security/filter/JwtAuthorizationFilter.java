@@ -69,9 +69,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
 
-    private UsernamePasswordAuthenticationToken getBasicAuthenticationToken(String tokenHeader) throws UnsupportedEncodingException {
-        // 去掉前面的 "Basic " 字符串
-        String base64 = tokenHeader.replace(JwtTokenUtil.TOKEN_BASIC_PREFIX, "");
+    private UsernamePasswordAuthenticationToken getBasicAuthenticationToken(String base64) throws UnsupportedEncodingException {
 
         // 解码
         String decode = new String(Base64.getDecoder().decode(base64), "UTF-8");
@@ -107,9 +105,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         return null;
     }
 
-    private UsernamePasswordAuthenticationToken getBearerAuthenticationToken(String tokenHeader) {
-        // 去掉前面的 "Bearer " 字符串
-        String token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+    private UsernamePasswordAuthenticationToken getBearerAuthenticationToken(String token) {
         // 解析token为对象
         AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
 
