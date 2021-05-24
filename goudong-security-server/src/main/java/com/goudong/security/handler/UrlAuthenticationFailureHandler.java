@@ -1,7 +1,7 @@
 package com.goudong.security.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import org.springframework.security.core.AuthenticationException;
@@ -26,7 +26,7 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
-        ClientExceptionEnumInterface badRequest = ClientExceptionEnumInterface.NOT_FOUND;
+        ClientExceptionEnum badRequest = ClientExceptionEnum.NOT_FOUND;
         Result<BasicException> result = Result.ofFail(badRequest);
         result.setClientMessage(e.getMessage());
 

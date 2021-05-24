@@ -2,6 +2,7 @@ package com.goudong.commons.utils;
 
 import com.goudong.commons.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -16,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GenerateRedisKeyUtil {
 
-    public static final String DELIMITER = ":";
-
     /**
      * 聪明的生成redis的key，需要替换表达式
      * @param keyTemplate   redis key 模板
@@ -25,16 +24,14 @@ public class GenerateRedisKeyUtil {
      * @return
      */
     public static String generateByClever (String keyTemplate, String... keys) {
-        if (keyTemplate == null || keyTemplate.equals("")) {
-            log.error("redis key template 字符串不能为空");
-            BasicException.ServerException.methodParamError("redis key template 字符串不能为空");
-        }
+
+        AssertUtil.isTrue(StringUtils.hasText(keyTemplate), "redis key template 字符串不能为空");
+
         // 模板字符串中包含“$” 就必须传参数，没有就不用
         if (keyTemplate.indexOf("$") != -1) {
-            if (keys == null || keys.length == 0) {
-                log.error("redis key template 的转换参数不能为空");
-                BasicException.ServerException.methodParamError("redis key template 的转换参数不能为空");
-            }
+
+            AssertUtil.isTrue(keys != null && keys.length > 0, "redis key template 的转换参数不能为空");
+
             // 表达式 数量和 需要替换的数量不匹配
             checkKeyAndParamLength(keyTemplate, keys);
         }
@@ -52,9 +49,7 @@ public class GenerateRedisKeyUtil {
         int num = key.split("\\$").length - 1;
         int num1 = keys.length;
         // 参数和所需要的参数长度不一致！
-        if (num != num1) {
-            BasicException.ServerException.methodParamError("key模板 和 keys参数 长度不一致");
-        }
+        AssertUtil.isTrue(num == num1, "key模板 和 keys参数 长度不一致");
     }
 
     /**

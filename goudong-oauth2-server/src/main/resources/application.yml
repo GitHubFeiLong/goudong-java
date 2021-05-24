@@ -110,7 +110,7 @@ mybatis:
 springfox:
   documentation:
     swagger-ui:
-      enabled: false
+      enabled: true
 
 
 

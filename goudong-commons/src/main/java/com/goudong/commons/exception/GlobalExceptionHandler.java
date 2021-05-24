@@ -2,7 +2,9 @@ package com.goudong.commons.exception;
 
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.goudong.commons.enumerate.ServerExceptionEnumInterface;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -59,10 +61,24 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(UndeclaredThrowableException.class)
-    public Result<Throwable> blockExceptionDispose(BlockException e){
+    public Result blockExceptionDispose(BlockException e){
         e.printStackTrace();
         log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 200, 200, "服务器繁忙，请重试", e.getRule().toString());
         return Result.ofFail();
+    }
+
+    /**
+     * token 过期的异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result tokenExpiredExceptionDispose(TokenExpiredException e){
+        e.printStackTrace();
+        ClientExceptionEnum unauthorized = ClientExceptionEnum.UNAUTHORIZED;
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, unauthorized.getStatus(), unauthorized.getCode(), unauthorized.getClientMessage(), e.getMessage());
+        return Result.ofFail(unauthorized);
     }
 
 
@@ -90,7 +106,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Throwable.class)
     public Result<Throwable> otherErrorDispose(Throwable e){
-        BasicException serverException = new BasicException.ServerException(ServerExceptionEnumInterface.SERVER_ERROR);
+        BasicException serverException = new BasicException.ServerException(ServerExceptionEnum.SERVER_ERROR);
         this.response.setStatus(serverException.status);
         // 打印错误日志
         log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, e.getMessage());

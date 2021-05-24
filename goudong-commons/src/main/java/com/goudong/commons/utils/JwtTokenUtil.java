@@ -7,7 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnumInterface;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,12 +98,15 @@ public class JwtTokenUtil {
      */
     public static AuthorityUserDTO resolveToken(String token) {
 
+        // 将加工后的转换原生token（没有Bearer ，Basic 字符串）
+        String nativeToken = generateNativeToken(token);
+
         Algorithm algorithm = Algorithm.HMAC256(JwtTokenUtil.SALT);
         JWTVerifier verifier = JWT.require(algorithm)
                 // //匹配指定的token发布者
                 .withIssuer(JwtTokenUtil.ISSUER)
                 .build();
-        DecodedJWT jwt = verifier.verify(token);
+        DecodedJWT jwt = verifier.verify(nativeToken);
         String result = jwt.getAudience().get(0);
         log.info("result:{}",result);
         return JSON.parseObject(result, AuthorityUserDTO.class);
@@ -117,30 +120,36 @@ public class JwtTokenUtil {
     public static String getUserUuid(HttpServletRequest request) {
         String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
 
-        // token 格式不对
-        boolean isFormatError = tokenHeader == null
-                || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)
-                || !tokenHeader.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX);
-        if (isFormatError) {
-            BasicException.exception(ClientExceptionEnumInterface.TOKEN_ERROR);
-        }
-
-        String token = null;
-        // 去掉前面的 "Bearer " 字符串
-        if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
-            token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
-        } else if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
-            token = tokenHeader.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
-        } else {
-            // 兜底方法
-        }
-
+        String token = generateNativeToken(tokenHeader);
 
         AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
 
         return authorityUserDTO.getUuid();
     }
 
+    /**
+     * 生成原生的token字符串，参数包含了 Bearer 或 Basic 开头
+     * @param token
+     * @return
+     */
+    private static String generateNativeToken (String token) {
+        // token 格式不对
+        boolean isFormatError = token == null
+                || !(token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX) || token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX));
+        if (isFormatError) {
+            BasicException.exception(ClientExceptionEnum.TOKEN_ERROR);
+        }
+        // 去掉前面的 "Bearer " 字符串
+        if (token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
+            return token.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+        }
+        // 去掉前面的 "Basic "字符串
+        if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
+            return token.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+        }
+
+        return null;
+    }
     // 从token中获取用户名
 //    public static String getUsername(String token){
 //        return getTokenBody(token).getSubject();

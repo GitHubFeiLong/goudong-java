@@ -158,11 +158,14 @@ public class RedisValueUtil {
      * @param redisKeyEnums    redis key枚举数组
      * @param params     模板参数二维数组
      */
-    public void deleteKeys (@Valid @NotEmpty(message = "RedisKeyEnum数组不能为空") RedisKeyEnum[] redisKeyEnums
-            , @Valid @NotEmpty(message = "params数组不能为空") String[][] params) {
+    public void deleteKeys (RedisKeyEnum[] redisKeyEnums, String[][] params) {
+
+        AssertUtil.notEmpty(redisKeyEnums, "RedisKeyEnum数组不能为空");
+        AssertUtil.notEmpty(params, "params数组不能为空");
+
+        AssertUtil.isTrue(redisKeyEnums.length == params.length, "参数长度错误");
         if (redisKeyEnums.length != params.length) {
             log.error("deleteKeys redisKeyEnums.length:{}, params.length:{}", redisKeyEnums.length, params.length);
-            BasicException.ServerException.methodParamError("参数长度错误");
         }
         // 获取完整的 key
         for (int i = 0; i < redisKeyEnums.length; i++) {
