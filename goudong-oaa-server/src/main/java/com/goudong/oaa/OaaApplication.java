@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version 1.0
  */
 @SpringBootApplication
-@RestController
 public class OaaApplication {
     public static void main(String[] args) {
         SpringApplication.run(OaaApplication.class, args);
