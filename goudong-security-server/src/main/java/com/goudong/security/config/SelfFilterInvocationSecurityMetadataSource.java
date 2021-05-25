@@ -30,15 +30,23 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
+        // 获取请求地址
+        String requestUrI = ((FilterInvocation) o).getHttpRequest().getRequestURI();
+
+        // 获取上下文路径
+        String contextPath = ((FilterInvocation) o).getHttpRequest().getContextPath();
+        // mvc 错误接口
+        if (requestUrI.equals(contextPath + "/error")) {
+            return null;
+        }
 
         Set<ConfigAttribute> set = new HashSet<>();
-        // 获取请求地址
-        String requestUrl = ((FilterInvocation) o).getHttpRequest().getRequestURI();
+
         // 获取请求的方法
         String requestMethod = ((FilterInvocation) o).getHttpRequest().getMethod();
-        log.info("requestUrl >> {}，requestMethod >> {}", requestUrl, requestMethod);
+        log.info("requestUrI >> {}，requestMethod >> {}", requestUrI, requestMethod);
         // 查询 请求方式的url 需要哪些权限
-        List<String> roleNames = selfAuthorityUserDao.selectRoleNameByMenu(requestUrl, requestMethod);
+        List<String> roleNames = selfAuthorityUserDao.selectRoleNameByMenu(requestUrI, requestMethod);
         // 没有角色匹配
         if (roleNames.isEmpty()) {
             return SecurityConfig.createList("ROLE_ANONYMOUS");

@@ -53,7 +53,7 @@ public class BasicException extends RuntimeException{
      * @param serverMessage 服务端日志显示信息
      */
     public BasicException(int status, String code, String clientMessage, String serverMessage) {
-        super(clientMessage+"\n"+serverMessage);
+        super(clientMessage+"\t"+serverMessage);
         this.status = status;
         this.code = code;
         this.clientMessage = clientMessage;

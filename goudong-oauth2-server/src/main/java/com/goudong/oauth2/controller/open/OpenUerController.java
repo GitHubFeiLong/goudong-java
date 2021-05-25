@@ -1,6 +1,7 @@
 package com.goudong.oauth2.controller.open;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
@@ -39,6 +40,12 @@ public class OpenUerController {
     @Resource
     private AuthorityUserService authorityUserService;
 
+    @GetMapping("/demo")
+    @ApiOperation("测试")
+    public Result demo () {
+        BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
+        return Result.ofSuccess();
+    }
     /**
      * 根据手机号获取账号
      *

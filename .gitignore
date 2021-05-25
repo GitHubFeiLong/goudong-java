@@ -28,6 +28,8 @@ hs_err_pid*
 *.iml
 target/
 
-.idea
+.idea/*
 
-logs
+logs/
+
+META-INF/

@@ -36,7 +36,7 @@ public class Result<T> implements Serializable {
     /**
      * 状态码
      */
-    @ApiModelProperty(value = "自定义状态码", required = true, example = "A0001")
+    @ApiModelProperty(value = "响应码", required = true, example = "404")
     private String code;
     /**
      * 客户端状态码对应信息
@@ -53,7 +53,7 @@ public class Result<T> implements Serializable {
     /**
      * 数据
      */
-    @ApiModelProperty(value = "额外自定义数据", required = true)
+    @ApiModelProperty(value = "额外自定义数据")
     private T data;
 
     /**

@@ -13,7 +13,9 @@ import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ResourceProperties;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -60,6 +62,9 @@ public class JwtTokenUtil {
 
     @Autowired
     public HttpServletRequest httpServletRequest;
+
+    @Resource
+    private ResourceProperties resourceProperties;
 
     /**
      * 生产短期的token字符串
@@ -110,7 +115,6 @@ public class JwtTokenUtil {
                 .build();
 
         DecodedJWT jwt = null;
-        BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
         try {
             jwt = verifier.verify(nativeToken);
         } catch (TokenExpiredException | JWTDecodeException e) {
