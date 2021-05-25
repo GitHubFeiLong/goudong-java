@@ -7,11 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="goudong-security-server" />
-        <module name="goudong-gateway-server" />
         <module name="goudong-oauth2-server" />
-        <module name="goudong-commons" />
         <module name="goudong-message-server" />
+        <module name="goudong-oaa-server" />
+        <module name="goudong-gateway-server" />
+        <module name="goudong-security-server" />
+        <module name="goudong-commons" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -23,7 +24,8 @@
       <module name="goudong-commons" options="-parameters" />
       <module name="goudong-gateway-server" options="-parameters" />
       <module name="goudong-message-server" options="-parameters" />
-      <module name="goudong-oauth2-server" options="-parameters -extdirs D:\workspaces\GitHub\goudong-java\goudong-oauth2-server/lib" />
+      <module name="goudong-oaa-server" options="-parameters" />
+      <module name="goudong-oauth2-server" options="-parameters -extdirs D:\workspace\my-workspaces\goudong-java\goudong-oauth2-server/lib" />
       <module name="goudong-security-server" options="-parameters" />
       <module name="sentinel-dashboard" options="-parameters" />
     </option>

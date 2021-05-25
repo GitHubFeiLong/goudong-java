@@ -18,8 +18,8 @@ import java.util.Date;
  */
 @Data
 @SuppressWarnings("ALL")
-@ConfigurationProperties(prefix = "ui")
-public class UIPageValue {
+@ConfigurationProperties(prefix = "ui", ignoreUnknownFields = true)
+public class UIProperties {
 
     /**
      * qq登陆成功需要绑定账号跳转页面

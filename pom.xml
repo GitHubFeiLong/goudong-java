@@ -17,6 +17,7 @@
         <module>goudong-oauth2-server</module>
         <module>goudong-security-server</module>
         <module>goudong-message-server</module>
+        <module>goudong-oaa-server</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>

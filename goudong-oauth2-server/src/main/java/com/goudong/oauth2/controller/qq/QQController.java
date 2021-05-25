@@ -4,7 +4,7 @@ import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisValueUtil;
-import com.goudong.oauth2.config.UIPageValue;
+import com.goudong.oauth2.config.UIProperties;
 import com.goudong.oauth2.entity.OtherUserInfoBean;
 import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
 import com.goudong.oauth2.service.AuthorityUserService;
@@ -43,7 +43,7 @@ import java.util.List;
 @RequestMapping("/qq")
 public class QQController {
     @Resource
-    private UIPageValue uiPageValue;
+    private UIProperties uiProperties;
 
     @Resource
     private AuthorityUserService userService;
@@ -95,7 +95,7 @@ public class QQController {
             // openId未使用，可以绑定
             if (authorityUserDTOS.isEmpty()) {
                 OtherUserInfoBean otherUserInfoBean = new OtherUserInfoBean(openID, userInfoBean.getNickname(), userInfoBean.getAvatar().getAvatarURL30(), OtherUserTypeEnum.QQ.name());
-                String qqBindRedirectUriFull = uiPageValue.getBindPageUrl(otherUserInfoBean);
+                String qqBindRedirectUriFull = uiProperties.getBindPageUrl(otherUserInfoBean);
                 log.info("qqBindRedirectUriFull:{}", qqBindRedirectUriFull);
                 response.sendRedirect(qqBindRedirectUriFull);
             } else {
@@ -108,7 +108,7 @@ public class QQController {
                 redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
 
                 // 重定向首页，并带上token参数
-                response.sendRedirect(uiPageValue.getIndexUrl(token));
+                response.sendRedirect(uiProperties.getIndexUrl(token));
             }
         }
 

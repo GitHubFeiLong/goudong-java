@@ -1,23 +1,20 @@
 package com.goudong.oauth2;
 
 import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.oauth2.config.UIPageValue;
+import com.goudong.oauth2.config.UIProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import springfox.documentation.oas.annotations.EnableOpenApi;
 
 /**
  * 类描述：
  * 注解 @EnableConfigurationProperties 开启配置文件映射对象属性（自动转驼峰）
  * @Author msi
  * @Date 2021/2/9 19:20
- * @Version 1.0
+ * @Vsion 1.0
  */
-@EnableConfigurationProperties({UIPageValue.class})
+@EnableConfigurationProperties({UIProperties.class})
 @SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS, BasePackageConst.SECURITY})
 @MapperScan(basePackages = {"com.goudong.oauth2.dao", BasePackageConst.SECURITY_DAO})
 public class
