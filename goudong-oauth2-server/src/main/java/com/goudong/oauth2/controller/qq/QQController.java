@@ -2,6 +2,7 @@ package com.goudong.oauth2.controller.qq;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.oauth2.config.UIProperties;
@@ -106,9 +107,12 @@ public class QQController {
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
                 // 添加信息到redis中
                 redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
-
+                Transition transition = Transition.builder()
+                        .token(token)
+                        .redirectUrl(uiProperties.getIndexPage())
+                        .build();
                 // 重定向首页，并带上token参数
-                response.sendRedirect(uiProperties.getIndexUrl(token));
+                response.sendRedirect(uiProperties.getTransitionPageUrl(transition));
             }
         }
 
