@@ -39,6 +39,7 @@
         <result column="uuid" property="uuid"></result>
         <result column="username" property="username"></result>
         <result column="email" property="email"></result>
+        <result column="phone" property="phone"></result>
         <result column="nickname" property="nickname"></result>
         <result column="remark" property="remark"></result>
         <result column="valid_time" property="validTime"></result>
