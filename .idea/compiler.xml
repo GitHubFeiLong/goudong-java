@@ -12,6 +12,7 @@
         <module name="goudong-oaa-server" />
         <module name="goudong-gateway-server" />
         <module name="goudong-security-server" />
+        <module name="goudong-commodity-server" />
         <module name="goudong-commons" />
       </profile>
     </annotationProcessing>
@@ -21,11 +22,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="goudong-commodity-server" options="-parameters" />
       <module name="goudong-commons" options="-parameters" />
       <module name="goudong-gateway-server" options="-parameters" />
       <module name="goudong-message-server" options="-parameters" />
       <module name="goudong-oaa-server" options="-parameters" />
-      <module name="goudong-oauth2-server" options="-parameters -extdirs D:\workspaces\GitHub\goudong-java\goudong-oauth2-server/lib" />
+      <module name="goudong-oauth2-server" options="-parameters -extdirs D:\workspace\my-workspaces\goudong-java\goudong-oauth2-server/lib" />
       <module name="goudong-security-server" options="-parameters" />
       <module name="sentinel-dashboard" options="-parameters" />
     </option>
