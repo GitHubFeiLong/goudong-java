@@ -9,8 +9,6 @@ y
 Igoudong-commons/src/main/java/com/goudong/commons/config/RedisConfig.java,5\9\59e8d71ba01664f75930516afe42d159cfa58f50
 M
 goudong-oauth2-server/pom.xml,a\4\a4a045e0d8057419bf18d0f2bbe919fad50b8bb3
-|
-Lgoudong-commons/src/main/java/com/goudong/commons/config/Swagger3Config.java,f\9\f9f573bff7c4b4328b2751acef10636511096635
 }
 Mgoudong-commons/src/main/java/com/goudong/commons/entity/SelfUserDetails.java,4\5\452bf9c75341562dcbad9edddccd14b66b91a42e
 á
@@ -130,3 +128,15 @@ Kgoudong-message-server/src/main/java/com/goudong/message/util/CodeUtil.java,0\
 ^goudong-message-server/src/main/java/com/goudong/message/sender/EmailCodeRoutingKeySender.java,4\0\404e903b495ec450ab196882e141e8742e6191d6
 ç
 ]goudong-security-server/src/main/java/com/goudong/security/filter/JwtAuthorizationFilter.java,0\2\02f01272d224c9f973d9e39af10de132a0477b74
+]
+-goudong-oauth2-server/src/test/java/Demo.java,a\7\a72d5d4fce376209e7cbced86e90255620480d6a
+^
+.goudong-oauth2-server/src/test/java/Token.java,b\4\b405f26c35a3603e01f5a5e4fb4f5a6583d85e68
+f
+6logs/goudong-oauth2-logs/2021-05/info-2021-05-04-1.log,e\9\e9976b795492e8960a45372b9a79911fe8f5630f
+à
+Xgoudong-message-server/src/main/java/com/goudong/message/config/ReceptionCodeConfig.java,5\8\580eb6e8f13ca042c0ad11692d9d98390a7e4fd2
+}
+Mgoudong-commons/src/main/java/com/goudong/commons/config/ErrorController.java,6\f\6fc015d0918cc4f253ffca96afaaa941568c5e4d
+}
+Mgoudong-commons/src/main/java/com/goudong/commons/config/ErrorAttributes.java,a\0\a0c3d2d3ef2aaab2fba75d8f7f24a8bacf41873e
