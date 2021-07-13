@@ -1,4 +1,4 @@
-package com.goudong.commons.interceptor;
+package com.goudong.commons.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONType;
@@ -35,7 +35,7 @@ import java.util.Objects;
 @Slf4j
 @Aspect
 @Component
-public class LogAOP {
+public class LogAop {
     /**
      * 保存request中的代码执行开始时间戳
      */
@@ -94,7 +94,7 @@ public class LogAOP {
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         long start = System.currentTimeMillis();
         // 设置日志的开始时间
-        this.request.setAttribute(LogAOP.REQUEST_ATTRIBUTE_KEY, start);
+        this.request.setAttribute(LogAop.REQUEST_ATTRIBUTE_KEY, start);
         // 继续执行方法
         Object obj = pjp.proceed();
 
@@ -152,7 +152,7 @@ public class LogAOP {
                 .parameters(parameters).build();
 
         // 获取接口开始运行的时间戳
-        Object start = this.request.getAttribute(LogAOP.REQUEST_ATTRIBUTE_KEY);
+        Object start = this.request.getAttribute(LogAop.REQUEST_ATTRIBUTE_KEY);
         if (start instanceof Long) {
             logInfoDTO.setTimeConsuming(System.currentTimeMillis() - (long)start);
         }
@@ -185,9 +185,9 @@ public class LogAOP {
     @ApiModelProperty(name = "requestType", value = "请求类型", example = "GET")
     private String requestType;
     @ApiModelProperty(name = "threadId", value = "线程id", example = "1")
-    private long threadId;
+    private Long threadId;
     @ApiModelProperty(name = "timeConsuming", value = "请求用时，单位毫秒", example = "1000")
-    private long timeConsuming;
+    private Long timeConsuming;
     @ApiModelProperty(name = "parameters", value = "请求参数")
     private Map<String, Object> parameters;
     @ApiModelProperty(name = "returnValue", value = "请求结果", example = "User")
