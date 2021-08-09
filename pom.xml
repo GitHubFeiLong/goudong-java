@@ -49,6 +49,7 @@
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-lang.version>2.6</commons-lang.version>
         <Sdk4J.version>2.0</Sdk4J.version>
+        <log4j-web.version>2.14.0</log4j-web.version>
     </properties>
 
     <!--Spring Boot-->
@@ -190,6 +191,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-log4j2</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-web</artifactId>
+                <version>${log4j-web.version}</version>
             </dependency>
             <!--RabbitMQ-->
             <dependency>

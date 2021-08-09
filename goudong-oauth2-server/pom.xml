@@ -149,6 +149,10 @@
             <artifactId>Sdk4J</artifactId>
             <version>${Sdk4J.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->

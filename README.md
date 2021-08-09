@@ -1,10 +1,68 @@
-# 约定大于配置（重要）
+# goudong
+该项目使用 spring cloud、spring cloud alibaba、spring boot搭建的微服务项目，其中ORM框架采用了MyBatis，权限认证使用的是spring security，通过token进行无状态登录认证，
+，后端框架包含有：、mybatis、jwt、log4j2、
+## 软件及配置项
+### 依赖的软件/组件及其版本
+| 软件/组件       | 版本  |
+| ----- | -----  |
+| MySQL | 8.0.16| 
+| Redis | 3.0.504(后期会升高)| 
+| MongoDB | 4.4| 
+| Erlang | 11| 
+| RabbitMQ | 3.8.9| 
+| Nacos | 1.4.0| 
 
-## Flyway
+### 必要的环境变量
+需要修改自己对应的属性值。
+```bash
+@echo off
+echo windows平台设置goudong环境变量
+:: MySQL
+SET MYSQL_USERNAME=MySQL用户名
+SET MYSQL_PASSWORD=MySQL密码
+
+
+:: Redis
+SET REDIS_PASSWORD=Redis密码
+
+:: RabbitMQ
+SET RABBITMQ_USERNAME=RabbitMQ用户名
+SET RABBITMQ_PASSWORD=RabbitMQ密码
+
+:: 邮箱
+SET EMAIL_USERNAME=邮箱账户
+SET EMAIL_PASSWORD=邮箱密码
+
+:: 阿里云短信
+SET ALI_MESSAGE_ACCESS_KEY_ID=短信key
+SET ALI_MESSAGE_ACCESS_KEY_SECRET=短信密码
+SET ALI_MESSAGE_SIGN_NAME=短信签名
+SET ALI_MESSAGE_TEMPLATE_CODE=短信模板
+
+echo 正在设置中，请稍等...
+
+setx "MYSQL_USERNAME" "%MYSQL_USERNAME%"
+setx "MYSQL_PASSWORD" "%MYSQL_PASSWORD%"
+setx "REDIS_PASSWORD" "%REDIS_PASSWORD%"
+setx "RABBITMQ_USERNAME" "%RABBITMQ_USERNAME%"
+setx "RABBITMQ_PASSWORD" "%RABBITMQ_PASSWORD%"
+setx "EMAIL_USERNAME" "%EMAIL_USERNAME%"
+setx "EMAIL_PASSWORD" "%EMAIL_PASSWORD%"
+setx "ALIBABA_MESSAGE_ACCESS_KEY_ID" "%ALI_MESSAGE_ACCESS_KEY_ID%"
+setx "ALIBABA_MESSAGE_ACCESS_KEY_SECRET" "%ALI_MESSAGE_ACCESS_KEY_SECRET%"
+setx "ALIBABA_MESSAGE_SIGN_NAME" "%ALI_MESSAGE_SIGN_NAME%"
+setx "ALIBABA_MESSAGE_TEMPLATE_CODE" "%ALI_MESSAGE_TEMPLATE_CODE%"
+
+pause
+```
+
+## 约定大于配置（重要）
+
+### Flyway
 
 在Flyway的约定上，加上本项目自己的一些约定。
 
-### 约定1：脚本文件命名
+#### 约定1：脚本文件命名
 
 使用简短的字符串，大致表示脚本功能，例如：`V1.0.0__DT_user.sql` `V1.0.0__DT_user#roles.sql`
 
@@ -23,15 +81,15 @@
 
 
 
-## POJO
+### POJO
 
-### 简介
+#### 简介
 
 [简介](https://blog.csdn.net/uestcyms/article/details/80244407)
 
 本项目的约定如下
 
-### 约定1：试图层，服务层，持久层 使用对应XO
+#### 约定1：视图层，服务层，持久层 使用对应XO
 
 ![image-20210517144446184](README.assets/image-20210517144446184.png)
 
@@ -48,7 +106,9 @@
 
 
 
-## HTTP 响应代码
+### HTTP 响应代码
 
 项目基本参照 [规范](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status) 来正确返回响应码
+
+
 
