@@ -12,15 +12,15 @@
 | RabbitMQ | 3.8.9| 
 | Nacos | 1.4.0| 
 
-### 必要的环境变量
+### 操作系统环境变量配置
 需要修改自己对应的属性值。
+#### Windows
 ```bash
 @echo off
 echo windows平台设置goudong环境变量
 :: MySQL
 SET MYSQL_USERNAME=MySQL用户名
 SET MYSQL_PASSWORD=MySQL密码
-
 
 :: Redis
 SET REDIS_PASSWORD=Redis密码
@@ -39,8 +39,7 @@ SET ALI_MESSAGE_ACCESS_KEY_SECRET=短信密码
 SET ALI_MESSAGE_SIGN_NAME=短信签名
 SET ALI_MESSAGE_TEMPLATE_CODE=短信模板
 
-echo 正在设置中，请稍等...
-
+echo 正在设置中,请稍等...
 setx "MYSQL_USERNAME" "%MYSQL_USERNAME%"
 setx "MYSQL_PASSWORD" "%MYSQL_PASSWORD%"
 setx "REDIS_PASSWORD" "%REDIS_PASSWORD%"
@@ -55,7 +54,23 @@ setx "ALIBABA_MESSAGE_TEMPLATE_CODE" "%ALI_MESSAGE_TEMPLATE_CODE%"
 
 pause
 ```
-
+> 注意：
+> 如果有信息是以下字符的，需要转义（使用^符号，如&应该写成^&）
+> + @命令行回显屏蔽符 
+> + %批处理变量引导符
+> + \>重定向符
+> + \>> 重定向符
+> + \<、>、<& 重定向符
+> + | 命令管道符
+> + ^ 转义字符
+> + & 组合命令
+> + && 组合命令
+> + || 组合命令
+> + ""字符串界定符
+> + , 逗号
+> + ; 分号
+> + () 括号
+> + ! 感叹号
 ## 约定大于配置（重要）
 
 ### Flyway
