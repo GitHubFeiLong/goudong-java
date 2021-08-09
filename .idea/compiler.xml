@@ -8,11 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="goudong-oauth2-server" />
-        <module name="goudong-commodity-server" />
-        <module name="goudong-oaa-server" />
         <module name="goudong-gateway-server" />
+        <module name="goudong-commodity-server" />
         <module name="goudong-message-server" />
         <module name="goudong-commons" />
+        <module name="goudong-oaa-server" />
         <module name="goudong-security-server" />
       </profile>
     </annotationProcessing>
