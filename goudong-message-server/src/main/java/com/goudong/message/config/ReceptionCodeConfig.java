@@ -48,6 +48,9 @@ public class ReceptionCodeConfig {
     @Resource
     private JavaMailSenderImpl javaMailSender;
 
+    @Resource
+    private SendSms sendSms;
+
     /**
      * 监听邮箱发送验证码队列
      * exclusive=true, 标明只能有一个消费者获取该队列的数据
@@ -99,7 +102,7 @@ public class ReceptionCodeConfig {
         log.debug("phone:{}, code:{}", phone, code);
         redisValueUtil.setValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, phone);
         // 发送短信
-//        SendSms.sendCode(phone, code);
+        sendSms.sendCode(phone, code);
     }
 
     /**

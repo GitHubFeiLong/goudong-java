@@ -18,8 +18,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    username: root
-    password: l(=8gp_04h*&
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     druid:
       # 下面为连接池的补充设置，应用到上面所有数据源中
       # 初始化大小，最小，最大
@@ -66,7 +66,7 @@ spring:
     database: 0   # Redis数据库索引（默认为0）
     host: 127.0.0.1 # Redis服务器地址
     port: 6379
-    password: 123456
+    password: ${REDIS_PASSWORD}
     timeout: 3000
 
   ## flyway数据迁移

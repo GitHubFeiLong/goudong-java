@@ -143,6 +143,12 @@
             <artifactId>hutool-all</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--qq互联-->
+        <dependency>
+            <groupId>net.gplatform</groupId>
+            <artifactId>Sdk4J</artifactId>
+            <version>${Sdk4J.version}</version>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->
@@ -176,26 +182,5 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <!-- 这个元素描述了项目相关的所有资源路径列表，例如和项目相关的属性文件，这些资源被包含在
-             最终的打包文件里。 -->
-        <resources>
-            <!-- 这个元素描述了项目相关或测试相关的所有资源路径 -->
-            <resource>
-                <!-- 描述存放资源的目录，该路径相对POM路径 -->
-                <directory>lib</directory>
-                <!-- 描述了资源的目标路径。该路径相对target/classes目录（例如${project.build.outputDirectory}）。
-                     举个例子，如果你想资源在特定的包里(org.apache.maven.messages)，你就必须该元素设置为
-                    org/apache/maven/messages。然而，如果你只是想把资源放到源码目录结构里，就不需要该配置。 -->
-                <targetPath>BOOT-INF/lib/</targetPath>
-                <!-- 包含的模式列表，例如**/*.xml. -->
-                <includes>
-                    <include>**/*.jar</include>
-                </includes>
-                <!-- 排除的模式列表，例如**/*.xml -->
-                <excludes>
-                    <exclude></exclude>
-                </excludes>
-            </resource>
-        </resources>
     </build>
 </project>

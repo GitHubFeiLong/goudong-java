@@ -31,6 +31,7 @@
         <option value="$PROJECT_DIR$/goudong-sentinel-server/pom.xml" />
         <option value="$PROJECT_DIR$/goudong-sentinel-dashboard-server/pom.xml" />
         <option value="$PROJECT_DIR$/sentinel-dashboard/pom.xml" />
+        <option value="$PROJECT_DIR$/nacos-1.4.2/pom.xml" />
       </list>
     </option>
   </component>

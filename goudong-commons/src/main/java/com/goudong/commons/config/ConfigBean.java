@@ -17,6 +17,7 @@ import javax.annotation.Resource;
  * @Version 1.0
  */
 //@Configuration
+@Deprecated
 public class ConfigBean {
 
     @Bean
