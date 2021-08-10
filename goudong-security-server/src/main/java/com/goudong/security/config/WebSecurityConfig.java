@@ -120,7 +120,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             authorityIgnoreResourcePOS.stream()
                     .filter(f->!f.getIsDelete())
                     .forEach(p1->{
-
                         String[] methods;
                         if ("*".equals(p1.getMethod())) {
                             methods = new String[]{"GET", "POST", "PUT", "DELETE"};
@@ -134,6 +133,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         });
                     });
         }
+
+
+
         log.info("ignore url >> {}", web.toString());
     }
 

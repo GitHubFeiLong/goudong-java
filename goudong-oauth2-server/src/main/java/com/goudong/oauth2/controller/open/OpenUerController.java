@@ -41,12 +41,6 @@ public class OpenUerController {
     @Resource
     private AuthorityUserService authorityUserService;
 
-    @GetMapping("/demo")
-    @ApiOperation("测试")
-    public Result demo () {
-        BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
-        return Result.ofSuccess();
-    }
     /**
      * 根据手机号获取账号
      *

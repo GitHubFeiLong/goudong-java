@@ -76,12 +76,25 @@ spring:
     baseline-on-migrate: true
     out-of-order: false
 
-mybatis:
+mybatis-plus:
   #  mapper-locations: classpath:dao/*.xml
   mapper-locations: classpath*:/dao/*.xml #其他包的也能扫描到
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: auto
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出sql语句
-    map-underscore-to-camel-case: true #开启驼峰命名转换
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   # mybatis使用分页插件
   pagehelper:
     helperDialect: mysql
@@ -89,16 +102,6 @@ mybatis:
     supportMethodsArguments: true
     params: count=countSql
 
-#springfox:
-#  documentation:
-#    swagger-ui:
-#      enabled: true # 开启swagger
-knife4j:
-  enable: true
-  setting:
-    enableDebug: false
-
-# UI 页面地址
 ui:
   # 绑定账号页面
   bind-page: http://localhost:9998/bindPage.html
@@ -106,3 +109,25 @@ ui:
   transition-page: http://localhost:9998/transition.html
   # 前端首页
   index-page: http://localhost:9998/index.html
+
+knife4j:
+  enable: true    # 是否开启Knife4j增强模式，默认值为false
+  production: true     # 对Knife4j提供的资源提供BasicHttp校验,保护文档
+  basic:
+    enable: true       # 关闭BasicHttp功能，默认为false
+    username: dangbo    # basic用户名
+    password: dangbo    # basic密码
+  documents:            # 自定义文档集合，该属性是数组
+    -
+      group: md版本    # 所属分组
+      name: 测试分组1    # 类似于接口中的tag,对于自定义文档的分组
+      locations: classpath:md/*     # markdown文件路径,可以是一个文件夹(classpath:markdowns/*)，也可以是单个文件(classpath:md/sign.md)
+    -
+      group: markdown版本
+      name: 测试分组2
+      locations: classpath:markdown/*
+  setting:            # 前端Ui的个性化配置属性
+    enableDocumentManage: true        # 是否显示界面中"文档管理"功能，默认是true
+    enableReloadCacheParameter: true # 是否在每个Debug调试栏后显示刷新变量按钮,默认不显示
+    enableRequestCache: true          # 是否开启请求参数缓存
+    enableDebug: true               # 启用调试，默认为true

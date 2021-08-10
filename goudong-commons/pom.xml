@@ -85,5 +85,10 @@
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-core</artifactId>
         </dependency>
+        <!-- mybatis-plus-boot-starter -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 </project>

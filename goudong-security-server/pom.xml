@@ -30,12 +30,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--mybatis-->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!--security-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
