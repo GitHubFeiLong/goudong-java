@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.AuthorityRolePO;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.po.AuthorityUserRolePO;
@@ -198,7 +199,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
 
         boolean error = authorityUserPOS.isEmpty() || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), authorityUserPOS.get(0).getPassword());
         if (error) {
-            BasicException.ClientException.resourceNotFound("账户名与密码不匹配，请重新输入");
+            ClientException.resourceNotFound("账户名与密码不匹配，请重新输入");
         }
         // 修改openId
         // qq

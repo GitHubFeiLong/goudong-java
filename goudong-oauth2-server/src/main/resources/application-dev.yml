@@ -89,10 +89,14 @@ mybatis:
     supportMethodsArguments: true
     params: count=countSql
 
-springfox:
-  documentation:
-    swagger-ui:
-      enabled: true # 开启swagger
+#springfox:
+#  documentation:
+#    swagger-ui:
+#      enabled: true # 开启swagger
+knife4j:
+  enable: true
+  setting:
+    enableDebug: false
 
 # UI 页面地址
 ui:

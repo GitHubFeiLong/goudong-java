@@ -1,6 +1,7 @@
 package com.goudong.commons.utils;
 
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -68,7 +69,7 @@ public class GenerateRedisKeyUtil {
             }
         } catch (StringIndexOutOfBoundsException s) {
             // redis key 中的"${}" 格式错误
-            BasicException.ServerException.methodParamError("key模板 格式错误");
+            ServerException.methodParamError("key模板 格式错误");
         }
 
         return result.toString();

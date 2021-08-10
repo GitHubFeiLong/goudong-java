@@ -82,7 +82,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException exception (ServerExceptionEnum exceptionEnum) {
-        throw new BasicException.ServerException(exceptionEnum);
+        throw new ServerException(exceptionEnum);
     }
 
     /**
@@ -91,66 +91,10 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException exception (ClientExceptionEnum exceptionEnum) {
-        throw new BasicException.ClientException(exceptionEnum);
+        throw new ClientException(exceptionEnum);
     }
 
-    /**
-     * 类描述：
-     *  客户端内部错误
-     * @ClassName ParamterInvalidException
-     * @Author msi
-     * @Date 2020/7/14 20:40
-     * @Version 1.0
-     */
-    public static class ClientException extends BasicException {
 
-        /**
-         * 资源不存在
-         * 404 Not Found
-         * @param clientMessage 客户端提示信息
-         * @return
-         */
-        public static BasicException resourceNotFound(String clientMessage){
-            log.error("资源不存在：{}", clientMessage);
-            throw new BasicException(404, "404", clientMessage, "Not Found - 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。");
-        }
 
-        public ClientException(ClientExceptionEnum clientExceptionEnum) {
-            super(clientExceptionEnum);
-        }
-
-    }
-
-    /**
-     * 类描述：
-     *  服务器内部错误
-     * @ClassName ServerException
-     * @Author msi
-     * @Date 2020/7/14 20:40
-     * @Version 1.0
-     */
-    public static class ServerException extends BasicException {
-
-        public static final String clientMessage = "服务器内部错误";
-
-        public ServerException(ServerExceptionEnum serverExceptionEnum) {
-            super(serverExceptionEnum);
-        }
-
-        public static BasicException exception(String serverMessage){
-            log.error("服务器内部错误：{}", serverMessage);
-            throw new BasicException(500, "500500", clientMessage, serverMessage);
-        }
-
-        /**
-         * 服务之间方法调用 参数错误
-         * @param serverMessage
-         * @return
-         */
-        public static BasicException methodParamError(String serverMessage){
-            log.error("服务器内部方法传参错误：{}", serverMessage);
-            throw new BasicException(400, "500400", clientMessage, serverMessage);
-        }
-    }
 
 }

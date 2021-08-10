@@ -33,7 +33,6 @@
         <spring-cloud-dependencies.version>Hoxton.SR10</spring-cloud-dependencies.version>
         <spring-cloud-alibaba-dependencies.version>2.1.0.RELEASE</spring-cloud-alibaba-dependencies.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
-        <knife4j-micro-spring-boot-starter.version>3.0.2</knife4j-micro-spring-boot-starter.version>
         <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
         <mybatis-spring-boot-starter.version>2.1.4</mybatis-spring-boot-starter.version>
         <pagehelper-spring-boot-starter.version>1.2.4</pagehelper-spring-boot-starter.version>
@@ -62,25 +61,7 @@
 
 
     <dependencies>
-        <!--swagger-->
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>${springfox-boot-starter.version}</version>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.slf4j</groupId>-->
-<!--                    <artifactId>slf4j-api</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
         <!--增强swagger-->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-micro-spring-boot-starter</artifactId>
-            <version>${knife4j-micro-spring-boot-starter.version}</version>
-        </dependency>
-        <!--增强swagger的前端ui-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>

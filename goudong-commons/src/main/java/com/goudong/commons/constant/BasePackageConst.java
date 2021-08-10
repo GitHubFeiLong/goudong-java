@@ -7,6 +7,7 @@ package com.goudong.commons.constant;
  */
 public class BasePackageConst {
     public static final String COMMONS = "com.goudong.commons";
+    public static final String GATEWAY = "com.goudong.gateway";
     public static final String MESSAGE = "com.goudong.message";
     public static final String OAUTH2 = "com.goudong.oauth2";
     public static final String SECURITY = "com.goudong.security";

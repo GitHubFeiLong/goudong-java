@@ -3,6 +3,7 @@ package com.goudong.oauth2.controller.open;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
@@ -122,7 +123,7 @@ public class OpenUerController {
         AuthorityUserDTO build = AuthorityUserDTO.builder().username(loginName).phone(loginName).email(loginName).build();
         List<AuthorityUserDTO> authorityUserDTOS = authorityUserService.listByOrAuthorityUserDTO(build);
         if (authorityUserDTOS.isEmpty()) {
-            return Result.ofFail(BasicException.ClientException.resourceNotFound("用户不存在"));
+            return Result.ofFail(ClientException.resourceNotFound("用户不存在"));
         }
         return Result.ofSuccess(authorityUserDTOS.get(0));
     }

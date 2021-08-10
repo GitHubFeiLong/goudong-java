@@ -1,16 +1,15 @@
 # goudong
-该项目使用 spring cloud、spring cloud alibaba、spring boot搭建的微服务项目，其中ORM框架采用了MyBatis，权限认证使用的是spring security，通过token进行无状态登录认证，
-，后端框架包含有：、mybatis、jwt、log4j2、
+该项目是使用maven进行打包构建，使用Spring Boot、Spring Cloud、Spring Cloud Alibaba搭建的微服务电商后端项目，该项目提供的接口根据Restful接口风格进行设计
 ## 软件及配置项
 ### 依赖的软件/组件及其版本
 | 软件/组件       | 版本  |
 | ----- | -----  |
-| MySQL | 8.0.16| 
-| Redis | 3.0.504(后期会升高)| 
-| MongoDB | 4.4| 
-| Erlang | 11| 
-| RabbitMQ | 3.8.9| 
-| Nacos | 1.4.0| 
+| MySQL | 8.0.16|
+| Redis | 3.0.504(后期会升高)|
+| MongoDB | 4.4|
+| Erlang | 11|
+| RabbitMQ | 3.8.9|
+| Nacos | 1.4.0|
 
 ### 操作系统环境变量配置
 需要修改自己对应的属性值。

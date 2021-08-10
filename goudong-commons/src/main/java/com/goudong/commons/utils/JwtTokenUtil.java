@@ -23,7 +23,7 @@ import java.util.Date;
 
 /**
  * 类描述：
- *
+ * token工具类
  * @ClassName TokenUtil
  * @Author msi
  * @Date 2020/6/12 19:57
@@ -96,8 +96,6 @@ public class JwtTokenUtil {
 
         return TOKEN_BEARER_PREFIX + token;
     }
-
-
 
     /**
      * 解析token字符串

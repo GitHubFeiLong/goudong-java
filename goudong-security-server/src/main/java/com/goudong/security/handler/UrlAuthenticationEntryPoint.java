@@ -3,6 +3,7 @@ package com.goudong.security.handler;
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.Result;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -26,7 +27,7 @@ public class UrlAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         ClientExceptionEnum notAuthentication = ClientExceptionEnum.UNAUTHORIZED;
-        Result result = Result.ofFail(new BasicException.ClientException(notAuthentication));
+        Result result = Result.ofFail(new ClientException(notAuthentication));
 
         httpServletResponse.setStatus(notAuthentication.getStatus());
         httpServletResponse.setCharacterEncoding("UTF-8");

@@ -18,6 +18,6 @@ import javax.annotation.Resource;
 public class ApplicationRunnerConfig implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("启动服务了");
+        log.debug("启动服务了");
     }
 }
