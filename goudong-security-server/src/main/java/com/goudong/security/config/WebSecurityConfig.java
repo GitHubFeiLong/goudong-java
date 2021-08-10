@@ -1,9 +1,13 @@
 package com.goudong.security.config;
 
+import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.po.AuthorityIgnoreResourcePO;
+import com.goudong.commons.pojo.IgnoreResourceAntMatchers;
+import com.goudong.commons.utils.RedisValueUtil;
 import com.goudong.security.dao.SelfAuthorityIgnoreResourceDao;
 import com.goudong.security.filter.JwtAuthorizationFilter;
 import com.goudong.security.handler.*;
+import com.goudong.security.scheduler.IgnoreResourceScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +27,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -98,7 +103,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 拦截白名单查询
      */
     @Resource
-    private SelfAuthorityIgnoreResourceDao selfAuthorityIgnoreResourceDao;
+    private IgnoreResourceScheduler ignoreResourceScheduler;
+
+    @Resource
+    private RedisValueUtil redisValueUtil;
 
     /**
      * 加密方式
@@ -115,29 +123,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) {
-        List<AuthorityIgnoreResourcePO> authorityIgnoreResourcePOS = selfAuthorityIgnoreResourceDao.selectAll();
-        if (!authorityIgnoreResourcePOS.isEmpty()) {
-            authorityIgnoreResourcePOS.stream()
-                    .filter(f->!f.getIsDelete())
-                    .forEach(p1->{
-                        String[] methods;
-                        if ("*".equals(p1.getMethod())) {
-                            methods = new String[]{"GET", "POST", "PUT", "DELETE"};
-                        } else {
-                            // 数据库设置的该路径的请求方式用逗号进行分割
-                            methods = p1.getMethod().split(",");
-                            Assert.isTrue(methods != null && methods.length > 0, "请求方式为空");
-                        }
-                        Stream.of(methods).forEach(p2->{
-                            web.ignoring().antMatchers(HttpMethod.resolve(p2.toUpperCase()), p1.getUrl());
-                        });
-                    });
-        }
+        // 获取忽略资源
+        List<IgnoreResourceAntMatchers> antMatchersList = ignoreResourceScheduler.getIgnoreResourceAntMatchers();
 
+        // 添加忽略资源
+        antMatchersList.stream().forEach(p->{
+            web.ignoring().antMatchers(p.getHttpMethod(), p.getUrl());
+        });
 
+        // 保存到redis
+        redisValueUtil.setValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, antMatchersList);
 
         log.info("ignore url >> {}", web.toString());
     }
+
+
 
     /**
      * 自定义登录认证

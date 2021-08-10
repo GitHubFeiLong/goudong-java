@@ -1,8 +1,6 @@
 package com.goudong.commons.enumerate;
 
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,18 +20,27 @@ public enum RedisKeyEnum {
      */
     REPEAT_URI("gd:repeat:${uri}:${userUuid}", 2, TimeUnit.SECONDS),
 
+    /*====================== goudong-oauth2-server ======================*/
+    /**
+     * 认证服务中的登录信息，保存登录用户的token
+     * @param ${uuid} 登录人的主键
+     */
+    OAUTH2_LOGIN_INFO("gd:oauth2:login-info:token:${uuid}"),
+    /**
+     * 认证服务中的 忽略资源
+     */
+    OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource"),
+
+    /*====================== goudong-message-server ======================*/
     /**
      * 消息服务中的验证码，保存邮箱验证码和短信验证码
      * @param ${email|phone} 邮箱或者手机号
      */
     MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES),
 
-    /**
-     * 认证服务中的登录信息，保存登录用户的token
-     * @param ${uuid} 登录人的主键
-     */
-    OAUTH2_LOGIN_INFO("gd:oauth2:login-info:token:${uuid}"),
+
     ;
+
 
     /**
      * redis key template
