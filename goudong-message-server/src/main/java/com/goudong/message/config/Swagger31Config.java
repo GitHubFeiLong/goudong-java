@@ -11,8 +11,6 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -28,8 +26,8 @@ import java.util.LinkedHashSet;
  * @Date 2020/10/17 10:00
  * @Version 1.0
  */
-//@Configuration
-public class Swagger3Config {
+@Configuration
+public class Swagger31Config {
 
     /**
      * 开放接口组
@@ -47,7 +45,7 @@ public class Swagger3Config {
                 .enable(true)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.message.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.open"))
                 //只有标记了@ApiOperation的方法才会暴露出给swagger
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())

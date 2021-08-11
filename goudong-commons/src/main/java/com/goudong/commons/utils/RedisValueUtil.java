@@ -3,14 +3,11 @@ package com.goudong.commons.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.exception.BasicException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 2020/12/28 11:24
  * @Version 1.0
  */
+@Deprecated
 @Slf4j
 @Component
 public class RedisValueUtil {

@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /api/oauth2
 spring:
+  main:
+    allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
   application:
     name: goudong-oauth2-server #微服务名
   # json日期格式化
@@ -111,23 +113,11 @@ ui:
   index-page: http://localhost:9998/index.html
 
 knife4j:
-  enable: true    # 是否开启Knife4j增强模式，默认值为false
-  production: true     # 对Knife4j提供的资源提供BasicHttp校验,保护文档
+  enable: true         # 是否开启Knife4j增强模式，默认值为false
+  production: false    # 生产环境开启
   basic:
-    enable: true       # 关闭BasicHttp功能，默认为false
-    username: dangbo    # basic用户名
-    password: dangbo    # basic密码
-  documents:            # 自定义文档集合，该属性是数组
-    -
-      group: md版本    # 所属分组
-      name: 测试分组1    # 类似于接口中的tag,对于自定义文档的分组
-      locations: classpath:md/*     # markdown文件路径,可以是一个文件夹(classpath:markdowns/*)，也可以是单个文件(classpath:md/sign.md)
-    -
-      group: markdown版本
-      name: 测试分组2
-      locations: classpath:markdown/*
-  setting:            # 前端Ui的个性化配置属性
-    enableDocumentManage: true        # 是否显示界面中"文档管理"功能，默认是true
-    enableReloadCacheParameter: true # 是否在每个Debug调试栏后显示刷新变量按钮,默认不显示
-    enableRequestCache: true          # 是否开启请求参数缓存
-    enableDebug: true               # 启用调试，默认为true
+    enable: true       # BasicHttp功能，默认为false
+    username: admin    # 用户名
+    password: 123456   # 密码
+  setting:             # 前端Ui的个性化配置属性
+    enableDebug: false # 启用调试，默认为true 无效

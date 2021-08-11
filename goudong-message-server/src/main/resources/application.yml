@@ -68,3 +68,8 @@ alibaba:
     accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
     signName: ${ALIBABA_MESSAGE_SIGN_NAME}
     templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
+
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true # 开启swagger

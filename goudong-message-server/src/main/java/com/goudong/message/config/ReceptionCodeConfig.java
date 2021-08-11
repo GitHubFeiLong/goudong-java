@@ -3,7 +3,7 @@ package com.goudong.message.config;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.openfeign.oauth2.InvalidEmailClient;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.RedisValueUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.message.util.CodeUtil;
 import com.goudong.message.util.SendSms;
 import com.rabbitmq.client.Channel;
@@ -25,7 +25,6 @@ import javax.mail.internet.MimeMessage;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * 消费 验证码交换机的队列消息
@@ -43,7 +42,7 @@ public class ReceptionCodeConfig {
     private InvalidEmailClient invalidEmailClient;
 
     @Resource
-    private RedisValueUtil redisValueUtil;
+    private RedisOperationsUtil redisOperationsUtil;
 
     @Resource
     private JavaMailSenderImpl javaMailSender;
@@ -72,7 +71,7 @@ public class ReceptionCodeConfig {
         // 验证码
         String code = CodeUtil.generate();
         log.debug("email:{}, code:{}", email, code);
-        redisValueUtil.setValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, email);
+        redisOperationsUtil.setStringValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, email);
         // 发送邮件
         sendEmailCode(email, code);
     }
@@ -100,7 +99,7 @@ public class ReceptionCodeConfig {
         // 验证码
         String code = CodeUtil.generate();
         log.debug("phone:{}, code:{}", phone, code);
-        redisValueUtil.setValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, phone);
+        redisOperationsUtil.setStringValue(RedisKeyEnum.MESSAGE_AUTH_CODE, code, phone);
         // 发送短信
         sendSms.sendCode(phone, code);
     }
@@ -129,11 +128,11 @@ public class ReceptionCodeConfig {
             log.error("邮箱登录账号失败");
             e.printStackTrace();
             // 删除redis中的key
-            redisValueUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
+            redisOperationsUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
         } catch (MailSendException e) {
             log.error("发送邮件失败: {}", email);
             // 删除redis中的key
-            redisValueUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
+            redisOperationsUtil.deleteKey(RedisKeyEnum.MESSAGE_AUTH_CODE, email);
             e.printStackTrace();
         }
     }

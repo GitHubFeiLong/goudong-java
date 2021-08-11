@@ -1,8 +1,6 @@
 server:
   port: 10000
 spring:
-  profiles:
-    active: dev
   application:
     name: goudong-gateway-server
   cloud:

@@ -5,7 +5,7 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.RedisValueUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.message.config.CodeDirectRabbitConfig;
 import com.goudong.message.sender.EmailCodeRoutingKeySender;
 import io.swagger.annotations.Api;
@@ -42,7 +42,7 @@ public class CodeController {
     private RabbitTemplate rabbitTemplate;
 
     @Resource
-    private RedisValueUtil redisValueUtil;
+    private RedisOperationsUtil redisOperationsUtil;
 
     @Resource
     private EmailCodeRoutingKeySender emailCodeRoutingKeySender;
@@ -92,7 +92,7 @@ public class CodeController {
         @ApiImplicitParam(name = "code", value = "验证码", required = true)
     })
     public Result<Boolean> checkCode (@PathVariable String number, @PathVariable String code) {
-        String redisValue = redisValueUtil.getValue(RedisKeyEnum.MESSAGE_AUTH_CODE, number);
+        String redisValue = redisOperationsUtil.getStringValue(RedisKeyEnum.MESSAGE_AUTH_CODE, number);
         if (redisValue == null || !code.equals(redisValue)) {
             return Result.ofSuccess(false);
         }

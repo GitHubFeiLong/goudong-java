@@ -1,12 +1,17 @@
 package com.goudong.security.config;
 
+import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.pojo.IgnoreResourceAntMatchers;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.security.dao.SelfAuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -28,6 +33,9 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
     @Resource
     private SelfAuthorityUserDao selfAuthorityUserDao;
 
+    @Resource
+    private RedisOperationsUtil redisOperationsUtil;
+
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         // 获取请求地址
@@ -45,6 +53,7 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
         // 获取请求的方法
         String requestMethod = ((FilterInvocation) o).getHttpRequest().getMethod();
         log.info("requestUrI >> {}，requestMethod >> {}", requestUrI, requestMethod);
+
         // 查询 请求方式的url 需要哪些权限
         List<String> roleNames = selfAuthorityUserDao.selectRoleNameByMenu(requestUrI, requestMethod);
         // 没有角色匹配

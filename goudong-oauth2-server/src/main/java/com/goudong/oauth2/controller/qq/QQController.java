@@ -4,7 +4,7 @@ import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisValueUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.oauth2.config.UIProperties;
 import com.goudong.oauth2.entity.OtherUserInfoBean;
 import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
@@ -50,7 +50,7 @@ public class QQController {
     private AuthorityUserService userService;
 
     @Resource
-    private RedisValueUtil redisValueUtil;
+    private RedisOperationsUtil redisOperationsUtil;
 
     /**
      * qq登录
@@ -106,7 +106,8 @@ public class QQController {
                 // 设置到响应头里
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
                 // 添加信息到redis中
-                redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
+                redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
+
                 Transition transition = Transition.builder()
                         .token(token)
                         .redirectUrl(uiProperties.getIndexPage())

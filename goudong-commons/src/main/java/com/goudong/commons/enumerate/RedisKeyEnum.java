@@ -1,6 +1,7 @@
 package com.goudong.commons.enumerate;
 
 import lombok.Getter;
+import org.springframework.data.redis.connection.DataType;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +30,7 @@ public enum RedisKeyEnum {
     /**
      * 认证服务中的 忽略资源
      */
-    OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource"),
+    OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource", DataType.LIST),
 
     /*====================== goudong-message-server ======================*/
     /**
@@ -47,6 +48,12 @@ public enum RedisKeyEnum {
      */
     private String key;
     /**
+     * redis的value数据类型
+     * 默认是String
+     * @see DataType
+     */
+    private DataType dataType = DataType.STRING;
+    /**
      * redis key 时间，默认3
      * 注意：当值小于0时，表示不设置失效时间
      */
@@ -59,9 +66,23 @@ public enum RedisKeyEnum {
     RedisKeyEnum(String key){
         this.key = key;
     }
+    RedisKeyEnum(String key, int time) {
+        this.key = key;
+        this.time = time;
+    }
+    RedisKeyEnum(String key, DataType dataType){
+        this.key = key;
+        this.dataType = dataType;
+    }
     RedisKeyEnum(String key, int time, TimeUnit timeUnit) {
         this.key = key;
         this.time = time;
         this.timeUnit = timeUnit;
+    }
+    RedisKeyEnum(String key, int time, TimeUnit timeUnit, DataType dataType) {
+        this.key = key;
+        this.time = time;
+        this.timeUnit = timeUnit;
+        this.dataType = dataType;
     }
 }

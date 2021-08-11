@@ -6,7 +6,7 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisValueUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.security.dao.SelfAuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -36,7 +35,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     private SelfAuthorityUserDao selfAuthorityUserDao;
 
     @Resource
-    private RedisValueUtil redisValueUtil;
+    private RedisOperationsUtil redisOperationsUtil;
+
     /**
      *
      * @param httpServletRequest
@@ -66,8 +66,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 设置到响应头里
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
         // 添加信息到redis中
-
-        redisValueUtil.setValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
+        redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
 
         out.flush();
         out.close();

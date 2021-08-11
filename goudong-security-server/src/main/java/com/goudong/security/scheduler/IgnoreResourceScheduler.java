@@ -3,12 +3,11 @@ package com.goudong.security.scheduler;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.po.AuthorityIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatchers;
-import com.goudong.commons.utils.RedisValueUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.security.dao.SelfAuthorityIgnoreResourceDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -29,19 +28,17 @@ import java.util.stream.Stream;
 public class IgnoreResourceScheduler {
 
     @Resource
-    private RedisValueUtil redisValueUtil;
-
-    @Resource
     private SelfAuthorityIgnoreResourceDao selfAuthorityIgnoreResourceDao;
 
     @Resource
-    private WebSecurity webSecurity;
+    private RedisOperationsUtil redisOperationsUtil;
 
     //每隔2秒执行一次
-    @Scheduled(fixedRate = 2000)
+    @Scheduled(fixedRate = 20000)
     public void testTasks() {
         List<IgnoreResourceAntMatchers> ignoreResourceAntMatchers = getIgnoreResourceAntMatchers();
         log.info("定时器：{}", ignoreResourceAntMatchers);
+        redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, ignoreResourceAntMatchers);
     }
     /**
      * 获取后台设置的忽略资源
@@ -72,7 +69,6 @@ public class IgnoreResourceScheduler {
                     });
         }
 
-        redisValueUtil.setValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, antMatchersList);
         return antMatchersList;
     }
 

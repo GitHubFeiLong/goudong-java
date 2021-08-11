@@ -1,17 +1,12 @@
 package com.goudong.security.config;
 
-import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.po.AuthorityIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatchers;
-import com.goudong.commons.utils.RedisValueUtil;
-import com.goudong.security.dao.SelfAuthorityIgnoreResourceDao;
 import com.goudong.security.filter.JwtAuthorizationFilter;
 import com.goudong.security.handler.*;
 import com.goudong.security.scheduler.IgnoreResourceScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,13 +18,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * 类描述：
@@ -105,8 +97,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private IgnoreResourceScheduler ignoreResourceScheduler;
 
-    @Resource
-    private RedisValueUtil redisValueUtil;
 
     /**
      * 加密方式
@@ -131,13 +121,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             web.ignoring().antMatchers(p.getHttpMethod(), p.getUrl());
         });
 
-        // 保存到redis
-        redisValueUtil.setValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, antMatchersList);
-
         log.info("ignore url >> {}", web.toString());
     }
-
-
 
     /**
      * 自定义登录认证

@@ -5,7 +5,7 @@ import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisValueUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -13,7 +13,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -34,7 +33,7 @@ import java.util.Objects;
 public class RepeatAop {
 
 	@Resource
-	private RedisValueUtil redisValueUtil;
+	private RedisOperationsUtil redisOperationsUtil;
 
 	/**
 	 * 定义切点：使用了注解@RepeatSubmitAnnotation的所有方法和类
@@ -65,12 +64,11 @@ public class RepeatAop {
 
 		String userUuid= JwtTokenUtil.getUserUuid(request);
 
-		Object value = redisValueUtil.getValue(RedisKeyEnum.REPEAT_URI, request.getRequestURI(), userUuid);
-
+		String value = redisOperationsUtil.getStringValue(RedisKeyEnum.REPEAT_URI, request.getRequestURI(), userUuid);
 		// redis中没有指定key，符合条件则继续执行，否则终止方法的执行
-		if (ObjectUtils.isEmpty(value)) {
+		if (value == null) {
 			// 将key存在redis中，指定时间
-			redisValueUtil.setValue(RedisKeyEnum.REPEAT_URI, 1, repeat.time(), repeat.timeUnit(), request.getRequestURI(), userUuid);
+			redisOperationsUtil.setStringValue(RedisKeyEnum.REPEAT_URI, "1", repeat.time(), repeat.timeUnit(), request.getRequestURI(), userUuid);
 			// 执行方法
 			ret =  pjp.proceed();
 		} else {

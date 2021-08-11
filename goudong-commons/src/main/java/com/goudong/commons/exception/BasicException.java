@@ -1,8 +1,6 @@
 package com.goudong.commons.exception;
 
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

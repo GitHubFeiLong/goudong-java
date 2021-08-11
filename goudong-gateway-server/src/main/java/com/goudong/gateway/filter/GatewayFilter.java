@@ -32,7 +32,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         // 只要带上了token， 就需要判断Token是否有效
         if (!StringUtils.isEmpty(headerToken)) {
             log.info("headerToken:{}", headerToken);
-            JwtTokenUtil.resolveToken(headerToken);
+//            JwtTokenUtil.resolveToken(headerToken);
         }
 
         return chain.filter(exchange);

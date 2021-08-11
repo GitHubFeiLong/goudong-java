@@ -144,7 +144,7 @@ public class JwtTokenUtil {
      * @param token
      * @return
      */
-    private static String generateNativeToken (String token) {
+    public static String generateNativeToken (String token) {
         // token 格式不对
         boolean isFormatError = token == null
                 || !(token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX) || token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX));
@@ -157,7 +157,7 @@ public class JwtTokenUtil {
         }
         // 去掉前面的 "Basic "字符串
         if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
-            return token.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
+            return token.replace(JwtTokenUtil.TOKEN_BASIC_PREFIX, "");
         }
 
         return null;

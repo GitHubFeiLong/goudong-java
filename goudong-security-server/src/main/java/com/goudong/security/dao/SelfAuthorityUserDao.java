@@ -1,13 +1,8 @@
 package com.goudong.security.dao;
 
 
-
-
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.po.AuthorityUserPO;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -26,6 +21,7 @@ public interface SelfAuthorityUserDao {
      * @param userPO 用户对象
      * @return
      */
+    @Deprecated
     List<AuthorityUserPO> selectUser(AuthorityUserPO userPO);
 
     /************/

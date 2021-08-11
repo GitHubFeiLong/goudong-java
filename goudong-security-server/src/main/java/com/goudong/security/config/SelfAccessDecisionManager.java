@@ -38,9 +38,6 @@ public class SelfAccessDecisionManager implements AccessDecisionManager {
             // 当前请求需要的权限
             String needRole = configAttribute.getAttribute();
             if ("ROLE_ANONYMOUS".equals(needRole)) {
-//                if (authentication instanceof AnonymousAuthenticationToken) {
-//                    throw new BadCredentialsException("Not logged in!!");
-//                }
                 return;
             }
             // 当前用户所具有的权限

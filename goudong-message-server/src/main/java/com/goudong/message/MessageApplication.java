@@ -18,7 +18,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Version 1.0
  */
 @EnableFeignClients(basePackages = {BasePackageConst.COMMONS})
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
 public class MessageApplication {
     public static void main(String[] args) {
