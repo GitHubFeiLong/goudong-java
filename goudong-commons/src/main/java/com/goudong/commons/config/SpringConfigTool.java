@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 类描述：
- *
+ * 获取Spring容器中的Bean工具类
  * @Author e-Feilong.Chen
  * @Date 2021/8/11 15:25
  */

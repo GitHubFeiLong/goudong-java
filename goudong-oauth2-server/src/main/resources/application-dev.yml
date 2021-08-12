@@ -5,6 +5,8 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
+  mvc:
+    throw-exception-if-no-handler-found: true
   application:
     name: goudong-oauth2-server #微服务名
   # json日期格式化
@@ -77,6 +79,7 @@ spring:
     locations: classpath:db/migration #迁移脚本的位置，默认db/migration
     baseline-on-migrate: true
     out-of-order: false
+
 
 mybatis-plus:
   #  mapper-locations: classpath:dao/*.xml

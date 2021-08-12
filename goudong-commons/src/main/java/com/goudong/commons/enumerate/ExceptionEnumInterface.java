@@ -2,7 +2,7 @@ package com.goudong.commons.enumerate;
 
 /**
  * 接口描述：
- *
+ * 定义异常枚举的方法
  * @Author msi
  * @Date 2021-05-15 10:41
  * @Version 1.0
