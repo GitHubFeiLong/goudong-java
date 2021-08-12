@@ -7,6 +7,8 @@ spring:
     allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
   mvc:
     throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false #工程中的资源文件建立映射
   application:
     name: goudong-oauth2-server #微服务名
   # json日期格式化

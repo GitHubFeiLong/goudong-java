@@ -93,12 +93,24 @@ public class Result<T> implements Serializable {
     public static Result<Object> ofSuccess() {
         return new Result(Result.SUCCESS);
     }
+
     /**
      * 返回成功,带数据
      * @return
      */
     public static <T> Result<T> ofSuccess(T t) {
         return new Result(Result.SUCCESS, null, null, t);
+    }
+
+    /**
+     * 返回成功,提示用户信息,并携带一些数据
+     * @param clientMessage
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public static <T> Result<T> ofSuccess(String clientMessage, T t) {
+        return new Result(Result.SUCCESS, clientMessage, null, t);
     }
 
     /**

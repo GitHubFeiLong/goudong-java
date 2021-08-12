@@ -7,9 +7,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 类描述：
@@ -18,19 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @Date 2021-05-02 13:33
  * @Version 1.0
  */
-@Api(tags = "登录后操作用户")
+@Api(tags = "登录")
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("/user")
 public class AuthorityUserController {
 
-    /**
-     * 登录
-     * @param username
-     * @param password
-     * @return
-     */
     @PostMapping("/login")
     @ApiOperation(value = "登录")
     @ApiImplicitParams({
@@ -38,7 +30,12 @@ public class AuthorityUserController {
             @ApiImplicitParam(name = "password", value = "密码", required = true),
     })
     public Result login (String username, String password) {
-        log.info("123123");
+        return Result.ofSuccess();
+    }
+
+    @PutMapping("/logout")
+    @ApiOperation(value = "注销")
+    public Result logout () {
         return Result.ofSuccess();
     }
 }

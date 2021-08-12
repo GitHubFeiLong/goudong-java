@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisOperationsUtil extends RedisTemplate implements RedisOperations{
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 获取 dataType 为String的value
@@ -36,7 +34,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
 
-        return stringRedisTemplate.opsForValue().get(key);
+        return (String) super.opsForValue().get(key);
     }
 
     /**
@@ -154,8 +152,12 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
         if (super.hasKey(key)) {
             super.delete(key);
         }
-        super.opsForList().leftPushAll(key, value);
-        expire(key, redisKeyEnum);
+        // 当value为空集合时添加会报错,所以这里判断下
+        if (value != null && !value.isEmpty()) {
+            super.opsForList().leftPushAll(key, value);
+            expire(key, redisKeyEnum);
+        }
+
     }
 
     /**

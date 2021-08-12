@@ -34,7 +34,7 @@ public class IgnoreResourceScheduler {
     private RedisOperationsUtil redisOperationsUtil;
 
     //每隔2秒执行一次
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 200000)
     public void testTasks() {
         List<IgnoreResourceAntMatchers> ignoreResourceAntMatchers = getIgnoreResourceAntMatchers();
         log.info("定时器：{}", ignoreResourceAntMatchers);

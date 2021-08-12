@@ -90,10 +90,6 @@ mybatis:
     supportMethodsArguments: true
     params: count=countSql
 
-springfox:
-  documentation:
-    swagger-ui:
-      enabled: false # swagger 不显示
 
 # 自定义配置
 ui:

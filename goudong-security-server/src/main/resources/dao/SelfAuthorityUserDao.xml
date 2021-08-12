@@ -36,20 +36,28 @@
         and <include refid="validTimeConditionSQL"/> and is_delete = false
     </select>
     <resultMap id="userDetailResultMap" type="com.goudong.commons.dto.AuthorityUserDTO">
-        <result column="uuid" property="uuid"></result>
-        <result column="username" property="username"></result>
-        <result column="password" property="password"></result>
-        <result column="email" property="email"></result>
-        <result column="phone" property="phone"></result>
-        <result column="nickname" property="nickname"></result>
-        <result column="remark" property="remark"></result>
-        <result column="valid_time" property="validTime"></result>
-        <result column="update_time" property="updateTime"></result>
-        <result column="create_time" property="createTime"></result>
+        <result column="uuid" property="uuid"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="nickname" property="nickname"/>
+        <result column="remark" property="remark"/>
+        <result column="valid_time" property="validTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
         <collection property="authorityRoleDTOS" ofType="com.goudong.commons.dto.AuthorityRoleDTO">
-            <result column="ar_role_name" property="roleName"></result>
-            <result column="ar_role_name_CN" property="roleNameCn"></result>
-            <result column="ar_remark" property="remark"></result>
+            <result column="ar_role_name" property="roleName"/>
+            <result column="ar_role_name_CN" property="roleNameCn"/>
+            <result column="ar_remark" property="remark"/>
+        </collection>
+        <collection property="authorityMenuDTOS" ofType="com.goudong.commons.dto.AuthorityMenuDTO">
+            <result column="amUuid" property="uuid"/>
+            <result column="amUrl" property="url"/>
+            <result column="amMethod" property="method"/>
+            <result column="amMenuName" property="menuName"/>
+            <result column="amParentUuid" property="parentUuid"/>
+            <result column="amRemark" property="remark"/>
         </collection>
     </resultMap>
     <select id="selectUserDetailByUsername" resultMap="userDetailResultMap">
@@ -66,13 +74,21 @@
             au.create_time,
             ar.role_name ar_role_name,
             ar.role_name_CN ar_role_name_CN,
-            ar.remark ar_remark
+            ar.remark ar_remark,
+            am.uuid amUuid,
+            am.url amUrl,
+            am.method amMethod,
+            am.menu_name amMenuName,
+            am.parent_uuid amParentUuid,
+            am.remark amRemark
         from authority_user au
-        inner join authority_user_role aur on au.uuid=aur.user_uuid
-        inner join authority_role ar on aur.role_uuid = ar.uuid
+        inner join authority_user_role aur on au.uuid = aur.user_uuid and aur.is_delete = 0
+        inner join authority_role ar on aur.role_uuid = ar.uuid and ar.is_delete = 0
+        left join authority_role_menu arm on arm.role_uuid = ar.uuid and arm.is_delete = 0
+        left join authority_menu am on am.uuid = arm.menu_uuid and am.is_delete = 0
         where <include refid="usernameConditionSQL"/>
         and <include refid="validTimeConditionSQL"/>
-        and au.is_delete = false and ar.is_delete = false
+        and au.is_delete = false
     </select>
     <select id="selectRoleNameByMenu" resultType="java.lang.String">
         select

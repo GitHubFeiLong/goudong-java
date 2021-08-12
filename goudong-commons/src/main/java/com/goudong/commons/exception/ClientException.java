@@ -11,6 +11,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ClientException extends BasicException {
+
+    /**
+     * 代替 构造方法(用起舒服些)
+     * @param clientExceptionEnum
+     * @return
+     */
+    public static ClientException clientException (ClientExceptionEnum clientExceptionEnum) {
+        return  new ClientException(clientExceptionEnum);
+    }
+
     /**
      * 资源不存在
      * 404 Not Found

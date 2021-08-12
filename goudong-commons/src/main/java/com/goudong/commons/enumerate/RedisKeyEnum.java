@@ -19,25 +19,32 @@ public enum RedisKeyEnum {
      * 重复提交uri记录
      * @param ${uri} 请求地址; ${userUuid} 用户uuid
      */
-    REPEAT_URI("gd:repeat:${uri}:${userUuid}", 2, TimeUnit.SECONDS),
+    REPEAT_URI("gd:repeat:${uri}:${userUuid}", 2, TimeUnit.SECONDS, DataType.STRING),
 
     /*====================== goudong-oauth2-server ======================*/
     /**
      * 认证服务中的登录信息，保存登录用户的token
      * @param ${uuid} 登录人的主键
      */
-    OAUTH2_LOGIN_INFO("gd:oauth2:login-info:token:${uuid}"),
+    OAUTH2_TOKEN_INFO("gd:oauth2:login-info:token:${uuid}", DataType.STRING),
+
     /**
      * 认证服务中的 忽略资源
      */
     OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource", DataType.LIST),
+
+    /**
+     * 认证服务中的 用户能访问菜单集合
+     * @param uuid 用户uuid
+     */
+    OAUTH2_USER_MENU("gd:oauth2:user-menu:${uuid}", DataType.LIST),
 
     /*====================== goudong-message-server ======================*/
     /**
      * 消息服务中的验证码，保存邮箱验证码和短信验证码
      * @param ${email|phone} 邮箱或者手机号
      */
-    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES),
+    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES, DataType.STRING),
 
 
     ;

@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     /**
-     * 获取bean
+     * 获取 Redis操作bean
      */
     private RedisOperationsUtil redisOperationsUtil = (RedisOperationsUtil)SpringConfigTool.getBean("redisOperationsUtil");
 
@@ -69,11 +69,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        // swagger 请求
-        if (new AntPathMatcher().match("/**/doc.html", request.getRequestURI())) {
-            chain.doFilter(request, response);
-            return;
-        }
 
         List<IgnoreResourceAntMatchers> listValue = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE);
         // 如果当前请求是白名单，就放过
@@ -88,8 +83,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                             return new AntPathMatcher().match(patternPath, requestPath);
                         }
                         return false;
-                    })
-                    .count();
+                    }).count();
 
             if (count > 0) {
                 chain.doFilter(request, response);

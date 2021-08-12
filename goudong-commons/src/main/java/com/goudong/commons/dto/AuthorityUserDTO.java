@@ -95,6 +95,11 @@ public class AuthorityUserDTO implements Serializable {
     private List<AuthorityRoleDTO> authorityRoleDTOS;
 
     /**
+     * 菜单
+     */
+    private List<AuthorityMenuDTO> authorityMenuDTOS;
+
+    /**
      * 用户名、电话或邮箱
      */
     private String loginName;

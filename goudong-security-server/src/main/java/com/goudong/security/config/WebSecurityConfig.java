@@ -181,7 +181,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 开启自动配置的注销功能
         http.logout() //用户注销, 清空session
                 //自定义注销请求路径
-                .logoutUrl("/api/oauth2/open/user/logout")
+                .logoutUrl("/user/logout")
                 //注销成功处理器(前后端分离)：返回状态码200
                 .logoutSuccessHandler(logoutSuccessHandler);
 

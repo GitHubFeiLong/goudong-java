@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.qq;
 
+import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.Transition;
@@ -27,7 +28,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -106,7 +109,11 @@ public class QQController {
                 // 设置到响应头里
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
                 // 添加信息到redis中
-                redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_LOGIN_INFO, token, authorityUserDTO.getUuid());
+                redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getUuid());
+
+                // 为了登陆后方便判断用户是否能访问某个url,事先将能访问的菜单url放入redis中
+                List<AuthorityMenuDTO> authorityMenuDTOS = authorityUserDTO.getAuthorityMenuDTOS();
+                redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_MENU, authorityMenuDTOS, authorityUserDTO.getUuid());
 
                 Transition transition = Transition.builder()
                         .token(token)
