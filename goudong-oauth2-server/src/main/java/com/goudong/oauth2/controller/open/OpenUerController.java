@@ -148,4 +148,15 @@ public class OpenUerController {
         AuthorityUserVO userVO = BeanUtil.copyProperties(userDTO1, AuthorityUserVO.class);
         return Result.ofSuccess(userVO);
     }
+
+    /**
+     * 查询用户的基本信息
+     * @param loginName 用户名/手机号/邮箱
+     * @return
+     */
+    @GetMapping("/detail-info/{login-name}")
+    public Result<AuthorityUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName){
+        AuthorityUserDTO authorityUserDTO = authorityUserService.getUserDetailByLoginName(loginName);
+        return Result.ofSuccess(authorityUserDTO);
+    }
 }

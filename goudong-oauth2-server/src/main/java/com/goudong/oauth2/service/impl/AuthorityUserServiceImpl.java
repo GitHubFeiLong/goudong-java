@@ -10,11 +10,13 @@ import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.po.AuthorityUserRolePO;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.oauth2.dao.AuthorityRoleDao;
 import com.goudong.oauth2.dao.AuthorityUserDao;
 import com.goudong.oauth2.dao.AuthorityUserRoleDao;
 import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
 import com.goudong.oauth2.service.AuthorityUserService;
+import com.goudong.security.dao.SelfAuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -45,6 +47,10 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
     private AuthorityRoleDao authorityRoleDao;
     @Resource
     private AuthorityUserRoleDao authorityUserRoleDao;
+    @Resource
+    private SelfAuthorityUserDao selfAuthorityUserDao;
+    @Resource
+    private RedisOperationsUtil redisOperationsUtil;
 
     /**
      * 根据 AuthorityUserDTO对象，使用逻辑与条件 查询 authority_user表
@@ -213,5 +219,18 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
         // 查询返回
         authorityUserPOS.get(0).setQqOpenId(userDTO.getQqOpenId());
         return BeanUtil.copyProperties(authorityUserPOS.get(0), AuthorityUserDTO.class);
+    }
+
+    /**
+     * 根据用户名或者电话号或者邮箱 查询用户的详细信息。包含用户信息，角色信息，权限信息
+     *
+     * @param loginName
+     * @return
+     */
+    @Override
+    public AuthorityUserDTO getUserDetailByLoginName(String loginName) {
+        AuthorityUserDTO authorityUserDTO = selfAuthorityUserDao.selectUserDetailByUsername(loginName);
+//        redisOperationsUtil.set
+        return authorityUserDTO;
     }
 }

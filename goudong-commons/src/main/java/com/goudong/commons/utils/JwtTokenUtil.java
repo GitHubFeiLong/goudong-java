@@ -8,18 +8,27 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.pojo.Result;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 类描述：
@@ -103,6 +112,23 @@ public class JwtTokenUtil {
      */
     public static AuthorityUserDTO resolveToken(String token) {
 
+        // 判断请求头是Bearer 还是 Basic 开头
+        if (token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
+            return getAuthorityUserDTOByBearer(token);
+        } else if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
+            return getAuthenticationByBasic(token);
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
+     * Basic方式 解码 base64字符串
+     * @param token
+     * @return
+     */
+    private static AuthorityUserDTO getAuthorityUserDTOByBearer(String token) {
         // 将加工后的转换原生token（没有Bearer ，Basic 字符串）
         String nativeToken = generateNativeToken(token);
 
@@ -122,6 +148,44 @@ public class JwtTokenUtil {
         String result = jwt.getAudience().get(0);
         log.info("result:{}",result);
         return JSON.parseObject(result, AuthorityUserDTO.class);
+    }
+
+
+    /**
+     * Basic方式 解码 base64字符串
+     * @param token
+     * @return
+     */
+    private static AuthorityUserDTO getAuthenticationByBasic(String token) {
+        // 将加工后的转换原生token（没有Bearer ，Basic 字符串）
+        String base64 = JwtTokenUtil.generateNativeToken(token);
+        // 解码
+        String decode = null;
+        try {
+            decode = new String(Base64.getDecoder().decode(base64), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Result.ofFail(ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR));
+        }
+
+        // base64解码后字符串是正确的格式
+        boolean isSureFormat = decode != null && decode.split(":").length == 2;
+        // 正确格式，查询用户和设置权限。
+        if (isSureFormat) {
+            // arr[0] 用户名； arr[1] 密码
+            String[] arr = decode.split(":");
+
+            // commons包中暂时无法查询数据库，直接返回对象，调用放处理
+            AuthorityUserDTO authorityUserDTO = new AuthorityUserDTO();
+
+            authorityUserDTO.setUsername(arr[0]);
+            authorityUserDTO.setPassword(arr[1]);
+
+            // 调用openfeign 查询用户
+            return authorityUserDTO;
+        }
+
+        Result.ofFail(ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR));
+        return null;
     }
 
     /**

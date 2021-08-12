@@ -57,4 +57,10 @@ public interface AuthorityUserService {
      */
     AuthorityUserDTO updateOpenId(AuthorityUserDTO userDTO);
 
+    /**
+     * 根据用户名或者电话号或者邮箱 查询用户的详细信息。包含用户信息，角色信息，权限信息
+     * @param loginName
+     * @return
+     */
+    AuthorityUserDTO getUserDetailByLoginName(String loginName);
 }

@@ -125,4 +125,4 @@ knife4j:
     username: admin    # 用户名
     password: 123456   # 密码
   setting:             # 前端Ui的个性化配置属性
-    enableDebug: false # 启用调试，默认为true 无效
+    enableDebug: true # 启用调试，默认为true 无效
