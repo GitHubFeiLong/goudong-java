@@ -47,6 +47,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable throwable) {
+        throwable.printStackTrace();
         log.error("网关异常全局处理，异常信息：{}",throwable.getMessage());
         Result result;
         if (throwable instanceof BasicException) {

@@ -244,6 +244,20 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
     }
 
     /**
+     * 检查key是否存在
+     *
+     * @param redisKeyEnum
+     * @param param
+     * @return
+     */
+    @Override
+    public boolean hasKey(RedisKeyEnum redisKeyEnum, String... param) {
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
+        return super.hasKey(key);
+    }
+
+    /**
      * 当 redisKeyEnum 的time大于0时，需要设置过期时间
      * @param key
      * @param redisKeyEnum

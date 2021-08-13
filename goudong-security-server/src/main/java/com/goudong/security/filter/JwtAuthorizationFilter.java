@@ -3,33 +3,23 @@ package com.goudong.security.filter;
 import com.goudong.commons.config.SpringConfigTool;
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.AuthorityRoleDO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.po.AuthorityUserPO;
-import com.goudong.commons.pojo.IgnoreResourceAntMatchers;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.security.dao.SelfAuthorityUserDao;
-import com.goudong.security.service.impl.SelfUserDetailsService;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.context.ContextLoader;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +60,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
 
-        List<IgnoreResourceAntMatchers> listValue = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE);
+        List<IgnoreResourceAntMatcher> listValue = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE);
         // 如果当前请求是白名单，就放过
         if (!listValue.isEmpty()) {
             long count = listValue.stream()
@@ -78,7 +68,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                         // 请求方式
                         if (HttpMethod.resolve(request.getMethod()).equals(f.getHttpMethod())) {
                             String requestPath = request.getRequestURI();
-                            String patternPath = f.getUrl();
+                            String patternPath = f.getPattern();
 
                             return new AntPathMatcher().match(patternPath, requestPath);
                         }

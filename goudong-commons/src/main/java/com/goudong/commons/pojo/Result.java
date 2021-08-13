@@ -1,10 +1,12 @@
 package com.goudong.commons.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.goudong.commons.enumerate.ExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
@@ -66,6 +68,8 @@ public class Result<T> implements Serializable {
      * 时间戳
      */
     @ApiModelProperty(value = "时间戳")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date timestamp = new Date();
 
     public Result() {

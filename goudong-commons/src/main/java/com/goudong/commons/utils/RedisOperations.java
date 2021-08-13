@@ -116,4 +116,12 @@ public interface RedisOperations {
      * @param params
      */
     void deleteKeys (RedisKeyEnum[] redisKeyEnums, String[][] params);
+
+    /**
+     * 检查key是否存在
+     * @param redisKeyEnum
+     * @param param
+     * @return
+     */
+    boolean hasKey (RedisKeyEnum redisKeyEnum, String... param);
 }

@@ -51,7 +51,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
             // 获取登录用户
             AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
             // 清除用户在线token,清除用户能访问的菜单
-            RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_MENU};
+            RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE};
             // 对应参数二维数组
             String[][] params = {
                     {authorityUserDTO.getUuid()},

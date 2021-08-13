@@ -3,7 +3,9 @@ package com.goudong.oauth2.controller.qq;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.pojo.Transition;
+import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.oauth2.config.UIProperties;
@@ -112,8 +114,8 @@ public class QQController {
                 redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getUuid());
 
                 // 为了登陆后方便判断用户是否能访问某个url,事先将能访问的菜单url放入redis中
-                List<AuthorityMenuDTO> authorityMenuDTOS = authorityUserDTO.getAuthorityMenuDTOS();
-                redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_MENU, authorityMenuDTOS, authorityUserDTO.getUuid());
+                List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = IgnoreResourceAntMatcherUtil.menu2AntMatchers(authorityUserDTO.getAuthorityMenuDTOS());
+                redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE, ignoreResourceAntMatchers, authorityUserDTO.getUuid());
 
                 Transition transition = Transition.builder()
                         .token(token)

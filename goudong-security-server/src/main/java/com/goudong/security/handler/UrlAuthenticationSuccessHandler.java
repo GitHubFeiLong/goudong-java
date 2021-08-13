@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.pojo.UserHashRedis;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.vo.AuthorityUserVO;
@@ -73,9 +75,14 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         // 添加信息到redis中
         redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getUuid());
-        // 为了登陆后方便判断用户是否能访问某个url,事先将能访问的菜单url放入redis中
+        // 为了登陆后方便判断用户是否能访问某个url
         List<AuthorityMenuDTO> authorityMenuDTOS = authorityUserDTO.getAuthorityMenuDTOS();
-        redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_MENU, authorityMenuDTOS, authorityUserDTO.getUuid());
+
+        // 先转换成使用AntPathMatch友好的对象
+        List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = IgnoreResourceAntMatcherUtil.menu2AntMatchers(authorityMenuDTOS);
+
+        // 事先将能访问的菜单url放入redis中
+        redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE, ignoreResourceAntMatchers, authorityUserDTO.getUuid());
 
         out.flush();
         out.close();

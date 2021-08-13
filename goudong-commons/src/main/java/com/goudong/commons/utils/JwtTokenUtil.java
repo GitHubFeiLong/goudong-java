@@ -8,27 +8,24 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.Result;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
 
 /**
  * 类描述：
@@ -38,6 +35,7 @@ import java.util.*;
  * @Date 2020/6/12 19:57
  * @Version 1.0
  */
+@Component
 @Slf4j
 public class JwtTokenUtil {
     /**
@@ -69,11 +67,16 @@ public class JwtTokenUtil {
      */
     public static final String SALT = "qaqababa";
 
-    @Autowired
-    public HttpServletRequest httpServletRequest;
-
     @Resource
     private ResourceProperties resourceProperties;
+
+
+    private static Oauth2Service oauth2Service;
+
+    @Autowired
+    public void setOauth2Service(Oauth2Service oauth2Service) {
+        JwtTokenUtil.oauth2Service = oauth2Service;
+    }
 
     /**
      * 生产短期的token字符串
@@ -112,15 +115,16 @@ public class JwtTokenUtil {
      */
     public static AuthorityUserDTO resolveToken(String token) {
 
-        // 判断请求头是Bearer 还是 Basic 开头
+        // 判断请求头是Beare开头
         if (token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
             return getAuthorityUserDTOByBearer(token);
-        } else if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
-            return getAuthenticationByBasic(token);
-        } else {
-            return null;
         }
-
+        // 判断请求头是Basic开头
+        if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
+            return getAuthenticationByBasic(token);
+        }
+        // token格式错误
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
 
     /**
@@ -177,15 +181,18 @@ public class JwtTokenUtil {
             // commons包中暂时无法查询数据库，直接返回对象，调用放处理
             AuthorityUserDTO authorityUserDTO = new AuthorityUserDTO();
 
-            authorityUserDTO.setUsername(arr[0]);
+            authorityUserDTO.setLoginName(arr[0]);
             authorityUserDTO.setPassword(arr[1]);
 
-            // 调用openfeign 查询用户
-            return authorityUserDTO;
+            //
+            /*
+            当解析调用方是网关时,因为无法扫描commons包,所以注入OpenFeign不成功,oauth2Service值为null
+            当其它服务启动类有扫描commons包时,可以正常调用
+             */
+            return oauth2Service == null ? authorityUserDTO : oauth2Service.getUserDetailByLoginName(arr[0]).getData();
         }
 
-        Result.ofFail(ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR));
-        return null;
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
 
     /**
@@ -209,12 +216,8 @@ public class JwtTokenUtil {
      * @return
      */
     public static String generateNativeToken (String token) {
-        // token 格式不对
-        boolean isFormatError = token == null
-                || !(token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX) || token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX));
-        if (isFormatError) {
-            BasicException.exception(ClientExceptionEnum.TOKEN_ERROR);
-        }
+        AssertUtil.notNull("token", "参数token不能为空");
+
         // 去掉前面的 "Bearer " 字符串
         if (token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
             return token.replace(JwtTokenUtil.TOKEN_BEARER_PREFIX, "");
@@ -224,7 +227,8 @@ public class JwtTokenUtil {
             return token.replace(JwtTokenUtil.TOKEN_BASIC_PREFIX, "");
         }
 
-        return null;
+        // token 格式不对
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
     // 从token中获取用户名
 //    public static String getUsername(String token){

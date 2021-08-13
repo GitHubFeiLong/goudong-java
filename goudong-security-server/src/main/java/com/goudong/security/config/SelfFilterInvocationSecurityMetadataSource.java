@@ -1,17 +1,13 @@
 package com.goudong.security.config;
 
-import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.pojo.IgnoreResourceAntMatchers;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.security.dao.SelfAuthorityUserDao;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.Resource;
 import java.util.Collection;

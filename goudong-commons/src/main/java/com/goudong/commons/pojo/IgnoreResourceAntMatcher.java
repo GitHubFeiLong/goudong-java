@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class IgnoreResourceAntMatchers implements Serializable {
+public class IgnoreResourceAntMatcher implements Serializable {
     private static final long serialVersionUID = 6793267140897074206L;
     /**
      * 请求方式
@@ -25,7 +25,7 @@ public class IgnoreResourceAntMatchers implements Serializable {
     private HttpMethod httpMethod;
 
     /**
-     * 请求资源路径
+     * 请求资源路径(使用ant方式)
      */
-    private String url;
+    private String pattern;
 }

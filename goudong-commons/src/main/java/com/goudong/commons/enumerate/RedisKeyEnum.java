@@ -1,5 +1,6 @@
 package com.goudong.commons.enumerate;
 
+import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import lombok.Getter;
 import org.springframework.data.redis.connection.DataType;
 
@@ -31,12 +32,19 @@ public enum RedisKeyEnum {
     /**
      * 认证服务中的 忽略资源
      */
-    OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource", DataType.LIST),
+    OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource", DataType.LIST, IgnoreResourceAntMatcher.class),
+
+    /**
+     * 认证服务中的 用户能访问的资源(菜单转换成IgnoreResourceAntMatcher后的对象)
+     * @param uuid 用户uuid
+     */
+    OAUTH2_USER_IGNORE_RESOURCE("gd:oauth2:user-menu:${uuid}", DataType.LIST, IgnoreResourceAntMatcher.class),
 
     /**
      * 认证服务中的 用户能访问菜单集合
      * @param uuid 用户uuid
      */
+    @Deprecated
     OAUTH2_USER_MENU("gd:oauth2:user-menu:${uuid}", DataType.LIST),
 
     /*====================== goudong-message-server ======================*/
@@ -44,8 +52,7 @@ public enum RedisKeyEnum {
      * 消息服务中的验证码，保存邮箱验证码和短信验证码
      * @param ${email|phone} 邮箱或者手机号
      */
-    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES, DataType.STRING),
-
+    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES, DataType.STRING, String.class),
 
     ;
 
@@ -60,6 +67,11 @@ public enum RedisKeyEnum {
      * @see DataType
      */
     private DataType dataType = DataType.STRING;
+    /**
+     * redis存储数据的元数据java类型
+     * 默认是String
+     */
+    private Class clazz = String.class;
     /**
      * redis key 时间，默认3
      * 注意：当值小于0时，表示不设置失效时间
@@ -81,6 +93,11 @@ public enum RedisKeyEnum {
         this.key = key;
         this.dataType = dataType;
     }
+    RedisKeyEnum(String key, DataType dataType, Class clazz){
+        this.key = key;
+        this.dataType = dataType;
+        this.clazz = clazz;
+    }
     RedisKeyEnum(String key, int time, TimeUnit timeUnit) {
         this.key = key;
         this.time = time;
@@ -91,5 +108,12 @@ public enum RedisKeyEnum {
         this.time = time;
         this.timeUnit = timeUnit;
         this.dataType = dataType;
+    }
+    RedisKeyEnum(String key, int time, TimeUnit timeUnit, DataType dataType, Class clazz) {
+        this.key = key;
+        this.time = time;
+        this.timeUnit = timeUnit;
+        this.dataType = dataType;
+        this.clazz = clazz;
     }
 }
