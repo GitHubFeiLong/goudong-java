@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.open;
 
+import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.pojo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,12 +30,14 @@ public class AuthorityUserController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
     })
+    @IgnoreResource("登录")
     public Result login (String username, String password) {
         return Result.ofSuccess();
     }
 
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
+    @IgnoreResource("注销")
     public Result logout () {
         return Result.ofSuccess();
     }

@@ -67,9 +67,6 @@ public class JwtTokenUtil {
      */
     public static final String SALT = "qaqababa";
 
-    @Resource
-    private ResourceProperties resourceProperties;
-
 
     private static Oauth2Service oauth2Service;
 
@@ -168,7 +165,7 @@ public class JwtTokenUtil {
         try {
             decode = new String(Base64.getDecoder().decode(base64), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            Result.ofFail(ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR));
+            throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
         }
 
         // base64解码后字符串是正确的格式
@@ -182,6 +179,7 @@ public class JwtTokenUtil {
             AuthorityUserDTO authorityUserDTO = new AuthorityUserDTO();
 
             authorityUserDTO.setLoginName(arr[0]);
+            authorityUserDTO.setUsername(arr[0]);
             authorityUserDTO.setPassword(arr[1]);
 
             //
@@ -200,14 +198,14 @@ public class JwtTokenUtil {
      * @param request
      * @return
      */
-    public static String getUserUuid(HttpServletRequest request) {
+    public static Long getUserId(HttpServletRequest request) {
         String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
 
         String token = generateNativeToken(tokenHeader);
 
         AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
 
-        return authorityUserDTO.getUuid();
+        return authorityUserDTO.getId();
     }
 
     /**
@@ -230,14 +228,4 @@ public class JwtTokenUtil {
         // token 格式不对
         throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
-    // 从token中获取用户名
-//    public static String getUsername(String token){
-//        return getTokenBody(token).getSubject();
-//    }
-//
-//    // 是否已过期
-//    public static boolean isExpiration(String token){
-//        return getTokenBody(token).getExpiration().before(new Date());
-//    }
-
 }

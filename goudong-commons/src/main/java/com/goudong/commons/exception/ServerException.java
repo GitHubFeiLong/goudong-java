@@ -1,5 +1,6 @@
 package com.goudong.commons.exception;
 
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,13 +14,22 @@ import lombok.extern.slf4j.Slf4j;
 public class ServerException extends BasicException{
     public static final String clientMessage = "服务器内部错误";
 
-    public ServerException(ServerExceptionEnum serverExceptionEnum) {
-        super(serverExceptionEnum);
+    /**
+     * 服务器内部错误，自己抛出的500异常
+     * @param serverMessage 错误描述
+     * @return
+     */
+    public static ServerException serverException (String serverMessage) {
+        throw new BasicException(500, "500500", clientMessage, serverMessage);
     }
 
-    public static BasicException exception(String serverMessage){
-        log.error("服务器内部错误：{}", serverMessage);
-        throw new BasicException(500, "500500", clientMessage, serverMessage);
+    /**
+     * 代替 构造方法(用起舒服些)
+     * @param serverExceptionEnum
+     * @return
+     */
+    public static ServerException serverException (ServerExceptionEnum serverExceptionEnum) {
+        return new ServerException(serverExceptionEnum);
     }
 
     /**
@@ -31,4 +41,9 @@ public class ServerException extends BasicException{
         log.error("服务器内部方法传参错误：{}", serverMessage);
         throw new BasicException(400, "500400", clientMessage, serverMessage);
     }
+
+    public ServerException(ServerExceptionEnum serverExceptionEnum) {
+        super(serverExceptionEnum);
+    }
+
 }

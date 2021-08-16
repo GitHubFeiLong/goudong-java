@@ -38,7 +38,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
      * @throws ServletException
      */
     @Override
-    public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+    public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;;charset=UTF-8");
@@ -54,8 +54,8 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
             RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE};
             // 对应参数二维数组
             String[][] params = {
-                    {authorityUserDTO.getUuid()},
-                    {authorityUserDTO.getUuid()}
+                    {authorityUserDTO.getId().toString()},
+                    {authorityUserDTO.getId().toString()}
             };
 
             // 删除redis中的数据

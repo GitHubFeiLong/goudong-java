@@ -1,5 +1,6 @@
 package com.goudong.message.controller;
 
+import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
@@ -50,7 +51,6 @@ public class CodeController {
     @GetMapping("/demo")
     @ApiOperation("测试")
     public Result demo () {
-        BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
         return Result.ofSuccess();
     }
 
@@ -61,6 +61,7 @@ public class CodeController {
     @GetMapping("/email-code/{email}")
     @ApiOperation(value = "发送邮箱验证码")
     @ApiImplicitParam(name = "email", value = "邮箱", required = true)
+    @IgnoreResource("发送邮箱验证码")
     public Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email) {
         rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
         return Result.ofSuccess();
@@ -73,6 +74,7 @@ public class CodeController {
     @GetMapping("/phone-code/{phone}")
     @ApiOperation(value = "发送手机验证码")
     @ApiImplicitParam(name = "phone", value = "手机号码", required = true)
+    @IgnoreResource("发送短信验证码")
     public Result sendPhoneCode (@PathVariable("phone") String phone) {
         AssertUtil.isPhone(phone, "手机号格式错误：" + phone);
         rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.PHONE_CODE_ROUTING_KEY, phone);
@@ -91,6 +93,7 @@ public class CodeController {
         @ApiImplicitParam(name = "number", value = "手机号码/邮箱", required = true),
         @ApiImplicitParam(name = "code", value = "验证码", required = true)
     })
+    @IgnoreResource("验证验证码是否正确")
     public Result<Boolean> checkCode (@PathVariable String number, @PathVariable String code) {
         String redisValue = redisOperationsUtil.getStringValue(RedisKeyEnum.MESSAGE_AUTH_CODE, number);
         if (redisValue == null || !code.equals(redisValue)) {

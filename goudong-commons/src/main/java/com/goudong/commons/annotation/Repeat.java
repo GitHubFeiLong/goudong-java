@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  * 防止重复提交的方法，需要使用该注解进行拦截。
  * 默认值：2s不能重复提交,可以自定义
  * 注意：一般使用在 post 和 put 无幂等性请求方式
+ * todo 好像注解放在类上没做处理
  * @Author msi
  * @Date 2020/6/11 17:36
  * @Version 1.0

@@ -1,9 +1,9 @@
 package com.goudong.security.service.impl;
 
-import com.goudong.commons.entity.SelfUserDetails;
-import com.goudong.commons.exception.BasicException;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.goudong.commons.pojo.SelfUserDetails;
 import com.goudong.commons.po.AuthorityUserPO;
-import com.goudong.security.dao.SelfAuthorityUserDao;
+import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,7 @@ import java.util.Set;
 public class SelfUserDetailsService implements UserDetailsService {
 
     @Resource
-    private SelfAuthorityUserDao selfAuthorityUserDao;
+    private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
     /**
      * 根据用户登录名查询用户信息
@@ -39,7 +40,17 @@ public class SelfUserDetailsService implements UserDetailsService {
 
         SelfUserDetails userInfo = new SelfUserDetails();
         // 查询用户信息
-        AuthorityUserPO user = selfAuthorityUserDao.selectUserByUsername(username);
+        LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.nested(i->i.eq(AuthorityUserPO::getUsername, username)
+                .or()
+                .eq(AuthorityUserPO::getEmail, username)
+                .or()
+                .eq(AuthorityUserPO::getPhone, username)
+        ).nested(i->i.isNull(AuthorityUserPO::getValidTime).or().lt(AuthorityUserPO::getValidTime, LocalDateTime.now()));
+
+
+        AuthorityUserPO user = selfAuthorityUserMapper.selectOne(lambdaQueryWrapper);
+
         if (user != null) {
             userInfo.setUsername(user.getUsername());
             userInfo.setPassword(user.getPassword());
@@ -49,7 +60,7 @@ public class SelfUserDetailsService implements UserDetailsService {
 
         Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();
         // 查询用户权限
-        List<String> roles = selfAuthorityUserDao.selectRoleNameByUserUuid(user.getUuid());
+        List<String> roles = selfAuthorityUserMapper.selectRoleNameByUserId(user.getId());
         for (String roleName : roles) {
             //用户拥有的角色
             SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleName);

@@ -85,18 +85,19 @@ pause
 
 下面罗列出常见的：
 
-| 功能       | 关键字                                                       | 示例                                                | 解释                                    |
-| ---------- | ------------------------------------------------------------ | --------------------------------------------------- | --------------------------------------- |
-| 删除整张表 | DT:<br />DROP TABLE tablename                                | `V1.0__DT_user.sql`,<br />`V1.0__DT_user#role.sql`  | 删除user表，删除user和role 两张表       |
-| 修改表     | AT<br />ALTER TABLE 简写                                     | `v1.0__AT_user.sql`                                 | user表修改字段（AT是ATM，ATA，ATD超集） |
-| 修改表字段 | ATM:<br />ALTER TABLE tablename MODIFY [COLUMN] column_definition [FIRST] [AFTER col_name] | `V1.0__ATM_user.sql`<br />`V1.0__ATM_user#role.sql` | 修改user表和role表的某些字段            |
-| 增加表字段 | ATA<br />ALTER TABLE tablename ADD [COLUMN] column_definition [FIRST \|AFTER col_umn] | `v1.0__ATA_user.sql`                                | user表新增某些字段                      |
-| 删除表字段 | ATD<br />ALTER TABLE tablename DROP [COLUMN] col_name        | `v1.0__ATD_user.sql`                                | user表删除某些字段                      |
-| 插入记录   | IT<br />INSERT INTO tablename (filed1,filed2,...,filedn) values(value1,value2,...,valuen); | `v1.0__IT_user.sql`                                 | user表插入记录                          |
-| 更新记录   | UT<br />UPDATE tablename SET filed1=value1,filed2=value2,...,filedn=valuen [WHERE CONDITION] | `v1.0__UT_user.sql`                                 | user表更新记录                          |
-| 删除记录   | dt<br />DELETE FROM tablename [WHERE CONDITION]              | `v1.0__dt_user.sql`                                 | user表删除记录                          |
+| 功能         | 关键字                                                       | 示例                                                | 解释                                    |
+| ------------ | ------------------------------------------------------------ | --------------------------------------------------- | --------------------------------------- |
+| 初始化表数据 | INIT:<br/>truncate table [表名] ；<br/>create table [表名]；<br/>insert into [表名] | R1.0__INIT_user.sql                                 | 创建全新的表并插入基本信息              |
+| 删除整张表   | DT:<br />DROP TABLE tablename                                | `V1.0__DT_user.sql`,<br />`V1.0__DT_user#role.sql`  | 删除user表，删除user和role 两张表       |
+| 修改表       | AT<br />ALTER TABLE 简写                                     | `v1.0__AT_user.sql`                                 | user表修改字段（AT是ATM，ATA，ATD超集） |
+| 修改表字段   | ATM:<br />ALTER TABLE tablename MODIFY [COLUMN] column_definition [FIRST] [AFTER col_name] | `V1.0__ATM_user.sql`<br />`V1.0__ATM_user#role.sql` | 修改user表和role表的某些字段            |
+| 增加表字段   | ATA<br />ALTER TABLE tablename ADD [COLUMN] column_definition [FIRST \|AFTER col_umn] | `v1.0__ATA_user.sql`                                | user表新增某些字段                      |
+| 删除表字段   | ATD<br />ALTER TABLE tablename DROP [COLUMN] col_name        | `v1.0__ATD_user.sql`                                | user表删除某些字段                      |
+| 插入记录     | IT<br />INSERT INTO tablename (filed1,filed2,...,filedn) values(value1,value2,...,valuen); | `v1.0__IT_user.sql`                                 | user表插入记录                          |
+| 更新记录     | UT<br />UPDATE tablename SET filed1=value1,filed2=value2,...,filedn=valuen [WHERE CONDITION] | `v1.0__UT_user.sql`                                 | user表更新记录                          |
+| 删除记录     | dt<br />DELETE FROM tablename [WHERE CONDITION]              | `v1.0__dt_user.sql`                                 | user表删除记录                          |
 
-
+> 如果一张表和其他表没有关联关系，那么可以使用`R`开头的脚本，例如`R__init_table.sql` ，这样脚本更改后，就会执行
 
 ### POJO
 
@@ -129,3 +130,24 @@ pause
 
 
 
+## 用户角色权限
+
+
+
+## 出色功能
+
+### 防止重复提交
+
+需要使用注解@Repeat，可以定义时间段
+
+### 扫描白名单接口
+
+使用注解@IgnoreResource，将接口保存到白名单（数据库中），程序启动后会定时扫描。
+
+### 接口请求日志
+
+使用AOP进行接口请求日志打印，将请求路径，请求参数，响应数据，异常等信息打印日志
+
+### RedisTemplate扩展
+
+RedisOperationsUtil，主要是因为整个系统的redis key 进行统一枚举处理（RedisKeyEnum），需要将key模板解析，redis失效等额外信息进行处理封装。

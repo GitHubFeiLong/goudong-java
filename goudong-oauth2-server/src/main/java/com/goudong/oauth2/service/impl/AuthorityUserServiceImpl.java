@@ -1,25 +1,23 @@
 package com.goudong.oauth2.service.impl;
 
-import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.AuthorityRolePO;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.po.AuthorityUserRolePO;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
-import com.goudong.oauth2.dao.AuthorityRoleDao;
-import com.goudong.oauth2.dao.AuthorityUserDao;
-import com.goudong.oauth2.dao.AuthorityUserRoleDao;
 import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
+import com.goudong.oauth2.mapper.AuthorityRoleMapper;
+import com.goudong.oauth2.mapper.AuthorityUserMapper;
+import com.goudong.oauth2.mapper.AuthorityUserRoleMapper;
 import com.goudong.oauth2.service.AuthorityUserService;
-import com.goudong.security.dao.SelfAuthorityUserDao;
+import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -39,34 +38,16 @@ import java.util.Random;
  */
 @Slf4j
 @Service
-public class AuthorityUserServiceImpl implements AuthorityUserService {
+public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, AuthorityUserPO> implements AuthorityUserService {
 
     @Resource
-    private AuthorityUserDao authorityUserDao;
+    private AuthorityRoleMapper authorityRoleMapper;
     @Resource
-    private AuthorityRoleDao authorityRoleDao;
+    private AuthorityUserMapper authorityUserMapper;
     @Resource
-    private AuthorityUserRoleDao authorityUserRoleDao;
+    private AuthorityUserRoleMapper authorityUserRoleMapper;
     @Resource
-    private SelfAuthorityUserDao selfAuthorityUserDao;
-    @Resource
-    private RedisOperationsUtil redisOperationsUtil;
-
-    /**
-     * 根据 AuthorityUserDTO对象，使用逻辑与条件 查询 authority_user表
-     * @param authorityUserDTO 用户对象
-     * @return
-     */
-    @Override
-    public List<AuthorityUserDTO> listByAndAuthorityUserDTO(AuthorityUserDTO authorityUserDTO) {
-        AuthorityUserPO authorityUserPO = new AuthorityUserPO();
-        // 转换对象
-        BeanUtils.copyProperties(authorityUserDTO, authorityUserPO);
-        // 查询
-        List<AuthorityUserPO> authorityUserPOS = authorityUserDao.selectByAnd(authorityUserPO);
-
-        return BeanUtil.copyList(authorityUserPOS, AuthorityUserDTO.class);
-    }
+    private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -79,15 +60,19 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
         AssertUtil.hasText(username, "根据用户名查询用户时，用户名不能为空");
         List<String> result = new ArrayList<>();
         // 查询用户名是否存在
-        AuthorityUserPO authorityUserPO = new AuthorityUserPO();
-        authorityUserPO.setUsername(username);
-        List<AuthorityUserPO> authorityUserPOS = authorityUserDao.selectByAnd(authorityUserPO);
+        LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(AuthorityUserPO::getUsername, username);
 
-        if (authorityUserPOS.isEmpty()) {
+        AuthorityUserPO authorityUserPO = super.getOne(lambdaQueryWrapper);
+
+        if (authorityUserPO == null) {
             return result;
         }
 
-        List<String> names = authorityUserDao.selectUserNameByLikeUsername(username);
+        lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.like(AuthorityUserPO::getUsername, username);
+
+        List<String> names = super.list(lambdaQueryWrapper).stream().map(AuthorityUserPO::getUsername).collect(Collectors.toList());
 
         Random random = new Random();
         do {
@@ -103,7 +88,6 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
         return result;
     }
 
-
     /**
      * 新增用户
      *
@@ -113,76 +97,76 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
     @Transactional
     @Override
     public AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO) {
+        // 查询填写的基本信息是否已存在
+        LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(AuthorityUserPO::getUsername, authorityUserDTO.getUsername())
+                .or()
+                .eq(AuthorityUserPO::getPhone, authorityUserDTO.getPhone())
+                .or()
+                .eq(AuthorityUserPO::getEmail, authorityUserDTO.getEmail());
 
-        AuthorityUserPO userPO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
-
-        List<AuthorityUserPO> userPOList = authorityUserDao.selectByOr(userPO);
+        List<AuthorityUserPO> userPOList = super.list(lambdaQueryWrapper);
 
         if (userPOList.size() > 1) {
             // 有多条，表示提交的数据有问题
             // 1. 使用postman 类似工具，提交未经校验的内容
             // 2. 注册时间过长，账号被别人注册了
-            BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST);
         }
         String accountRadio = authorityUserDTO.getAccountRadio();
+        AuthorityUserPO userPO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
         // 为空，插入
         if (userPOList.isEmpty() && "".equals(accountRadio)) {
+
             userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-            userPO.setUuid(IdUtil.randomUUID());
-            authorityUserDao.insert(userPO);
+            super.save(userPO);
 
-            AuthorityRolePO rolePO = authorityRoleDao.select(AuthorityRolePO.builder().roleName("ROLE_ORDINARY").build()).get(0);
+            LambdaQueryWrapper<AuthorityRolePO> queryWrapper = new LambdaQueryWrapper();
+            queryWrapper.eq(AuthorityRolePO::getRoleName, "ROLE_ORDINARY");
+
+            AuthorityRolePO rolePO = authorityRoleMapper.selectOne(queryWrapper);
             // 绑定角色
-            AuthorityUserRolePO userRolePO = AuthorityUserRolePO.builder().roleUuid(rolePO.getUuid()).userUuid(userPO.getUuid()).build();
+            AuthorityUserRolePO userRolePO = new AuthorityUserRolePO();
+            userRolePO.setRoleId(rolePO.getId());
+            userRolePO.setUserId(userPO.getId());
 
-            authorityUserRoleDao.insert(userRolePO);
+            authorityUserRoleMapper.insert(userRolePO);
 
             return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
         }
 
         if ("MY_SELF".equals(accountRadio) || "NOT_MY_SELF".equals(accountRadio)) {
             // 数据库没有相关用户有一条数据
-            userPO.setUuid(userPOList.get(0).getUuid());
+            userPO.setId(userPOList.get(0).getId());
 
             // 加密
             userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-            authorityUserDao.updateInsert(userPO);
+            authorityUserMapper.updateInsert(userPO);
 
             return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
         }
 
-        BasicException.exception(ClientExceptionEnum.BAD_REQUEST);
-
-        return null;
+        throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST);
     }
 
     /**
-     * 根据 AuthorityUserDTO对象，使用逻辑或条件 查询 authority_user表
+     * 根据 登录账号，查询用户基本信息
      *
-     * @param authorityUserDTO 用户对象
+     * @param loginName 登录账号
      * @return
      */
     @Override
-    public List<AuthorityUserDTO> listByOrAuthorityUserDTO(AuthorityUserDTO authorityUserDTO) {
-        AuthorityUserPO authorityUserPO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserPO.class);
-        List<AuthorityUserPO> authorityUserPOS = authorityUserDao.selectByOr(authorityUserPO);
-        return BeanUtil.copyList(authorityUserPOS, AuthorityUserDTO.class);
-    }
+    @Deprecated
+    public AuthorityUserDTO getUserByLoginName(String loginName) {
+        // 查询填写的基本信息是否已存在
+        LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(AuthorityUserPO::getUsername, loginName)
+                .or()
+                .eq(AuthorityUserPO::getPhone, loginName)
+                .or()
+                .eq(AuthorityUserPO::getEmail, loginName);
 
-    /**
-     * patch方式修改用户信息，只有有值才进行修改
-     *
-     * @param userDTO
-     * @return
-     */
-    @Override
-    public AuthorityUserDTO updateByPatch(AuthorityUserDTO userDTO) {
-        // 修改密码
-        AuthorityUserPO userPO = BeanUtil.copyProperties(userDTO, AuthorityUserPO.class);
-        if (StringUtils.isNotBlank(userPO.getPassword())) {
-            userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-        }
-        int result = authorityUserDao.updateByPatch(userPO);
+        AuthorityUserPO userPO = super.getOne(lambdaQueryWrapper);
 
         return BeanUtil.copyProperties(userPO, AuthorityUserDTO.class);
     }
@@ -196,29 +180,34 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
     public AuthorityUserDTO updateOpenId(AuthorityUserDTO userDTO) {
         AssertUtil.isEnum(userDTO.getUserType(), OtherUserTypeEnum.class, "绑定账号openId的类型无效");
         // 判断用户名和密码是否匹配
-        AuthorityUserPO userPO = AuthorityUserPO.builder()
-                .username(userDTO.getLoginName())
-                .email(userDTO.getLoginName())
-                .phone(userDTO.getLoginName())
-                .build();
-        List<AuthorityUserPO> authorityUserPOS = authorityUserDao.selectByOr(userPO);
+        String loginName = userDTO.getLoginName();
 
-        boolean error = authorityUserPOS.isEmpty() || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), authorityUserPOS.get(0).getPassword());
+        LambdaQueryWrapper<AuthorityUserPO> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(AuthorityUserPO::getUsername, loginName)
+                .or()
+                .eq(AuthorityUserPO::getEmail, loginName)
+                .or()
+                .eq(AuthorityUserPO::getPhone, loginName);
+        AuthorityUserPO authorityUserPO = super.getOne(queryWrapper);
+
+        boolean error = authorityUserPO==null
+                || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), authorityUserPO.getPassword());
         if (error) {
-            ClientException.resourceNotFound("账户名与密码不匹配，请重新输入");
+            throw ClientException.resourceNotFound("账户名与密码不匹配，请重新输入");
         }
         // 修改openId
         // qq
         if (OtherUserTypeEnum.QQ.name().equals(userDTO.getUserType())) {
-            AuthorityUserPO build = AuthorityUserPO.builder()
-                    .uuid(authorityUserPOS.get(0).getUuid())
-                    .qqOpenId(userDTO.getQqOpenId())
-                    .build();
-            authorityUserDao.updateByPatch(build);
+
+            LambdaUpdateWrapper<AuthorityUserPO> updateWrapper = new LambdaUpdateWrapper();
+            updateWrapper.set(AuthorityUserPO::getQqOpenId, userDTO.getQqOpenId())
+                    .eq(AuthorityUserPO::getId, authorityUserPO.getId());
+
+            super.update(updateWrapper);
         }
         // 查询返回
-        authorityUserPOS.get(0).setQqOpenId(userDTO.getQqOpenId());
-        return BeanUtil.copyProperties(authorityUserPOS.get(0), AuthorityUserDTO.class);
+        authorityUserPO.setQqOpenId(userDTO.getQqOpenId());
+        return BeanUtil.copyProperties(authorityUserPO, AuthorityUserDTO.class);
     }
 
     /**
@@ -229,7 +218,7 @@ public class AuthorityUserServiceImpl implements AuthorityUserService {
      */
     @Override
     public AuthorityUserDTO getUserDetailByLoginName(String loginName) {
-        AuthorityUserDTO authorityUserDTO = selfAuthorityUserDao.selectUserDetailByUsername(loginName);
+        AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(loginName);
 //        redisOperationsUtil.set
         return authorityUserDTO;
     }

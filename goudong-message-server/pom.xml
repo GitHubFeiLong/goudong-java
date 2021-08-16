@@ -110,12 +110,6 @@
             <groupId>com.aliyun</groupId>
             <artifactId>dysmsapi20170525</artifactId>
         </dependency>
-        <!--spring boot 配置文件处理器-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!--log4j-web-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

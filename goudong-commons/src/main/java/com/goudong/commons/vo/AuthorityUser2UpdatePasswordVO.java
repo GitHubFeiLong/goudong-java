@@ -20,9 +20,9 @@ import java.io.Serializable;
 public class AuthorityUser2UpdatePasswordVO implements Serializable {
 
     private static final long serialVersionUID = -8065171471044911100L;
-    @NotBlank(message = "用户主键uuid不能为空")
+    @NotNull(message = "用户主键id不能为空")
     @ApiModelProperty(value = "用户主键")
-    private String uuid;
+    private Long id;
 
     @NotBlank(message = "密码不能为空")
     @ApiModelProperty(value = "密码")

@@ -1,7 +1,6 @@
 package com.goudong.commons.config;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import org.springframework.boot.web.error.ErrorAttributeOptions;

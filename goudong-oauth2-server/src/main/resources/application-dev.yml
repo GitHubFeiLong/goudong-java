@@ -84,13 +84,17 @@ spring:
 
 
 mybatis-plus:
-  #  mapper-locations: classpath:dao/*.xml
-  mapper-locations: classpath*:/dao/*.xml #其他包的也能扫描到
+  #  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath*:/mapper/*.xml #其他包的也能扫描到
+  type-aliases-package: com.goudong.commons.po
   # 以下配置均有默认值,可以不设置
   global-config:
     db-config:
+      logic-delete-field: deleted #配置逻辑删除，也可以在字段上加注解 @TableLogic(value = "0",delval = "1")
+      logic-delete-value: 1 # 删除1
+      logic-not-delete-value: 0
       #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
-      id-type: auto
+      id-type: assign_id
       #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
       field-strategy: NOT_EMPTY
       #数据库类型
@@ -108,14 +112,9 @@ mybatis-plus:
     reasonable: true
     supportMethodsArguments: true
     params: count=countSql
-
-ui:
-  # 绑定账号页面
-  bind-page: http://localhost:9998/bindPage.html
-  # 后端路径传参给页面
-  transition-page: http://localhost:9998/transition.html
-  # 前端首页
-  index-page: http://localhost:9998/index.html
+ribbon:
+  ReadTimeout: 5000 #建立连接所用时间（避免超时）
+  ConnectTimeout: 5000 #连接后接口调用时间（避免超时）
 
 knife4j:
   enable: true         # 是否开启Knife4j增强模式，默认值为false
@@ -126,3 +125,17 @@ knife4j:
     password: 123456   # 密码
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true # 启用调试，默认为true 无效
+
+# 下面都是自定义配置 #
+ui:
+  # 绑定账号页面
+  bind-page: http://localhost:9998/bindPage.html
+  # 后端路径传参给页面
+  transition-page: http://localhost:9998/transition.html
+  # 前端首页
+  index-page: http://localhost:9998/index.html
+
+scheduler:
+  ScanIgnoreResourceScheduler:
+    fixedRate: 36000000 #扫描白名单接口时间间隔单位毫秒
+    initialDelay: 3000 # 启动完项目等一段时间再执行。

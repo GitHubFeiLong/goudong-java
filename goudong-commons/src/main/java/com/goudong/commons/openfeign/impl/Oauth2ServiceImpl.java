@@ -1,8 +1,12 @@
 package com.goudong.commons.openfeign.impl;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.vo.BaseIgnoreResourceVO;
+
+import java.util.List;
 
 /**
  * 类描述：
@@ -19,6 +23,17 @@ public class Oauth2ServiceImpl implements Oauth2Service {
      */
     @Override
     public Result<AuthorityUserDTO> getUserDetailByLoginName(String loginName) {
+        return Result.ofFail();
+    }
+
+    /**
+     * 添加多条白名单
+     *
+     * @param insertVOList 白名单集合
+     * @return
+     */
+    @Override
+    public Result<List<BaseIgnoreResourceDTO>> addList(List<BaseIgnoreResourceVO> insertVOList) {
         return Result.ofFail();
     }
 }

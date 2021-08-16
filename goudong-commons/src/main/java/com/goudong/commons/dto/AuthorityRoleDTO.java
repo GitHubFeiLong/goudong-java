@@ -1,11 +1,7 @@
 package com.goudong.commons.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.goudong.commons.po.BasePO;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 角色 DTO 传输层对象
@@ -13,11 +9,8 @@ import java.util.Date;
  * @author
  */
 @Data
-public class AuthorityRoleDTO implements Serializable {
-    /**
-     * uuid
-     */
-    private String uuid;
+public class AuthorityRoleDTO extends BasePO {
+    private static final long serialVersionUID = -2027717154119802886L;
 
     /**
      * 角色名称(必须以ROLE_起始命名)
@@ -33,20 +26,4 @@ public class AuthorityRoleDTO implements Serializable {
      * 备注
      */
     private String remark;
-
-    /**
-     * 是否被删除
-     */
-    private Boolean isDelete;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
 }

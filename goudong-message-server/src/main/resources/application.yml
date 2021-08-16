@@ -69,7 +69,18 @@ alibaba:
     signName: ${ALIBABA_MESSAGE_SIGN_NAME}
     templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
 
-springfox:
-  documentation:
-    swagger-ui:
-      enabled: true # 开启swagger
+
+knife4j:
+  enable: true         # 是否开启Knife4j增强模式，默认值为false
+  production: false    # 生产环境开启
+  basic:
+    enable: true       # BasicHttp功能，默认为false
+    username: admin    # 用户名
+    password: 123456   # 密码
+  setting:             # 前端Ui的个性化配置属性
+    enableDebug: true # 启用调试，默认为true 无效
+#定时器
+scheduler:
+  ScanIgnoreResourceScheduler:
+    fixedRate: 36000000 #扫描白名单接口时间间隔单位毫秒
+    initialDelay: 3000 # 启动完项目等一段时间再执行。

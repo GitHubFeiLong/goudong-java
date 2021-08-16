@@ -1,7 +1,5 @@
 package com.goudong.commons.vo;
 
-import com.goudong.commons.validated.Create;
-import com.goudong.commons.validated.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,7 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 创建用户

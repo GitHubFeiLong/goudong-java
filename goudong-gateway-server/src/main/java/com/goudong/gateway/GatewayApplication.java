@@ -1,12 +1,14 @@
 package com.goudong.gateway;
 
+import com.goudong.commons.config.RedisConfig;
 import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.commons.utils.JwtTokenUtil;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +24,10 @@ import java.util.stream.Collectors;
  */
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
-@SpringBootApplication(scanBasePackages = {BasePackageConst.GATEWAY})
+@SpringBootApplication(
+        scanBasePackages = {BasePackageConst.GATEWAY}
+        , exclude = {DataSourceAutoConfiguration.class}
+)
 public class GatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class, args);

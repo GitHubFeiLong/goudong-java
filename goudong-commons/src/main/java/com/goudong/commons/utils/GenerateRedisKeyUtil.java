@@ -69,7 +69,7 @@ public class GenerateRedisKeyUtil {
             }
         } catch (StringIndexOutOfBoundsException s) {
             // redis key 中的"${}" 格式错误
-            ServerException.methodParamError("key模板 格式错误");
+            throw ServerException.methodParamError("key模板 格式错误");
         }
 
         return result.toString();

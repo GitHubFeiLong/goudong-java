@@ -24,10 +24,16 @@ public class SpringConfigTool implements ApplicationContextAware {
         return springConfigTool;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext)throws BeansException {
         ac = applicationContext;
     }
 
+    /**
+     * 根据bean的名字从spring容器中获取bean
+     * @param beanName
+     * @return
+     */
     public synchronized static Object getBean(String beanName) {
         return ac.getBean(beanName);
     }

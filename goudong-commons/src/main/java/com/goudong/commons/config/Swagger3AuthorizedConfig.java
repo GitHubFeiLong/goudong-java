@@ -20,6 +20,7 @@ import java.util.List;
  * @Date 2020/10/17 10:00
  * @Version 1.0
  */
+@Deprecated
 public class Swagger3AuthorizedConfig {
 
     /**

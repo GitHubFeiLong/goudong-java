@@ -1,19 +1,14 @@
 package com.goudong.commons.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.goudong.commons.entity.AuthorityRoleDO;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.goudong.commons.po.BasePO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,12 +19,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorityUserDTO implements Serializable {
+public class AuthorityUserDTO extends BasePO {
     private static final long serialVersionUID = -6147408154544596138L;
-    /**
-     * uuid
-     */
-    private String uuid;
 
     /**
      * 用户名
@@ -66,26 +57,7 @@ public class AuthorityUserDTO implements Serializable {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date validTime;
-
-    /**
-     * 是否被删除
-     */
-    private Boolean isDelete;
-
-    /**
-     * 更新时间
-     */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
-
-    /**
-     * 创建时间
-     */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    private LocalDateTime validTime;
 
     /**
      * qq登录后，系统获取腾讯的open_id

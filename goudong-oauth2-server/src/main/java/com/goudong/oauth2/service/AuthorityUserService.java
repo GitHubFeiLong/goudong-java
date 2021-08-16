@@ -1,7 +1,7 @@
 package com.goudong.oauth2.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.entity.AuthorityUserDO;
 import com.goudong.commons.po.AuthorityUserPO;
 
 import java.util.List;
@@ -13,14 +13,7 @@ import java.util.List;
  * @Date 2021-05-02 13:53
  * @Version 1.0
  */
-public interface AuthorityUserService {
-
-    /**
-     * 根据 AuthorityUserDTO对象，使用逻辑与条件 查询 authority_user表
-     * @param authorityUserDTO 用户对象
-     * @return
-     */
-    List<AuthorityUserDTO> listByAndAuthorityUserDTO(AuthorityUserDTO authorityUserDTO);
+public interface AuthorityUserService extends IService<AuthorityUserPO> {
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -38,18 +31,11 @@ public interface AuthorityUserService {
     AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO);
 
     /**
-     * 根据 AuthorityUserDTO对象，使用逻辑或条件 查询 authority_user表
-     * @param authorityUserDTO 用户对象
+     * 根据 登录账号，查询用户基本信息
+     * @param loginName 登录账号
      * @return
      */
-    List<AuthorityUserDTO> listByOrAuthorityUserDTO(AuthorityUserDTO authorityUserDTO);
-
-    /**
-     * patch方式修改用户信息，只有有值才进行修改
-     * @param userDTO
-     * @return
-     */
-    AuthorityUserDTO updateByPatch(AuthorityUserDTO userDTO);
+    AuthorityUserDTO getUserByLoginName(String loginName);
 
     /**
      * 绑定opendId

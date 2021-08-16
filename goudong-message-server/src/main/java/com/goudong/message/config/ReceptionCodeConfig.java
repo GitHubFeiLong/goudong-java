@@ -3,7 +3,7 @@ package com.goudong.message.config;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
-import com.goudong.message.util.CodeUtil;
+import com.goudong.commons.utils.CodeUtil;
 import com.goudong.message.util.SendSms;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;

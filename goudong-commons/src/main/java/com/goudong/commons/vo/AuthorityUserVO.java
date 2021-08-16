@@ -1,26 +1,21 @@
 package com.goudong.commons.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.goudong.commons.po.BasePO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * authority_user
  * @author
  */
-@ApiModel(value="generate.AuthorityUserVO用户基本信息表")
 @Data
-public class AuthorityUserVO implements Serializable {
-    private static final long serialVersionUID = -4475232281689486236L;
-    /**
-     * uuid
-     */
-    @ApiModelProperty(value="uuid")
-    private String uuid;
+@ApiModel(value="generate.AuthorityUserVO用户基本信息表")
+public class AuthorityUserVO extends BasePO {
+
+    private static final long serialVersionUID = 6520160201127140443L;
 
     /**
      * 用户名
@@ -56,27 +51,7 @@ public class AuthorityUserVO implements Serializable {
      * 有效截止时间
      */
     @ApiModelProperty(value="有效截止时间")
-    private Date validTime;
-
-    /**
-     * 是否被删除
-     */
-    @ApiModelProperty(value="是否被删除")
-    private Boolean isDelete;
-
-    /**
-     * 更新时间
-     */
-    @ApiModelProperty(value="更新时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateTime;
-
-    /**
-     * 创建时间
-     */
-    @ApiModelProperty(value="创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime;
+    private LocalDateTime validTime;
 
     /**
      * qq登录后，系统获取腾讯的open_id

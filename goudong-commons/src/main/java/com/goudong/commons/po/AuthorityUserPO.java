@@ -1,31 +1,19 @@
 package com.goudong.commons.po;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.util.Date;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Tolerate;
+
+import java.time.LocalDateTime;
 
 /**
  * authority_user
  * @author
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
-public class AuthorityUserPO implements Serializable {
-    private static final long serialVersionUID = -8673423406924099991L;
-    /**
-     * uuid
-     */
-    private String uuid;
+@TableName("authority_user")
+public class AuthorityUserPO extends BasePO {
 
+    private static final long serialVersionUID = -4094738684059087967L;
     /**
      * 用户名
      */
@@ -59,22 +47,7 @@ public class AuthorityUserPO implements Serializable {
     /**
      * 有效截止时间
      */
-    private Date validTime;
-
-    /**
-     * 是否被删除
-     */
-    private Boolean isDelete;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+    private LocalDateTime validTime;
 
     /**
      * qq登录后，系统获取腾讯的open_id

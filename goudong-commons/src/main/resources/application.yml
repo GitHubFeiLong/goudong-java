@@ -1,0 +1,5 @@
+#定时器配置
+scheduler:
+  ScanIgnoreResourceScheduler:
+    fixedRate: 10000 #扫描白名单接口时间间隔单位毫秒
+    initialDelay: 3000 # 启动完项目等一段时间再执行。

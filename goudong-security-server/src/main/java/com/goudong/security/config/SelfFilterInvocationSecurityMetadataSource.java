@@ -1,7 +1,7 @@
 package com.goudong.security.config;
 
 import com.goudong.commons.utils.RedisOperationsUtil;
-import com.goudong.security.dao.SelfAuthorityUserDao;
+import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     @Resource
-    private SelfAuthorityUserDao selfAuthorityUserDao;
+    private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
     @Resource
     private RedisOperationsUtil redisOperationsUtil;
@@ -51,7 +51,7 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
         log.info("requestUrI >> {}，requestMethod >> {}", requestUrI, requestMethod);
 
         // 查询 请求方式的url 需要哪些权限
-        List<String> roleNames = selfAuthorityUserDao.selectRoleNameByMenu(requestUrI, requestMethod);
+        List<String> roleNames = selfAuthorityUserMapper.selectRoleNameByMenu(requestUrI, requestMethod);
         // 没有角色匹配
         if (roleNames.isEmpty()) {
             return SecurityConfig.createList("ROLE_ANONYMOUS");

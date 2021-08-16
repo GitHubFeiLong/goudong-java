@@ -18,7 +18,7 @@ public class ClientException extends BasicException {
      * @return
      */
     public static ClientException clientException (ClientExceptionEnum clientExceptionEnum) {
-        return  new ClientException(clientExceptionEnum);
+        return new ClientException(clientExceptionEnum);
     }
 
     /**

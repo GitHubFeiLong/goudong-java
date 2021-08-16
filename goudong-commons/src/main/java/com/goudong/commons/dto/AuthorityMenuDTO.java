@@ -1,5 +1,6 @@
 package com.goudong.commons.dto;
 
+import com.goudong.commons.po.BasePO;
 import lombok.Data;
 
 /**
@@ -9,11 +10,8 @@ import lombok.Data;
  * @Date 2021/8/12 15:23
  */
 @Data
-public class AuthorityMenuDTO {
-    /**
-     * 主键uuid
-     */
-    private String uuid;
+public class AuthorityMenuDTO extends BasePO {
+    private static final long serialVersionUID = 7234374806123502046L;
     /**
      * 请求url
      */
@@ -29,21 +27,9 @@ public class AuthorityMenuDTO {
     /**
      * 父菜单主键
      */
-    private String parentUuid;
+    private Long parentId;
     /**
      * 备注
      */
     private String remark;
-    /**
-     * 是否被删除
-     */
-    private String isDelete;
-    /**
-     * 更新时间
-     */
-    private String updateTime;
-    /**
-     * 删除时间
-     */
-    private String createTime;
 }

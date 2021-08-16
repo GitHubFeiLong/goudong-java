@@ -9,7 +9,7 @@ import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
-import com.goudong.security.dao.SelfAuthorityUserDao;
+import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -53,7 +53,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     /**
      * 用户dao
      */
-    private SelfAuthorityUserDao selfAuthorityUserDao = (SelfAuthorityUserDao)SpringConfigTool.getBean("selfAuthorityUserDao");
+    private SelfAuthorityUserMapper selfAuthorityUserMapper = (SelfAuthorityUserMapper)SpringConfigTool.getBean("selfAuthorityUserMapper");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -104,11 +104,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // 判断请求头是Bearer 还是 Basic 开头
         if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
             return getBearerAuthenticationToken(tokenHeader);
-        } else if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
-            return getBasicAuthenticationToken(tokenHeader);
-        } else {
-            return null;
         }
+        if (tokenHeader.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
+            return getBasicAuthenticationToken(tokenHeader);
+        }
+
+        // token格式错误
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
 
     /**
@@ -130,10 +132,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             String[] arr = decode.split(":");
 
             // 查询用户
-            AuthorityUserDTO authorityUserDTO = selfAuthorityUserDao.selectUserDetailByUsername(arr[0]);
+            AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(arr[0]);
             // 用户不存在
             if (authorityUserDTO == null) {
-                ClientException.exception(ClientExceptionEnum.TOKEN_ERROR);
+                throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
             }
             // 使用 BCrypt 加密的方式进行匹配
             boolean matches = new BCryptPasswordEncoder().matches(arr[1], authorityUserDTO.getPassword());
@@ -158,7 +160,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         }
 
-        return null;
+        // token 格式不正确
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
 
     /**

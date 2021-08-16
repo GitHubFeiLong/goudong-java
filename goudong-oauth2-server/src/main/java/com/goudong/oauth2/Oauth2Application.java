@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableConfigurationProperties({UIProperties.class})
 @SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS, BasePackageConst.SECURITY})
-@MapperScan(basePackages = {"com.goudong.oauth2.dao", BasePackageConst.SECURITY_DAO})
+@MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER, BasePackageConst.SECURITY_MAPPER})
 @EnableScheduling
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)

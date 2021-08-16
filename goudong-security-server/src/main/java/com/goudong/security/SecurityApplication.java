@@ -1,5 +1,6 @@
 package com.goudong.security;
 
+import com.goudong.commons.constant.BasePackageConst;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  */
 @SpringBootApplication
-@MapperScan(basePackages = {"com.goudong.security.dao"})
+@MapperScan(basePackages = {BasePackageConst.SECURITY_MAPPER})
 public class SecurityApplication {
     public static void main(String[] args) {
         SpringApplication.run(SecurityApplication.class, args);

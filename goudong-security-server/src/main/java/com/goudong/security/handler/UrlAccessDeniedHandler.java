@@ -25,9 +25,10 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException {
         log.error("权限不足");
-        Result result = Result.ofFail(ClientExceptionEnum.NOT_AUTHORIZATION);
+        ClientExceptionEnum notAuthorization = ClientExceptionEnum.NOT_AUTHORIZATION;
+        Result result = Result.ofFail(notAuthorization);
 
-        httpServletResponse.setStatus(403);
+        httpServletResponse.setStatus(notAuthorization.getStatus());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         httpServletResponse.getWriter().write(JSON.toJSONString(result));

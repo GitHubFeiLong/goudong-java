@@ -1,11 +1,11 @@
 package com.goudong.security.scheduler;
 
 import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.po.AuthorityIgnoreResourcePO;
+import com.goudong.commons.po.BaseIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
-import com.goudong.security.dao.SelfAuthorityIgnoreResourceDao;
+import com.goudong.security.mapper.BaseIgnoreResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -25,14 +25,14 @@ import java.util.List;
 public class IgnoreResourceScheduler {
 
     @Resource
-    private SelfAuthorityIgnoreResourceDao selfAuthorityIgnoreResourceDao;
+    private BaseIgnoreResourceMapper baseIgnoreResourceMapper;
 
     @Resource
     private RedisOperationsUtil redisOperationsUtil;
 
     //每隔2秒执行一次
-    @Scheduled(fixedRate = 200000)
-    public void testTasks() {
+    @Scheduled(fixedRate = 10000)
+    public void ignoreResourceScheduler() {
         List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = getIgnoreResourceAntMatchers();
         // 保存redis中.
         redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, ignoreResourceAntMatchers);
@@ -43,7 +43,7 @@ public class IgnoreResourceScheduler {
      */
     public List<IgnoreResourceAntMatcher> getIgnoreResourceAntMatchers() {
         // 查询表 返回白名单集合
-        List<AuthorityIgnoreResourcePO> authorityIgnoreResourcePOS = selfAuthorityIgnoreResourceDao.selectAll();
+        List<BaseIgnoreResourcePO> authorityIgnoreResourcePOS = baseIgnoreResourceMapper.selectList(null);
         // 将白名单集合转换成 使用antPathMatch时的友好对象
         return IgnoreResourceAntMatcherUtil.ignoreResource2AntMatchers(authorityIgnoreResourcePOS);
     }

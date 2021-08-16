@@ -14,8 +14,15 @@ import java.util.List;
  */
 public class BeanUtil {
 
+    /**
+     * 复制对象
+     * @param source
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     @SneakyThrows
-    public static <T> T copyProperties(Object source, Class<?> clazz) {
+    public static <T> T copyProperties(Object source, Class<T> clazz) {
         if (source == null) {
             return null;
         }
@@ -28,9 +35,9 @@ public class BeanUtil {
     }
 
     @SneakyThrows
-    public static List copyList(List sourceList, Class<?> clazz) {
+    public static <T> List<T> copyList(List sourceList, Class<T> clazz) {
         if (sourceList == null || sourceList.isEmpty()) {
-            return new ArrayList<>();
+            return new ArrayList<T>();
         }
 
         List result = new ArrayList(sourceList.size());

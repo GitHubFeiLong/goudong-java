@@ -1,10 +1,12 @@
 package com.goudong.oauth2.controller.qq;
 
-import com.goudong.commons.dto.AuthorityMenuDTO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.pojo.Transition;
+import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -30,9 +32,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 类描述：
@@ -96,26 +96,28 @@ public class QQController {
             log.info("UserInfoBean:{}", userInfoBean.toString());
 
             // 根据openId查询用户
-            List<AuthorityUserDTO> authorityUserDTOS = userService.listByAndAuthorityUserDTO(AuthorityUserDTO.builder().qqOpenId(openID).build());
+            LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
+            lambdaQueryWrapper.eq(AuthorityUserPO::getQqOpenId, openID);
+            AuthorityUserPO authorityUserPO = userService.getOne(lambdaQueryWrapper);
 
             // openId未使用，可以绑定
-            if (authorityUserDTOS.isEmpty()) {
+            if (authorityUserPO == null) {
                 OtherUserInfoBean otherUserInfoBean = new OtherUserInfoBean(openID, userInfoBean.getNickname(), userInfoBean.getAvatar().getAvatarURL30(), OtherUserTypeEnum.QQ.name());
                 String qqBindRedirectUriFull = uiProperties.getBindPageUrl(otherUserInfoBean);
                 log.info("qqBindRedirectUriFull:{}", qqBindRedirectUriFull);
                 response.sendRedirect(qqBindRedirectUriFull);
             } else {
-                AuthorityUserDTO authorityUserDTO = authorityUserDTOS.get(0);
+                AuthorityUserDTO authorityUserDTO = BeanUtil.copyProperties(authorityUserPO, AuthorityUserDTO.class);
                 // 生成token
                 String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
                 // 设置到响应头里
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
                 // 添加信息到redis中
-                redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getUuid());
+                redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId().toString());
 
                 // 为了登陆后方便判断用户是否能访问某个url,事先将能访问的菜单url放入redis中
                 List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = IgnoreResourceAntMatcherUtil.menu2AntMatchers(authorityUserDTO.getAuthorityMenuDTOS());
-                redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE, ignoreResourceAntMatchers, authorityUserDTO.getUuid());
+                redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE, ignoreResourceAntMatchers, authorityUserDTO.getId().toString());
 
                 Transition transition = Transition.builder()
                         .token(token)

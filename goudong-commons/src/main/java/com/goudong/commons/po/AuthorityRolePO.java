@@ -1,31 +1,18 @@
 package com.goudong.commons.po;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 角色
  * authority_role
  * @author
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
-public class AuthorityRolePO implements Serializable {
-    private static final long serialVersionUID = -6905985572474217281L;
-    /**
-     * uuid
-     */
-    private String uuid;
+@TableName("authority_role")
+public class AuthorityRolePO extends BasePO {
 
+    private static final long serialVersionUID = 3961964136793768410L;
     /**
      * 角色名称(必须以ROLE_起始命名)
      */
@@ -40,20 +27,4 @@ public class AuthorityRolePO implements Serializable {
      * 备注
      */
     private String remark;
-
-    /**
-     * 是否被删除
-     */
-    private Boolean isDelete;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
 }

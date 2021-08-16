@@ -8,7 +8,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class UrlAuthenticationFailureHandler implements AuthenticationFailureHan
         ClientExceptionEnum badRequest = ClientExceptionEnum.NOT_FOUND;
         Result<BasicException> result = Result.ofFail(badRequest);
         result.setClientMessage(e.getMessage());
-
+        // TODO是否需要返回200
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
