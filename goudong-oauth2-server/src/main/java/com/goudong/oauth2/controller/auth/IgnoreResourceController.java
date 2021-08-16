@@ -32,7 +32,7 @@ public class IgnoreResourceController {
     @Resource
     private IgnoreResourceService ignoreResourceService;
 
-    @PostMapping("/list")
+    @PostMapping("/ignore-resources")
     @ApiOperation(value = "添加白名单数据", notes = "该接口，系统内部也会调用")
     public Result<List<BaseIgnoreResourceDTO>> addList (@RequestBody @Valid List<BaseIgnoreResourceVO> insertVOList) {
         List<BaseIgnoreResourceDTO> insertDTOList = BeanUtil.copyList(insertVOList, BaseIgnoreResourceDTO.class);

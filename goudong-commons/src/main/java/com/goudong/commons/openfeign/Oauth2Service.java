@@ -1,9 +1,13 @@
 package com.goudong.commons.openfeign;
 
+import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +35,14 @@ public interface Oauth2Service {
      * @param insertVOList 白名单集合
      * @return
      */
-    @PostMapping("/ignore-resource/list")
-    Result<List<BaseIgnoreResourceDTO>> addList (@RequestBody List<BaseIgnoreResourceVO> insertVOList);
+    @PostMapping("/ignore-resource/ignore-resources")
+    Result<List<BaseIgnoreResourceDTO>> addIgnoreResources (@RequestBody List<BaseIgnoreResourceVO> insertVOList);
+
+    /**
+     * 批量添加菜单
+     * @param insertVOList
+     * @return
+     */
+    @PostMapping("/menu/menus")
+    Result<List<AuthorityMenuDTO>> addMenus (@RequestBody List<AuthorityMenu2InsertVO> insertVOList);
 }

@@ -66,6 +66,8 @@ CREATE TABLE `authority_menu`
     `menu_name`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '菜单名称',
     `parent_id`      bigint(20) DEFAULT NULL COMMENT '父菜单id',
     `remark`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+    `application_name`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '接口所在的应用名称',
+    `type`           SMALLINT NOT NULL DEFAULT 0 COMMENT '0:系统接口；1：前端页面',
     `deleted`        tinyint(1) DEFAULT 0 COMMENT '是否被删除',
     `update_time`    datetime(0) COMMENT '更新时间',
     `create_time`    datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

@@ -4,7 +4,6 @@ import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.oauth2.config.UIProperties;
-import com.goudong.oauth2.controller.qq.QQController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

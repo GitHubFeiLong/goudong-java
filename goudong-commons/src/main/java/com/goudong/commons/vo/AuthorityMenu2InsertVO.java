@@ -1,7 +1,7 @@
-package com.goudong.commons.dto;
+package com.goudong.commons.vo;
 
-import com.goudong.commons.po.BasePO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 类描述：
@@ -10,8 +10,8 @@ import lombok.Data;
  * @Date 2021/8/12 15:23
  */
 @Data
-public class AuthorityMenuDTO extends BasePO {
-    private static final long serialVersionUID = 7234374806123502046L;
+@NoArgsConstructor
+public class AuthorityMenu2InsertVO {
     /**
      * 请求url
      */
@@ -25,10 +25,6 @@ public class AuthorityMenuDTO extends BasePO {
      */
     private String menuName;
     /**
-     * 父菜单主键
-     */
-    private Long parentId;
-    /**
      * 备注
      */
     private String remark;
@@ -41,4 +37,11 @@ public class AuthorityMenuDTO extends BasePO {
      * 默认0
      */
     private Integer type;
+
+    public AuthorityMenu2InsertVO(String url, String method, String remark, String applicationName) {
+        this.url = url;
+        this.method = method;
+        this.remark = remark;
+        this.applicationName = applicationName;
+    }
 }

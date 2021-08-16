@@ -1,9 +1,11 @@
 package com.goudong.commons.openfeign.impl;
 
+import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
 
 import java.util.List;
@@ -33,7 +35,19 @@ public class Oauth2ServiceImpl implements Oauth2Service {
      * @return
      */
     @Override
-    public Result<List<BaseIgnoreResourceDTO>> addList(List<BaseIgnoreResourceVO> insertVOList) {
-        return Result.ofFail();
+    public Result<List<BaseIgnoreResourceDTO>> addIgnoreResources(List<BaseIgnoreResourceVO> insertVOList) {
+        return null;
     }
+
+    /**
+     * 批量添加菜单
+     *
+     * @param insertVOList
+     * @return
+     */
+    @Override
+    public Result<List<AuthorityMenuDTO>> addMenus(List<AuthorityMenu2InsertVO> insertVOList) {
+        return null;
+    }
+
 }
