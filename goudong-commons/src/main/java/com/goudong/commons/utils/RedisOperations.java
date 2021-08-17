@@ -1,5 +1,6 @@
 package com.goudong.commons.utils;
 
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 
 import java.util.List;
@@ -16,6 +17,19 @@ import java.util.concurrent.TimeUnit;
 public interface RedisOperations {
 
     /**
+     * 登录统一处理redis
+     * @param token
+     * @param authorityUserDTO
+     */
+    void login (String token, AuthorityUserDTO authorityUserDTO);
+
+    /**
+     * 退出统一处理redis
+     * @param token
+     */
+    void logout(String token);
+
+    /**
      * 获取 dataType 为String的value
      * @param redisKeyEnum
      * @param param
@@ -29,7 +43,7 @@ public interface RedisOperations {
      * @param param
      * @return
      */
-    List getListValue(RedisKeyEnum redisKeyEnum, String... param);
+    <T> List<T> getListValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, String... param);
     /**
      * 获取 dataType 为Set的所有元素
      * @param redisKeyEnum
@@ -50,7 +64,7 @@ public interface RedisOperations {
      * @param param
      * @return
      */
-    Map getHashValue(RedisKeyEnum redisKeyEnum, String... param);
+    <T> T getHashValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, String... param);
 
     /**
      * 设置String类型

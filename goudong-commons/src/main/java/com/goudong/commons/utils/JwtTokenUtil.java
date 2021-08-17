@@ -1,6 +1,7 @@
 package com.goudong.commons.utils;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.crypto.digest.MD5;
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -67,6 +68,7 @@ public class JwtTokenUtil {
      */
     public static final String SALT = "qaqababa";
 
+    public static MD5 md5 = MD5.create();
 
     private static Oauth2Service oauth2Service;
 
@@ -76,7 +78,25 @@ public class JwtTokenUtil {
     }
 
     /**
-     * 生产短期的token字符串
+     * 检查token格式是否正确
+     * @return
+     */
+    public static boolean checkTokenFormat(String token) {
+        // "Bearer "
+        if (token.startsWith(JwtTokenUtil.TOKEN_BEARER_PREFIX)) {
+            return true;
+        }
+        // "Basic "
+        if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
+            return true;
+        }
+
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+    }
+
+
+    /**
+     * 生产指定有效时长的token字符串
      * 将用户的基本信息、权限信息、能访问的菜单信息存储到token中
      * @param authorityUserDTO 用户登录信息
      * @return
@@ -107,6 +127,18 @@ public class JwtTokenUtil {
     }
 
     /**
+     * 根据token生成redis key。
+     * 将token字符串生成16位16进制的字符串，用作redis的key
+     * @param token
+     * @return
+     */
+    public static String generateRedisKey (String token) {
+        boolean bool = JwtTokenUtil.checkTokenFormat(token);
+
+        return md5.digestHex16(token);
+    }
+
+    /**
      * 解析token字符串
      * @param token 需要被解析的字符串
      */
@@ -125,7 +157,7 @@ public class JwtTokenUtil {
     }
 
     /**
-     * Basic方式 解码 base64字符串
+     * Bearer方式 解码字符串
      * @param token
      * @return
      */
@@ -143,7 +175,7 @@ public class JwtTokenUtil {
         try {
             jwt = verifier.verify(nativeToken);
         } catch (TokenExpiredException | JWTDecodeException e) {
-            BasicException.exception(ClientExceptionEnum.UNAUTHORIZED);
+            throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
         }
 
         String result = jwt.getAudience().get(0);
@@ -153,7 +185,7 @@ public class JwtTokenUtil {
 
 
     /**
-     * Basic方式 解码 base64字符串
+     * Basic方式 解码字符串
      * @param token
      * @return
      */
@@ -209,7 +241,7 @@ public class JwtTokenUtil {
     }
 
     /**
-     * 生成原生的token字符串，参数包含了 Bearer 或 Basic 开头
+     * 去掉token字符串的`Basic `前缀或`Bearer `前缀
      * @param token
      * @return
      */

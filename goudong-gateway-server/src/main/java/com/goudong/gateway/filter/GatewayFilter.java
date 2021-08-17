@@ -1,5 +1,6 @@
 package com.goudong.gateway.filter;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.MD5;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
@@ -70,7 +71,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
         // 白名单集合
-        List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE);
+        List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
         // 抛出异常/返回false都是没有权限(或者白名单没有配置完善)
         boolean access = IgnoreResourceAntMatcherUtil.checkAccess(uri, method, ignoreList);
         // 能访问,直接return.
@@ -81,7 +82,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         // 不是白名单的就需要权限验证了.
         String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
         // 只要带上了token， 就需要判断Token是否有效
-        if (!StringUtils.isEmpty(headerToken)) {
+        if (StringUtils.isNotBlank(headerToken)) {
             log.info("headerToken:{}", headerToken);
             // 解析token,解析成功表示token有效
             // 当token是Basic开头时,authorityUserDTO只有username和password属性有值.
@@ -110,14 +111,13 @@ public class GatewayFilter implements GlobalFilter, Ordered {
                 authorityUserDTO = userDetail;
             }
 
-            // 将token进行md5加密作为redis key，然后保存用户详细信息
-            String tokenMd5Key = MD5.create().digestHex16(headerToken);
-
+            // 延时
+            redisOperationsUtil.login(headerToken, authorityUserDTO);
 
             // 根据用户id,判断redis 是否还存储该token(判断是否在线)
             String stringValue = redisOperationsUtil.getStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, authorityUserDTO.getId().toString());
             // 正常业务系统访问，未登录或者与登录的token值不同<重新登录>
-            if (!isBasicType && stringValue == null || !stringValue.equals(headerToken)) {
+            if ((!isBasicType && stringValue == null) || !stringValue.equals(headerToken)) {
                 // redis不存在token(未登录)或者该token失效(已经有新token登录了)
                 throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
             }

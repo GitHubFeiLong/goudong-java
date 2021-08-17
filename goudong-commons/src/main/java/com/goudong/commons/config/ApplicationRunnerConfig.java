@@ -6,6 +6,7 @@ import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.ResourceUtil;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,8 +45,17 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("启动了服务");
-        addMenus();
-        addIgnoreResources();
+
+        // 延迟启动（项目启动后，要过一段时间才会注册到nacos中，而这些任务会调用其它服务。）
+        new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                Thread.sleep(5000);
+                addMenus();
+                addIgnoreResources();
+            }
+        }.start();
     }
 
     /**

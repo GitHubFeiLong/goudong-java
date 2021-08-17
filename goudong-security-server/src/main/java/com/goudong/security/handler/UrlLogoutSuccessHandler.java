@@ -48,18 +48,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         // 获取token
         String token = httpServletRequest.getHeader(JwtTokenUtil.TOKEN_HEADER);
         if (token != null) {
-            // 获取登录用户
-            AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
-            // 清除用户在线token,清除用户能访问的菜单
-            RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE};
-            // 对应参数二维数组
-            String[][] params = {
-                    {authorityUserDTO.getId().toString()},
-                    {authorityUserDTO.getId().toString()}
-            };
-
-            // 删除redis中的数据
-            redisOperationsUtil.deleteKeys(deleteKeys, params);
+            redisOperationsUtil.logout(token);
         }
 
         out.flush();

@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.ResourceAntMatcher;
+import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,5 +59,21 @@ public class RedisOperationUtilTest {
         Map key = redisOperationsUtil.opsForHash().entries("key");
         AuthorityUserDTO authorityUserDTO1 = BeanUtil.toBean(key, AuthorityUserDTO.class);
         System.out.println("1 = " + 1);
+    }
+
+    @Test
+    public void test1 () {
+        String token =
+                "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJ7XCJhdXRob3JpdHlNZW51RFRPU1wiOltdLFwiYXV0aG9yaXR5Um9sZURUT1NcIjpbe1wicmVtYXJrXCI6XCJcIixcInJvbGVOYW1lXCI6XCJST0xFX0FETUlOXCIsXCJyb2xlTmFtZUNuXCI6XCLotoXnuqfnrqHnkIblkZhcIn1dLFwiZW1haWxcIjpcIkBcIixcImlkXCI6MSxcInBhc3N3b3JkXCI6XCIkMmEkMTAkOHB0dGVWMXhQNTFBak9TL3U2TkFsZS8xUHcyQlVzUy5EL21iR3VoYXVmLnFjLm9UaWtlQXlcIixcInBob25lXCI6XCIxXCIsXCJyZW1hcmtcIjpcIui2hee6p-euoeeQhuWRmFwiLFwidXNlcm5hbWVcIjpcImFkbWluXCJ9Iiwic3ViIjoi54uX5LicIiwiaXNzIjoiY2ZsIiwiZXhwIjoxNjI5Nzg5MzcwLCJpYXQiOjE2MjkxODQ1NzAsImp0aSI6IjkzYmE0Y2U3LTA3MmMtNGQxMC04N2ZmLTBkM2U1NmI4OTkxZiJ9.DfCPPDxENk8kSMBfCbfCPcXhZcqRaocjKOyT-B6upc4"
+                ;
+        String key = JwtTokenUtil.generateRedisKey(token);
+
+        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
+        redisOperationsUtil.opsForHash().putAll(key, BeanUtil.beanToMap(authorityUserDTO));
+
+        authorityUserDTO.setUsername(null);
+        redisOperationsUtil.opsForHash().putAll(key, BeanUtil.beanToMap(authorityUserDTO));
+
+        System.out.println(1);
     }
 }

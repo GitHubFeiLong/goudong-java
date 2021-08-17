@@ -112,12 +112,9 @@ public class QQController {
                 String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
                 // 设置到响应头里
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
-                // 添加信息到redis中
-                redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId().toString());
 
-                // 为了登陆后方便判断用户是否能访问某个url,事先将能访问的菜单url放入redis中
-                List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = IgnoreResourceAntMatcherUtil.menu2AntMatchers(authorityUserDTO.getAuthorityMenuDTOS());
-                redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_USER_IGNORE_RESOURCE, ignoreResourceAntMatchers, authorityUserDTO.getId().toString());
+                // 将用户登录信息保存到redis中
+                redisOperationsUtil.login(token, authorityUserDTO);
 
                 Transition transition = Transition.builder()
                         .token(token)

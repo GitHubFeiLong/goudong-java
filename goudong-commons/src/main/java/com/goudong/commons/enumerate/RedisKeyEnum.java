@@ -18,18 +18,23 @@ public enum RedisKeyEnum {
 
     /**
      * 重复提交uri记录
-     * @param ${uri} 请求地址; ${userUuid} 用户uuid
+     * @param ${uri} 请求地址;
+     * @param ${userId} 用户id
      */
-    REPEAT_URI("gd:repeat:${uri}:${userUuid}", 2, TimeUnit.SECONDS, DataType.STRING),
+    REPEAT_URI("gd:repeat:${uri}:${userId}", 2, TimeUnit.SECONDS, DataType.STRING),
 
     /*====================== goudong-oauth2-server ======================*/
     /**
      * 认证服务中的登录信息，保存登录用户的token
-     * @param ${uuid} 登录人的主键
+     * @param ${id} 登录人的主键
      */
-    OAUTH2_TOKEN_INFO("gd:oauth2:login-info:token:${uuid}", DataType.STRING),
+    OAUTH2_TOKEN_INFO("gd:oauth2:login-info:token:${id}", DataType.STRING),
 
-//    OAUTH2_USER_INFO("gd:oauth2:user-info:token-key:${token-md5}", DataType.ZSET),
+    /**
+     * 用户详细存储到redis中
+     * @param ${token-md5} token字符串转成16进制16位的字符串
+     */
+    OAUTH2_USER_INFO("gd:oauth2:user-info:token-key:${token-md5}", DataType.HASH),
 
     /**
      * 认证服务中的 忽略资源
@@ -40,6 +45,7 @@ public enum RedisKeyEnum {
      * 认证服务中的 用户能访问的资源(菜单转换成IgnoreResourceAntMatcher后的对象)
      * @param uuid 用户uuid
      */
+    @Deprecated
     OAUTH2_USER_IGNORE_RESOURCE("gd:oauth2:user-menu:${uuid}", DataType.LIST, IgnoreResourceAntMatcher.class),
 
     /**
