@@ -1,7 +1,5 @@
 package com.goudong.gateway.filter;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.crypto.digest.MD5;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
@@ -10,7 +8,6 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
-import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;

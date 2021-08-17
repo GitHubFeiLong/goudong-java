@@ -3,6 +3,7 @@ package com.goudong.commons.scheduler;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.ResourceAntMatcher;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.utils.ResourceUtil;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
 import lombok.SneakyThrows;
@@ -31,6 +32,12 @@ public class ScanIgnoreResourceScheduler {
     @Autowired
     private Oauth2Service oauth2Service;
 
+    private RedisOperationsUtil redisOperationsUtil;
+
+    @Autowired
+    public void setRedisOperationsUtil(RedisOperationsUtil redisOperationsUtil) {
+        this.redisOperationsUtil = redisOperationsUtil;
+    }
 
     /**
      * 定时器，扫描白名单
@@ -40,6 +47,7 @@ public class ScanIgnoreResourceScheduler {
     public void scheduler() {
         long var0 = System.currentTimeMillis();
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
+        // redisOperationsUtil.setListValue();
         // 有数据，插入数据库
         if (resourceAntMatchers.size() > 0) {
             List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
