@@ -79,8 +79,9 @@ knife4j:
     password: 123456   # 密码
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true # 启用调试，默认为true 无效
-#定时器
+
+
+# 自定义定时器
 scheduler:
-  ScanIgnoreResourceScheduler:
-    fixedRate: 36000000 #扫描白名单接口时间间隔单位毫秒
-    initialDelay: 3000 # 启动完项目等一段时间再执行。
+  scanIgnoreResource: # 扫描白名单
+    cron: "0/10 * * * * ?" #定时器表达式（-）

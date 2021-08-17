@@ -50,7 +50,12 @@ public class ResourceUtil {
      * @throws ClassNotFoundException
      */
     public static List<ResourceAntMatcher> scanMenu(String contextPath) throws IOException, ClassNotFoundException {
-        return ResourceUtil.generateResourceAntMatchers(contextPath, false);
+        List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.generateResourceAntMatchers(contextPath, false);
+        // 将路径参数变为*
+        resourceAntMatchers.parallelStream().forEach(p->{
+            p.setPattern(StringUtil.replacePathVariable2Asterisk(p.getPattern()));
+        });
+        return resourceAntMatchers;
     }
 
     /**
@@ -61,7 +66,12 @@ public class ResourceUtil {
      * @throws ClassNotFoundException
      */
     public static List<ResourceAntMatcher> scanIgnore(String contextPath) throws IOException, ClassNotFoundException {
-        return ResourceUtil.generateResourceAntMatchers(contextPath, true);
+        List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.generateResourceAntMatchers(contextPath, true);
+        // 将路径参数变为*
+        resourceAntMatchers.parallelStream().forEach(p->{
+            p.setPattern(StringUtil.replacePathVariable2Asterisk(p.getPattern()));
+        });
+        return resourceAntMatchers;
     }
 
     /**

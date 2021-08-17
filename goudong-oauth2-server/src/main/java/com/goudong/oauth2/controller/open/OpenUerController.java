@@ -145,19 +145,20 @@ public class OpenUerController {
     @IgnoreResource("修改密码")
     public Result<AuthorityUserVO> updatePassword(@RequestBody @Validated AuthorityUser2UpdatePasswordVO updatePasswordVO){
 
-        LambdaUpdateWrapper<AuthorityUserPO> updateWrapper = new LambdaUpdateWrapper<>();
-        String hashPw = BCrypt.hashpw(updatePasswordVO.getPassword(), BCrypt.gensalt());
-        updateWrapper.set(AuthorityUserPO::getPassword, hashPw)
-                .eq(AuthorityUserPO::getId, updatePasswordVO.getId());
-
-        boolean update = authorityUserService.update(updateWrapper);
-
-        AuthorityUserPO byId = authorityUserService.getById(updatePasswordVO.getId());
-        if (byId==null) {
-            throw ClientException.resourceNotFound("账号不存在");
-        }
-
-        return Result.ofSuccess(BeanUtil.copyProperties(byId, AuthorityUserVO.class));
+        return Result.ofSuccess(null);
+//        LambdaUpdateWrapper<AuthorityUserPO> updateWrapper = new LambdaUpdateWrapper<>();
+//        String hashPw = BCrypt.hashpw(updatePasswordVO.getPassword(), BCrypt.gensalt());
+//        updateWrapper.set(AuthorityUserPO::getPassword, hashPw)
+//                .eq(AuthorityUserPO::getId, updatePasswordVO.getId());
+//
+//        boolean update = authorityUserService.update(updateWrapper);
+//
+//        AuthorityUserPO byId = authorityUserService.getById(updatePasswordVO.getId());
+//        if (byId==null) {
+//            throw ClientException.resourceNotFound("账号不存在");
+//        }
+//
+//        return Result.ofSuccess(BeanUtil.copyProperties(byId, AuthorityUserVO.class));
     }
 
     /**

@@ -11,6 +11,14 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
 
+    <!--Spring Boot-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.8.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <modules>
         <module>goudong-commons</module>
         <module>goudong-gateway-server</module>
@@ -47,18 +55,12 @@
         <flyway-maven-plugin.version>7.2.1</flyway-maven-plugin.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-lang.version>2.6</commons-lang.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <Sdk4J.version>2.0</Sdk4J.version>
         <log4j-web.version>2.14.0</log4j-web.version>
+        <redisson-spring-boot-starter.version>3.14.0</redisson-spring-boot-starter.version>
     </properties>
-
-    <!--Spring Boot-->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.8.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
 
     <dependencies>
         <!--增强swagger-->
@@ -148,6 +150,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <!-- redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson-spring-boot-starter.version}</version>
             </dependency>
             <!--mongodb-->
             <dependency>
@@ -270,6 +278,18 @@
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.version}</version>
             </dependency>
+            <!-- commons-collections4 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            <!--commons-io-->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
             <!--qq互联-->
             <dependency>
                 <groupId>net.gplatform</groupId>
@@ -291,7 +311,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <!---->
+            <!--spring boot默认打包的jar包其它模块是不能依赖的，所以需要这个插件-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

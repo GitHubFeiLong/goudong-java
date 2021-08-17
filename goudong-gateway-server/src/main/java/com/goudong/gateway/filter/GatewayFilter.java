@@ -1,5 +1,6 @@
 package com.goudong.gateway.filter;
 
+import cn.hutool.crypto.digest.MD5;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
@@ -108,6 +109,10 @@ public class GatewayFilter implements GlobalFilter, Ordered {
                 // basic方式（swagger）不需要验证单一登录
                 authorityUserDTO = userDetail;
             }
+
+            // 将token进行md5加密作为redis key，然后保存用户详细信息
+            String tokenMd5Key = MD5.create().digestHex16(headerToken);
+
 
             // 根据用户id,判断redis 是否还存储该token(判断是否在线)
             String stringValue = redisOperationsUtil.getStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, authorityUserDTO.getId().toString());

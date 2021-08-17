@@ -82,6 +82,12 @@ spring:
     baseline-on-migrate: true
     out-of-order: false
 
+# redisson配置
+redisson:
+  password: ${spring.redis.password}
+  singleServerConfig:
+    address: ${spring.redis.host}:${spring.redis.port}
+
 
 mybatis-plus:
   #  mapper-locations: classpath:mapper/*.xml
@@ -135,8 +141,7 @@ ui:
   # 前端首页
   index-page: http://localhost:9998/index.html
 
+# 自定义定时器
 scheduler:
-  ScanIgnoreResourceScheduler:
-    enable: true #开启这个定时任务
-    fixedRate: 36000000 #扫描白名单接口时间间隔单位毫秒
-    initialDelay: 3000 # 启动完项目等一段时间再执行。
+  scanIgnoreResource: # 扫描白名单
+    cron: "0/10 * * * * ?" #定时器表达式（-）

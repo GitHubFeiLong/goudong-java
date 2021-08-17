@@ -28,9 +28,6 @@ public class ScanIgnoreResourceScheduler {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Value("${scheduler.ScanIgnoreResourceScheduler.enable:false}")
-    private Boolean enable;
-
     @Autowired
     private Oauth2Service oauth2Service;
 
@@ -39,18 +36,16 @@ public class ScanIgnoreResourceScheduler {
      * 定时器，扫描白名单
      */
     @SneakyThrows
-    @Scheduled(initialDelayString="${scheduler.ScanIgnoreResourceScheduler.initialDelay}", fixedRateString="${scheduler.ScanIgnoreResourceScheduler.fixedRate}")
+    @Scheduled(cron = "${scheduler.scanIgnoreResource.cron}")
     public void scheduler() {
-        if (enable) {
-            long var0 = System.currentTimeMillis();
-            List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
-            // 有数据，插入数据库
-            if (resourceAntMatchers.size() > 0) {
-                List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
-                oauth2Service.addIgnoreResources(baseIgnoreResourceVOS);
-            }
-            long var1 = System.currentTimeMillis();
-            log.info("ScanIgnoreResourceScheduler 定时器执行花费时长: {} ms", var1 - var0);
+        long var0 = System.currentTimeMillis();
+        List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
+        // 有数据，插入数据库
+        if (resourceAntMatchers.size() > 0) {
+            List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
+            oauth2Service.addIgnoreResources(baseIgnoreResourceVOS);
         }
+        long var1 = System.currentTimeMillis();
+        log.info("ScanIgnoreResourceScheduler 定时器执行花费时长: {} ms", var1 - var0);
     }
 }
