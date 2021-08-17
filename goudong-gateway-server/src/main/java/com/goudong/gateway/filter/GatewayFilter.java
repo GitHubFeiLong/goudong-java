@@ -43,9 +43,6 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     private RedisOperationsUtil redisOperationsUtil;
 
     @Resource
-    private AuthorityUserUtil authorityUserUtil;
-
-    @Resource
     private Oauth2Service oauth2Service;
 
     /**
@@ -116,7 +113,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             }
 
             // 延时
-            authorityUserUtil.login(headerToken, authorityUserDTO);
+            redisOperationsUtil.login(headerToken, authorityUserDTO);
 
             // 根据用户id,判断redis 是否还存储该token(判断是否在线)
             String stringValue = redisOperationsUtil.getStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, authorityUserDTO.getId().toString());

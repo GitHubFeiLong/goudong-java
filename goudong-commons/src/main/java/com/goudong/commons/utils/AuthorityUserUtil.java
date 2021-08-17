@@ -23,6 +23,7 @@ public class AuthorityUserUtil {
     @Autowired
     private RedisOperationsUtil redisOperationsUtil;
 
+
     /**
      * 登录统一处理redis
      * @param token

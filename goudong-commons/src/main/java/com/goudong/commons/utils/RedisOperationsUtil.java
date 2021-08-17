@@ -1,6 +1,7 @@
 package com.goudong.commons.utils;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +17,44 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RedisOperationsUtil extends RedisTemplate implements RedisOperations{
+
+    /**
+     * 登录统一处理redis
+     * @param token
+     * @param authorityUserDTO
+     */
+    public void login (String token, AuthorityUserDTO authorityUserDTO) {
+        // 添加token保存到redis中
+        this.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId().toString());
+
+        // 将用户信息保存到redis中
+        // 将token进行md5加密作为redis key(16位16进制字符串)，然后保存用户详细信息
+        String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
+        // 存储redis || 追加时长
+        this.setHashValue(RedisKeyEnum.OAUTH2_USER_INFO, BeanUtil.beanToMap(authorityUserDTO), tokenMd5Key);
+    }
+
+    /**
+     * 退出统一处理redis
+     * @param token
+     */
+    public void logout(String token) {
+        // 获取登录用户
+        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
+
+        // 将token进行md5加密作为redis key(16位16进制字符串)
+        String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
+
+        // 清除用户在线token,清除用户能访问的菜单
+        RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_INFO};
+        // 对应参数二维数组
+        String[][] params = {
+                {authorityUserDTO.getId().toString()},
+                {tokenMd5Key}
+        };
+        // 删除redis中的数据
+        this.deleteKeys(deleteKeys, params);
+    }
 
     /**
      * 获取 dataType 为String的value
@@ -130,7 +169,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param 替换模板字符串
      */
     @Override
-    public void setStringValue (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, Object... param) {
+    public void setStringValueCustomizeExpire (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);;
         if (time < 0) {

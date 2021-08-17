@@ -80,7 +80,7 @@ public class RepeatAop {
 		// redis中没有指定key，符合条件则继续执行，否则终止方法的执行
 		if (value == null) {
 			// 将key存在redis中，指定时间
-			redisOperationsUtil.setStringValue(RedisKeyEnum.REPEAT_URI, "1", repeat.time(), repeat.timeUnit(), request.getRequestURI(), userId.toString());
+			redisOperationsUtil.setStringValueCustomizeExpire(RedisKeyEnum.REPEAT_URI, "1", repeat.time(), repeat.timeUnit(), request.getRequestURI(), userId);
 			// 执行方法
 			ret =  pjp.proceed();
 		} else {

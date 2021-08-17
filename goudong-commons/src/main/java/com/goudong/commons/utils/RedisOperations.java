@@ -17,6 +17,19 @@ import java.util.concurrent.TimeUnit;
 public interface RedisOperations {
 
     /**
+     * 登录统一处理redis
+     * @param token
+     * @param authorityUserDTO
+     */
+    void login (String token, AuthorityUserDTO authorityUserDTO);
+
+    /**
+     * 退出统一处理redis
+     * @param token
+     */
+    void logout(String token);
+
+    /**
      * 获取 dataType 为String的value
      * @param redisKeyEnum
      * @param param
@@ -69,7 +82,7 @@ public interface RedisOperations {
      * @param timeUnit 时间单位
      * @param param 替换模板字符串
      */
-    void setStringValue (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, Object... param);
+    void setStringValueCustomizeExpire (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, Object... param);
 
     /**
      * 设置List类型
