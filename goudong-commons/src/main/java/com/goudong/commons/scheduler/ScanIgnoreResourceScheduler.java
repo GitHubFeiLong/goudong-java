@@ -1,5 +1,6 @@
 package com.goudong.commons.scheduler;
 
+import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.ResourceAntMatcher;
 import com.goudong.commons.utils.BeanUtil;
@@ -29,8 +30,16 @@ public class ScanIgnoreResourceScheduler {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Autowired
+    @Value("${spring.application.name}")
+    private String applicationName;
+
+
     private Oauth2Service oauth2Service;
+
+    @Autowired
+    public void setOauth2Service(Oauth2Service oauth2Service) {
+        this.oauth2Service = oauth2Service;
+    }
 
     private RedisOperationsUtil redisOperationsUtil;
 
@@ -40,14 +49,24 @@ public class ScanIgnoreResourceScheduler {
     }
 
     /**
-     * 定时器，扫描白名单
+     * 定时器，扫描白名单(配置热加载)
      */
     @SneakyThrows
     @Scheduled(cron = "${scheduler.scanIgnoreResource.cron}")
     public void scheduler() {
         long var0 = System.currentTimeMillis();
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
-        // redisOperationsUtil.setListValue();
+
+        // 查询应用上次保存到redis的菜单list
+        List<ResourceAntMatcher> menus = redisOperationsUtil.getListValue(RedisKeyEnum.APP_MENU, ResourceAntMatcher.class, applicationName);
+
+        // 比较本次是否有新增
+        boolean containsAll = menus.containsAll(menus);
+        if (containsAll) {
+            return;
+        }
+
+        redisOperationsUtil.setListValue(RedisKeyEnum.APP_MENU, resourceAntMatchers, applicationName);
         // 有数据，插入数据库
         if (resourceAntMatchers.size() > 0) {
             List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);

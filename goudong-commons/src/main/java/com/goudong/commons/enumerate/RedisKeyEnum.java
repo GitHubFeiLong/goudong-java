@@ -23,6 +23,13 @@ public enum RedisKeyEnum {
      */
     REPEAT_URI("gd:repeat:${uri}:${userId}", 2, TimeUnit.SECONDS, DataType.STRING),
 
+    /**
+     * 各个服务的菜单
+     * 作用：限制频繁调用保存菜单接口。
+     * @param ${application-name} 应用名称
+     */
+    APP_MENU("gd:app-menu:${application-name}", -1, TimeUnit.SECONDS, DataType.LIST),
+
     /*====================== goudong-oauth2-server ======================*/
     /**
      * 认证服务中的登录信息，保存登录用户的token
@@ -45,6 +52,11 @@ public enum RedisKeyEnum {
      * 添加菜单资源时，使用redisson加分布式锁
      */
     OAUTH2_REDISSON_ADD_MENU("gd:oauth2:redisson:add-menu", 3, TimeUnit.SECONDS, DataType.STRING),
+
+    /**
+     * 设置redis中的白名单，使用redisson加分布式锁
+     */
+    OAUTH2_REDISSON_IGNORE_RESOURCE("gd:oauth2:redisson:ignore-resource", 3, TimeUnit.SECONDS, DataType.STRING),
 
     /*====================== goudong-message-server ======================*/
     /**

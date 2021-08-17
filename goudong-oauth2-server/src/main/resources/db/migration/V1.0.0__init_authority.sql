@@ -73,7 +73,8 @@ CREATE TABLE `authority_menu`
     `create_time`    datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `create_user_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '创建人id',
     `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人id',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `uq_authority_menu__url_method`(`url`, `method`)
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
 
 DROP TABLE IF EXISTS `authority_role_menu`;

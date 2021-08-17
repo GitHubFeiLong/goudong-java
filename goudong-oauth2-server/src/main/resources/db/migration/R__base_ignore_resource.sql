@@ -10,7 +10,8 @@ CREATE TABLE `base_ignore_resource`  (
   `create_time` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
   `create_user_id` bigint(20) NOT NULL COMMENT '创建人id',
   `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人id',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uq_base_ignore_resource__url_method`(`pattern`, `method`)
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '不需要授权就能访问的资源' ROW_FORMAT = Dynamic;
 
 INSERT INTO `base_ignore_resource` ( `pattern`, `method`, `remark`, `is_system`,`create_user_id`)
