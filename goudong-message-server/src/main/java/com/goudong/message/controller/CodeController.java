@@ -1,9 +1,8 @@
 package com.goudong.message.controller;
 
 import com.goudong.commons.annotation.IgnoreResource;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.annotation.Repeat;
 import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -16,7 +15,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Email;
@@ -47,6 +49,8 @@ public class CodeController {
 
     @GetMapping("/demo")
     @ApiOperation("测试")
+    @Repeat
+    @IgnoreResource("测试接口")
     public Result demo () {
         return Result.ofSuccess();
     }

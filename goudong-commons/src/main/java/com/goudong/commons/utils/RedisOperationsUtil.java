@@ -1,7 +1,6 @@
 package com.goudong.commons.utils;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,44 +18,6 @@ import java.util.concurrent.TimeUnit;
 public class RedisOperationsUtil extends RedisTemplate implements RedisOperations{
 
     /**
-     * 登录统一处理redis
-     * @param token
-     * @param authorityUserDTO
-     */
-    public void login (String token, AuthorityUserDTO authorityUserDTO) {
-        // 添加token保存到redis中
-        this.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId().toString());
-
-        // 将用户信息保存到redis中
-        // 将token进行md5加密作为redis key(16位16进制字符串)，然后保存用户详细信息
-        String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
-        // 存储redis || 追加时长
-        this.setHashValue(RedisKeyEnum.OAUTH2_USER_INFO, BeanUtil.beanToMap(authorityUserDTO), tokenMd5Key);
-    }
-
-    /**
-     * 退出统一处理redis
-     * @param token
-     */
-    public void logout(String token) {
-        // 获取登录用户
-        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
-
-        // 将token进行md5加密作为redis key(16位16进制字符串)
-        String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
-
-        // 清除用户在线token,清除用户能访问的菜单
-        RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_INFO};
-        // 对应参数二维数组
-        String[][] params = {
-                {authorityUserDTO.getId().toString()},
-                {tokenMd5Key}
-        };
-        // 删除redis中的数据
-        this.deleteKeys(deleteKeys, params);
-    }
-
-    /**
      * 获取 dataType 为String的value
      *
      * @param redisKeyEnum
@@ -64,7 +25,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @return
      */
     @Override
-    public String getStringValue(RedisKeyEnum redisKeyEnum, String... param) {
+    public String getStringValue(RedisKeyEnum redisKeyEnum, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
 
@@ -79,7 +40,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @return
      */
     @Override
-    public <T> List<T> getListValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, String... param) {
+    public <T> List<T> getListValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         // 获取list（此时元素是LinkedHashMap）
@@ -102,7 +63,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @return
      */
     @Override
-    public Set getSetValue(RedisKeyEnum redisKeyEnum, String... param) {
+    public Set getSetValue(RedisKeyEnum redisKeyEnum, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
 
@@ -117,7 +78,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @return
      */
     @Override
-    public TreeSet getZSetValue(RedisKeyEnum redisKeyEnum, String... param) {
+    public TreeSet getZSetValue(RedisKeyEnum redisKeyEnum, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
 
@@ -132,7 +93,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @return
      */
     @Override
-    public <T> T getHashValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, String... param) {
+    public <T> T getHashValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         // 将Map转为Bean
@@ -149,7 +110,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param
      */
     @Override
-    public void setStringValue(RedisKeyEnum redisKeyEnum, String value, String... param) {
+    public void setStringValue(RedisKeyEnum redisKeyEnum, String value, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         int time = redisKeyEnum.getTime();
@@ -169,7 +130,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param 替换模板字符串
      */
     @Override
-    public void setStringValue (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, String... param) {
+    public void setStringValue (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);;
         if (time < 0) {
@@ -188,7 +149,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param
      */
     @Override
-    public void setListValue(RedisKeyEnum redisKeyEnum, List value, String... param) {
+    public void setListValue(RedisKeyEnum redisKeyEnum, List value, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
 
@@ -212,7 +173,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param
      */
     @Override
-    public void setSetValue(RedisKeyEnum redisKeyEnum, Set value, String... param) {
+    public void setSetValue(RedisKeyEnum redisKeyEnum, Set value, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         super.opsForSet().add(key, value);
@@ -227,7 +188,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param
      */
     @Override
-    public void setZSetValue(RedisKeyEnum redisKeyEnum, TreeSet value, String... param) {
+    public void setZSetValue(RedisKeyEnum redisKeyEnum, TreeSet value, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         super.opsForZSet().add(key, value);
@@ -242,7 +203,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param
      */
     @Override
-    public void setHashValue(RedisKeyEnum redisKeyEnum, Map value, String... param) {
+    public void setHashValue(RedisKeyEnum redisKeyEnum, Map value, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         super.opsForHash().putAll(key, value);
@@ -256,7 +217,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param param
      */
     @Override
-    public void deleteKey(RedisKeyEnum redisKeyEnum, String... param) {
+    public void deleteKey(RedisKeyEnum redisKeyEnum, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         super.delete(key);
@@ -269,7 +230,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param params
      */
     @Override
-    public void deleteKeys(RedisKeyEnum[] redisKeyEnums, String[][] params) {
+    public void deleteKeys(RedisKeyEnum[] redisKeyEnums, Object[][] params) {
         AssertUtil.notEmpty(redisKeyEnums, "RedisKeyEnum数组不能为空");
         AssertUtil.notEmpty(params, "params数组不能为空");
 
@@ -280,7 +241,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
         // 获取完整的 key
         for (int i = 0; i < redisKeyEnums.length; i++) {
             // 每个key的详细参数
-            String[] param = params[i];
+            Object[] param = params[i];
             String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnums[i].getKey(), param);
             super.delete(key);
         }
@@ -295,7 +256,7 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @return
      */
     @Override
-    public boolean hasKey(RedisKeyEnum redisKeyEnum, String... param) {
+    public boolean hasKey(RedisKeyEnum redisKeyEnum, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
         return super.hasKey(key);

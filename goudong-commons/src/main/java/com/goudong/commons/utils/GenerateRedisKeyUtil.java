@@ -1,6 +1,5 @@
 package com.goudong.commons.utils;
 
-import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -24,7 +23,7 @@ public class GenerateRedisKeyUtil {
      * @param keys
      * @return
      */
-    public static String generateByClever (String keyTemplate, String... keys) {
+    public static String generateByClever (String keyTemplate, Object... keys) {
 
         AssertUtil.isTrue(StringUtils.hasText(keyTemplate), "redis key template 字符串不能为空");
 
@@ -46,7 +45,7 @@ public class GenerateRedisKeyUtil {
      * @param key   模板
      * @param keys  参数
      */
-    private static void checkKeyAndParamLength(String key, String... keys) {
+    private static void checkKeyAndParamLength(String key, Object... keys) {
         int num = key.split("\\$").length - 1;
         int num1 = keys.length;
         // 参数和所需要的参数长度不一致！
@@ -59,13 +58,13 @@ public class GenerateRedisKeyUtil {
      * @param params    参数
      * @return
      */
-    private static String replaceAndGenerate(String keyTemplate, String... params) {
+    private static String replaceAndGenerate(String keyTemplate, Object... params) {
         StringBuilder result = new StringBuilder(keyTemplate);
 
         // 从下标1开始，跳过第一个主体，然后使用后续的字符串替换掉主体的表达式
         try {
             for (int i = 0; i < params.length; i++) {
-                result.replace(result.indexOf("$"), result.indexOf("}")+1, params[i]);
+                result.replace(result.indexOf("$"), result.indexOf("}")+1, params[i]+"");
             }
         } catch (StringIndexOutOfBoundsException s) {
             // redis key 中的"${}" 格式错误

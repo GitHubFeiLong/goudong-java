@@ -230,6 +230,7 @@ public class JwtTokenUtil {
      * @param request
      * @return
      */
+    @Deprecated
     public static Long getUserId(HttpServletRequest request) {
         String tokenHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
 

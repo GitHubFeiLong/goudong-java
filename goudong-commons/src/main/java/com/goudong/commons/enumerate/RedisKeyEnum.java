@@ -42,13 +42,6 @@ public enum RedisKeyEnum {
     OAUTH2_IGNORE_RESOURCE("gd:oauth2:ignore-resource", DataType.LIST, IgnoreResourceAntMatcher.class),
 
     /**
-     * 认证服务中的 用户能访问的资源(菜单转换成IgnoreResourceAntMatcher后的对象)
-     * @param uuid 用户uuid
-     */
-    @Deprecated
-    OAUTH2_USER_IGNORE_RESOURCE("gd:oauth2:user-menu:${uuid}", DataType.LIST, IgnoreResourceAntMatcher.class),
-
-    /**
      * 添加菜单资源时，使用redisson加分布式锁
      */
     OAUTH2_REDISSON_ADD_MENU("gd:oauth2:redisson:add-menu", 3, TimeUnit.SECONDS, DataType.STRING),

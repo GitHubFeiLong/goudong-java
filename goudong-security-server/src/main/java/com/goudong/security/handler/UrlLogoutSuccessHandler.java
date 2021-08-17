@@ -1,11 +1,9 @@
 package com.goudong.security.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -27,7 +25,7 @@ import java.io.PrintWriter;
 public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Resource
-    private RedisOperationsUtil redisOperationsUtil;
+    private AuthorityUserUtil authorityUserUtil;
 
     /**
      * 退出登录
@@ -48,7 +46,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
         // 获取token
         String token = httpServletRequest.getHeader(JwtTokenUtil.TOKEN_HEADER);
         if (token != null) {
-            redisOperationsUtil.logout(token);
+            authorityUserUtil.logout(token);
         }
 
         out.flush();

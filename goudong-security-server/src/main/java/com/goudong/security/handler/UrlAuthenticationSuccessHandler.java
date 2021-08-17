@@ -1,15 +1,11 @@
 package com.goudong.security.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * 登录成功处理器
@@ -39,7 +34,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
     @Resource
-    private RedisOperationsUtil redisOperationsUtil;
+    private AuthorityUserUtil authorityUserUtil;
 
     /**
      *
@@ -71,7 +66,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
 
         // 将用户登录信息保存到redis中
-        redisOperationsUtil.login(token, authorityUserDTO);
+        authorityUserUtil.login(token, authorityUserDTO);
 
         out.flush();
         out.close();

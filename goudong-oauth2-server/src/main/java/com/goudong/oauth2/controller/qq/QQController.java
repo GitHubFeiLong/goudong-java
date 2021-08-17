@@ -2,12 +2,10 @@ package com.goudong.oauth2.controller.qq;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.po.AuthorityUserPO;
-import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.pojo.Transition;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.oauth2.config.UIProperties;
@@ -32,7 +30,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 类描述：
@@ -56,6 +53,9 @@ public class QQController {
 
     @Resource
     private RedisOperationsUtil redisOperationsUtil;
+
+    @Resource
+    private AuthorityUserUtil authorityUserUtil;
 
     /**
      * qq登录
@@ -114,7 +114,7 @@ public class QQController {
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
 
                 // 将用户登录信息保存到redis中
-                redisOperationsUtil.login(token, authorityUserDTO);
+                authorityUserUtil.login(token, authorityUserDTO);
 
                 Transition transition = Transition.builder()
                         .token(token)

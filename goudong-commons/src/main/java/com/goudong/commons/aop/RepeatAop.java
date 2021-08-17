@@ -6,7 +6,9 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -55,6 +57,11 @@ public class RepeatAop {
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		assert Objects.nonNull(attributes) : "ServletRequestAttributes 为空了";
 		HttpServletRequest request = attributes.getRequest();
+		String token = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
+		// 没有携带token，直接放行
+		if (StringUtils.isBlank(token)) {
+			return pjp.proceed();
+		}
 
 		// 获取注解的参数
 		MethodSignature signature = (MethodSignature)pjp.getSignature();
@@ -62,9 +69,14 @@ public class RepeatAop {
 
 		Object ret = null;
 
+		//
+
 		Long userId = JwtTokenUtil.getUserId(request);
 
-		String value = redisOperationsUtil.getStringValue(RedisKeyEnum.REPEAT_URI, request.getRequestURI(), userId.toString());
+		// 格式化请求url，将其参数路径变为*
+		String path = StringUtil.replacePathVariable2Asterisk(request.getRequestURI());
+
+		String value = redisOperationsUtil.getStringValue(RedisKeyEnum.REPEAT_URI, path, userId.toString());
 		// redis中没有指定key，符合条件则继续执行，否则终止方法的执行
 		if (value == null) {
 			// 将key存在redis中，指定时间
@@ -72,10 +84,11 @@ public class RepeatAop {
 			// 执行方法
 			ret =  pjp.proceed();
 		} else {
-			log.info("防止了 {} 重复提交",request.getRequestURI());
+			log.warn("防止了 {} 重复提交",request.getRequestURI());
 			// 429
 			BasicException.exception(ClientExceptionEnum.TOO_MANY_REQUESTS);
 		}
+
 		// 停止执行
 		return ret;
 	}

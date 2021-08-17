@@ -10,6 +10,7 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -40,6 +41,9 @@ public class GatewayFilter implements GlobalFilter, Ordered {
 
     @Resource
     private RedisOperationsUtil redisOperationsUtil;
+
+    @Resource
+    private AuthorityUserUtil authorityUserUtil;
 
     @Resource
     private Oauth2Service oauth2Service;
@@ -112,7 +116,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             }
 
             // 延时
-            redisOperationsUtil.login(headerToken, authorityUserDTO);
+            authorityUserUtil.login(headerToken, authorityUserDTO);
 
             // 根据用户id,判断redis 是否还存储该token(判断是否在线)
             String stringValue = redisOperationsUtil.getStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, authorityUserDTO.getId().toString());

@@ -17,25 +17,12 @@ import java.util.concurrent.TimeUnit;
 public interface RedisOperations {
 
     /**
-     * 登录统一处理redis
-     * @param token
-     * @param authorityUserDTO
-     */
-    void login (String token, AuthorityUserDTO authorityUserDTO);
-
-    /**
-     * 退出统一处理redis
-     * @param token
-     */
-    void logout(String token);
-
-    /**
      * 获取 dataType 为String的value
      * @param redisKeyEnum
      * @param param
      * @return
      */
-    String getStringValue(RedisKeyEnum redisKeyEnum, String... param);
+    String getStringValue(RedisKeyEnum redisKeyEnum, Object... param);
 
     /**
      * 获取 dataType 为List的所有元素
@@ -43,28 +30,28 @@ public interface RedisOperations {
      * @param param
      * @return
      */
-    <T> List<T> getListValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, String... param);
+    <T> List<T> getListValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, Object... param);
     /**
      * 获取 dataType 为Set的所有元素
      * @param redisKeyEnum
      * @param param
      * @return
      */
-    Set getSetValue(RedisKeyEnum redisKeyEnum, String... param);
+    Set getSetValue(RedisKeyEnum redisKeyEnum, Object... param);
     /**
      * 获取 dataType 为ZSet的所有元素
      * @param redisKeyEnum
      * @param param
      * @return
      */
-    TreeSet getZSetValue(RedisKeyEnum redisKeyEnum, String... param);
+    TreeSet getZSetValue(RedisKeyEnum redisKeyEnum, Object... param);
     /**
      * 获取 dataType 为Hash的所有元素
      * @param redisKeyEnum
      * @param param
      * @return
      */
-    <T> T getHashValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, String... param);
+    <T> T getHashValue(RedisKeyEnum redisKeyEnum, Class<T> clazz, Object... param);
 
     /**
      * 设置String类型
@@ -72,7 +59,7 @@ public interface RedisOperations {
      * @param value
      * @param param
      */
-    void setStringValue(RedisKeyEnum redisKeyEnum, String value, String... param);
+    void setStringValue(RedisKeyEnum redisKeyEnum, String value, Object... param);
 
     /**
      * 设置String类型,不同的是，自定义时间和单位
@@ -82,7 +69,7 @@ public interface RedisOperations {
      * @param timeUnit 时间单位
      * @param param 替换模板字符串
      */
-    void setStringValue (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, String... param);
+    void setStringValue (RedisKeyEnum redisKeyEnum, String value, int time, TimeUnit timeUnit, Object... param);
 
     /**
      * 设置List类型
@@ -90,7 +77,7 @@ public interface RedisOperations {
      * @param value
      * @param param
      */
-    void setListValue(RedisKeyEnum redisKeyEnum, List value, String... param);
+    void setListValue(RedisKeyEnum redisKeyEnum, List value, Object... param);
 
     /**
      * 设置Set类型
@@ -98,7 +85,7 @@ public interface RedisOperations {
      * @param value
      * @param param
      */
-    void setSetValue(RedisKeyEnum redisKeyEnum, Set value, String... param);
+    void setSetValue(RedisKeyEnum redisKeyEnum, Set value, Object... param);
 
     /**
      * 设置ZSet类型
@@ -106,7 +93,7 @@ public interface RedisOperations {
      * @param value
      * @param param
      */
-    void setZSetValue(RedisKeyEnum redisKeyEnum, TreeSet value, String... param);
+    void setZSetValue(RedisKeyEnum redisKeyEnum, TreeSet value, Object... param);
 
     /**
      * 设置Hash类型
@@ -114,14 +101,14 @@ public interface RedisOperations {
      * @param value
      * @param param
      */
-    void setHashValue(RedisKeyEnum redisKeyEnum, Map value, String... param);
+    void setHashValue(RedisKeyEnum redisKeyEnum, Map value, Object... param);
 
     /**
      * 删除单个key
      * @param redisKeyEnum
      * @param param
      */
-    void deleteKey (RedisKeyEnum redisKeyEnum, String ... param);
+    void deleteKey (RedisKeyEnum redisKeyEnum, Object ... param);
 
     /**
      * 删除多个key
@@ -129,7 +116,7 @@ public interface RedisOperations {
      * @param redisKeyEnums
      * @param params
      */
-    void deleteKeys (RedisKeyEnum[] redisKeyEnums, String[][] params);
+    void deleteKeys (RedisKeyEnum[] redisKeyEnums, Object[][] params);
 
     /**
      * 检查key是否存在
@@ -137,5 +124,5 @@ public interface RedisOperations {
      * @param param
      * @return
      */
-    boolean hasKey (RedisKeyEnum redisKeyEnum, String... param);
+    boolean hasKey (RedisKeyEnum redisKeyEnum, Object... param);
 }
