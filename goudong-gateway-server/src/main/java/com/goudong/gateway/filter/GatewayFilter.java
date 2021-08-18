@@ -1,6 +1,5 @@
 package com.goudong.gateway.filter;
 
-import com.google.common.collect.Lists;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
@@ -9,7 +8,6 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
-import com.goudong.commons.pojo.ResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -22,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -57,7 +56,6 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         // 检查请求是否能放入
         checkRequestAccess(request);
-
         return chain.filter(exchange);
     }
 
@@ -75,6 +73,13 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             return;
         }
 
+        // 白名单集合
+        List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
+        // 检查本次请求是否是白名单能访问,直接return.
+        if (IgnoreResourceAntMatcherUtil.checkAccess(uri, method, ignoreList)) {
+            return;
+        }
+
         // token
         String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
 
@@ -82,6 +87,12 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         AuthorityUserDTO authorityUserDTO = null;
         if (StringUtils.isNotBlank(headerToken)) {
             authorityUserDTO = getUserByToken(headerToken);
+
+            // swagger文档，手动登录
+            if (new AntPathMatcher().match("/api/*/doc.html", uri) && Objects.equals(method, HttpMethod.GET)) {
+                redisOperationsUtil.login(headerToken, authorityUserDTO);
+                return;
+            }
 
             // 判断用户是否在线
             String tokenMd5Key = JwtTokenUtil.generateRedisKey(headerToken);
@@ -102,6 +113,8 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             // 登录账户包含ADMIN角色,直接放行
             boolean hasRoleAdmin = authorityUserDTO.getAuthorityRoleDTOS().stream().filter(f->CommonConst.ROLE_ADMIN.equals(f.getRoleName())).count()>0;
             if (hasRoleAdmin) {
+                // 延长用户在线时长
+                redisOperationsUtil.renewLoginStatus(headerToken, authorityUserDTO.getId());
                 return;
             }
 
@@ -114,13 +127,6 @@ public class GatewayFilter implements GlobalFilter, Ordered {
 
             // 延长用户在线时长
             redisOperationsUtil.renewLoginStatus(headerToken, authorityUserDTO.getId());
-        }
-
-        // 白名单集合
-        List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
-        // 检查本次请求是否是白名单能访问,直接return.
-        if (IgnoreResourceAntMatcherUtil.checkAccess(uri, method, ignoreList)) {
-            return;
         }
 
         throw ClientException.clientException(ClientExceptionEnum.NOT_AUTHORIZATION);

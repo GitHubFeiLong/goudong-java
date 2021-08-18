@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
@@ -75,5 +76,11 @@ public class RedisOperationUtilTest {
         redisOperationsUtil.opsForHash().putAll(key, BeanUtil.beanToMap(authorityUserDTO));
 
         System.out.println(1);
+    }
+
+    @Test
+    public void test2() {
+        redisOperationsUtil.opsForValue().set("key", "value", -1, TimeUnit.HOURS);
+
     }
 }

@@ -124,6 +124,7 @@ public interface RedisOperations {
      */
     void setHashValue(RedisKeyEnum redisKeyEnum, Map value, Object... param);
 
+
     /**
      * 删除单个key
      * @param redisKeyEnum

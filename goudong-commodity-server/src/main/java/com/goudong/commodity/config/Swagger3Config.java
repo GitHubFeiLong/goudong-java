@@ -1,6 +1,5 @@
 package com.goudong.commodity.config;
 
-import com.goudong.commons.config.Swagger3AuthorizedConfig;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,8 +52,6 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("openApi")
-                .securitySchemes(Swagger3AuthorizedConfig.securitySchemes())
-                .securityContexts(Swagger3AuthorizedConfig.securityContexts())
                 ;
     }
 
@@ -82,8 +79,6 @@ public class Swagger3Config {
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 // 在子模块中使用groupName 可以使用右上的下拉功能
                 .groupName("QQ")
-                .securitySchemes(Swagger3AuthorizedConfig.securitySchemes())
-                .securityContexts(Swagger3AuthorizedConfig.securityContexts())
                 ;
 
     }
@@ -106,8 +101,6 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("WeChat")
-                .securitySchemes(Swagger3AuthorizedConfig.securitySchemes())
-                .securityContexts(Swagger3AuthorizedConfig.securityContexts())
                 ;
 
     }
