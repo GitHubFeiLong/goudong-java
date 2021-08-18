@@ -23,22 +23,16 @@ public enum RedisKeyEnum {
      */
     REPEAT_URI("gd:repeat:${uri}:${userId}", 2, TimeUnit.SECONDS, DataType.STRING),
 
-    /**
-     * 各个服务的菜单
-     * 作用：限制频繁调用保存菜单接口。
-     * @param ${application-name} 应用名称
-     */
-    APP_MENU("gd:app-menu:${application-name}", -1, TimeUnit.SECONDS, DataType.LIST),
-
     /*====================== goudong-oauth2-server ======================*/
     /**
-     * 认证服务中的登录信息，保存登录用户的token
+     * 存用户登录token信息
+     * 作用：判断是否在线。
      * @param ${id} 登录人的主键
      */
     OAUTH2_TOKEN_INFO("gd:oauth2:login-info:token:${id}", DataType.STRING),
 
     /**
-     * 用户详细存储到redis中
+     * 存用户详细信息
      * @param ${token-md5} token字符串转成16进制16位的字符串
      */
     OAUTH2_USER_INFO("gd:oauth2:user-info:token-key:${token-md5}", DataType.HASH),

@@ -53,9 +53,7 @@ public class IgnoreResourceScheduler {
             // 先判断是否需要存redis
             List<IgnoreResourceAntMatcher> redisValue = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
             boolean containsAll = ignoreResourceAntMatchers.containsAll(redisValue);
-            if (!containsAll) {
-                operationRedisValue(ignoreResourceAntMatchers, redisValue);
-            }
+            operationRedisValue(ignoreResourceAntMatchers, redisValue);
         } finally {
             lock.unlock();
         }

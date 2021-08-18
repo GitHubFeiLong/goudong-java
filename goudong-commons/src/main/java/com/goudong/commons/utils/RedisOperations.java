@@ -17,6 +17,13 @@ import java.util.concurrent.TimeUnit;
 public interface RedisOperations {
 
     /**
+     * 登录状态续期
+     * @param token
+     * @param userId
+     */
+    void renewLoginStatus(String token, Long userId);
+
+    /**
      * 登录统一处理redis
      * @param token
      * @param authorityUserDTO
@@ -26,8 +33,9 @@ public interface RedisOperations {
     /**
      * 退出统一处理redis
      * @param token
+     * @param userId
      */
-    void logout(String token);
+    void logout(String token, Long userId);
 
     /**
      * 获取 dataType 为String的value
@@ -138,4 +146,11 @@ public interface RedisOperations {
      * @return
      */
     boolean hasKey (RedisKeyEnum redisKeyEnum, Object... param);
+
+    /**
+     * 当 redisKeyEnum 的time大于0时，需要设置过期时间
+     * @param key
+     * @param redisKeyEnum
+     */
+    boolean expire(String key, RedisKeyEnum redisKeyEnum);
 }

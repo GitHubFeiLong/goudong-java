@@ -219,7 +219,6 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
     @Override
     public AuthorityUserDTO getUserDetailByLoginName(String loginName) {
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(loginName);
-//        redisOperationsUtil.set
         return authorityUserDTO;
     }
 }

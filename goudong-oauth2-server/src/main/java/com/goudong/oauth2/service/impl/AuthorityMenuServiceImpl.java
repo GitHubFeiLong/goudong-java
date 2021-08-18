@@ -1,19 +1,19 @@
 package com.goudong.oauth2.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.po.AuthorityMenuPO;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.oauth2.mapper.AuthorityMenuMapper;
 import com.goudong.oauth2.service.AuthorityMenuService;
-import org.checkerframework.checker.units.qual.A;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +23,7 @@ import java.util.List;
  * @Author e-Feilong.Chen
  * @Date 2021/8/16 16:16
  */
+@Slf4j
 @Service
 public class AuthorityMenuServiceImpl extends ServiceImpl<AuthorityMenuMapper, AuthorityMenuPO> implements AuthorityMenuService {
 
@@ -58,7 +59,13 @@ public class AuthorityMenuServiceImpl extends ServiceImpl<AuthorityMenuMapper, A
         }
 
         // 添加进菜单
-        super.saveBatch(authorityMenuPOS);
+        try {
+            super.saveBatch(authorityMenuPOS);
+        } catch (Exception e) {
+            if (e instanceof BatchUpdateException) {
+                log.info("更新失败");
+            }
+        }
 
         // 释放锁
         lock.unlock();

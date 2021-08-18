@@ -1,5 +1,8 @@
 package com.goudong.commons.constant;
 
+import com.goudong.commons.pojo.ResourceAntMatcher;
+import org.springframework.http.HttpMethod;
+
 /**
  * 类描述：
  * 字符串常量
@@ -40,4 +43,5 @@ public class CommonConst {
      * 普通用户角色
      */
     public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
+
 }

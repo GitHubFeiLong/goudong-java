@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS `base_ignore_resource`;
 CREATE TABLE `base_ignore_resource`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `pattern` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '路径Pattern',
-  `method` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '请求方式请求方式(多个用逗号分隔)',
-  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `pattern` varchar(255) NOT NULL COMMENT '路径Pattern',
+  `method` varchar(255) NOT NULL COMMENT '请求方式请求方式(多个用逗号分隔)',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `is_system` tinyint(1) DEFAULT 0 COMMENT '是否是系统预置的',
   `deleted` tinyint(1) DEFAULT 0 COMMENT '是否被删除',
   `update_time` datetime(0) COMMENT '修改日期',
@@ -12,7 +12,7 @@ CREATE TABLE `base_ignore_resource`  (
   `update_user_id` bigint(20) DEFAULT NULL COMMENT '更新人id',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uq_base_ignore_resource__url_method`(`pattern`, `method`)
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '不需要授权就能访问的资源' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '不需要授权就能访问的资源';
 
 INSERT INTO `base_ignore_resource` ( `pattern`, `method`, `remark`, `is_system`,`create_user_id`)
 VALUES

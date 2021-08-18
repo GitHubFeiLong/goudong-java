@@ -41,4 +41,5 @@ public class AuthorityUserController {
     public Result logout () {
         return Result.ofSuccess();
     }
+
 }

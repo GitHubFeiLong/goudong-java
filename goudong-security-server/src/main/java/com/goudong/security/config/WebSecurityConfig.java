@@ -1,6 +1,8 @@
 package com.goudong.security.config;
 
+import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
+import com.goudong.commons.pojo.ResourceAntMatcher;
 import com.goudong.security.filter.JwtAuthorizationFilter;
 import com.goudong.security.handler.*;
 import com.goudong.security.scheduler.IgnoreResourceScheduler;

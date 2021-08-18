@@ -19,41 +19,60 @@ import java.util.concurrent.TimeUnit;
 public class RedisOperationsUtil extends RedisTemplate implements RedisOperations{
 
     /**
+     * 登录状态续期
+     *
+     * @param token
+     * @param userId
+     */
+    @Override
+    public void renewLoginStatus(String token, Long userId) {
+        if(token != null) {
+            String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
+            // 获取完整key
+            String key = GenerateRedisKeyUtil.generateByClever(RedisKeyEnum.OAUTH2_USER_INFO.getKey(), tokenMd5Key);
+            if (super.hasKey(key)) {
+                // redis 存的用户详细信息
+                this.expire(key, RedisKeyEnum.OAUTH2_USER_INFO);
+            }
+            // 获取完整key
+            String tokenInfoKey = GenerateRedisKeyUtil.generateByClever(RedisKeyEnum.OAUTH2_TOKEN_INFO.getKey(), userId);
+            if (super.hasKey(tokenInfoKey)) {
+                // redis 存的token信息
+                this.expire(tokenInfoKey, RedisKeyEnum.OAUTH2_TOKEN_INFO);
+            }
+        }
+    }
+
+
+    /**
      * 登录统一处理redis
      * @param token
      * @param authorityUserDTO
      */
     public void login (String token, AuthorityUserDTO authorityUserDTO) {
-        // 添加token保存到redis中
-        this.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId().toString());
-
         // 将用户信息保存到redis中
         // 将token进行md5加密作为redis key(16位16进制字符串)，然后保存用户详细信息
         String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
         // 存储redis || 追加时长
         this.setHashValue(RedisKeyEnum.OAUTH2_USER_INFO, BeanUtil.beanToMap(authorityUserDTO), tokenMd5Key);
+        this.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId());
     }
 
     /**
      * 退出统一处理redis
      * @param token
+     * @param userId
      */
-    public void logout(String token) {
-        // 获取登录用户
-        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
-
+    public void logout(String token, Long userId) {
         // 将token进行md5加密作为redis key(16位16进制字符串)
         String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
-
-        // 清除用户在线token,清除用户能访问的菜单
-        RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_INFO};
-        // 对应参数二维数组
-        String[][] params = {
-                {authorityUserDTO.getId().toString()},
-                {tokenMd5Key}
+        RedisKeyEnum[] keys = new RedisKeyEnum[]{RedisKeyEnum.OAUTH2_USER_INFO, RedisKeyEnum.OAUTH2_TOKEN_INFO};
+        Object[][] params = new Object[][]{
+                {tokenMd5Key},
+                {userId},
         };
         // 删除redis中的数据
-        this.deleteKeys(deleteKeys, params);
+        this.deleteKeys(keys, params);
     }
 
     /**
@@ -306,9 +325,14 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
      * @param key
      * @param redisKeyEnum
      */
-    private void expire(String key, RedisKeyEnum redisKeyEnum){
+    public boolean expire(String key, RedisKeyEnum redisKeyEnum){
         if (redisKeyEnum.getTime() > 0) {
-            super.expire(key, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
+            boolean result = super.expire(key, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
+            if (!result) {
+                log.error("更新redis key过期时间错误（key：{} 时长：{} 时间单位：{}） ，该key可能不存在", key, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
+            }
+            return result;
         }
+        return false;
     }
 }

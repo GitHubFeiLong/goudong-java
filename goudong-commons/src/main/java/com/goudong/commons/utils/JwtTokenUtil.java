@@ -68,7 +68,6 @@ public class JwtTokenUtil {
      */
     public static final String SALT = "qaqababa";
 
-    public static MD5 md5 = MD5.create();
 
     private static Oauth2Service oauth2Service;
 
@@ -135,7 +134,7 @@ public class JwtTokenUtil {
     public static String generateRedisKey (String token) {
         boolean bool = JwtTokenUtil.checkTokenFormat(token);
 
-        return md5.digestHex16(token);
+        return MD5.create().digestHex16(token);
     }
 
     /**

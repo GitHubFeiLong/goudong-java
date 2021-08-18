@@ -54,7 +54,6 @@ public class AuthorityMenuPO extends BasePO{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AuthorityMenuPO)) return false;
-        if (!super.equals(o)) return false;
         AuthorityMenuPO that = (AuthorityMenuPO) o;
         return Objects.equals(url, that.url) && Objects.equals(method, that.method);
     }

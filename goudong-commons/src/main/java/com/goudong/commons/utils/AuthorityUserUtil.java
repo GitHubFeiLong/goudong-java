@@ -20,9 +20,19 @@ import java.util.List;
 @Component
 public class AuthorityUserUtil {
 
+    private HttpServletRequest request;
+
     @Autowired
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
     private RedisOperationsUtil redisOperationsUtil;
 
+    @Autowired
+    public void setRedisOperationsUtil(RedisOperationsUtil redisOperationsUtil) {
+        this.redisOperationsUtil = redisOperationsUtil;
+    }
 
     /**
      * 登录统一处理redis
@@ -30,77 +40,50 @@ public class AuthorityUserUtil {
      * @param authorityUserDTO
      */
     public void login (String token, AuthorityUserDTO authorityUserDTO) {
-        // 添加token保存到redis中
-        redisOperationsUtil.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId().toString());
-
-        // 将用户信息保存到redis中
-        // 将token进行md5加密作为redis key(16位16进制字符串)，然后保存用户详细信息
-        String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
-        // 存储redis || 追加时长
-        redisOperationsUtil.setHashValue(RedisKeyEnum.OAUTH2_USER_INFO, BeanUtil.beanToMap(authorityUserDTO), tokenMd5Key);
+        redisOperationsUtil.login(token, authorityUserDTO);
     }
 
     /**
      * 退出统一处理redis
      * @param token
      */
-    public void logout(String token) {
-        // 获取登录用户
-        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
-
-        // 将token进行md5加密作为redis key(16位16进制字符串)
-        String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
-
-        // 清除用户在线token,清除用户能访问的菜单
-        RedisKeyEnum[] deleteKeys = {RedisKeyEnum.OAUTH2_TOKEN_INFO, RedisKeyEnum.OAUTH2_USER_INFO};
-        // 对应参数二维数组
-        String[][] params = {
-                {authorityUserDTO.getId().toString()},
-                {tokenMd5Key}
-        };
-        // 删除redis中的数据
-        redisOperationsUtil.deleteKeys(deleteKeys, params);
+    public void logout(String token, Long userId) {
+        redisOperationsUtil.logout(token, userId);
     }
 
     /**
      * 使用HttpServletRequest 获取用户信息
      * 原理就是使用请求头的Authorization值，使用md5生成一个16位的key，从redis获取对象
-     * @param request
      * @return
      */
-    public AuthorityUserDTO getUserDetails(HttpServletRequest request){
+    public AuthorityUserDTO getUserDetails(){
         // 获取token
-        String token = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
+        String token = this.request.getHeader(JwtTokenUtil.TOKEN_HEADER);
         return getUserDetails(token);
 
     }
     /**
      * 根据请求对象获取用户id
-     * @param request
      * @return
      */
-    public Long getUserId(HttpServletRequest request) {
-        // 获取token
-        String token = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
-        return getUserDetails(token).getId();
+    public Long getUserId() {
+        return getUserDetails().getId();
     }
 
     /**
      * 根据请求对象，获取用户角色
-     * @param request
      * @return
      */
-    public List<AuthorityRoleDTO> getUserRoleDetails (HttpServletRequest request) {
-        return getUserDetails(request).getAuthorityRoleDTOS();
+    public List<AuthorityRoleDTO> getUserRoleDetails () {
+        return getUserDetails().getAuthorityRoleDTOS();
     }
 
     /**
      * 根据请求对象，获取用户权限
-     * @param request
      * @return
      */
-    public List<AuthorityMenuDTO> getUserMenuDetails (HttpServletRequest request) {
-        return getUserDetails(request).getAuthorityMenuDTOS();
+    public List<AuthorityMenuDTO> getUserMenuDetails () {
+        return getUserDetails().getAuthorityMenuDTOS();
     }
 
 

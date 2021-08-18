@@ -144,4 +144,4 @@ ui:
 # 自定义定时器
 scheduler:
   scanIgnoreResource: # 扫描白名单
-    cron: "0/10 * * * * ?" #定时器表达式（-）
+    cron: "-" #定时器表达式（-）（0/10 * * * * ?）

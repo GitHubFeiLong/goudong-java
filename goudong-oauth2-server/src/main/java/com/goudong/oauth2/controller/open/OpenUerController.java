@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.open;
 
+import cn.hutool.http.server.HttpServerRequest;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.goudong.commons.annotation.IgnoreResource;
@@ -9,6 +10,7 @@ import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.vo.AuthorityUser2CreateVO;
 import com.goudong.commons.vo.AuthorityUser2UpdateOpenIdVO;
@@ -26,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -45,6 +48,12 @@ public class OpenUerController {
 
     @Resource
     private AuthorityUserService authorityUserService;
+
+    @Resource
+    private HttpServletRequest request;
+
+    @Resource
+    private AuthorityUserUtil authorityUserUtil;
 
     /**
      * 根据手机号获取账号
@@ -144,21 +153,21 @@ public class OpenUerController {
     @ApiOperation(value = "修改密码")
     @IgnoreResource("修改密码")
     public Result<AuthorityUserVO> updatePassword(@RequestBody @Validated AuthorityUser2UpdatePasswordVO updatePasswordVO){
+        Long userId = authorityUserUtil.getUserId();
 
-        return Result.ofSuccess(null);
-//        LambdaUpdateWrapper<AuthorityUserPO> updateWrapper = new LambdaUpdateWrapper<>();
-//        String hashPw = BCrypt.hashpw(updatePasswordVO.getPassword(), BCrypt.gensalt());
-//        updateWrapper.set(AuthorityUserPO::getPassword, hashPw)
-//                .eq(AuthorityUserPO::getId, updatePasswordVO.getId());
-//
-//        boolean update = authorityUserService.update(updateWrapper);
-//
-//        AuthorityUserPO byId = authorityUserService.getById(updatePasswordVO.getId());
-//        if (byId==null) {
-//            throw ClientException.resourceNotFound("账号不存在");
-//        }
-//
-//        return Result.ofSuccess(BeanUtil.copyProperties(byId, AuthorityUserVO.class));
+       LambdaUpdateWrapper<AuthorityUserPO> updateWrapper = new LambdaUpdateWrapper<>();
+       String hashPw = BCrypt.hashpw(updatePasswordVO.getPassword(), BCrypt.gensalt());
+       updateWrapper.set(AuthorityUserPO::getPassword, hashPw)
+               .eq(AuthorityUserPO::getId, userId);
+
+       boolean update = authorityUserService.update(updateWrapper);
+
+       AuthorityUserPO byId = authorityUserService.getById(userId);
+       if (byId==null) {
+           throw ClientException.resourceNotFound("账号不存在");
+       }
+
+       return Result.ofSuccess(BeanUtil.copyProperties(byId, AuthorityUserVO.class));
     }
 
     /**

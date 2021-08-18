@@ -30,4 +30,9 @@ public class ResourceAntMatcher implements Serializable {
      * 备注
      */
     private String remark;
+
+    public ResourceAntMatcher(String pattern, String method) {
+        this.pattern = pattern;
+        this.method = method;
+    }
 }

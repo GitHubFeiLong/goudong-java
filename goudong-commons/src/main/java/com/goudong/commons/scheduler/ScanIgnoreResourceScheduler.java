@@ -50,6 +50,7 @@ public class ScanIgnoreResourceScheduler {
 
     /**
      * 定时器，扫描白名单(配置热加载)
+     * 生产环境将值 scheduler.scanIgnoreResource.cron 设置成 "-"，关闭该定时器。
      */
     @SneakyThrows
     @Scheduled(cron = "${scheduler.scanIgnoreResource.cron}")
@@ -57,21 +58,9 @@ public class ScanIgnoreResourceScheduler {
         long var0 = System.currentTimeMillis();
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
 
-        // 查询应用上次保存到redis的菜单list
-        List<ResourceAntMatcher> menus = redisOperationsUtil.getListValue(RedisKeyEnum.APP_MENU, ResourceAntMatcher.class, applicationName);
-
-        // 比较本次是否有新增
-        boolean containsAll = menus.containsAll(menus);
-        if (containsAll) {
-            return;
-        }
-
-        redisOperationsUtil.setListValue(RedisKeyEnum.APP_MENU, resourceAntMatchers, applicationName);
         // 有数据，插入数据库
-        if (resourceAntMatchers.size() > 0) {
-            List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
-            oauth2Service.addIgnoreResources(baseIgnoreResourceVOS);
-        }
+        List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
+        oauth2Service.addIgnoreResources(baseIgnoreResourceVOS);
         long var1 = System.currentTimeMillis();
         log.info("ScanIgnoreResourceScheduler 定时器执行花费时长: {} ms", var1 - var0);
     }
