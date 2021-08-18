@@ -65,11 +65,23 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      * @param request
      */
     private void checkRequestAccess(ServerHttpRequest request) {
+        // token
+        String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
         // 登录接口，直接放行
         boolean isLogin = Objects.equals(uri, "/api/oauth2/user/login") && Objects.equals(method, HttpMethod.POST);
         if (isLogin) {
+            return;
+        }
+        // swagger文档，手动登录
+        if (new AntPathMatcher().match(CommonConst.KNIFE4J_DOC_PATTERN, uri) && Objects.equals(method, HttpMethod.GET)) {
+            // 还未登录swagger时，没有token
+            if (headerToken == null) {
+                return;
+            }
+            // 登陆过swagger了
+            redisOperationsUtil.login(headerToken, getUserByToken(headerToken));
             return;
         }
 
@@ -80,19 +92,9 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             return;
         }
 
-        // token
-        String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
-
-        // 2. 只要带上了token， 就需要判断Token是否有效
-        AuthorityUserDTO authorityUserDTO = null;
+        // 带上了token， 就需要判断Token是否有效
         if (StringUtils.isNotBlank(headerToken)) {
-            authorityUserDTO = getUserByToken(headerToken);
-
-            // swagger文档，手动登录
-            if (new AntPathMatcher().match("/api/*/doc.html", uri) && Objects.equals(method, HttpMethod.GET)) {
-                redisOperationsUtil.login(headerToken, authorityUserDTO);
-                return;
-            }
+            AuthorityUserDTO authorityUserDTO = getUserByToken(headerToken);
 
             // 判断用户是否在线
             String tokenMd5Key = JwtTokenUtil.generateRedisKey(headerToken);

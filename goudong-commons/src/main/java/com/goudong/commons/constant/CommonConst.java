@@ -31,6 +31,11 @@ public class CommonConst {
     public static final String API_PREFIX = "/api/*";
 
     /**
+     * 增强swagger的文档地址模式pattern
+     */
+    public static final String KNIFE4J_DOC_PATTERN = "/api/*/doc.html";
+
+    /**
      * 所有字节码文件的路径 antPath模式
      */
     public static final String ALL_CLASSES_ANT_PATH = "/**/*.class";
