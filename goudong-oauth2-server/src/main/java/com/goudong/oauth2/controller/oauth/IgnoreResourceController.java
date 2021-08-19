@@ -1,4 +1,4 @@
-package com.goudong.oauth2.controller.auth;
+package com.goudong.oauth2.controller.oauth;
 
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.pojo.Result;

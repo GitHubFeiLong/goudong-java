@@ -150,7 +150,9 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         if (authorityUserDTO.getId() == null) {
             // 查询用户
             AuthorityUserDTO userDetail = oauth2Service.getUserDetailByLoginName(authorityUserDTO.getUsername()).getData();
-
+            if (userDetail == null) {
+                throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
+            }
             String rawPassword = authorityUserDTO.getPassword();
             String encodedPassword = userDetail.getPassword();
             // 使用 BCrypt 加密的方式进行匹配

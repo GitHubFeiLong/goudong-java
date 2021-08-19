@@ -5,6 +5,7 @@ import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
@@ -38,6 +39,9 @@ public class RepeatAop {
 	@Resource
 	private RedisOperationsUtil redisOperationsUtil;
 
+	@Resource
+	private AuthorityUserUtil authorityUserUtil;
+
 	/**
 	 * 定义切点：使用了注解@RepeatSubmitAnnotation的所有方法和类
 	 */
@@ -70,9 +74,7 @@ public class RepeatAop {
 
 		Object ret = null;
 
-		//
-
-		Long userId = JwtTokenUtil.getUserId(request);
+		Long userId = authorityUserUtil.getUserId();
 
 		// 格式化请求url，将其参数路径变为*
 		String path = StringUtil.replacePathVariable2Asterisk(request.getRequestURI());

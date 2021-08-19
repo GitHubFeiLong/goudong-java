@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 类描述：
- * 用户控制器
+ * 登录和退出控制器（只是接口展示方便swagger上查看文档）
  * @Author msi
  * @Date 2021-05-02 13:33
  * @Version 1.0
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping("/user")
-public class AuthorityUserController {
+public class LoginController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录")

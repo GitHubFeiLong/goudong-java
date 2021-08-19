@@ -1,7 +1,6 @@
-package com.goudong.oauth2.controller.auth;
+package com.goudong.oauth2.controller.oauth;
 
 import com.goudong.commons.dto.AuthorityMenuDTO;
-import com.goudong.commons.po.AuthorityMenuPO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;

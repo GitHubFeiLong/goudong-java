@@ -105,5 +105,26 @@ public class Swagger3Config {
 
     }
 
+    @Bean
+    public Docket Oauth2Docket() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("用户角色权限title")
+                .description("用户角色权限相关接口")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.oauth"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("用户角色权限")
+                ;
+
+    }
 
 }
