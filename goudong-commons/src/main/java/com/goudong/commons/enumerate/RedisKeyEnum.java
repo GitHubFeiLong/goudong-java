@@ -57,7 +57,7 @@ public enum RedisKeyEnum {
      * 消息服务中的验证码，保存邮箱验证码和短信验证码
      * @param ${email|phone} 邮箱或者手机号
      */
-    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 5, TimeUnit.MINUTES, DataType.STRING, String.class),
+    MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 10, TimeUnit.MINUTES, DataType.STRING, String.class),
 
     ;
 

@@ -3,6 +3,9 @@ package com.goudong.commons.po;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,7 +24,10 @@ public class BasePO implements Serializable {
     private static final long serialVersionUID = 8647446252613184267L;
     /**
      * id
+     * 防止前端接受精度丢失
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonSerialize(using= ToStringSerializer.class)
     protected Long id;
     /**
      * 是否被删除

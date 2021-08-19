@@ -49,4 +49,11 @@ public interface AuthorityUserService extends IService<AuthorityUserPO> {
      * @return
      */
     AuthorityUserDTO getUserDetailByLoginName(String loginName);
+
+    /**
+     * 更新密码
+     * @param authorityUserDTO
+     * @return
+     */
+    AuthorityUserDTO updatePassword(AuthorityUserDTO authorityUserDTO);
 }

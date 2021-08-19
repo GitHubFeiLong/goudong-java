@@ -21,7 +21,15 @@ public class AuthorityUser2UpdatePasswordVO implements Serializable {
 
     private static final long serialVersionUID = 7929990337110946181L;
 
+    @NotNull(message = "用户id不能为空")
+    @ApiModelProperty(value = "用户id", required = true)
+    private Long id;
+
+    @NotBlank(message = "验证码不能为空")
+    @ApiModelProperty(value = "验证码", required = true)
+    private String code;
+
     @NotBlank(message = "密码不能为空")
-    @ApiModelProperty(value = "密码")
+    @ApiModelProperty(value = "密码",required = true)
     private String password;
 }

@@ -41,7 +41,30 @@ public class BasicException extends RuntimeException{
     @ApiModelProperty(value = "状态码对应描述", required = true, example = "用户不存在")
     public String serverMessage;
 
+    /**
+     * 客户端误操作造成异常
+     * @param exceptionEnum
+     */
+    public BasicException(ClientExceptionEnum exceptionEnum) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
+    }
 
+    /**
+     * 客户端误操作造成异常
+     * @param exceptionEnum
+     * @param clientMessage 自定义客户端提示信息
+     */
+    public BasicException(ClientExceptionEnum exceptionEnum, String clientMessage) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, exceptionEnum.getServerMessage());
+    }
+
+    /**
+     * 服务端异常
+     * @param exceptionEnum
+     */
+    public BasicException(ServerExceptionEnum exceptionEnum) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
+    }
 
     /**
      * 构造方法
@@ -57,42 +80,4 @@ public class BasicException extends RuntimeException{
         this.clientMessage = clientMessage;
         this.serverMessage = serverMessage;
     }
-
-    /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
-     */
-    public BasicException(ClientExceptionEnum exceptionEnum) {
-        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
-    }
-
-    /**
-     * 服务端异常
-     * @param exceptionEnum
-     */
-    public BasicException(ServerExceptionEnum exceptionEnum) {
-        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
-    }
-
-    /**
-     * 快速抛出服务端通用异常
-     * @param exceptionEnum 服务端异常枚举
-     * @return
-     */
-    public static BasicException exception (ServerExceptionEnum exceptionEnum) {
-        throw new ServerException(exceptionEnum);
-    }
-
-    /**
-     * 快速抛出客户端通用异常
-     * @param exceptionEnum 客户端异常枚举
-     * @return
-     */
-    public static BasicException exception (ClientExceptionEnum exceptionEnum) {
-        throw new ClientException(exceptionEnum);
-    }
-
-
-
-
 }

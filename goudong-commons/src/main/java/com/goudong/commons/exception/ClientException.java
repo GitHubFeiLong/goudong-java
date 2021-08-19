@@ -14,7 +14,7 @@ public class ClientException extends BasicException {
 
     /**
      * 代替 构造方法(用起舒服些)
-     * @param clientExceptionEnum
+     * @param clientExceptionEnum 客户端错误枚举
      * @return
      */
     public static ClientException clientException (ClientExceptionEnum clientExceptionEnum) {
@@ -22,17 +22,21 @@ public class ClientException extends BasicException {
     }
 
     /**
-     * 资源不存在
-     * 404 Not Found
-     * @param clientMessage 客户端提示信息
+     * 代替 构造方法(用起舒服些)
+     * @param clientExceptionEnum 客户端错误枚举
+     * @param clientMessage 动态自定义客户端提示信息
      * @return
      */
-    public static BasicException resourceNotFound(String clientMessage){
-        log.error("资源不存在：{}", clientMessage);
-        throw new BasicException(404, "404", clientMessage, "Not Found - 请求失败，请求所希望得到的资源未被在服务器上发现。没有信息能够告诉用户这个状况到底是暂时的还是永久的。");
+    public static ClientException clientException (ClientExceptionEnum clientExceptionEnum, String clientMessage) {
+        return new ClientException(clientExceptionEnum, clientMessage);
     }
 
     public ClientException(ClientExceptionEnum clientExceptionEnum) {
         super(clientExceptionEnum);
     }
+
+    public ClientException(ClientExceptionEnum clientExceptionEnum, String clientMessage) {
+        super(clientExceptionEnum, clientMessage);
+    }
+
 }

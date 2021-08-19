@@ -92,4 +92,9 @@ public class AuthorityUserDTO extends BasePO {
      * 绑定的openId类型：QQ，WE_CHAT
      */
     private String userType;
+
+    /**
+     * 验证码
+     */
+    private String code;
 }

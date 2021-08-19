@@ -4,6 +4,7 @@ import com.goudong.commons.annotation.Repeat;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
@@ -86,7 +87,7 @@ public class RepeatAop {
 		} else {
 			log.warn("防止了 {} 重复提交",request.getRequestURI());
 			// 429
-			BasicException.exception(ClientExceptionEnum.TOO_MANY_REQUESTS);
+			throw ClientException.clientException(ClientExceptionEnum.TOO_MANY_REQUESTS);
 		}
 
 		// 停止执行

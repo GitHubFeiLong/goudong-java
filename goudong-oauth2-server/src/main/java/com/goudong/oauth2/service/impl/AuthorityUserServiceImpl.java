@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.openfeign.MessageService;
 import com.goudong.commons.po.AuthorityRolePO;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.po.AuthorityUserRolePO;
+import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.oauth2.enumerate.OtherUserTypeEnum;
@@ -48,6 +50,8 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
     private AuthorityUserRoleMapper authorityUserRoleMapper;
     @Resource
     private SelfAuthorityUserMapper selfAuthorityUserMapper;
+    @Resource
+    private MessageService messageService;
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -193,7 +197,7 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
         boolean error = authorityUserPO==null
                 || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), authorityUserPO.getPassword());
         if (error) {
-            throw ClientException.resourceNotFound("账户名与密码不匹配，请重新输入");
+            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账户名与密码不匹配，请重新输入");
         }
         // 修改openId
         // qq
@@ -220,5 +224,39 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
     public AuthorityUserDTO getUserDetailByLoginName(String loginName) {
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(loginName);
         return authorityUserDTO;
+    }
+
+    /**
+     * 更新密码
+     *
+     * @param authorityUserDTO
+     * @return
+     */
+    @Override
+    public AuthorityUserDTO updatePassword(AuthorityUserDTO authorityUserDTO) {
+        AuthorityUserPO byId = super.getById(authorityUserDTO.getId());
+        if (byId == null) {
+            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账号不存在");
+        }
+
+        // 判断验证码是否正确
+        Result<Boolean> booleanResult = messageService.checkCode(byId.getPhone(), authorityUserDTO.getCode());
+
+        if (booleanResult.getData()) {
+            Long userId = authorityUserDTO.getId();
+
+            LambdaUpdateWrapper<AuthorityUserPO> updateWrapper = new LambdaUpdateWrapper<>();
+            String hashPw = BCrypt.hashpw(authorityUserDTO.getPassword(), BCrypt.gensalt());
+            updateWrapper.set(AuthorityUserPO::getPassword, hashPw)
+                    .eq(AuthorityUserPO::getId, userId);
+
+            boolean update = super.update(updateWrapper);
+            if (update) {
+                return BeanUtil.copyProperties(super.getById(authorityUserDTO.getId()), AuthorityUserDTO.class);
+            }
+        }
+
+        // 验证码错误，或更新失败
+        throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");
     }
 }

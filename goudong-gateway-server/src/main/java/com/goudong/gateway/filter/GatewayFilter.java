@@ -131,7 +131,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             redisOperationsUtil.renewLoginStatus(headerToken, authorityUserDTO.getId());
         }
 
-        throw ClientException.clientException(ClientExceptionEnum.NOT_AUTHORIZATION);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
     }
 
     /**
