@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -73,7 +71,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(BasicException.class)
-    public Result<BasicException> clientExceptionDispose(BasicException exception){
+    public Result<BasicException> basicExceptionDispose(BasicException exception){
         // 设置响应码
         response.setStatus(exception.getStatus());
         // 打印错误日志
@@ -82,6 +80,26 @@ public class GlobalExceptionHandler {
         exception.printStackTrace();
 
         return Result.ofFail(exception);
+    }
+
+    /**
+     * 运行时异常，其它框架抛出的异常未封装（openfeign调用服务时）
+     * 后续可能会继续扩展....
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public Result<BasicException> runtimeExceptionDispose(RuntimeException exception){
+        BasicException basicException = BasicException.generateByServer(exception);
+
+        // 设置响应码
+        response.setStatus(basicException.getStatus());
+        // 打印错误日志
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
+        // 堆栈跟踪
+        exception.printStackTrace();
+
+        return Result.ofFail(basicException);
     }
 
     /**

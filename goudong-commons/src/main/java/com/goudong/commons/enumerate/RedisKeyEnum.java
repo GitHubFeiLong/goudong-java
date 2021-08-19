@@ -29,13 +29,13 @@ public enum RedisKeyEnum {
      * 作用：判断是否在线。
      * @param ${id} 登录人的主键
      */
-    OAUTH2_TOKEN_INFO("gd:oauth2:login-info:token:${id}", DataType.STRING),
+    OAUTH2_TOKEN_INFO("gd:oauth2:login-info:token-info:${id}", DataType.STRING),
 
     /**
      * 存用户详细信息
      * @param ${token-md5} token字符串转成16进制16位的字符串
      */
-    OAUTH2_USER_INFO("gd:oauth2:user-info:token-key:${token-md5}", DataType.HASH),
+    OAUTH2_USER_INFO("gd:oauth2:login-info:user-info:${token-md5}", DataType.HASH),
 
     /**
      * 认证服务中的 忽略资源

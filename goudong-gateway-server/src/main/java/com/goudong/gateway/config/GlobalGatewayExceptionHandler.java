@@ -7,7 +7,9 @@ package com.goudong.gateway.config;
  * @Date 2021/8/10 15:55
  */
 
+import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.pojo.Result;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,22 +45,21 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
     private List<HttpMessageReader<?>> messageReaders = Collections.emptyList();
     private List<HttpMessageWriter<?>> messageWriters = Collections.emptyList();
     private List<ViewResolver> viewResolvers = Collections.emptyList();
-    private ThreadLocal<Result> threadLocal=new ThreadLocal<>();
+    private ThreadLocal<BasicException> threadLocal=new ThreadLocal<>();
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable throwable) {
         throwable.printStackTrace();
         log.error("网关异常全局处理，异常信息：{}",throwable.getMessage());
-        Result result;
+        BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage());
         if (throwable instanceof BasicException) {
-            BasicException basicException = (BasicException) throwable;
-            result = Result.ofFail(basicException);
+            basicException = (BasicException) throwable;
         } else {
-            result = Result.ofFail();
+            basicException = BasicException.generateByServer(throwable);
         }
 
         //这里只是做个最简单的同一的异常结果输出，实际业务可根据throwable不同的异常处理不同的逻辑
-        threadLocal.set(result);
+        threadLocal.set(basicException);
         ServerRequest newRequest = ServerRequest.create(exchange, this.messageReaders);
         return RouterFunctions.route(RequestPredicates.all(), this::renderErrorResponse).route(newRequest)
                 .switchIfEmpty(Mono.error(throwable))
@@ -66,16 +67,17 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
                 .flatMap((response) -> write(exchange, response));
     }
 
+
     /**
      * 统一返回指定异常信息(指定json格式输出)
      * @param request
      * @return
      */
     protected Mono<ServerResponse> renderErrorResponse(ServerRequest request){
-        int status = Integer.parseInt(Optional.ofNullable(threadLocal.get().getCode()).orElseGet(() -> "500"));
+        int status = Optional.ofNullable(threadLocal.get().getStatus()).orElseGet(() -> 500);
         return ServerResponse.status(status)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(threadLocal.get()));
+                .body(BodyInserters.fromValue(Result.ofFail(threadLocal.get())));
     }
 
     /**

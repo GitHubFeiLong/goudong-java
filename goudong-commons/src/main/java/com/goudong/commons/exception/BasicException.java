@@ -42,6 +42,24 @@ public class BasicException extends RuntimeException{
     public String serverMessage;
 
     /**
+     * 根据异常对象，返回自定义的服务异常对象
+     * @param throwable
+     * @return
+     */
+    public static BasicException generateByServer(Throwable throwable) {
+        // 默认500异常
+        BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR);
+        String message = throwable.getMessage();
+
+        // openFeign调用远程服务，服务还未注册到nacos中
+        if (message.startsWith("com.netflix.client.ClientException")) {
+            basicException = ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
+        }
+
+        return basicException;
+    }
+
+    /**
      * 客户端误操作造成异常
      * @param exceptionEnum
      */
@@ -64,6 +82,15 @@ public class BasicException extends RuntimeException{
      */
     public BasicException(ServerExceptionEnum exceptionEnum) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
+    }
+
+    /**
+     * 服务端异常
+     * @param exceptionEnum
+     * @param serverMessage 服务端错误信息
+     */
+    public BasicException(ServerExceptionEnum exceptionEnum, String serverMessage) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), serverMessage);
     }
 
     /**

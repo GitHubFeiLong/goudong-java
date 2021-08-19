@@ -28,7 +28,6 @@ spring:
     init-sqls: #获取连接后立即执行初始化的SQL语句。
     locations: classpath:db/migration #迁移脚本的位置。 （默认值： db/migration 。 ）
     out-of-order: false #是否允许乱序（out of order）迁移。 （默认值： false 。 ）
-    password: #待迁移数据库的登录密码
     placeholder-prefix: #设置每个占位符的前缀。 （默认值： ${ 。 ）
     placeholder-replacement: #是否要替换占位符。 （默认值： true 。 ）
     flyway.placeholder-suffix: #设置占位符的后缀。 （默认值： } 。 ）
@@ -37,10 +36,11 @@ spring:
     sql-migration-prefix: V #SQL迁移的文件名前缀。 （默认值： V 。 ）
     sql-migration-separator: __ #SQL迁移的文件名分隔符。 （默认值： __ 。 ）
     sql-migration-suffix: .sql #SQL迁移的文件名后缀。 （默认值： .sql 。 ）
-    table: #Flyway使用的Schema元数据表名称。 （默认值： schema_version 。 ）
+    table: #Flyway使用的Schema元数据表名称。 （默认值： flyway_schema_history 。 ）
     target: #Flyway要迁移到的目标版本号。 （默认最新版本。 ）
     url: #待迁移的数据库的JDBC URL。如果没有设置，就使用配置的主数据源。
     user: #待迁移数据库的登录用户。
+    password: #待迁移数据库的登录密码
     validate-on-migrate: true #在运行迁移时是否要自动验证。 （默认值： true 。 ）
 ```
 

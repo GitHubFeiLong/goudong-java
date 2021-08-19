@@ -21,25 +21,21 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <optional>true</optional>
         </dependency>
         <!--spring cloud Alibaba nacos 服务配置中心-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <optional>true</optional>
         </dependency>
         <!--openfeign-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <optional>true</optional>
         </dependency>
         <!--sentinel 流量防卫兵-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-            <optional>true</optional>
         </dependency>
         <!--动态规则扩展 推模式：使用 Nacos 配置规则-->
         <dependency>
@@ -114,6 +110,34 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--flyway-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
+
+    <!-- 构建项目需要的信息 -->
+    <build>
+        <!-- 子项目可以引用的默认插件信息。该插件配置项直到被引用时才会被解析或绑定到生命周期。给定插件的任何本地配置都会覆盖这里的配置 -->
+        <pluginManagement>
+            <!-- 使用的插件列表 。 -->
+            <plugins>
+                <!-- 数据库版本管理插件-->
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

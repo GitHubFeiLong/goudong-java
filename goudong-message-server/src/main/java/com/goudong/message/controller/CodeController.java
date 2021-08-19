@@ -1,8 +1,14 @@
 package com.goudong.message.controller;
 
+import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.annotation.Repeat;
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.exception.ServerException;
+import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -52,7 +58,27 @@ public class CodeController {
     @Repeat
     @IgnoreResource("测试接口")
     public Result demo () {
-        return Result.ofSuccess();
+        try (Entry entry = SphU.entry("sourceName")) {
+            entry.exit();
+            return Result.ofSuccess("成功");
+        } catch (BlockException e) {
+            e.printStackTrace();
+            throw ServerException.serverException(e.getMessage());
+        } finally {
+
+        }
+    }
+
+    @Resource
+    private Oauth2Service oauth2Service;
+
+    @GetMapping("/demo1")
+    @ApiOperation("测试")
+    @Repeat
+    public Result demo1 () {
+        String admin = "admin";
+        Result<AuthorityUserDTO> userDetailByLoginName = oauth2Service.getUserDetailByLoginName(admin);
+        return Result.ofSuccess(userDetailByLoginName);
     }
 
     /**

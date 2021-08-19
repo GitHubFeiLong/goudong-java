@@ -23,7 +23,7 @@ public interface MessageService {
      * @param email 邮箱
      * @return
      */
-    @GetMapping("/email-code/{email}")
+    @GetMapping("/code/email-code/{email}")
     Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email);
 
 
@@ -32,7 +32,7 @@ public interface MessageService {
      * @param phone 手机号码
      * @return
      */
-    @GetMapping("/phone-code/{phone}")
+    @GetMapping("/code/phone-code/{phone}")
     Result sendPhoneCode (@PathVariable("phone") String phone);
 
 
@@ -42,6 +42,6 @@ public interface MessageService {
      * @param code 验证码
      * @return
      */
-    @GetMapping("/check-code/{number}/{code}")
+    @GetMapping("/code/check-code/{number}/{code}")
     Result<Boolean> checkCode (@PathVariable String number, @PathVariable String code);
 }

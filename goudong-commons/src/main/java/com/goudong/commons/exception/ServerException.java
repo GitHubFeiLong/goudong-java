@@ -1,6 +1,5 @@
 package com.goudong.commons.exception;
 
-import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +19,7 @@ public class ServerException extends BasicException{
      * @return
      */
     public static ServerException serverException (String serverMessage) {
-        throw new BasicException(500, "500500", clientMessage, serverMessage);
+        return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
     }
 
     /**
@@ -30,6 +29,16 @@ public class ServerException extends BasicException{
      */
     public static ServerException serverException (ServerExceptionEnum serverExceptionEnum) {
         return new ServerException(serverExceptionEnum);
+    }
+
+    /**
+     * 代替 构造方法(用起舒服些)
+     * @param serverExceptionEnum
+     * @param serverMessage 错误信息
+     * @return
+     */
+    public static ServerException serverException (ServerExceptionEnum serverExceptionEnum, String serverMessage) {
+        return new ServerException(serverExceptionEnum, serverMessage);
     }
 
     /**
@@ -44,6 +53,10 @@ public class ServerException extends BasicException{
 
     public ServerException(ServerExceptionEnum serverExceptionEnum) {
         super(serverExceptionEnum);
+    }
+
+    public ServerException(ServerExceptionEnum serverExceptionEnum, String serverMessage) {
+        super(serverExceptionEnum, serverMessage);
     }
 
 }

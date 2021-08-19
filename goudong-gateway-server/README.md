@@ -4,9 +4,9 @@
 
 ## 功能描述
 
-[网关鉴权流程 - ProcessOn](https://www.processon.com/diagraming/611cb4515653bb1367b2d0dd)：
+网关流程如下：
 
-
+![image-20210819124421072](README.assets/image-20210819124421072.png)
 
 ## 拥有路由
 

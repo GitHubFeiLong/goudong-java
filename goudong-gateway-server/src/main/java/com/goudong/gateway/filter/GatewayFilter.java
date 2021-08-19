@@ -5,7 +5,9 @@ import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
@@ -52,7 +54,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("进入网关过滤器");
+        log.info("进入网关过滤器, token:{}",exchange.getRequest().getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER));
         ServerHttpRequest request = exchange.getRequest();
         // 检查请求是否能放入
         checkRequestAccess(request);
@@ -148,14 +150,15 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         if (authorityUserDTO.getId() == null) {
             // 查询用户
             AuthorityUserDTO userDetail = oauth2Service.getUserDetailByLoginName(authorityUserDTO.getUsername()).getData();
+
             String rawPassword = authorityUserDTO.getPassword();
             String encodedPassword = userDetail.getPassword();
             // 使用 BCrypt 加密的方式进行匹配
             boolean matches = new BCryptPasswordEncoder().matches(rawPassword, encodedPassword);
             // 密码不正确，抛出异常
             if (!matches) {
-                // 404 为匹配.
-                throw ClientException.clientException(ClientExceptionEnum.NAME_OR_PWD_ERROR);
+                // 401 密码不匹配.
+                throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
             }
 
             return userDetail;

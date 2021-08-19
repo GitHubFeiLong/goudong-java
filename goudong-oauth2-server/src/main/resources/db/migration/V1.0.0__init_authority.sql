@@ -21,7 +21,10 @@ CREATE TABLE `authority_user`
     UNIQUE INDEX `uq_user_email`(`email`) USING BTREE COMMENT '用户，邮箱唯一键'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '用户基本信息表';
 INSERT INTO `authority_user`
-VALUES (1, 'admin', '$2a$10$8ptteV1xP51AjOS/u6NAle/1Pw2BUsS.D/mbGuhauf.qc.oTikeAy', '@', '1', NULL, '超级管理员',
+VALUES (1, 'admin', '$2a$10$DI2GDONVUKrDKcV4C2iAq.8OJ70J5qvOqbm1nA8EF6pQfikbnPdLu', '@admin', 'admin_phone', NULL, '超级管理员',
+        NULL, NULL, 0, now(), NULL, 1, NULL);
+INSERT INTO `authority_user`
+VALUES (2, 'knife4j', '$2a$10$PVaGIUXolMkMVJIjTSZbGugSPR47LvfUkSzhqO0Ese.mqypFYuJtS', '@Knife4j', 'Knife4j_phone', NULL, 'Knife4j文档账号',
         NULL, NULL, 0, now(), NULL, 1, NULL);
 
 
@@ -54,7 +57,7 @@ CREATE TABLE `authority_user_role`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '用户角色映射表';
 INSERT INTO `authority_user_role`
-VALUES (1, 1, 1);
+VALUES (1, 1, 1),(2, 2, 1);
 
 
 DROP TABLE IF EXISTS `authority_menu`;

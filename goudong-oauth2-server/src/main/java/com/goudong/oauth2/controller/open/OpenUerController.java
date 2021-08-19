@@ -1,8 +1,6 @@
 package com.goudong.oauth2.controller.open;
 
-import cn.hutool.http.server.HttpServerRequest;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
@@ -17,19 +15,16 @@ import com.goudong.commons.vo.AuthorityUser2UpdateOpenIdVO;
 import com.goudong.commons.vo.AuthorityUser2UpdatePasswordVO;
 import com.goudong.commons.vo.AuthorityUserVO;
 import com.goudong.oauth2.service.AuthorityUserService;
-import feign.Client;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
