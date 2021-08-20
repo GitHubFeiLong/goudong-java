@@ -21,15 +21,10 @@
             <optional>true</optional>
         </dependency>
         <!--security-->
-<!--        <dependency>-->
-<!--            <groupId>com.goudong</groupId>-->
-<!--            <artifactId>goudong-security-server</artifactId>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
-        <!--security-->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-security</artifactId>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-security-server</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--spring cloud Alibaba nacos-->
         <dependency>
@@ -145,6 +140,7 @@
         <dependency>
             <groupId>net.gplatform</groupId>
             <artifactId>Sdk4J</artifactId>
+            <version>${Sdk4J.version}</version>
         </dependency>
         <!--解决项目启动报日志错误-->
         <dependency>

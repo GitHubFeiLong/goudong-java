@@ -5,7 +5,9 @@ import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.openfeign.Oauth2Service;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
@@ -69,14 +71,11 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
-
-        // 白名单集合
-        List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
-        // 检查本次请求是否是白名单能访问,直接return.
-        if (IgnoreResourceAntMatcherUtil.checkAccess(uri, method, ignoreList)) {
+        // 登录接口，直接放行
+        boolean isLogin = Objects.equals(uri, "/api/oauth2/user/login") && Objects.equals(method, HttpMethod.POST);
+        if (isLogin) {
             return;
         }
-
         // swagger文档，手动登录
         if (new AntPathMatcher().match(CommonConst.KNIFE4J_DOC_PATTERN, uri) && Objects.equals(method, HttpMethod.GET)) {
             // 还未登录swagger时，没有token
@@ -85,6 +84,13 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             }
             // 登陆过swagger了
             redisOperationsUtil.login(headerToken, getUserByToken(headerToken));
+            return;
+        }
+
+        // 白名单集合
+        List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
+        // 检查本次请求是否是白名单能访问,直接return.
+        if (IgnoreResourceAntMatcherUtil.checkAccess(uri, method, ignoreList)) {
             return;
         }
 
