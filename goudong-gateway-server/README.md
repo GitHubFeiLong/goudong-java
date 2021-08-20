@@ -6,7 +6,7 @@
 
 网关流程如下：
 
-![image-20210819124421072](README.assets/image-20210819124421072.png)
+![image-20210820112939087](README.assets/image-20210820112939087.png)
 
 ## 拥有路由
 

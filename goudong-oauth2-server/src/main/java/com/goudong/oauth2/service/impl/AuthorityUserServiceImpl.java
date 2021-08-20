@@ -18,7 +18,6 @@ import com.goudong.oauth2.mapper.AuthorityRoleMapper;
 import com.goudong.oauth2.mapper.AuthorityUserMapper;
 import com.goudong.oauth2.mapper.AuthorityUserRoleMapper;
 import com.goudong.oauth2.service.AuthorityUserService;
-import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -48,10 +47,11 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
     private AuthorityUserMapper authorityUserMapper;
     @Resource
     private AuthorityUserRoleMapper authorityUserRoleMapper;
-    @Resource
-    private SelfAuthorityUserMapper selfAuthorityUserMapper;
+    // @Resource
+    // private SelfAuthorityUserMapper selfAuthorityUserMapper;
     @Resource
     private MessageService messageService;
+
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -222,7 +222,7 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
      */
     @Override
     public AuthorityUserDTO getUserDetailByLoginName(String loginName) {
-        AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(loginName);
+        AuthorityUserDTO authorityUserDTO = authorityUserMapper.selectUserDetailByUsername(loginName);
         return authorityUserDTO;
     }
 
