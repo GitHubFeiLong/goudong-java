@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -86,7 +87,7 @@ public class AuthorityRoleController {
         return Result.ofSuccess(BeanUtil.copyProperties(authorityRoleDTO, AuthorityRoleVO.class));
     }
 
-    @GetMapping("/roles")
+    @PostMapping("/roles/page")
     @ApiOperation("分页查询角色")
     public Result<Page<AuthorityRolePO>> pageRoles (@RequestBody PageParam page) {
         Page<AuthorityRolePO> pageResult = authorityRoleService.pageRoles(page);
