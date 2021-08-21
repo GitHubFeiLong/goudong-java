@@ -1,6 +1,9 @@
 package com.goudong.oaa.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,27 +19,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService implements UserDetailsService {
-    private List<User> userList;
-    @Resource
+    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @PostConstruct
-    public void initData() {
-        String password = passwordEncoder.encode("123456");
-        userList = new ArrayList<>();
-        userList.add(new User("macro", password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin")));
-        userList.add(new User("andy", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-        userList.add(new User("mark", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        List<User> findUserList = userList.stream().filter(user -> user.getUsername().equals(username)).collect(Collectors.toList());
-        if (!CollectionUtils.isEmpty(findUserList)) {
-            return findUserList.get(0);
-        } else {
-            throw new UsernameNotFoundException("用户名或密码错误");
+        log.info("usernameis:" + username);
+        // 查询数据库操作
+        if(!username.equals("admin")){
+            throw new UsernameNotFoundException("the user is not found");
+        }else{
+            // 用户角色也应在数据库中获取
+            String role = "ROLE_ADMIN";
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(role));
+            // 线上环境应该通过用户名查询数据库获取加密后的密码
+            String password = passwordEncoder.encode("123456");
+            return new org.springframework.security.core.userdetails.User(username,password, authorities);
         }
     }
 }

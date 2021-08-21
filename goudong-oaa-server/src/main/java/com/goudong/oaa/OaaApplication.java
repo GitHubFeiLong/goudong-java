@@ -2,6 +2,8 @@ package com.goudong.oaa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version 1.0
  */
 @SpringBootApplication
+// @EnableDiscoveryClient
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class OaaApplication {
     public static void main(String[] args) {
         SpringApplication.run(OaaApplication.class, args);

@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * SpringSecurity配置
  * Created by macro on 2019/10/8.
  */
-@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -29,6 +28,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * 允许匿名访问所有接口 主要是 oauth 接口
+     * @param http
+     * @throws Exception
+     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf()
@@ -41,5 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .permitAll();
+        //
+        // http.authorizeRequests()
+        //         .antMatchers("/**").permitAll();
     }
+
 }
