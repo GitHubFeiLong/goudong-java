@@ -2,7 +2,11 @@ server:
   port: 10003
 spring:
   application:
-    name: goudong-auth-server
+    name: goudong-auth2-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 # nacos服务集群
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
@@ -12,7 +16,7 @@ spring:
     database: 0
     host: localhost
     port: 6379
-    password: 123456
+    #password: 123456
     jedis:
       pool:
         max-active: 8
@@ -25,3 +29,36 @@ management:
   endpoint:
     health:
       enabled: true
+mybatis-plus:
+  #  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath*:/mapper/*.xml #其他包的也能扫描到
+  type-aliases-package: com.goudong.commons.po
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      logic-delete-field: deleted #配置逻辑删除，也可以在字段上加注解 @TableLogic(value = "0",delval = "1")
+      logic-delete-value: 1 # 删除1
+      logic-not-delete-value: 0
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: assign_id
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+knife4j:
+  enable: true         # 是否开启Knife4j增强模式，默认值为false
+  production: false    # 生产环境开启
+  basic:
+    enable: true       # BasicHttp功能，默认为false
+    username: knife4j  # 用户名
+    password: knife4j  # 密码
+  setting:             # 前端Ui的个性化配置属性
+    enableDebug: true  # 启用调试，默认为true 无效

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goudong.oaa.mapper.SelfAuthorityUserMapper">
+
+    <select id="selectRoleNameByUserId" resultType="java.lang.String">
+        SELECT
+            ar.role_name
+        FROM authority_user au
+        inner join authority_user_role aur on au.id=aur.user_id
+        inner join authority_role ar on aur.role_id = ar.id and ar.deleted=false
+        where au.id=#{userId} and au.deleted=false
+    </select>
+</mapper>
