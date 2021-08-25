@@ -85,8 +85,7 @@ public class LoggingAspect {
                     "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
                     joinPoint.getSignature().getName(),
                     e.getCause() != null ? e.getCause() : "NULL",
-                    e.getMessage(),
-                    e
+                    e.getMessage()
                 );
         } else {
             logger(joinPoint)
@@ -111,15 +110,10 @@ public class LoggingAspect {
         if (log.isDebugEnabled()) {
             log.debug("Enter: {}() with argument[s] = {}", joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
         }
-        try {
-            Object result = joinPoint.proceed();
-            if (log.isDebugEnabled()) {
-                log.debug("Exit: {}() with result = {}", joinPoint.getSignature().getName(), result);
-            }
-            return result;
-        } catch (IllegalArgumentException e) {
-            log.error("Illegal argument: {} in {}()", Arrays.toString(joinPoint.getArgs()), joinPoint.getSignature().getName());
-            throw e;
+        Object result = joinPoint.proceed();
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: {}() with result = {}", joinPoint.getSignature().getName(), result);
         }
+        return result;
     }
 }

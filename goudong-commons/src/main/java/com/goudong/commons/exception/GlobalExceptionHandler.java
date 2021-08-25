@@ -133,7 +133,8 @@ public class GlobalExceptionHandler {
             BindException.class,
             ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
-            HttpMessageNotReadableException.class
+            HttpMessageNotReadableException.class,
+            IllegalArgumentException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Throwable> ValidExceptionDispose(Exception e){
@@ -149,7 +150,9 @@ public class GlobalExceptionHandler {
             }
         } else if (e instanceof HttpMessageNotReadableException) {
             messages.add("请求参数丢失");
-        } else {
+        } else if (e instanceof IllegalArgumentException) {
+            messages.add(e.getMessage());
+        } else  {
             messages.add(((MethodArgumentNotValidException)e).getBindingResult().getFieldError().getDefaultMessage());
         }
 
