@@ -1,8 +1,5 @@
 package com.goudong.commons.constant;
 
-import com.goudong.commons.pojo.ResourceAntMatcher;
-import org.springframework.http.HttpMethod;
-
 /**
  * 类描述：
  * 字符串常量

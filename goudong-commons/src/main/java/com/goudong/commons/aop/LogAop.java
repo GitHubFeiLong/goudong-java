@@ -16,7 +16,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +26,7 @@ import java.util.Objects;
 /**
  * 类描述：
  *  日志切面：记录请求的参数，返回的结果
+ *  暂时不适用该日志类
  * @ClassName LogAOP
  * @Author msi
  * @Date 2020/11/4 16:13
@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Aspect
-@Component
+///@Component
 public class LogAop {
     /**
      * 保存request中的代码执行开始时间戳

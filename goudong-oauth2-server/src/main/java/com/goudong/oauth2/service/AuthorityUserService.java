@@ -56,4 +56,6 @@ public interface AuthorityUserService extends IService<AuthorityUserPO> {
      * @return
      */
     AuthorityUserDTO updatePassword(AuthorityUserDTO authorityUserDTO);
+
+    AuthorityUserDTO demo(String name, String address, int i);
 }

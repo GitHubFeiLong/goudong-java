@@ -259,4 +259,14 @@ public class AuthorityUserServiceImpl extends ServiceImpl<AuthorityUserMapper, A
         // 验证码错误，或更新失败
         throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");
     }
+
+    @Override
+    public AuthorityUserDTO demo(String name, String address, int i) {
+        AuthorityUserDTO a = new AuthorityUserDTO();
+        a.setUsername(name);
+        a.setPassword(address);
+        List<AuthorityUserPO> authorityUserPOS = authorityUserMapper.selectList(null);
+
+        return a;
+    }
 }

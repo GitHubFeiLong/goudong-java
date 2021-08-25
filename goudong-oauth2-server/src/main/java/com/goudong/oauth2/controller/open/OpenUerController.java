@@ -50,6 +50,13 @@ public class OpenUerController {
     @Resource
     private AuthorityUserUtil authorityUserUtil;
 
+    @GetMapping("/demo")
+    @ApiOperation("测试日志接口")
+    public Result demo(String name, String address) {
+        authorityUserService.demo(name, address, 100);
+        return Result.ofSuccess("return");
+    }
+
     /**
      * 根据手机号获取账号
      *

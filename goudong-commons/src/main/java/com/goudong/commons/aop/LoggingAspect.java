@@ -1,20 +1,30 @@
 package com.goudong.commons.aop;
 
+import com.goudong.commons.constant.SpringProfileConst;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 /**
- * Aspect for logging execution of service and repository Spring components.
- *
- * By default, it only runs with the "dev" profile.
+ * 类描述：
+ * 根据配置的环境，打印不同级别的日志
+ * 该类复制自JHipster中的源码
+ * @author msi
+ * @date 2021/8/25 20:13
+ * @version 1.0
  */
-// @Aspect
+@Aspect
+@Component
 public class LoggingAspect {
 
     private final Environment env;
@@ -24,10 +34,10 @@ public class LoggingAspect {
     }
 
     /**
-     * Pointcut that matches all repositories, services and Web REST endpoints.
+     * RestController，Service 注解的切点
      */
     @Pointcut(
-        "within(@org.springframework.stereotype.Repository *)" +
+        "within(@org.apache.ibatis.annotations.Mapper *)" +
         " || within(@org.springframework.stereotype.Service *)" +
         " || within(@org.springframework.web.bind.annotation.RestController *)"
     )
@@ -36,7 +46,7 @@ public class LoggingAspect {
     }
 
     /**
-     * Pointcut that matches all Spring beans in the application's main packages.
+     * 应用的控制层，业务层，持久层的包切点
      */
     @Pointcut(
         "within(com.goudong.*.controller..*)" +
@@ -47,18 +57,6 @@ public class LoggingAspect {
         // Method is empty as this is just a Pointcut, the implementations are in the advices.
     }
 
-    @Pointcut(
-            "within(com.goudong.*.controller..*)" +
-            " || within(com.goudong.*.service..*)" +
-            " || within(com.goudong.*.mapper..*)"
-    )
-    public void demo() {
-    }
-
-    @Before("demo()")
-    public void before(JoinPoint joinPoint) {
-        System.out.println("123123 = " + 123123);
-    }
 
     /**
      * Retrieves the {@link Logger} associated to the given {@link JoinPoint}.
@@ -71,14 +69,17 @@ public class LoggingAspect {
     }
 
     /**
-     * Advice that logs methods throwing exceptions.
+     * 方法发生异常打印日志
      *
      * @param joinPoint join point for advice.
      * @param e exception.
      */
     @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        if (true) {
+        if (
+                env.acceptsProfiles(Profiles.of(SpringProfileConst.DEVELOPMENT)) ||
+                env.acceptsProfiles(Profiles.of(SpringProfileConst.TEST))
+        ) {
             logger(joinPoint)
                 .error(
                     "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
@@ -98,7 +99,7 @@ public class LoggingAspect {
     }
 
     /**
-     * Advice that logs when a method is entered and exited.
+     * 方法进入和退出时打印日志
      *
      * @param joinPoint join point for advice.
      * @return result.

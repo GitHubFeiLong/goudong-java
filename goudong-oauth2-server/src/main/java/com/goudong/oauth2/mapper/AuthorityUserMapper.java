@@ -2,6 +2,7 @@ package com.goudong.oauth2.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.goudong.commons.po.AuthorityUserPO;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @Date 2021-05-02 14:11
  * @Version 1.0
  */
+@Mapper
 public interface AuthorityUserMapper extends BaseMapper<AuthorityUserPO> {
 
     /**
