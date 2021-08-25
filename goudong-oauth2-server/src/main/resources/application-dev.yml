@@ -1,3 +1,10 @@
+logging:
+  level:
+    ROOT: INFO
+    tech.jhipster: INFO
+    org.hibernate.SQL: INFO
+    com.mycompany.myapp: INFO
+
 server:
   port: 10001
   servlet:
@@ -71,7 +78,7 @@ spring:
     database: 0   # Redis数据库索引（默认为0）
     host: 127.0.0.1 # Redis服务器地址
     port: 6379
-    password: ${REDIS_PASSWORD}
+#    password: ${REDIS_PASSWORD}
     timeout: 3000
 
   ## flyway数据迁移
