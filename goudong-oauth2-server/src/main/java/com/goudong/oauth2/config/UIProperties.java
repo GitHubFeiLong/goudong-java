@@ -23,7 +23,7 @@ import java.util.*;
 @Slf4j
 @Data
 @SuppressWarnings("ALL")
-@ConfigurationProperties(prefix = "ui", ignoreUnknownFields = true)
+@ConfigurationProperties(prefix = "goudong.ui", ignoreUnknownFields = true)
 public class UIProperties {
 
     /**

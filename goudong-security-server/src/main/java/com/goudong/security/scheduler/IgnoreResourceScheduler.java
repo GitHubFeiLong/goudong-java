@@ -41,7 +41,7 @@ public class IgnoreResourceScheduler {
     /**
      * 每隔2秒执行一次
      */
-    @Scheduled(cron = "${scheduler.scanIgnoreResource.cron}")
+    @Scheduled(cron = "${goudong.scheduler.scanIgnoreResource.cron}")
     public void ignoreResourceScheduler() {
         List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = getIgnoreResourceAntMatchers();
         // 分布式锁

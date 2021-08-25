@@ -1,4 +1,4 @@
-package com.goudong.commons.aop;
+package com.goudong.oauth2.config;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -6,15 +6,18 @@ import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 /**
+ * 该类复制自JHipster中的源码
  * Aspect for logging execution of service and repository Spring components.
  *
  * By default, it only runs with the "dev" profile.
  */
-// @Aspect
+@Aspect
+@Component
 public class LoggingAspect {
 
     private final Environment env;
@@ -47,18 +50,6 @@ public class LoggingAspect {
         // Method is empty as this is just a Pointcut, the implementations are in the advices.
     }
 
-    @Pointcut(
-            "within(com.goudong.*.controller..*)" +
-            " || within(com.goudong.*.service..*)" +
-            " || within(com.goudong.*.mapper..*)"
-    )
-    public void demo() {
-    }
-
-    @Before("demo()")
-    public void before(JoinPoint joinPoint) {
-        System.out.println("123123 = " + 123123);
-    }
 
     /**
      * Retrieves the {@link Logger} associated to the given {@link JoinPoint}.

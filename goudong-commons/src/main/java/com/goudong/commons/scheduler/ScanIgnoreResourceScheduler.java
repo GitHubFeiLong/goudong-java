@@ -53,7 +53,7 @@ public class ScanIgnoreResourceScheduler {
      * 生产环境将值 scheduler.scanIgnoreResource.cron 设置成 "-"，关闭该定时器。
      */
     @SneakyThrows
-    @Scheduled(cron = "${scheduler.scanIgnoreResource.cron}")
+    @Scheduled(cron = "${goudong.scheduler.scanIgnoreResource.cron}")
     public void scheduler() {
         long var0 = System.currentTimeMillis();
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);

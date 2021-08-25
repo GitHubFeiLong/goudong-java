@@ -92,7 +92,8 @@ mybatis:
 
 
 # 自定义配置
-ui:
-  bind-page: http://www.goudong.shop/bindPage.html
-  transition-page: http://www.goudong.shop/transition.html
-  index-page: http://www.goudong.shop/index.html
+goudong:
+  ui:
+    bind-page: http://www.goudong.shop/bindPage.html
+    transition-page: http://www.goudong.shop/transition.html
+    index-page: http://www.goudong.shop/index.html
