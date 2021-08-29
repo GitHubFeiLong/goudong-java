@@ -35,8 +35,8 @@ public class Swagger3Config {
     @Bean
     public Docket openDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("open api")
-                .description("开放接口，不需要登录就能访问")
+                .title("title")
+                .description("描述")
                 .version("1.0")
                 .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
                 .build();
@@ -44,87 +44,15 @@ public class Swagger3Config {
                 .enable(true)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.open"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller"))
                 //只有标记了@ApiOperation的方法才会暴露出给swagger
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                .groupName("openApi")
+                .groupName("default")
                 ;
-    }
-
-
-
-    @Bean
-    public Docket qqDocket() {
-        ApiInfo apiInfo = new ApiInfoBuilder()
-                .title("QQ模块")
-                .description("qq相关的认证")
-                .version("1.0")
-                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
-                .build();
-
-        return new Docket(DocumentationType.OAS_30)
-                .enable(true)
-                .apiInfo(apiInfo)
-                .select()
-                // 全部扫描
-                //.apis(RequestHandlerSelectors.any())
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.qq"))
-                .paths(PathSelectors.any())
-                .build()
-                // 支持的通讯协议集合
-                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                // 在子模块中使用groupName 可以使用右上的下拉功能
-                .groupName("QQ")
-                ;
-
-    }
-
-    @Bean
-    public Docket weChatDocket() {
-        ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("WeChat")
-                .description("微信OAuth")
-                .version("1.0")
-                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
-                .build();
-        return new Docket(DocumentationType.OAS_30)
-                .enable(true)
-                .apiInfo(apiInfo)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.wechat"))
-                .paths(PathSelectors.any())
-                .build()
-                // 支持的通讯协议集合
-                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                .groupName("WeChat")
-                ;
-
-    }
-
-    @Bean
-    public Docket Oauth2Docket() {
-        ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("用户角色权限title")
-                .description("用户角色权限相关接口")
-                .version("1.0")
-                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
-                .build();
-        return new Docket(DocumentationType.OAS_30)
-                .enable(true)
-                .apiInfo(apiInfo)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.oauth"))
-                .paths(PathSelectors.any())
-                .build()
-                // 支持的通讯协议集合
-                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                .groupName("用户角色权限")
-                ;
-
     }
 
 }

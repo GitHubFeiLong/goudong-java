@@ -16,6 +16,7 @@ public class BasePackageConst {
     public static final String COMMONS = "com.goudong.commons";
     public static final String GATEWAY = "com.goudong.gateway";
     public static final String MESSAGE = "com.goudong.message";
+    public static final String USER = "com.goudong.user";
     public static final String OAUTH2 = "com.goudong.oauth2";
     public static final String SECURITY = "com.goudong.security";
     public static final String COMMODITY = "com.goudong.commodity";
@@ -30,4 +31,5 @@ public class BasePackageConst {
 
     public static final String SECURITY_MAPPER = "com.goudong.security.mapper";
     public static final String OAUTH2_MAPPER = "com.goudong.oauth2.mapper";
+    public static final String USER_MAPPER = "com.goudong.user.mapper";
 }

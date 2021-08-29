@@ -1,2 +1,2 @@
-# 用户服务
-包含了用户登录，现接入了qq互联，微信需要企业验证不能接入
+1. http://localhost:10003/api/oauth2/oauth/authorize?response_type=code&client_id=admin&redirect_uri=http://www.baidu.com&scope=all&state=normal
+2. 
