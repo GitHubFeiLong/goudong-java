@@ -8,7 +8,7 @@ import com.goudong.commons.annotation.Repeat;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.openfeign.Oauth2Service;
+import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -70,14 +70,14 @@ public class CodeController {
     }
 
     @Resource
-    private Oauth2Service oauth2Service;
+    private UserService userService;
 
     @GetMapping("/demo1")
     @ApiOperation("测试")
     @Repeat
     public Result demo1 () {
         String admin = "admin";
-        Result<AuthorityUserDTO> userDetailByLoginName = oauth2Service.getUserDetailByLoginName(admin);
+        Result<AuthorityUserDTO> userDetailByLoginName = userService.getUserDetailByLoginName(admin);
         return Result.ofSuccess(userDetailByLoginName);
     }
 

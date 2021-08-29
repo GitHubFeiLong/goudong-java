@@ -4,22 +4,20 @@ import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.pojo.Result;
-import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * Oauth2接口
+ * User接口
  * @Author msi
  */
-@FeignClient(name="goudong-oauth2-server", path = "/api/oauth2")
+@FeignClient(name="goudong-user-server", path = "/api/user")
 @ResponseBody
-public interface Oauth2Service {
+public interface UserService {
 
     /**
      * 查询用户的详细信息,包括角色权限

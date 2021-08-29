@@ -11,16 +11,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.openfeign.Oauth2Service;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.openfeign.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
@@ -69,11 +65,11 @@ public class JwtTokenUtil {
     public static final String SALT = "qaqababa";
 
 
-    private static Oauth2Service oauth2Service;
+    private static UserService userService;
 
     @Autowired
-    public void setOauth2Service(Oauth2Service oauth2Service) {
-        JwtTokenUtil.oauth2Service = oauth2Service;
+    public void setOauth2Service(UserService userService) {
+        JwtTokenUtil.userService = userService;
     }
 
     /**
@@ -218,7 +214,7 @@ public class JwtTokenUtil {
             当解析调用方是网关时,因为无法扫描commons包,所以注入OpenFeign不成功,oauth2Service值为null
             当其它服务启动类有扫描commons包时,可以正常调用
              */
-            return oauth2Service == null ? authorityUserDTO : oauth2Service.getUserDetailByLoginName(arr[0]).getData();
+            return userService == null ? authorityUserDTO : userService.getUserDetailByLoginName(arr[0]).getData();
         }
 
         throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);

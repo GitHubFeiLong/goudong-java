@@ -1,6 +1,6 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.openfeign.Oauth2Service;
+import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.ResourceAntMatcher;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.ResourceUtil;
@@ -40,7 +40,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
     private String applicationName;
 
     @Autowired
-    private Oauth2Service oauth2Service;
+    private UserService userService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -72,7 +72,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
             });
 
             // 调用接口
-            oauth2Service.addMenus(menu2InsertVOS);
+            userService.addMenus(menu2InsertVOS);
         }
     }
 
@@ -88,7 +88,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
             List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
 
             // 调用接口
-            oauth2Service.addIgnoreResources(baseIgnoreResourceVOS);
+            userService.addIgnoreResources(baseIgnoreResourceVOS);
         }
 
     }

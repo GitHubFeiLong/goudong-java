@@ -93,7 +93,9 @@ knife4j:
     enableDebug: true # 启用调试，默认为true 无效
 
 
-# 自定义定时器
-scheduler:
-  scanIgnoreResource: # 扫描白名单
-    cron: "-" #定时器表达式（-）（0/10 * * * * ?）
+
+goudong:
+  # 自定义定时器
+  scheduler:
+    scanIgnoreResource: # 扫描白名单
+      cron: "-" #定时器表达式（-）（0/10 * * * * ?）

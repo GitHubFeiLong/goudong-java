@@ -1,7 +1,6 @@
 package com.goudong.commons.scheduler;
 
-import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.openfeign.Oauth2Service;
+import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.ResourceAntMatcher;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -34,11 +33,11 @@ public class ScanIgnoreResourceScheduler {
     private String applicationName;
 
 
-    private Oauth2Service oauth2Service;
+    private UserService userService;
 
     @Autowired
-    public void setOauth2Service(Oauth2Service oauth2Service) {
-        this.oauth2Service = oauth2Service;
+    public void setOauth2Service(UserService userService) {
+        this.userService = userService;
     }
 
     private RedisOperationsUtil redisOperationsUtil;
@@ -60,7 +59,7 @@ public class ScanIgnoreResourceScheduler {
 
         // 有数据，插入数据库
         List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
-        oauth2Service.addIgnoreResources(baseIgnoreResourceVOS);
+        userService.addIgnoreResources(baseIgnoreResourceVOS);
         long var1 = System.currentTimeMillis();
         log.info("ScanIgnoreResourceScheduler 定时器执行花费时长: {} ms", var1 - var0);
     }

@@ -5,10 +5,8 @@ import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.openfeign.Oauth2Service;
+import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
@@ -44,7 +42,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     private RedisOperationsUtil redisOperationsUtil;
 
     @Resource
-    private Oauth2Service oauth2Service;
+    private UserService userService;
 
     /**
      * 网管请求入口
@@ -149,7 +147,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         // base64格式
         if (authorityUserDTO.getId() == null) {
             // 查询用户
-            AuthorityUserDTO userDetail = oauth2Service.getUserDetailByLoginName(authorityUserDTO.getUsername()).getData();
+            AuthorityUserDTO userDetail = userService.getUserDetailByLoginName(authorityUserDTO.getUsername()).getData();
             if (userDetail == null) {
                 throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
             }
