@@ -38,6 +38,7 @@ public class ResourceUtil {
      * 扫描的包名，注意：子模块只能扫描到自己的包下的class。（所有微服务的控制层包完全名数组）
      */
     private static final String[] CONTROLLER_PACKAGES = {
+            BasePackageConst.USER_CONTROLLER,
             BasePackageConst.OAUTH2_CONTROLLER,
             BasePackageConst.MESSAGE_CONTROLLER,
     };

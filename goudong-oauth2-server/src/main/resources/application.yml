@@ -4,7 +4,7 @@ server:
     context-path: /api/oauth2
 spring:
   application:
-    name: goudong-auth2-server
+    name: goudong-oauth2-server
   cloud:
     nacos:
       discovery:
@@ -18,7 +18,13 @@ spring:
     database: 0
     host: localhost
     port: 6379
-#    password: 123456
+    password: 123456
+
+# redisson配置
+redisson:
+  password: ${spring.redis.password}
+  singleServerConfig:
+    address: ${spring.redis.host}:${spring.redis.port}
 
 management:
   endpoint:

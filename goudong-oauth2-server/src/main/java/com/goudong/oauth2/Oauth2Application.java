@@ -1,9 +1,11 @@
 package com.goudong.oauth2;
 
+import com.goudong.commons.constant.BasePackageConst;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
@@ -17,11 +19,12 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
  * @Date 2021-05-25 14:06
  * @Version 1.0
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS})
 @EnableAuthorizationServer
 @EnableResourceServer
 @EnableDiscoveryClient
-@MapperScan(basePackages = {"com.goudong.oauth2.mapper"})
+@EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
+@MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER, BasePackageConst.COMMONS_MAPPER})
 public class Oauth2Application {
     public static void main(String[] args) {
         SpringApplication.run(Oauth2Application.class, args);

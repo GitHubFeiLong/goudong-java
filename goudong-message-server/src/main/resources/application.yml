@@ -15,6 +15,11 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
   ## Redis
   redis:
     database: 0   # Redis数据库索引（默认为0）
@@ -74,12 +79,38 @@ spring:
     user: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 
-alibaba:
-  message:
-    accessKeyId: ${ALIBABA_MESSAGE_ACCESS_KEY_ID}
-    accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
-    signName: ${ALIBABA_MESSAGE_SIGN_NAME}
-    templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
+
+mybatis-plus:
+  #  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath*:/mapper/*.xml #其他包的也能扫描到
+  type-aliases-package: com.goudong.commons.po
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      logic-delete-field: deleted #配置逻辑删除，也可以在字段上加注解 @TableLogic(value = "0",delval = "1")
+      logic-delete-value: 1 # 删除1
+      logic-not-delete-value: 0
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: assign_id
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # mybatis使用分页插件
+  pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+
 
 
 knife4j:
@@ -93,9 +124,16 @@ knife4j:
     enableDebug: true # 启用调试，默认为true 无效
 
 
-
+# 自定义配置
 goudong:
+  alibaba:
+    message:
+      accessKeyId: ${ALIBABA_MESSAGE_ACCESS_KEY_ID}
+      accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
+      signName: ${ALIBABA_MESSAGE_SIGN_NAME}
+      templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
   # 自定义定时器
   scheduler:
     scanIgnoreResource: # 扫描白名单
       cron: "-" #定时器表达式（-）（0/10 * * * * ?）
+

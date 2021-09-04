@@ -23,6 +23,7 @@ public class BasePackageConst {
 
     /*=========================* 控制层包名 *=========================*/
 
+    public static final String USER_CONTROLLER = "com.goudong.user.controller";
     public static final String OAUTH2_CONTROLLER = "com.goudong.oauth2.controller";
     public static final String MESSAGE_CONTROLLER = "com.goudong.message.controller";
     public static final String COMMODITY_CONTROLLER = "com.goudong.commodity.controller";
@@ -32,4 +33,6 @@ public class BasePackageConst {
     public static final String SECURITY_MAPPER = "com.goudong.security.mapper";
     public static final String OAUTH2_MAPPER = "com.goudong.oauth2.mapper";
     public static final String USER_MAPPER = "com.goudong.user.mapper";
+    public static final String COMMONS_MAPPER = "com.goudong.commons.mapper";
+    public static final String MESSAGE_MAPPER = "com.goudong.message.mapper";
 }

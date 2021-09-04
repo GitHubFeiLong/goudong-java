@@ -1,9 +1,9 @@
 package com.goudong.message;
 
 import com.goudong.commons.constant.BasePackageConst;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,9 +20,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableFeignClients(basePackages = {BasePackageConst.OPENFEIGN})
 @EnableDiscoveryClient
-@SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS},
-        exclude = {DataSourceAutoConfiguration.class}
-)
+@SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
+@MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling
 public class MessageApplication {
     public static void main(String[] args) {

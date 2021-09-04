@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "alibaba.message")
+@ConfigurationProperties(prefix = "goudong.alibaba.message")
 public class SendSms {
 
     /**

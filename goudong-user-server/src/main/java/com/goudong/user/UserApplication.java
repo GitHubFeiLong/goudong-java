@@ -18,8 +18,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @Vsion 1.0
  */
 @EnableConfigurationProperties({UIProperties.class})
-@SpringBootApplication(scanBasePackages = {BasePackageConst.USER, BasePackageConst.COMMONS, BasePackageConst.SECURITY})
-@MapperScan(basePackages = {BasePackageConst.USER_MAPPER, BasePackageConst.SECURITY_MAPPER})
+@SpringBootApplication(scanBasePackages = {BasePackageConst.USER, BasePackageConst.COMMONS/*, BasePackageConst.SECURITY*/})
+@MapperScan(basePackages = {BasePackageConst.USER_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)

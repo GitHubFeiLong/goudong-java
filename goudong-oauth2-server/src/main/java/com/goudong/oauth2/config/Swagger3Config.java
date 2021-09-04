@@ -29,14 +29,14 @@ import java.util.LinkedHashSet;
 public class Swagger3Config {
 
     /**
-     * 开放接口组
+     * 登录相关
      * @return
      */
     @Bean
-    public Docket openDocket() {
+    public Docket loginDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("title")
-                .description("描述")
+                .title("登录相关接口")
+                .description("账号密码登录，token登录，退出登录")
                 .version("1.0")
                 .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
                 .build();
@@ -44,14 +44,14 @@ public class Swagger3Config {
                 .enable(true)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.login"))
                 //只有标记了@ApiOperation的方法才会暴露出给swagger
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                .groupName("default")
+                .groupName("登录")
                 ;
     }
 
