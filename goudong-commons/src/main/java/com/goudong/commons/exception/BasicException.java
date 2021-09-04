@@ -53,8 +53,12 @@ public class BasicException extends RuntimeException{
 
         // openFeign调用远程服务，服务还未注册到nacos中
         if (message.startsWith("com.netflix.client.ClientException")) {
-            basicException = ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
+            return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
         }
+        // // 服务器还未注册到注册中心，网关调用报错
+        // if (message.startsWith()) {
+        //
+        // }
 
         return basicException;
     }

@@ -45,6 +45,15 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     private UserService userService;
 
     /**
+     * 用户名密码登录接口
+     */
+    public static final String LOGIN_PASSWORD_API = "/api/oauth2/login/login";
+    /**
+     * token登录接口
+     */
+    public static final String LOGIN_TOKEN_API = "/api/oauth2/login/token";
+
+    /**
      * 网管请求入口
      * @param exchange
      * @param chain
@@ -70,7 +79,8 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
         // 登录接口，直接放行
-        boolean isLogin = Objects.equals(uri, "/api/oauth2/user/login") && Objects.equals(method, HttpMethod.POST);
+        boolean isLogin = (Objects.equals(uri, LOGIN_PASSWORD_API) && Objects.equals(method, HttpMethod.POST))
+                || Objects.equals(uri, LOGIN_TOKEN_API) && Objects.equals(method, HttpMethod.POST);
         if (isLogin) {
             return;
         }

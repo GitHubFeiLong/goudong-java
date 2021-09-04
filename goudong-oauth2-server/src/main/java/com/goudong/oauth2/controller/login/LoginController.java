@@ -2,6 +2,7 @@ package com.goudong.oauth2.controller.login;
 
 import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,12 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     @PostMapping("/login")
-    @ApiOperation(value = "登录")
+    @ApiOperation(value = "登录(password)")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username", value = "用户名", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
     })
-    @IgnoreResource("登录")
+    @IgnoreResource("登录(password)")
     public Result login (String username, String password) {
         return Result.ofSuccess();
     }
@@ -42,6 +43,13 @@ public class LoginController {
     @ApiOperation(value = "注销")
     @IgnoreResource("注销")
     public Result logout () {
+        return Result.ofSuccess();
+    }
+
+    @PostMapping(value = "/token", headers = {JwtTokenUtil.TOKEN_HEADER})
+    @ApiOperation(value = "登录(token)")
+    @IgnoreResource("登录(token)")
+    public Result login () {
         return Result.ofSuccess();
     }
 

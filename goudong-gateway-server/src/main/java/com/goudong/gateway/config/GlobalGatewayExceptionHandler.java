@@ -7,14 +7,18 @@ package com.goudong.gateway.config;
  * @Date 2021/8/10 15:55
  */
 
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.pojo.Result;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
+import org.springframework.cloud.gateway.support.NotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.HttpMessageReader;
 import org.springframework.http.codec.HttpMessageWriter;
@@ -24,6 +28,7 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.reactive.result.view.ViewResolver;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -54,7 +59,21 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
         BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage());
         if (throwable instanceof BasicException) {
             basicException = (BasicException) throwable;
-        } else {
+        } if (throwable instanceof NotFoundException) {
+            NotFoundException notFoundException = (NotFoundException)throwable;
+            // TODO 不知道这个状态码和异常是不是一对一，如果是那么就不需要再判断状态码了
+            // 503 网关未找到服务
+            if (notFoundException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE) {
+                basicException = ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, notFoundException.getMessage());
+            }
+        } if (throwable instanceof ResponseStatusException) {
+            ResponseStatusException responseStatusException = (ResponseStatusException)throwable;
+            // 404 资源不存在
+            if (responseStatusException.getStatus() == HttpStatus.NOT_FOUND) {
+                basicException = ClientException.clientException(ClientExceptionEnum.NOT_FOUND);
+            }
+        }
+        else {
             basicException = BasicException.generateByServer(throwable);
         }
 
