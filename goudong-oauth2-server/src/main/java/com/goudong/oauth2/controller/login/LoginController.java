@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 类描述：
@@ -50,6 +47,31 @@ public class LoginController {
     @ApiOperation(value = "登录(token)")
     @IgnoreResource("登录(token)")
     public Result login () {
+        return Result.ofSuccess();
+    }
+
+    private static Boolean boo = true;
+
+    @PostMapping(value = "/debug")
+    @ApiOperation(value = "开始debug")
+    public Result startDebug () {
+        boo = true;
+        new Thread(){
+            @Override
+            public void run() {
+                while(boo) {
+                    log.debug("测试debug日志，测试删除策略");
+                    log.info("测试info日志，测试删除策略");
+                }
+            }
+        }.start();
+        return Result.ofSuccess();
+    }
+
+    @DeleteMapping(value = "/debug")
+    @ApiOperation(value = "关闭debug")
+    public Result stopDebug () {
+        boo = false;
         return Result.ofSuccess();
     }
 
