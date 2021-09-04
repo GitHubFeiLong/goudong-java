@@ -50,29 +50,8 @@ public class LoginController {
         return Result.ofSuccess();
     }
 
-    private static Boolean boo = true;
 
-    @PostMapping(value = "/debug")
-    @ApiOperation(value = "开始debug")
-    public Result startDebug () {
-        boo = true;
-        new Thread(){
-            @Override
-            public void run() {
-                while(boo) {
-                    log.debug("测试debug日志，测试删除策略");
-                    log.info("测试info日志，测试删除策略");
-                }
-            }
-        }.start();
-        return Result.ofSuccess();
-    }
 
-    @DeleteMapping(value = "/debug")
-    @ApiOperation(value = "关闭debug")
-    public Result stopDebug () {
-        boo = false;
-        return Result.ofSuccess();
-    }
+
 
 }

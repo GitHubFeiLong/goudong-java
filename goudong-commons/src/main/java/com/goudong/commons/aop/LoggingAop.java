@@ -25,21 +25,23 @@ import java.util.Arrays;
  */
 @Aspect
 @Component
-public class LoggingAspect {
+public class LoggingAop {
 
     private final Environment env;
 
-    public LoggingAspect(Environment env) {
+    public LoggingAop(Environment env) {
         this.env = env;
     }
 
     /**
-     * RestController，Service 注解的切点
+     * @RestController，@Controller,@Service 注解的切点
+     * mapper注解不生效，直接切mapper所在的包
      */
     @Pointcut(
-        "within(@org.apache.ibatis.annotations.Mapper *)" +
-        " || within(@org.springframework.stereotype.Service *)" +
-        " || within(@org.springframework.web.bind.annotation.RestController *)"
+        "@within(org.springframework.stereotype.Service)" +
+        " || @within(org.springframework.web.bind.annotation.RestController)" +
+        " || @within(org.springframework.stereotype.Controller)" +
+        " || within(com.goudong.*.mapper..*)"
     )
     public void springBeanPointcut() {
         // Method is empty as this is just a Pointcut, the implementations are in the advices.
@@ -99,12 +101,12 @@ public class LoggingAspect {
 
     /**
      * 方法进入和退出时打印日志
-     *
+     * @Around("springBeanPointcut()||mapperPackagePointcut()") 这样能进入controller以及mapper
      * @param joinPoint join point for advice.
      * @return result.
      * @throws Throwable throws {@link IllegalArgumentException}.
      */
-    @Around("applicationPackagePointcut() && springBeanPointcut()")
+    @Around("springBeanPointcut() && springBeanPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = logger(joinPoint);
         if (log.isDebugEnabled()) {
@@ -116,4 +118,5 @@ public class LoggingAspect {
         }
         return result;
     }
+
 }
