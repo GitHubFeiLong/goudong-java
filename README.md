@@ -1,5 +1,19 @@
 # goudong
 该项目是使用maven进行打包构建，使用Spring Boot、Spring Cloud、Spring Cloud Alibaba搭建的微服务电商后端项目，该项目提供的接口根据Restful接口风格进行设计
+
+
+
+## 模块
+
+1. 公用包：goudong-commons
+2. 商品服务：goudong-commodity-server
+3. 网关服务：goudong-gateway-server
+4. 消息服务：goudong-message-server
+5. 认证服务：goudong-oauth2-server
+6. 用户服务：goudong-user-server
+
+
+
 ## 软件及配置项
 ### 依赖的软件/组件及其版本
 | 软件/组件       | 版本  |
@@ -127,6 +141,17 @@ pause
 ### HTTP 响应代码
 
 项目基本参照 [规范](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status) 来正确返回响应码
+
+
+
+## 日志
+
+使用log4j2：
+
+1. 配置了开发环境和生产环境日志配置文件。
+2. 配置日志归档及日志删除策略。
+
+> 通过在``application.yml`中的`spring.profiles.active: xxx` 配置，然后在application-xxx.yml文件中配置`logging.config.classpath: log4j2-dev.xml` 属性，让其在不同环境不同日志配置。
 
 
 
