@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ public class AuthorityUser2CreateVO implements Serializable {
     private String username;
 
     @NotBlank(message = "密码不能为空")
+    @Size(min = 8, max = 20, message = "password的长度为8~20位")
     @ApiModelProperty(value = "密码")
     private String password;
 
