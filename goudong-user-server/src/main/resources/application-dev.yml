@@ -1,7 +1,7 @@
 logging:
   level:
     ROOT: INFO
-    com.goudong: DEBUG
+    com.goudong.user: DEBUG
 
 server:
   port: 10001
