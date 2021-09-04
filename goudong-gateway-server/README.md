@@ -4,7 +4,13 @@
 
 ## 功能描述
 
-网关流程如下：
+第一版网关流程如下：
+
+![QQ截图20210904225317](README.assets/QQ%E6%88%AA%E5%9B%BE20210904225317.png)
+
+
+
+第一版网关流程如下：
 
 ![image-20210820112939087](README.assets/image-20210820112939087.png)
 
@@ -12,4 +18,5 @@
 
 1. goudong-oauth2-server
 2. goudong-message-server
+3. goudong-user-server
 

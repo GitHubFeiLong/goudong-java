@@ -35,7 +35,7 @@ public class Swagger3Config {
     @Bean
     public Docket loginDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("登录相关接口")
+                .title("登录")
                 .description("账号密码登录，token登录，退出登录")
                 .version("1.0")
                 .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))

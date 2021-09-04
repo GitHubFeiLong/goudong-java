@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 类描述：
  * 登录和退出控制器（只是接口展示方便swagger上查看文档）
@@ -25,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/login")
 public class LoginController {
 
+    @Resource
+    private HttpServletRequest httpServletRequest;
     @PostMapping("/login")
     @ApiOperation(value = "登录(password)")
     @ApiImplicitParams({
@@ -47,6 +52,7 @@ public class LoginController {
     @ApiOperation(value = "登录(token)")
     @IgnoreResource("登录(token)")
     public Result login () {
+        System.out.println("123 = " + 123);
         return Result.ofSuccess();
     }
 

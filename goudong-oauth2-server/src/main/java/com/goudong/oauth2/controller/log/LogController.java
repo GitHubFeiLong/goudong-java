@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
@@ -28,9 +29,18 @@ import javax.annotation.Resource;
 public class LogController {
 
     @Resource
+    private HttpServletRequest request;
+    @Resource
     private SelfAuthorityUserMapper userMapper;
 
     private static Boolean boo = true;
+
+    @PostMapping("/demo")
+    @ApiOperation("测试")
+    public Result demo (String name) {
+        System.out.println("name = " + name);
+        return Result.ofSuccess(request.getHeaderNames().toString());
+    }
 
     @PostMapping(value = "/debug")
     @ApiOperation(value = "开始debug")

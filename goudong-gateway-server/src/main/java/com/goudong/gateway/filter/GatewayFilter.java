@@ -65,6 +65,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         // 检查请求是否能放入
         checkRequestAccess(request);
+
         return chain.filter(exchange);
     }
 
@@ -74,16 +75,19 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      * @param request
      */
     private void checkRequestAccess(ServerHttpRequest request) {
-        // token
-        String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
+
+        // token
+        String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
+
         // 登录接口，直接放行
         boolean isLogin = (Objects.equals(uri, LOGIN_PASSWORD_API) && Objects.equals(method, HttpMethod.POST))
                 || Objects.equals(uri, LOGIN_TOKEN_API) && Objects.equals(method, HttpMethod.POST);
         if (isLogin) {
             return;
         }
+        // 欠佳
         // swagger文档，手动登录
         if (new AntPathMatcher().match(CommonConst.KNIFE4J_DOC_PATTERN, uri) && Objects.equals(method, HttpMethod.GET)) {
             // 还未登录swagger时，没有token
@@ -140,6 +144,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             // 延长用户在线时长
             redisOperationsUtil.renewLoginStatus(headerToken, authorityUserDTO.getId());
         }
+
 
         throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
     }

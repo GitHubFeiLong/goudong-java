@@ -59,21 +59,20 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
         BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage());
         if (throwable instanceof BasicException) {
             basicException = (BasicException) throwable;
-        } if (throwable instanceof NotFoundException) {
+        } else if (throwable instanceof NotFoundException) {
             NotFoundException notFoundException = (NotFoundException)throwable;
             // TODO 不知道这个状态码和异常是不是一对一，如果是那么就不需要再判断状态码了
             // 503 网关未找到服务
             if (notFoundException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE) {
                 basicException = ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, notFoundException.getMessage());
             }
-        } if (throwable instanceof ResponseStatusException) {
+        } else if (throwable instanceof ResponseStatusException) {
             ResponseStatusException responseStatusException = (ResponseStatusException)throwable;
             // 404 资源不存在
             if (responseStatusException.getStatus() == HttpStatus.NOT_FOUND) {
                 basicException = ClientException.clientException(ClientExceptionEnum.NOT_FOUND);
             }
-        }
-        else {
+        } else {
             basicException = BasicException.generateByServer(throwable);
         }
 
