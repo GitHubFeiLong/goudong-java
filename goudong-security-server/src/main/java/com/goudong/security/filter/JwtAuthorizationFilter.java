@@ -9,10 +9,10 @@ import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.StringUtil;
 import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -109,8 +109,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return getBasicAuthenticationToken(tokenHeader);
         }
 
-        // token格式错误
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+        String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
     /**
@@ -135,13 +135,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(arr[0]);
             // 用户不存在
             if (authorityUserDTO == null) {
-                throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+                throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在");
             }
             // 使用 BCrypt 加密的方式进行匹配
             boolean matches = new BCryptPasswordEncoder().matches(arr[1], authorityUserDTO.getPassword());
             // 密码不正确，抛出异常
             if (!matches) {
-                throw new BadCredentialsException("账户名与密码不匹配，请重新输入");
+                throw ClientException.clientException(ClientExceptionEnum.UNPROCESSABLE_ENTITY, "用户名或密码错误");
             }
 
             // 放置权限
@@ -160,8 +160,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         }
 
-        // token 格式不正确
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+        String message = StringUtil.format("请求头 {} 的值不是正确的 base64编码类型", JwtTokenUtil.TOKEN_HEADER);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
     /**

@@ -9,18 +9,16 @@ package com.goudong.oauth2.service;
  */
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.pojo.SelfUserDetails;
 import com.goudong.oauth2.entity.User;
 import com.goudong.oauth2.mapper.SelfAuthorityUserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,29 +37,8 @@ public class UserService implements UserDetailsService {
     @Resource
     private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
-    @Autowired
-    @Lazy
-    private PasswordEncoder passwordEncoder;
-
-    // @PostConstruct
-    // public void initData() {
-    //     String password = passwordEncoder.encode("123456");
-    //     userList = new ArrayList<>();
-    //     userList.add(new User(0L,"macro", password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin")));
-    //     userList.add(new User(0L,"andy", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-    //     userList.add(new User(0L,"mark", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-    // }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // List<User> findUserList = userList.stream().filter(user -> user.getUsername().equals(username)).collect(Collectors.toList());
-        // if (!CollectionUtils.isEmpty(findUserList)) {
-        //     return findUserList.get(0);
-        // } else {
-        //     throw new UsernameNotFoundException("用户名或密码错误");
-        // }
-
-
 
         SelfUserDetails userInfo = new SelfUserDetails();
         // 查询用户信息
@@ -80,7 +57,7 @@ public class UserService implements UserDetailsService {
             userInfo.setUsername(user.getUsername());
             userInfo.setPassword(user.getPassword());
         } else {
-            throw new BadCredentialsException("账户名与密码不匹配，请重新输入");
+            throw ClientException.clientException(ClientExceptionEnum.UNPROCESSABLE_ENTITY, "用户名或密码错误");
         }
 
         Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();

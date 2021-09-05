@@ -86,7 +86,8 @@ public class JwtTokenUtil {
             return true;
         }
 
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+        String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
 
@@ -147,8 +148,9 @@ public class JwtTokenUtil {
         if (token.startsWith(JwtTokenUtil.TOKEN_BASIC_PREFIX)) {
             return getAuthenticationByBasic(token);
         }
-        // token格式错误
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+
+        String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
     /**
@@ -172,12 +174,34 @@ public class JwtTokenUtil {
         } catch (TokenExpiredException | JWTDecodeException e) {
             throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
         }
+        // token 失效时间是否满足要求
+        JwtTokenUtil.checkValidToken(jwt);
 
         String result = jwt.getAudience().get(0);
         log.info("result:{}",result);
         return JSON.parseObject(result, AuthorityUserDTO.class);
     }
 
+    /**
+     * token失效时间校验
+     * @param decodedJWT
+     * @return
+     */
+    private static void checkValidToken(DecodedJWT decodedJWT) {
+        // 失效的时间(提前一天，防止token失效)
+        LocalDateTime expiresAtLocalDateTime = decodedJWT
+                .getExpiresAt()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime()
+                .minusDays(1);
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(expiresAtLocalDateTime)) {
+            String message = StringUtil.format("请求头 {} 的值 已过期，需要重新登录", JwtTokenUtil.TOKEN_HEADER);
+            throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        }
+    }
 
     /**
      * Basic方式 解码字符串
@@ -192,7 +216,8 @@ public class JwtTokenUtil {
         try {
             decode = new String(Base64.getDecoder().decode(base64), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+            String message = StringUtil.format("请求头 {} 的值不是正确的 base64编码类型", JwtTokenUtil.TOKEN_HEADER);
+            throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
         }
 
         // base64解码后字符串是正确的格式
@@ -217,7 +242,8 @@ public class JwtTokenUtil {
             return userService == null ? authorityUserDTO : userService.getUserDetailByLoginName(arr[0]).getData();
         }
 
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+        String message = StringUtil.format("请求头 {} 的值不是正确的 base64编码类型", JwtTokenUtil.TOKEN_HEADER);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
     /**
@@ -253,7 +279,7 @@ public class JwtTokenUtil {
             return token.replace(JwtTokenUtil.TOKEN_BASIC_PREFIX, "");
         }
 
-        // token 格式不对
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+        String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 }

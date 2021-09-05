@@ -11,6 +11,7 @@ import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -154,7 +155,8 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         }
 
 
-        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
+        String message = StringUtil.format("本次请求缺少请求头 {} ", JwtTokenUtil.TOKEN_HEADER);
+        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
     /**

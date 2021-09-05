@@ -1,13 +1,13 @@
 package com.goudong.oauth2.config;
 
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.oauth2.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -43,8 +43,8 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         // 用户名/电话/邮箱不传时直接抛出异常
-        if (!StringUtils.hasText(username)) {
-            throw new UsernameNotFoundException("登录信息错误");
+        if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "请输入用户名和密码");
         }
         // 根据用户名查询用户是否存在
         UserDetails userInfo = userService.loadUserByUsername(username);
@@ -53,7 +53,7 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
         boolean matches = new BCryptPasswordEncoder().matches(password, userInfo.getPassword());
         // 密码不正确，抛出异常
         if (!matches) {
-            throw new BadCredentialsException("账户名与密码不匹配，请重新输入");
+            throw ClientException.clientException(ClientExceptionEnum.UNPROCESSABLE_ENTITY, "用户名或密码错误");
         }
         // 验证通过，返回用户信息
         return new UsernamePasswordAuthenticationToken(username, userInfo.getPassword(), userInfo.getAuthorities());

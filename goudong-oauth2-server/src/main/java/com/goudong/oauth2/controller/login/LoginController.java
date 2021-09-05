@@ -1,8 +1,10 @@
 package com.goudong.oauth2.controller.login;
 
 import com.goudong.commons.annotation.IgnoreResource;
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -29,7 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginController {
 
     @Resource
+    private RedisOperationsUtil redisOperationsUtil;
+
+    @Resource
     private HttpServletRequest httpServletRequest;
+
     @PostMapping("/login")
     @ApiOperation(value = "登录(password)")
     @ApiImplicitParams({
@@ -51,9 +57,11 @@ public class LoginController {
     @PostMapping(value = "/token", headers = {JwtTokenUtil.TOKEN_HEADER})
     @ApiOperation(value = "登录(token)")
     @IgnoreResource("登录(token)")
-    public Result login () {
-        System.out.println("123 = " + 123);
-        return Result.ofSuccess();
+    public Result login (@RequestHeader(JwtTokenUtil.TOKEN_HEADER) String token) {
+        // 检查token是否有效
+        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
+        redisOperationsUtil.login(token, authorityUserDTO);
+        return Result.ofSuccess(token);
     }
 
 

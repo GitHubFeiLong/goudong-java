@@ -1,6 +1,5 @@
 package com.goudong.commons.enumerate;
 
-import com.goudong.commons.utils.JwtTokenUtil;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -42,13 +41,17 @@ public enum ClientExceptionEnum implements ExceptionEnumInterface {
      */
     NOT_FOUND(404, "404", "资源不存在", "404 Not Found - 请求失败，请求所希望得到的资源未被在服务器上发现。"),
 
-
     /**
      * 406 Not Acceptable
      * 请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
      */
-    TOKEN_ERROR(406, "406", "请登录认证", "406 Not Acceptable - 缺少请求头 " + JwtTokenUtil.TOKEN_HEADER + "或 token格式错误"),
+    NOT_ACCEPTABLE(406, "406", "请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。", "406 Not Acceptable - 请求头不满足接口的条件"),
 
+    /**
+     * 422 Unprocessable Entity
+     * 请求格式良好，但由于语义错误而无法遵循。
+     */
+    UNPROCESSABLE_ENTITY(422, "422", "请求格式良好，但由于语义错误而无法遵循。", "422 Unprocessable Entity - 请求格式良好，但由于语义错误而无法遵循。"),
     /**
      * 429 Too Many Requests
      * 用户在给定的时间内发送了太多请求（“限制请求速率”）。
