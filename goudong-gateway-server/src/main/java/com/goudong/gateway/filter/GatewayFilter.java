@@ -68,12 +68,12 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         String tokenMd5Key = checkRequestAccess(request);
 
         // 将token的md5加密后的值保存在token中
-        // ServerHttpRequest newRequest = exchange.getRequest()
-        //         .mutate()
-        //         .header(CommonConst.HEADER_TOKEN_MD5_KEY, tokenMd5Key)
-        //         .build();
-        // ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
-        return chain.filter(exchange);
+        ServerHttpRequest newRequest = exchange.getRequest()
+                .mutate()
+                .header(CommonConst.HEADER_TOKEN_MD5_KEY, tokenMd5Key)
+                .build();
+        ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
+        return chain.filter(newExchange);
     }
 
 
@@ -154,7 +154,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         }
 
 
-        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
+        throw ClientException.clientException(ClientExceptionEnum.TOKEN_ERROR);
     }
 
     /**
