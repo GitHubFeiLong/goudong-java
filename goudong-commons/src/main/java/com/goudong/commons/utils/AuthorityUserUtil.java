@@ -1,6 +1,5 @@
 package com.goudong.commons.utils;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;

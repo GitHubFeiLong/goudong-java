@@ -25,7 +25,7 @@ public class CommonConst {
     /**
      * API接口前缀固定（防止使用路径传参骗过服务器白名单）
      */
-    public static final String API_PREFIX = "/api/*";
+    public static final String API_PREFIX = "/api/**";
 
     /**
      * 增强swagger的文档地址模式pattern
@@ -45,5 +45,10 @@ public class CommonConst {
      * 普通用户角色
      */
     public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
+
+    /**
+     * 网关路由微服务时，新增一个请求头，微服务用于获取当前登录用户信息
+     */
+    public static final String HEADER_TOKEN_MD5_KEY = "token-md5-key";
 
 }

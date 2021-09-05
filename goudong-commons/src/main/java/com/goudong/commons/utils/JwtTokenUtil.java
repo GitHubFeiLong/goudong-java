@@ -62,7 +62,7 @@ public class JwtTokenUtil {
     /**
      * 生产token的盐
      */
-    public static final String SALT = "qaqababa";
+    public static final String SALT = "99fa69b0-d9d5-4b5a-aa86-e75637df03c6";
 
 
     private static UserService userService;

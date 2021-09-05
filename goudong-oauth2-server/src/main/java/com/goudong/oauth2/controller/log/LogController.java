@@ -1,6 +1,7 @@
 package com.goudong.oauth2.controller.log;
 
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.oauth2.mapper.SelfAuthorityUserMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +33,8 @@ public class LogController {
     private HttpServletRequest request;
     @Resource
     private SelfAuthorityUserMapper userMapper;
+    @Resource
+    private AuthorityUserUtil userUtil;
 
     private static Boolean boo = true;
 
@@ -39,7 +42,7 @@ public class LogController {
     @ApiOperation("测试")
     public Result demo (String name) {
         System.out.println("name = " + name);
-        return Result.ofSuccess(request.getHeaderNames().toString());
+        return Result.ofSuccess(userUtil.getUserDetails());
     }
 
     @PostMapping(value = "/debug")

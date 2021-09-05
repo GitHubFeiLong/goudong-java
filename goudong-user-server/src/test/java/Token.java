@@ -1,3 +1,4 @@
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
@@ -16,7 +17,8 @@ import java.util.Date;
  */
 public class Token {
     public static void main(String[] args) {
-        System.out.println(generateToken(AuthorityUserDTO.builder().build(), 1));
+        // System.out.println(generateToken(AuthorityUserDTO.builder().build(), 1));
+        System.out.println("UUID.randomUUID() = " + UUID.randomUUID());
     }
 
     public static String generateToken (AuthorityUserDTO authorityUserDTO, int hour) {

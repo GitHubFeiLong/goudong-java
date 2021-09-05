@@ -1,7 +1,12 @@
 package com.goudong.commons.config;
 
+import com.goudong.commons.interceptor.UserInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 /**
  * 类描述：
@@ -11,6 +16,21 @@ import org.springframework.web.servlet.config.annotation.*;
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
+
+    @Resource
+    private UserInterceptor userInterceptor;
+
+    // /**
+    //  * 注册拦截器
+    //  * @param registry
+    //  */
+    // @Override
+    // public void addInterceptors(InterceptorRegistry registry) {
+    //     WebMvcConfigurer.super.addInterceptors(registry);
+    //     // api前缀的请求都进行拦截处理
+    //     // 注意： 这里拦截不到在配置文件添加前缀
+    //     registry.addInterceptor(userInterceptor).addPathPatterns("/**");
+    // }
 
     /**
      * mvc 添加静态资源

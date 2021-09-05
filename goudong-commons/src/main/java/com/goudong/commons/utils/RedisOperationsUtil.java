@@ -53,6 +53,16 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
         // 将用户信息保存到redis中
         // 将token进行md5加密作为redis key(16位16进制字符串)，然后保存用户详细信息
         String tokenMd5Key = JwtTokenUtil.generateRedisKey(token);
+
+        // 只允许同一账号同时只能在线一个。
+        // 获取上一次登录产生的token，删除redis中相关的 OAUTH2_USER_INFO信息。
+        String lastLoginToken = this.getStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, authorityUserDTO.getId());
+        if (lastLoginToken != null && !lastLoginToken.equals(token)) {
+            String lastLoginTokenMd5Key = JwtTokenUtil.generateRedisKey(lastLoginToken);
+            // 删除用户信息
+            this.deleteKey(RedisKeyEnum.OAUTH2_USER_INFO, lastLoginTokenMd5Key);
+        }
+
         // 存储redis || 追加时长
         this.setHashValue(RedisKeyEnum.OAUTH2_USER_INFO, BeanUtil.beanToMap(authorityUserDTO), tokenMd5Key);
         this.setStringValue(RedisKeyEnum.OAUTH2_TOKEN_INFO, token, authorityUserDTO.getId());

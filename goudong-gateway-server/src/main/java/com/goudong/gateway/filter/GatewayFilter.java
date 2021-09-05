@@ -53,6 +53,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      */
     public static final String LOGIN_TOKEN_API = "/api/oauth2/login/token";
 
+    public static final String DEFAULT_TOKEN_MD5_KEY = null;
     /**
      * 网管请求入口
      * @param exchange
@@ -64,8 +65,14 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         log.info("进入网关过滤器, token:{}",exchange.getRequest().getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER));
         ServerHttpRequest request = exchange.getRequest();
         // 检查请求是否能放入
-        checkRequestAccess(request);
+        String tokenMd5Key = checkRequestAccess(request);
 
+        // 将token的md5加密后的值保存在token中
+        // ServerHttpRequest newRequest = exchange.getRequest()
+        //         .mutate()
+        //         .header(CommonConst.HEADER_TOKEN_MD5_KEY, tokenMd5Key)
+        //         .build();
+        // ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
         return chain.filter(exchange);
     }
 
@@ -74,7 +81,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      * 检查当前请求是否能通过
      * @param request
      */
-    private void checkRequestAccess(ServerHttpRequest request) {
+    private String checkRequestAccess(ServerHttpRequest request) {
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
 
@@ -85,25 +92,25 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         boolean isLogin = (Objects.equals(uri, LOGIN_PASSWORD_API) && Objects.equals(method, HttpMethod.POST))
                 || Objects.equals(uri, LOGIN_TOKEN_API) && Objects.equals(method, HttpMethod.POST);
         if (isLogin) {
-            return;
+            return GatewayFilter.DEFAULT_TOKEN_MD5_KEY;
         }
         // 欠佳
         // swagger文档，手动登录
         if (new AntPathMatcher().match(CommonConst.KNIFE4J_DOC_PATTERN, uri) && Objects.equals(method, HttpMethod.GET)) {
             // 还未登录swagger时，没有token
             if (headerToken == null) {
-                return;
+                return GatewayFilter.DEFAULT_TOKEN_MD5_KEY;
             }
             // 登陆过swagger了
             redisOperationsUtil.login(headerToken, getUserByToken(headerToken));
-            return;
+            return GatewayFilter.DEFAULT_TOKEN_MD5_KEY;
         }
 
         // 白名单集合
         List<IgnoreResourceAntMatcher> ignoreList = redisOperationsUtil.getListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, IgnoreResourceAntMatcher.class);
         // 检查本次请求是否是白名单能访问,直接return.
         if (IgnoreResourceAntMatcherUtil.checkAccess(uri, method, ignoreList)) {
-            return;
+            return GatewayFilter.DEFAULT_TOKEN_MD5_KEY;
         }
 
         // 带上了token， 就需要判断Token是否有效
@@ -131,7 +138,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             if (hasRoleAdmin) {
                 // 延长用户在线时长
                 redisOperationsUtil.renewLoginStatus(headerToken, authorityUserDTO.getId());
-                return;
+                return tokenMd5Key;
             }
 
             // 当用户是正常登录访问的,那么检查权限是否足够
@@ -143,6 +150,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
 
             // 延长用户在线时长
             redisOperationsUtil.renewLoginStatus(headerToken, authorityUserDTO.getId());
+            return tokenMd5Key;
         }
 
 
