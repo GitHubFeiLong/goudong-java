@@ -1,12 +1,5 @@
 package com.goudong.oauth2.service;
 
-/**
- * 类描述：
- *
- * @author msi
- * @version 1.0
- * @date 2021/8/29 19:33
- */
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
@@ -28,10 +21,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by macro on 2019/9/30.
+ * 类描述：
+ * 根据用户名查询用户
+ * @author msi
+ * @version 1.0
+ * @date 2021/8/29 19:33
  */
 @Service
-public class UserService implements UserDetailsService {
+public class SelfUserDetailsService implements UserDetailsService {
     private List<User> userList;
 
     @Resource

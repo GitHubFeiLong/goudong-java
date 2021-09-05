@@ -3,9 +3,11 @@ package com.goudong.commons.openfeign;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
+import com.goudong.commons.dto.BaseTokenDTO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
+import com.goudong.commons.vo.BaseToken2CreateVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,4 +45,12 @@ public interface UserService {
      */
     @PostMapping("/menu/menus")
     Result<List<AuthorityMenuDTO>> addMenus (@RequestBody List<AuthorityMenu2InsertVO> insertVOList);
+
+    /**
+     * 批量添加token到数据库
+     * @param token2CreateVOS
+     * @return
+     */
+    @PostMapping("/base-token/tokens")
+    Result<List<BaseTokenDTO>> createTokens (@RequestBody List<BaseToken2CreateVO> token2CreateVOS );
 }

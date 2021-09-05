@@ -2,7 +2,7 @@ package com.goudong.oauth2.config;
 
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.oauth2.service.UserService;
+import com.goudong.oauth2.service.SelfUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 public class SelfAuthenticationProvider implements AuthenticationProvider {
 
     @Resource
-    private UserService userService;
+    private SelfUserDetailsService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) {

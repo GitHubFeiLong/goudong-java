@@ -1,6 +1,7 @@
 package com.goudong.user.controller.qq;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.common.collect.Lists;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.po.AuthorityUserPO;
 import com.goudong.commons.pojo.Transition;
@@ -8,7 +9,9 @@ import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.vo.BaseToken2CreateVO;
 import com.goudong.user.config.UIProperties;
+import com.goudong.user.controller.token.BaseTokenController;
 import com.goudong.user.entity.OtherUserInfoBean;
 import com.goudong.user.enumerate.OtherUserTypeEnum;
 import com.goudong.user.service.AuthorityUserService;
@@ -30,6 +33,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * 类描述：
@@ -56,6 +60,9 @@ public class QQController {
 
     @Resource
     private AuthorityUserUtil authorityUserUtil;
+
+    @Resource
+    private BaseTokenController baseTokenController;
 
     /**
      * qq登录
@@ -109,7 +116,13 @@ public class QQController {
             } else {
                 AuthorityUserDTO authorityUserDTO = BeanUtil.copyProperties(authorityUserPO, AuthorityUserDTO.class);
                 // 生成token
-                String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+                String token = JwtTokenUtil.generateBearerToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+
+                // 保存token到数据库统一管理
+                ArrayList<BaseToken2CreateVO> baseToken2CreateVOS = Lists.newArrayList(
+                        new BaseToken2CreateVO(authorityUserDTO.getId(), token)
+                );
+                baseTokenController.createTokens(baseToken2CreateVOS);
                 // 设置到响应头里
                 response.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
 

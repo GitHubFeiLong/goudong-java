@@ -54,7 +54,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 查询用户信息
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(username);
 
-        String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+        String token = JwtTokenUtil.generateBearerToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");

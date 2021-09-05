@@ -1,12 +1,15 @@
 package com.goudong.oauth2.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.vo.AuthorityUserVO;
+import com.goudong.commons.vo.BaseToken2CreateVO;
 import com.goudong.oauth2.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * 登录成功处理器
@@ -35,6 +39,10 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     @Resource
     private AuthorityUserUtil authorityUserUtil;
+
+    @Resource
+    private UserService userService;
+
 
     /**
      *
@@ -54,7 +62,14 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         // 查询用户信息
         AuthorityUserDTO authorityUserDTO = selfAuthorityUserMapper.selectUserDetailByUsername(username);
 
-        String token = JwtTokenUtil.generateToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+        String token = JwtTokenUtil.generateBearerToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
+
+        // 保存token到数据库统一管理
+        ArrayList<BaseToken2CreateVO> baseToken2CreateVOS = Lists.newArrayList(
+                new BaseToken2CreateVO(authorityUserDTO.getId(), token)
+        );
+        userService.createTokens(baseToken2CreateVOS);
+
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");

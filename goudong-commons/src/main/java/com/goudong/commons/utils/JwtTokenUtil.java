@@ -65,6 +65,9 @@ public class JwtTokenUtil {
     public static final String SALT = "99fa69b0-d9d5-4b5a-aa86-e75637df03c6";
 
 
+    /**
+     * 用户服务Feign
+     */
     private static UserService userService;
 
     @Autowired
@@ -90,14 +93,13 @@ public class JwtTokenUtil {
         throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
     }
 
-
     /**
      * 生产指定有效时长的token字符串
      * 将用户的基本信息、权限信息、能访问的菜单信息存储到token中
      * @param authorityUserDTO 用户登录信息
      * @return
      */
-    public static String generateToken (AuthorityUserDTO authorityUserDTO, int hour) {
+    public static String generateBearerToken (AuthorityUserDTO authorityUserDTO, int hour) {
         // secret 密钥，只有服务器知道
         Algorithm algorithm = Algorithm.HMAC256(JwtTokenUtil.SALT);
         // 当前时间
@@ -174,6 +176,7 @@ public class JwtTokenUtil {
         } catch (TokenExpiredException | JWTDecodeException e) {
             throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED);
         }
+
         // token 失效时间是否满足要求
         JwtTokenUtil.checkValidToken(jwt);
 

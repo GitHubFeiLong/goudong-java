@@ -3,10 +3,12 @@ package com.goudong.commons.openfeign.impl;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
+import com.goudong.commons.dto.BaseTokenDTO;
 import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import com.goudong.commons.vo.BaseIgnoreResourceVO;
+import com.goudong.commons.vo.BaseToken2CreateVO;
 
 import java.util.List;
 
@@ -47,6 +49,17 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Result<List<AuthorityMenuDTO>> addMenus(List<AuthorityMenu2InsertVO> insertVOList) {
+        return null;
+    }
+
+    /**
+     * 批量添加token到数据库
+     *
+     * @param token2CreateVOS
+     * @return
+     */
+    @Override
+    public Result<List<BaseTokenDTO>> createTokens(List<BaseToken2CreateVO> token2CreateVOS) {
         return null;
     }
 
