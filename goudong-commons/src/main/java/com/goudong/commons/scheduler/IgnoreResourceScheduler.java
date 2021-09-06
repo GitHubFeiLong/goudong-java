@@ -1,9 +1,9 @@
 package com.goudong.commons.scheduler;
 
 import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.mapper.CommonsIgnoreResourceMapper;
 import com.goudong.commons.po.BaseIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
+import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.GenerateRedisKeyUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
@@ -30,7 +30,7 @@ import java.util.List;
 public class IgnoreResourceScheduler {
 
     @Resource
-    private CommonsIgnoreResourceMapper commonsIgnoreResourceMapper;
+    private CommonsIgnoreResourceService commonsIgnoreResourceService;
 
     @Resource
     private RedisOperationsUtil redisOperationsUtil;
@@ -66,7 +66,7 @@ public class IgnoreResourceScheduler {
      */
     public List<IgnoreResourceAntMatcher> getIgnoreResourceAntMatchers() {
         // 查询表 返回白名单集合
-        List<BaseIgnoreResourcePO> authorityIgnoreResourcePOS = commonsIgnoreResourceMapper.selectList(null);
+        List<BaseIgnoreResourcePO> authorityIgnoreResourcePOS = commonsIgnoreResourceService.list();
         // 将白名单集合转换成 使用antPathMatch时的友好对象
         return IgnoreResourceAntMatcherUtil.ignoreResource2AntMatchers(authorityIgnoreResourcePOS);
     }
@@ -95,6 +95,7 @@ public class IgnoreResourceScheduler {
             redisOperationsUtil.opsForList().leftPushAll(redisKey, dbCollection);
         }
     }
+
 
 
 

@@ -13,7 +13,7 @@ import java.util.List;
  * @Date 2021-08-14 11:50
  * @Version 1.0
  */
-public interface IgnoreResourceService extends IService<BaseIgnoreResourcePO> {
+public interface CommonsIgnoreResourceService extends IService<BaseIgnoreResourcePO> {
     /**
      * 集合添加到白名单
      * @param insertDTOList

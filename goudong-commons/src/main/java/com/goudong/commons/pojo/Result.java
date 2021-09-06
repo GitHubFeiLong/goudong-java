@@ -74,9 +74,11 @@ public class Result<T> implements Serializable {
 
     public Result() {
     }
+
     public Result(String code) {
         this.code = code;
     }
+
     public Result(String code, String clientMessage, String serverMessage) {
         this.code = code;
         this.clientMessage = clientMessage;
@@ -88,7 +90,6 @@ public class Result<T> implements Serializable {
         this.serverMessage = serverMessage;
         this.data = t;
     }
-
 
     /**
      * 返回成功
@@ -155,7 +156,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByBadRequest(String clientMessage, String serverMessage) {
-        return  new Result("400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
+        return new Result("400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
     }
 
     /**
@@ -164,7 +165,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByNotFound(String url) {
-        return  new Result("404", "当前请求资源不存在，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url);
+        return new Result("404", "当前请求资源不存在，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
     /**
@@ -173,7 +174,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByMethodNotAllowed(String url) {
-        return  new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url);
+        return new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
     /**
@@ -182,7 +183,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByNotAcceptable(String serverMessage) {
-        return  new Result("406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
+        return new Result("406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
     }
 
 }

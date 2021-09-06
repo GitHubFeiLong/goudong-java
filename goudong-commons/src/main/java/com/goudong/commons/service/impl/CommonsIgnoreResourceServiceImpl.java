@@ -3,12 +3,17 @@ package com.goudong.commons.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
+import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.mapper.CommonsIgnoreResourceMapper;
 import com.goudong.commons.po.BaseIgnoreResourcePO;
-import com.goudong.commons.service.IgnoreResourceService;
+import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
+import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
+import com.goudong.commons.utils.RedisOperationsUtil;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +24,11 @@ import java.util.List;
  * @Date 2021-08-14 11:50
  * @Version 1.0
  */
-@Service("commonsIgnoreResourceServiceImpl")
-public class IgnoreResourceServiceImpl extends ServiceImpl<CommonsIgnoreResourceMapper, BaseIgnoreResourcePO> implements IgnoreResourceService {
+@Service
+public class CommonsIgnoreResourceServiceImpl extends ServiceImpl<CommonsIgnoreResourceMapper, BaseIgnoreResourcePO> implements CommonsIgnoreResourceService {
+
+    @Resource
+    private RedisOperationsUtil redisOperationsUtil;
 
     /**
      * 集合添加到白名单
@@ -39,8 +47,13 @@ public class IgnoreResourceServiceImpl extends ServiceImpl<CommonsIgnoreResource
         // 比较不同数据
         List<BaseIgnoreResourcePO> insertList = absent(rawList, newList);
 
-        // 不同数据插入数据库
-        super.saveBatch(insertList);
+        if (!insertList.isEmpty()) {
+            // 不同数据插入数据库
+            super.saveBatch(insertList);
+        }
+
+        List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = IgnoreResourceAntMatcherUtil.ignoreResource2AntMatchers(super.list());
+        redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, ignoreResourceAntMatchers);
 
         return BeanUtil.copyList(insertList, BaseIgnoreResourceDTO.class);
     }

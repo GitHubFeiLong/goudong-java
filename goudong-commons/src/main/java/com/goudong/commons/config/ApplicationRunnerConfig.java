@@ -1,11 +1,14 @@
 package com.goudong.commons.config;
 
+import com.goudong.commons.dto.AuthorityMenuDTO;
+import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.ResourceAntMatcher;
+import com.goudong.commons.service.CommonsAuthorityMenuService;
+import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.ResourceUtil;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;
-import com.goudong.commons.vo.BaseIgnoreResourceVO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,13 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
     @Value("${spring.application.name}")
     private String applicationName;
 
+    @Resource
+    private CommonsIgnoreResourceService commonsIgnoreResourceService;
+
+    @Resource
+    private CommonsAuthorityMenuService commonsAuthorityMenuService;
+
+    @Deprecated
     @Autowired
     private UserService userService;
 
@@ -51,7 +62,6 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
             @SneakyThrows
             @Override
             public void run() {
-                Thread.sleep(5000);
                 addMenus();
                 addIgnoreResources();
             }
@@ -63,7 +73,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void addMenus() throws IOException, ClassNotFoundException {
+    private void addMenus() throws IOException, ClassNotFoundException, InterruptedException {
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanMenu(contextPath);
         if (resourceAntMatchers.size() > 0) {
             List<AuthorityMenu2InsertVO> menu2InsertVOS = new ArrayList<>(resourceAntMatchers.size());
@@ -71,8 +81,8 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
                 menu2InsertVOS.add(new AuthorityMenu2InsertVO(p.getPattern(), p.getMethod(), p.getRemark(), applicationName));
             });
 
-            // 调用接口
-            userService.addMenus(menu2InsertVOS);
+            List<AuthorityMenuDTO> insertDTOS = BeanUtil.copyList(menu2InsertVOS, AuthorityMenuDTO.class);
+            commonsAuthorityMenuService.addList(insertDTOS);
         }
     }
 
@@ -81,15 +91,14 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void addIgnoreResources() throws IOException, ClassNotFoundException {
+    private void addIgnoreResources() throws IOException, ClassNotFoundException, InterruptedException {
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
         // 有数据，插入数据库
         if (resourceAntMatchers.size() > 0) {
-            List<BaseIgnoreResourceVO> baseIgnoreResourceVOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceVO.class);
-
+            List<BaseIgnoreResourceDTO> baseIgnoreResourceDTOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceDTO.class);
             // 调用接口
-            userService.addIgnoreResources(baseIgnoreResourceVOS);
+            commonsIgnoreResourceService.addList(baseIgnoreResourceDTOS);
         }
-
     }
+
 }

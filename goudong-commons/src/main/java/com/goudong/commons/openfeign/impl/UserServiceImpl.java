@@ -1,13 +1,9 @@
 package com.goudong.commons.openfeign.impl;
 
-import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.dto.BaseTokenDTO;
 import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.Result;
-import com.goudong.commons.vo.AuthorityMenu2InsertVO;
-import com.goudong.commons.vo.BaseIgnoreResourceVO;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 
 import java.util.List;
@@ -29,28 +25,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result<AuthorityUserDTO> getUserDetailByLoginName(String loginName) {
         return Result.ofFail();
-    }
-
-    /**
-     * 添加多条白名单
-     *
-     * @param insertVOList 白名单集合
-     * @return
-     */
-    @Override
-    public Result<List<BaseIgnoreResourceDTO>> addIgnoreResources(List<BaseIgnoreResourceVO> insertVOList) {
-        return null;
-    }
-
-    /**
-     * 批量添加菜单
-     *
-     * @param insertVOList
-     * @return
-     */
-    @Override
-    public Result<List<AuthorityMenuDTO>> addMenus(List<AuthorityMenu2InsertVO> insertVOList) {
-        return null;
     }
 
     /**
