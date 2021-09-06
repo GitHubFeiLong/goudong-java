@@ -22,4 +22,9 @@ public class BaseTokenPO extends BasePO{
      * token字符串
      */
     private String token;
+
+    /**
+     * token md5数字加密
+     */
+    private String tokenMd5;
 }

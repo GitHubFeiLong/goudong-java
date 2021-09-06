@@ -110,7 +110,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 
     /**
@@ -161,7 +161,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         String message = StringUtil.format("请求头 {} 的值不是正确的 base64编码类型", JwtTokenUtil.TOKEN_HEADER);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 
     /**

@@ -21,4 +21,11 @@ public interface BaseTokenService extends IService<BaseTokenPO> {
      * @return
      */
     List<BaseTokenDTO> createTokens(List<BaseTokenDTO> baseTokenDTOS);
+
+    /**
+     * 根据token md5 查询
+     * @param tokenMd5
+     * @return
+     */
+    BaseTokenDTO getTokenByTokenMd5(String tokenMd5);
 }

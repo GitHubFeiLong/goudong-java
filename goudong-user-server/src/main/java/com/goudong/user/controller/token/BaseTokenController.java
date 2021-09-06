@@ -9,13 +9,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -41,4 +39,9 @@ public class BaseTokenController {
         return Result.ofSuccess(baseTokenService.createTokens(baseTokenDTOS));
     }
 
+    @GetMapping("/token/{token-md5}")
+    @ApiOperation(value = "根据token-md5查询")
+    public Result<Optional<BaseTokenDTO>> getTokenByTokenMd5 (@PathVariable("token-md5") String tokenMd5) {
+        return Result.ofSuccess(Optional.ofNullable(baseTokenService.getTokenByTokenMd5(tokenMd5)));
+    }
 }

@@ -90,7 +90,7 @@ public class JwtTokenUtil {
         }
 
         String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 
     /**
@@ -152,7 +152,7 @@ public class JwtTokenUtil {
         }
 
         String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 
     /**
@@ -200,9 +200,9 @@ public class JwtTokenUtil {
                 .minusDays(1);
         LocalDateTime now = LocalDateTime.now();
 
-        if (now.isBefore(expiresAtLocalDateTime)) {
+        if (now.isAfter(expiresAtLocalDateTime)) {
             String message = StringUtil.format("请求头 {} 的值 已过期，需要重新登录", JwtTokenUtil.TOKEN_HEADER);
-            throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+            throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
         }
     }
 
@@ -220,7 +220,7 @@ public class JwtTokenUtil {
             decode = new String(Base64.getDecoder().decode(base64), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             String message = StringUtil.format("请求头 {} 的值不是正确的 base64编码类型", JwtTokenUtil.TOKEN_HEADER);
-            throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+            throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
         }
 
         // base64解码后字符串是正确的格式
@@ -246,7 +246,7 @@ public class JwtTokenUtil {
         }
 
         String message = StringUtil.format("请求头 {} 的值不是正确的 base64编码类型", JwtTokenUtil.TOKEN_HEADER);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 
     /**
@@ -283,6 +283,6 @@ public class JwtTokenUtil {
         }
 
         String message = StringUtil.format("请求头 {} 的值格式错误，需要以 {} 或 {} 开头。", JwtTokenUtil.TOKEN_HEADER, JwtTokenUtil.TOKEN_BEARER_PREFIX, JwtTokenUtil.TOKEN_BASIC_PREFIX);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 }

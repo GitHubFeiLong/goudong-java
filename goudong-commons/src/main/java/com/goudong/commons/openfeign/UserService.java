@@ -12,6 +12,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * User接口
@@ -52,5 +53,13 @@ public interface UserService {
      * @return
      */
     @PostMapping("/base-token/tokens")
-    Result<List<BaseTokenDTO>> createTokens (@RequestBody List<BaseToken2CreateVO> token2CreateVOS );
+    Result<List<BaseTokenDTO>> createTokens (@RequestBody List<BaseToken2CreateVO> token2CreateVOS);
+
+    /**
+     * 根据token-md5查询
+     * @param tokenMd5
+     * @return
+     */
+    @GetMapping("/base-token/token/{token-md5}")
+    Result<Optional<BaseTokenDTO>> getTokenByTokenMd5 (@PathVariable("token-md5") String tokenMd5);
 }

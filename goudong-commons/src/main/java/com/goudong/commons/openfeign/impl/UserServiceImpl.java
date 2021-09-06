@@ -11,6 +11,7 @@ import com.goudong.commons.vo.BaseIgnoreResourceVO;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -60,6 +61,17 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Result<List<BaseTokenDTO>> createTokens(List<BaseToken2CreateVO> token2CreateVOS) {
+        return null;
+    }
+
+    /**
+     * 根据token-md5查询
+     *
+     * @param tokenMd5
+     * @return
+     */
+    @Override
+    public Result<Optional<BaseTokenDTO>> getTokenByTokenMd5(String tokenMd5) {
         return null;
     }
 

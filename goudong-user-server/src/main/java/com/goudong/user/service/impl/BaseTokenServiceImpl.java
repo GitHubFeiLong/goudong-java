@@ -1,5 +1,7 @@
 package com.goudong.user.service.impl;
 
+import cn.hutool.crypto.digest.MD5;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.BaseTokenDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
@@ -58,9 +60,31 @@ public class BaseTokenServiceImpl extends ServiceImpl<BaseTokenMapper, BaseToken
             throw ClientException.clientException(ClientExceptionEnum.UNPROCESSABLE_ENTITY, clientMessage);
         }
 
+        // 数字签名
+        baseTokenPOS.stream().forEach(p->{
+            p.setTokenMd5(MD5.create().digestHex16(p.getToken()));
+        });
+
         super.saveBatch(baseTokenPOS);
 
         return BeanUtil.copyList(baseTokenPOS, BaseTokenDTO.class);
+    }
+
+    /**
+     * 根据token md5 查询
+     *
+     * @param tokenMd5
+     * @return
+     */
+    @Override
+    public BaseTokenDTO getTokenByTokenMd5(String tokenMd5) {
+        LambdaQueryWrapper<BaseTokenPO> lambdaQueryWrapper = new LambdaQueryWrapper();
+
+        LambdaQueryWrapper<BaseTokenPO> eq = lambdaQueryWrapper.eq(BaseTokenPO::getTokenMd5, tokenMd5);
+
+        BaseTokenPO baseTokenPO = super.getOne(eq);
+
+        return BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
     }
 
 }

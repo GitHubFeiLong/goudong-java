@@ -116,10 +116,13 @@ public class GatewayFilter implements GlobalFilter, Ordered {
 
         // 带上了token， 就需要判断Token是否有效
         if (StringUtils.isNotBlank(headerToken)) {
+            String tokenMd5Key = JwtTokenUtil.generateRedisKey(headerToken);
+            // 校验token是否有效
+            userService.getTokenByTokenMd5(tokenMd5Key).getData().orElseThrow(()->ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, "token无效"));
+
             AuthorityUserDTO authorityUserDTO = getUserByToken(headerToken);
 
             // 判断用户是否在线
-            String tokenMd5Key = JwtTokenUtil.generateRedisKey(headerToken);
             boolean offLine = !redisOperationsUtil.hasKey(RedisKeyEnum.OAUTH2_USER_INFO, tokenMd5Key);
             if (offLine) {
                 // redis不存在token(未登录)
@@ -156,7 +159,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
 
 
         String message = StringUtil.format("本次请求缺少请求头 {} ", JwtTokenUtil.TOKEN_HEADER);
-        throw ClientException.clientException(ClientExceptionEnum.NOT_ACCEPTABLE, message);
+        throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, message);
     }
 
     /**
