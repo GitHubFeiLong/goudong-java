@@ -176,4 +176,13 @@ public class Result<T> implements Serializable {
         return  new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
+    /**
+     * 406 Method Not Allowed
+     * @param serverMessage 异常描述
+     * @return
+     */
+    public static Result ofFailByNotAcceptable(String serverMessage) {
+        return  new Result("406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
+    }
+
 }

@@ -11,6 +11,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -36,7 +37,9 @@ public class ErrorController extends AbstractErrorController {
      * @return
      */
     @RequestMapping
-    public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> error(HttpServletRequest request, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         Map<String, Object> body = errorAttributes.getErrorAttributes(new ServletWebRequest(request), ErrorAttributeOptions.defaults());
 
         int code = (int)request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);

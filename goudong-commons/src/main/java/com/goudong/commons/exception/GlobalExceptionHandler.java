@@ -4,11 +4,13 @@ package com.goudong.commons.exception;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -189,4 +191,17 @@ public class GlobalExceptionHandler {
         return Result.ofFailByMethodNotAllowed(request.getRequestURL().toString());
     }
 
+    /**
+     * 406 Not Acceptable
+     * 请求的资源的内容特性无法满足请求头中的条件，因而无法生成响应实体。
+     * @return
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public Result notAcceptable() {
+        final String contentType = "Content-Type";
+        final String header = request.getHeader(contentType);
+        String message = StringUtil.format("{} 资源不支持{}:{} 方式", request.getRequestURL().toString(), contentType, header);
+        return Result.ofFailByNotAcceptable(message);
+    }
 }
