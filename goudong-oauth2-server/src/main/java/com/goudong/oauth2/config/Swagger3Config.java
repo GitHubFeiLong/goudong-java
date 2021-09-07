@@ -29,6 +29,33 @@ import java.util.LinkedHashSet;
 public class Swagger3Config {
 
     /**
+     * 默认全部扫描
+     * @return
+     */
+    @Bean
+    public Docket defaultDocket() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("all api")
+                .description("全部接口归纳")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller"))
+                //只有标记了@ApiOperation的方法才会暴露出给swagger
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("all api")
+                ;
+    }
+
+    /**
      * 登录相关
      * @return
      */
