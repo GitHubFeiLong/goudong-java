@@ -17,5 +17,5 @@ public class MenuVO {
 
     private String path;
 
-    private List<MenuDO> child;
+    private List<MenuVO> child;
 }
