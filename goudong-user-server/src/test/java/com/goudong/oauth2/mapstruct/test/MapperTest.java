@@ -38,7 +38,26 @@ public class MapperTest {
         MenuDO menuDO1 = new MenuDO();
         menuDO1.setMenuName("111 menuName");
         menuDO1.setUrl("111 url");
-        menuDO.setSubMenus(Lists.newArrayList(menuDO1));
+
+        MenuDO menuDO2 = new MenuDO();
+        menuDO2.setMenuName("222 menuName");
+        menuDO2.setUrl("222 url");
+
+        MenuDO menuDO3 = new MenuDO();
+        menuDO3.setMenuName("menuDO3 menuName");
+        menuDO3.setUrl("menuDO3 url");
+
+        MenuDO menuDO4 = new MenuDO();
+        menuDO4.setMenuName("menuDO4 menuName");
+        menuDO4.setUrl("menuDO4 url");
+
+        MenuDO menuDO5 = new MenuDO();
+        menuDO5.setMenuName("menuDO5 menuName");
+        menuDO5.setUrl("menuDO5 url");
+
+        menuDO3.setSubMenus(Lists.newArrayList(menuDO4, menuDO5));
+
+        menuDO.setSubMenus(Lists.newArrayList(menuDO1, menuDO2, menuDO3));
 
         MenuVO vo = MenuMapper.INSTANCE.do2Vo(menuDO);
 
