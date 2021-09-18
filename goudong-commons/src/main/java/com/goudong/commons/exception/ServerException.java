@@ -42,6 +42,17 @@ public class ServerException extends BasicException{
     }
 
     /**
+     * 代替 构造方法(用起舒服些)
+     * @param serverExceptionEnum
+     * @param clientMessage 客户端错误信息
+     * @param serverMessage 服务端错误信息
+     * @return
+     */
+    public static ServerException serverException (ServerExceptionEnum serverExceptionEnum, String clientMessage, String serverMessage) {
+        return new ServerException(serverExceptionEnum, clientMessage, serverMessage);
+    }
+
+    /**
      * 服务之间方法调用 参数错误
      * @param serverMessage
      * @return
@@ -57,6 +68,10 @@ public class ServerException extends BasicException{
 
     public ServerException(ServerExceptionEnum serverExceptionEnum, String serverMessage) {
         super(serverExceptionEnum, serverMessage);
+    }
+
+    public ServerException(ServerExceptionEnum serverExceptionEnum, String clientMessage, String serverMessage) {
+        super(serverExceptionEnum, clientMessage, serverMessage);
     }
 
 }

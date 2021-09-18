@@ -345,4 +345,20 @@ public class RedisOperationsUtil extends RedisTemplate implements RedisOperation
         }
         return false;
     }
+
+    /**
+     * 获取key的失效时长
+     * 返回值为-1时 此键值没有设置过期日期
+     *
+     * 返回值为-2时 不存在此键
+     * @param redisKeyEnum
+     * @param param
+     * @return
+     */
+    @Override
+    public long getExpire(RedisKeyEnum redisKeyEnum, Object... param) {
+        //此方法返回单位为秒过期时长
+        String key = GenerateRedisKeyUtil.generateByClever(redisKeyEnum.getKey(), param);
+        return super.opsForValue().getOperations().getExpire(key);
+    }
 }

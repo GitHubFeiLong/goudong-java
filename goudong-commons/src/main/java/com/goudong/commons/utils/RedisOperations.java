@@ -154,4 +154,15 @@ public interface RedisOperations {
      * @param redisKeyEnum
      */
     boolean expire(String key, RedisKeyEnum redisKeyEnum);
+
+    /**
+     * 获取key的失效时长
+     * 返回值为-1时 此键值没有设置过期日期
+     *
+     * 返回值为-2时 不存在此键
+     * @param redisKeyEnum
+     * @param param
+     * @return
+     */
+    long getExpire(RedisKeyEnum redisKeyEnum, Object... param);
 }

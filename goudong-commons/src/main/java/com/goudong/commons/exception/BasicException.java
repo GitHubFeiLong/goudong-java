@@ -81,6 +81,15 @@ public class BasicException extends RuntimeException{
     }
 
     /**
+     * 客户端误操作造成异常
+     * @param exceptionEnum
+     * @param clientMessage 自定义客户端提示信息
+     */
+    public BasicException(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, serverMessage);
+    }
+
+    /**
      * 服务端异常
      * @param exceptionEnum
      */
@@ -95,6 +104,17 @@ public class BasicException extends RuntimeException{
      */
     public BasicException(ServerExceptionEnum exceptionEnum, String serverMessage) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), serverMessage);
+    }
+
+    /**
+     * 服务端异常
+     * @param exceptionEnum 状态码相关
+     * @param clientMessage 客户端提示
+     * @param serverMessage 服务端提示
+     * @param serverMessage 服务端错误信息
+     */
+    public BasicException(ServerExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, serverMessage);
     }
 
     /**

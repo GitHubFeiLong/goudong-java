@@ -2,10 +2,12 @@ package com.goudong.commons.exception;
 
 
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.UnexpectedTypeException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +88,41 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 唯一索引全局捕获
+     * ps 最好自己捕获抛出详细信息给前端,但是都用400
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<BasicException> dataIntegrityViolationExceptionDispose(DataIntegrityViolationException e) {
+        // 打印错误日志
+        e.printStackTrace();
+        BasicException basicException = null;
+        String message = e.getRootCause().getMessage();
+
+        // 外键约束
+        if (message.startsWith("Duplicate entry") && message.indexOf("for key")!=-1) {
+            // e.getRootCause().getMessage() => Duplicate entry '组长' for key 'uk_base_role__role_name_cn
+            String value = message.split(" ")[2].replace("'","");
+            String clientMessage = StringUtil.format("{} 在数据库中已存在，请勿重复新增", value);
+            String serverMessage = message;
+            basicException = ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
+        } else if (message.startsWith("Cannot add or update a child row: a foreign key constraint fails") && message.endsWith("ON DELETE RESTRICT ON UPDATE RESTRICT)")) {
+            // 数据库更新或删除表的数据，外键值不正确
+            // e.getRootCause().getMessage() => Cannot add or update a child row: a foreign key constraint fails (`icc`.`base_role_menu`, CONSTRAINT `fk_base_role_menu__base_menu_id` FOREIGN KEY (`base_menu_id`) REFERENCES `base_menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT)
+            String clientMessage = StringUtil.format("参数错误");
+            String serverMessage = message;
+            basicException = ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
+        }
+
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
+        // 堆栈跟踪
+        e.printStackTrace();
+        return Result.ofFail(basicException);
+    }
+
+    /**
      * 运行时异常，其它框架抛出的异常未封装（openfeign调用服务时）
      * 后续可能会继续扩展....
      * @param exception
@@ -133,6 +171,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = {
             BindException.class,
+            UnexpectedTypeException.class,
             ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class,
@@ -146,14 +185,17 @@ public class GlobalExceptionHandler {
             for (ObjectError item : list) {
                 messages.add(item.getDefaultMessage());
             }
-        } else if (e instanceof ConstraintViolationException) {
+        } else if (e instanceof ConstraintViolationException) { // 属性校验失败，不满足注解
             for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException)e).getConstraintViolations()) {
-                messages.add(constraintViolation.getMessage());
+                String full = StringUtil.format("参数{} {}",constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
+                messages.add(full);
             }
         } else if (e instanceof HttpMessageNotReadableException) {
             messages.add("请求参数丢失");
         } else if (e instanceof IllegalArgumentException) {
             messages.add(e.getMessage());
+        } else if (e instanceof UnexpectedTypeException) { // 参数校验注解写错了（比如Integer写了@NotBlank）
+            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "参数校验注解写错了", e.getMessage());
         } else  {
             messages.add(((MethodArgumentNotValidException)e).getBindingResult().getFieldError().getDefaultMessage());
         }
