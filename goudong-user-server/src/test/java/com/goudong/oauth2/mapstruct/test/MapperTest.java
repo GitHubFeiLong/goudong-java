@@ -62,5 +62,8 @@ public class MapperTest {
         MenuVO vo = MenuMapper.INSTANCE.do2Vo(menuDO);
 
         System.out.println("vo = " + vo);
+
+        MenuDO menuDO6 = MenuMapper.INSTANCE.vo2do(vo);
+        System.out.println("menuDO6 = " + menuDO6);
     }
 }

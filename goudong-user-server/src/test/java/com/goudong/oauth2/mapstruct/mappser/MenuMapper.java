@@ -25,5 +25,10 @@ public interface MenuMapper {
     })
     MenuVO do2Vo(MenuDO person);
 
-    // List<MenuVO> do2vo(List<MenuDO> people);
+    @Mappings({
+            @Mapping(target = "menuName", source = "name"),
+            @Mapping(target = "url", source = "path"),
+            @Mapping(target = "subMenus", source = "child"),
+    })
+    MenuDO vo2do(MenuVO person);
 }
