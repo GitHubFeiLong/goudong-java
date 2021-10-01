@@ -14,18 +14,18 @@ public interface Tree<T> {
      * 将一维node集合转换成树形结构集合
      * @return
      */
-    List<T> toTreeStructure();
+    List<T> toTreeStructure() throws NoSuchFieldException, IllegalAccessException;
 
     /**
      * 将树形结构集合转成一维结构集合
      * @return
      */
-    List<T> toGeneralStructure();
+    List<T> toGeneralStructure() throws NoSuchFieldException, IllegalAccessException;
 
     /**
      * 获取指定node的详细信息，包含其所有子node
      * @param selfValue 自己的标识值，例如id
      * @return 根据实现类实现逻辑分为：1. 树形结构的详细信息；2.一维结构的详细信息
      */
-    Object getNodeDetailBySelfValue(Object selfValue);
+    Object getNodeDetailBySelfValue(Object selfValue) throws NoSuchFieldException, IllegalAccessException;
 }
