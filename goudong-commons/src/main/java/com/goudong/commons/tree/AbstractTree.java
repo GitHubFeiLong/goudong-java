@@ -14,7 +14,6 @@ import java.util.List;
  * @version 1.0
  * @date 2021/9/30 20:35
  */
-@Slf4j
 public abstract class AbstractTree<T> implements Tree<T> {
 
     /**

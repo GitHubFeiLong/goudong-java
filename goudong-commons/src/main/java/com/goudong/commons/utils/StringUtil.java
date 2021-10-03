@@ -84,5 +84,7 @@ public class StringUtil {
     public static void main(String[] args) {
         String 陈飞龙 = format("{", "}", "我是{}，今年：{}岁了,参数{{}，{}}", "陈飞龙", 18,11);
         System.out.println("陈飞龙 = " + 陈飞龙);
+        String a1 = String.format("%s,%s", 1, "陈");
+        System.out.println(a1);
     }
 }
