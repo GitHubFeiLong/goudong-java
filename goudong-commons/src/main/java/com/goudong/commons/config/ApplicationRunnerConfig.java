@@ -2,8 +2,8 @@ package com.goudong.commons.config;
 
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
-import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.ResourceAntMatcher;
+import com.goudong.commons.quartz.JobQuartzManager;
 import com.goudong.commons.service.CommonsAuthorityMenuService;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.BeanUtil;
@@ -11,7 +11,6 @@ import com.goudong.commons.utils.ResourceUtil;
 import com.goudong.commons.vo.AuthorityMenu2InsertVO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -49,9 +48,8 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
     @Resource
     private CommonsAuthorityMenuService commonsAuthorityMenuService;
 
-    @Deprecated
-    @Autowired
-    private UserService userService;
+    @Resource
+    private JobQuartzManager quartzManager;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -66,6 +64,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
                 addIgnoreResources();
             }
         }.start();
+        quartzManager.start();
     }
 
     /**

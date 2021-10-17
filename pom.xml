@@ -62,6 +62,7 @@
         <log4j-web.version>2.14.0</log4j-web.version>
         <redisson-spring-boot-starter.version>3.14.0</redisson-spring-boot-starter.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
+        <quartz.version>2.3.2</quartz.version>
     </properties>
 
     <dependencies>
@@ -314,6 +315,11 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
