@@ -47,7 +47,7 @@
       <module name="goudong-message-server" options="-parameters" />
       <module name="goudong-oauth2-server" options="-parameters" />
       <module name="goudong-security-server" options="-parameters" />
-      <module name="goudong-user-server" options="-parameters -extdirs D:\workspaces\github-repository\goudong-java\goudong-user-server/lib" />
+      <module name="goudong-user-server" options="-parameters -extdirs D:\workspace\my-workspace\goudong-java\goudong-user-server/lib" />
       <module name="sentinel-dashboard" options="-parameters" />
     </option>
   </component>
