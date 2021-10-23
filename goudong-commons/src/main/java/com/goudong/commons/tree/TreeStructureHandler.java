@@ -1,13 +1,12 @@
 package com.goudong.commons.tree;
 
+import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.StringUtil;
+import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotBlank;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,21 +14,21 @@ import java.util.stream.Collectors;
 /**
  * 类描述：
  * 树形结构集合的处理器
- * 1. 将一维节点结构集合转换成树形结构。
- * 2. 获取指定节点及其子节点
  * @author msi
  * @version 1.0
  * @date 2021/9/30 23:27
  */
 public class TreeStructureHandler<T> extends AbstractTree<T> {
 
-    private final Logger log = LoggerFactory.getLogger(TreeStructureHandler.class);
-
     /**
-     * 树形结构的集合
+     *  以下属性使用默认值：selfFieldName=id, parentFieldName=parentId, childrenFieldName=children
+     * @param allNodes 节点集合，一般结构的集合
      */
-    private List<T> treeNodes;
-
+    public TreeStructureHandler(List<T> allNodes) {
+        super(allNodes);
+        // 将参数保留
+        super.generalNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
+    }
 
     /**
      * 构造方法，参数进行严格限制
@@ -38,33 +37,36 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
      * @param selfFieldName 自己元素标识属性名（例如：id）
      * @param parentFieldName 父元素标识属性名（例如：parentId）
      * @param childrenFieldName 装子元素集合的属性名（例如：children）
-     * @param generalNodes 一维节点集合
+     * @param allNodes 一般结构的集合
      */
-    public TreeStructureHandler(String selfFieldName, String parentFieldName, String childrenFieldName, List<T> generalNodes) {
-        super(selfFieldName, parentFieldName, childrenFieldName, generalNodes);
+    public TreeStructureHandler(String selfFieldName, String parentFieldName, String childrenFieldName, List<T> allNodes) {
+        super(selfFieldName, parentFieldName, childrenFieldName, allNodes);
+        // 将参数保留
+        super.generalNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
     }
 
     /**
-     * 将一维node集合转换成树形结构集合
+     * 将属性allNodes进行一系列的处理，最终使其达到树形结构
      *
-     * @return
+     * @return 返回树形结构的集合对象
      */
+    @SneakyThrows
     @Override
-    public List<T> toTreeStructure() throws NoSuchFieldException, IllegalAccessException {
+    public List<T> toTreeStructure() {
         // 已经执行过一次该方法，就直接会结果
-        if (CollectionUtils.isNotEmpty(this.treeNodes)) {
-            return this.treeNodes;
+        if (CollectionUtils.isNotEmpty(super.treeNodes)) {
+            return super.treeNodes;
         }
 
         List<T> parentNodes = new ArrayList<>();
         // 循环一维节点集合
-        Iterator<T> iterator = this.allNodes.iterator();
+        Iterator<T> iterator = super.allNodes.iterator();
         while (iterator.hasNext()) {
             T node = iterator.next();
             /*
                 通过反射获取对象父属性字段的值。
              */
-            Field parentDeclaredField = node.getClass().getDeclaredField(this.parentFieldName);
+            Field parentDeclaredField = node.getClass().getDeclaredField(super.parentFieldName);
             parentDeclaredField.setAccessible(true);
             Object parent = parentDeclaredField.get(node);
 
@@ -75,8 +77,8 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
         }
 
         // 无树形结构，直接返回。
-        if (parentNodes.size() == this.allNodes.size()) {
-            this.treeNodes = parentNodes;
+        if (parentNodes.size() == super.allNodes.size()) {
+            super.treeNodes = parentNodes;
             return parentNodes;
         }
 
@@ -85,31 +87,32 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
          */
         toTreeStructureProcessChildren(parentNodes);
 
-        this.treeNodes = parentNodes;
+        super.treeNodes = parentNodes;
         return parentNodes;
     }
 
     /**
      * 处理父节点的children属性。
-     * @param parentNodes
+     * @param parentNodes 父级节点集合
      */
-    private void toTreeStructureProcessChildren(List<T> parentNodes) throws NoSuchFieldException, IllegalAccessException {
+    @SneakyThrows
+    private void toTreeStructureProcessChildren(List<T> parentNodes) {
         // 循环父元素节点们
         Iterator<T> iterator = parentNodes.iterator();
         while (iterator.hasNext()) {
             T parentNode = iterator.next();
             /*
-                    获取自己的属性的值，找到它的所有子节点。
-                 */
-            Field selfDeclaredField = parentNode.getClass().getDeclaredField(this.selfFieldName);
+                获取自己的属性的值，找到它的所有子节点。
+             */
+            Field selfDeclaredField = parentNode.getClass().getDeclaredField(super.selfFieldName);
             selfDeclaredField.setAccessible(true);
             Object self = selfDeclaredField.get(parentNode);
 
             // 获取子元素
-            List<T> children = this.allNodes.stream().filter(f -> {
+            List<T> children = super.allNodes.stream().filter(f -> {
                 try {
                     // 父元素值（parentId）等于parentNode的属性值（id）,直接返回
-                    Field parentDeclaredField = f.getClass().getDeclaredField(this.parentFieldName);
+                    Field parentDeclaredField = f.getClass().getDeclaredField(super.parentFieldName);
                     parentDeclaredField.setAccessible(true);
                     Object parent = parentDeclaredField.get(f);
 
@@ -121,7 +124,7 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
             }).collect(Collectors.toList());
 
             // 设置子元素到父节点的 childrenField 中
-            Field childrenDeclaredField = parentNode.getClass().getDeclaredField(this.childrenFieldName);
+            Field childrenDeclaredField = parentNode.getClass().getDeclaredField(super.childrenFieldName);
             childrenDeclaredField.setAccessible(true);
             // 将本次获得子元属添加进去
             childrenDeclaredField.set(parentNode, children);
@@ -132,76 +135,51 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
     }
 
     /**
-     * 将树形结构集合转成一维结构集合
+     * 获取一维结构节点集合
      *
-     * @return
+     * @return 返回一维结构节点集合
      */
     @Override
     public List<T> toGeneralStructure(){
-        return this.getGeneralNodes();
+        return super.getGeneralNodes();
     }
 
     /**
-     * 获取指定node的详细信息，包含其所有子node
+     * 获取指定node的详细信息 一维类型
      *
-     * @param selfValue 自己的标识值，例如id
-     * @return 根据实现类实现逻辑分为：1. 树形结构的详细信息；2.一维结构的详细信息
+     * @param selfValue 指定node的唯一标识的值（selfFieldName属性的值）
+     * @return 返回 {@link GeneralNode},指定node的信息及其子元素信息（子属性是一维结构）
+     */
+    @SneakyThrows
+    @Override
+    public GeneralNode<T> getNodeDetailBySelfValue2GeneralNode(Object selfValue){
+        GeneralNode<T> generalNode = new GeneralNode<>();
+
+        // 因为构造方法传递节点集合是树形结构的，所以获取指定的节点，就能获取它下面的所有子节点
+        T selfNode = Optional.ofNullable(super.findBySelfValue2T(selfValue, super.allNodes))
+                .orElseThrow(()->ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, StringUtil.format("未找到指定的节点{}", selfValue)));
+        generalNode.setNode(selfNode);
+
+        // 获取该节点的所有子节点
+        Field declaredField = selfNode.getClass().getDeclaredField(super.childrenFieldName);
+        declaredField.setAccessible(true);
+        List<T> children = Optional.ofNullable((List<T>)declaredField.get(selfNode)).orElse(new ArrayList<>());
+
+        // 将children 扁平化
+        super.flatTreeNodesRecursion(generalNode.getChildren(), children);
+
+        return generalNode;
+    }
+
+    /**
+     * 获取指定node的详细信息 树形类型
+     *
+     * @param selfValue 指定node的唯一标识的值（selfFieldName属性的值）
+     * @return 返回该节点，并填充了它子属性（子属性是树形结构）
      */
     @Override
-    public T getNodeDetailBySelfValue(@NotBlank Object selfValue) throws NoSuchFieldException, IllegalAccessException {
-        return this.findBySelfValue(selfValue, this.treeNodes);
+    public T getNodeDetailBySelfValue2T(Object selfValue){
+        return super.findBySelfValue2T(selfValue, super.treeNodes);
     }
 
-    /**
-     * 递归找到符合条件的node对象
-     * @param selfValue
-     * @param children
-     * @return
-     */
-    private T findBySelfValue (Object selfValue, List<T> children) throws NoSuchFieldException, IllegalAccessException {
-        if (CollectionUtils.isEmpty(children)) {
-            return null;
-        }
-        Iterator<T> iterator = children.iterator();
-        while (iterator.hasNext()) {
-            T node = iterator.next();
-            Field declaredField = node.getClass().getDeclaredField(selfFieldName);
-            declaredField.setAccessible(true);
-            // 为防止类型不匹配导致equals不相等，将其都转成string。
-            String nodeSelfValue = Optional.ofNullable(declaredField.get(node)).orElse("").toString();
-            if (Objects.equals(String.valueOf(selfValue), nodeSelfValue)) {
-                // 匹配本次循环，直接返回
-                return node;
-            }
-            // node对象不是我们想要的对象，那么就进行递归node的子元素集合进行查找
-            Field childrenDeclaredField = node.getClass().getDeclaredField(this.childrenFieldName);
-            childrenDeclaredField.setAccessible(true);
-            List<T> nodeChildren = Optional.ofNullable((List<T>)childrenDeclaredField.get(node)).orElse(new ArrayList<T>());
-
-            T childNode = findBySelfValue(selfValue, nodeChildren);
-            if (childNode != null) {
-                return childNode;
-            }
-        }
-
-        log.error("没有找到您要查找的信息，查找条件：{}", selfValue);
-        String clientMessage = StringUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
-        throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage);
-    }
-
-    /**
-     * 获取树形结构集合
-     * @return
-     */
-    public List<T> getTreeNodes() throws NoSuchFieldException, IllegalAccessException {
-        return this.toTreeStructure();
-    }
-
-    /**
-     * 获取一维结构集合
-     * @return
-     */
-    public List<T> getGeneralNodes() {
-        return this.allNodes;
-    }
 }
