@@ -150,6 +150,10 @@ public abstract class AbstractTree<T> implements Tree<T> {
             if (childNode != null) {
                 return childNode;
             }
+            // 引用最初的迭代器，防止循环完第一个根后直接返回null。
+            if (!iterator.hasNext()) {
+                return null;
+            }
         }
 
         log.error("没有找到您要查找的信息，查找条件：{}", selfValue);

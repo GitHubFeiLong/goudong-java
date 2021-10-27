@@ -115,7 +115,7 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
         GeneralNode<T> generalNode = new GeneralNode<>();
 
         // 因为构造方法传递节点集合是树形结构的，所以获取指定的节点，就能获取它下面的所有子节点
-        T selfNode = Optional.ofNullable(super.findBySelfValue2T(selfValue, super.allNodes))
+        T selfNode = Optional.ofNullable(super.findBySelfValue2T(selfValue, super.treeNodes))
                 .orElseThrow(()->ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, StringUtil.format("未找到指定的节点{}", selfValue)));
         generalNode.setNode(selfNode);
 

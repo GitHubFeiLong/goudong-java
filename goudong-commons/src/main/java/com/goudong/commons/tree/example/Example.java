@@ -18,14 +18,21 @@ import java.util.List;
 public class Example {
 
     public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException {
-        // 声明5个Menu
+        // 第一棵树
         Menu menu1 = new Menu(1, null, null);
         Menu menu2 = new Menu(2, 1, null);
         Menu menu3 = new Menu(3, 1, null);
         Menu menu4 = new Menu(4, 2, null);
         Menu menu5 = new Menu(5, 4, null);
 
+        // 第二棵树
+        Menu menu6 = new Menu(6, null, null);
+        Menu menu7 = new Menu(7, 6, null);
+        Menu menu8 = new Menu(8, 7, null);
+        Menu menu9 = new Menu(9, 8, null);
+
         ArrayList<Menu> menus = Lists.newArrayList(menu1, menu2, menu3, menu4, menu5);
+        menus.addAll(Lists.newArrayList(menu6, menu7, menu8, menu9));
         System.out.println("准备的参数 menus = " + menus);
 
         /*
@@ -45,7 +52,7 @@ public class Example {
         List<Menu> toGeneralStructure = treeStructureHandler.toGeneralStructure();
         System.out.println("toGeneralStructure = " + toGeneralStructure);
         // 获取指定节点详细信息（一般）
-        GeneralNode<Menu> nodeDetailBySelfValue2GeneralNode = treeStructureHandler.getNodeDetailBySelfValue2GeneralNode(2);
+        GeneralNode<Menu> nodeDetailBySelfValue2GeneralNode = treeStructureHandler.getNodeDetailBySelfValue2GeneralNode(8);
         System.out.println("nodeDetailBySelfValue2GeneralNode = " + nodeDetailBySelfValue2GeneralNode);
         // 获取指定节点详细信息(树)
         Menu nodeDetailBySelfValue = treeStructureHandler.getNodeDetailBySelfValue2T(2);
@@ -63,7 +70,7 @@ public class Example {
         List<Menu> toGeneralStructure1 = menuGeneralStructureHandler.toGeneralStructure();
         System.out.println("toGeneralStructure1 = " + toGeneralStructure1);
         // 获取指定节点详细信息（一般）
-        GeneralNode<Menu> nodeDetailBySelfValue2GeneralNode1 = menuGeneralStructureHandler.getNodeDetailBySelfValue2GeneralNode(2);
+        GeneralNode<Menu> nodeDetailBySelfValue2GeneralNode1 = menuGeneralStructureHandler.getNodeDetailBySelfValue2GeneralNode(8);
         System.out.println("nodeDetailBySelfValue2GeneralNode1 = " + nodeDetailBySelfValue2GeneralNode1);
         // 获取指定节点详细信息(树)
         Menu nodeDetailBySelfValue2T = menuGeneralStructureHandler.getNodeDetailBySelfValue2T(2);
