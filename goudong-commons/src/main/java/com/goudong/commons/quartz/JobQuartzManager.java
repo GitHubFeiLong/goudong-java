@@ -52,7 +52,7 @@ public class JobQuartzManager implements ApplicationContextAware {
             this.scheduler = schedulerFactory.getScheduler();
             scheduler.setJobFactory(jobFactory); //设置定时任务工厂模式
             //项目启动时默认给spring容器添加动态的定时任务
-            this.addJob("job" + 100L, 100L, JobTask.class, "0/2 * * * * ?");
+            // this.addJob("job" + 100L, 100L, JobTask.class, "0/2 * * * * ?");
         } catch (SchedulerException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException("init Scheduler failed");
