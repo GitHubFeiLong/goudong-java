@@ -16,7 +16,8 @@ public class Demo {
     public static void main(String[] args) {
         RestTemplate restTemplate = BeanConfig.getRestTemplate();
 
-        String url = "http://localhost:10001" + ApiInfoEnum.CONTROLLER__METHOD.getApi();
+        // String url = "http://localhost:10001" + ApiInfoEnum.CONTROLLER__METHOD.getApi();
+        String url = "http://localhost:8510/api/icc/asset-auth-period-job/test";
         Result forObject = restTemplate.getForObject(url, Result.class);
         System.out.println("forObject = " + forObject);
     }
