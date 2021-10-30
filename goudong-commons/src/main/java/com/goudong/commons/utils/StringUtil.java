@@ -67,24 +67,25 @@ public class StringUtil {
             int indexStr = -1;
             while((indexStr = result.indexOf(leftCharacter)) != -1 && paramsIndex < length){
                 int indexEnd = result.indexOf(rightCharacter, indexStr);
-                // 没有 rightCharacter 后，直接返回值
-                if (indexEnd == -1) {
-                    return result.toString();
+                // 存在右侧结束符，就替换成 %s
+                if (indexEnd != -1) {
+                    result.replace(indexStr, indexEnd + 1, "%s");
+                    // 下标增
+                    paramsIndex++;
                 }
-                result.replace(indexStr, indexEnd + 1, params[paramsIndex]+"");
-                // 下标增
-                paramsIndex++;
+
             }
-            return result.toString();
+            // 格式化返回字符串结果
+            return String.format(String.valueOf(result), params);
         } catch (StringIndexOutOfBoundsException e) {
             throw ServerException.serverException("错误" + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
-        String 陈飞龙 = format("{", "}", "我是{}，今年：{}岁了,参数{{}，{}}", "陈飞龙", 18,11);
+        String 陈飞龙 = format("{", "}", "我是{}，今年：{}岁了,参数{{}，{}}", "陈飞龙{}{}", 18,11);
         System.out.println("陈飞龙 = " + 陈飞龙);
-        String a1 = String.format("%s,%s", 1, "陈");
+        String a1 = String.format("%s,%s", 1, "陈", 123123);
         System.out.println(a1);
     }
 }

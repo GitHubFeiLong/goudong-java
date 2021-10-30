@@ -28,6 +28,8 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
         super(allNodes);
         // 将参数保留
         super.generalNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
+        // 直接初始化tree
+        this.toTreeStructure();
     }
 
     /**

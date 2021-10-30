@@ -31,6 +31,7 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
         super(allNodes);
         // 将参数保留
         super.treeNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
+        this.toGeneralStructure();
     }
 
     /**
@@ -46,6 +47,7 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
         super(selfFieldName, parentFieldName, childrenFieldName, allNodes);
         // 将参数保留
         super.treeNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
+        this.toGeneralStructure();
     }
 
     /**
