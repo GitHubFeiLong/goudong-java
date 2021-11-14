@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 类描述：
- *
+ * 任务抽象类，其它任务继承它重写executeInternal方法，或实现Job接口重写execute方法。
  * @author msi
  * @version 1.0
  * @date 2021/10/17 14:11
