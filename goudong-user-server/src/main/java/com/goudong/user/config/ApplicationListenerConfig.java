@@ -7,13 +7,13 @@ import org.springframework.context.ApplicationListener;
 
 /**
  * 类描述：
- *
+ * 监听器
  * @Author msi
  * @Date 2021-08-13 23:46
  * @Version 1.0
  */
 @Slf4j
-//@Configuration
+//@Component
 public class ApplicationListenerConfig implements ApplicationListener {
     static int count = 0;
 
