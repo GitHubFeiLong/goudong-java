@@ -31,7 +31,13 @@
         <option value="$PROJECT_DIR$/goudong-sentinel-dashboard-server/pom.xml" />
         <option value="$PROJECT_DIR$/sentinel-dashboard/pom.xml" />
         <option value="$PROJECT_DIR$/nacos-1.4.2/pom.xml" />
+        <option value="$PROJECT_DIR$/goudong-file-online-preview/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/goudong-file-online-preview/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
