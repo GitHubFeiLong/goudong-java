@@ -13,6 +13,7 @@
         <module name="goudong-message-server" />
         <module name="goudong-commons" />
         <module name="goudong-user-server" />
+        <module name="goudong-file-online-preview" />
         <module name="goudong-file-online-preview-server" />
         <module name="goudong-security-server" />
       </profile>
@@ -46,6 +47,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="goudong-commodity-server" options="-parameters" />
       <module name="goudong-commons" options="-parameters" />
+      <module name="goudong-file-online-preview" options="-parameters" />
       <module name="goudong-file-online-preview-server" options="-parameters" />
       <module name="goudong-gateway-server" options="-parameters" />
       <module name="goudong-java" options="" />
