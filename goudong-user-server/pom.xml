@@ -186,8 +186,6 @@
                     <artifactId>flyway-maven-plugin</artifactId>
                     <version>${flyway-maven-plugin.version}</version>
                 </plugin>
-
-
             </plugins>
         </pluginManagement>
         <plugins>
@@ -241,6 +239,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!--spring boot打包成可执行jar-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

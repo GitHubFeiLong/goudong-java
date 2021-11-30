@@ -31,9 +31,6 @@
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <!--自定义服务-->
         <goudong-commons.version>1.0-SNAPSHOT</goudong-commons.version>
         <goudong-security-server.version>1.0-SNAPSHOT</goudong-security-server.version>
@@ -273,18 +270,7 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <!--spring boot默认打包的jar包其它模块是不能依赖的，所以需要这个插件-->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!--使用这种方式只会打成一个jar-->
-                    <includeSystemScope>true</includeSystemScope>
-                    <!--使用下面的方式，会install成两个jar-->
-                    <classifier>gd</classifier>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>
