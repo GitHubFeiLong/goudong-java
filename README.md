@@ -233,3 +233,9 @@ pause
 ### RedisTemplate扩展
 
 RedisOperationsUtil，主要是因为整个系统的redis key 进行统一枚举处理（RedisKeyEnum），需要将key模板解析，redis失效等额外信息进行处理封装。
+
+## 其它
+### banner 使用
+在[banner在线设计网页](http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20) 中设计banner。
+> 其它颜色的用法参考：[用了自定义Banner后，SpringBoot瞬间变的高大上了...](https://blog.csdn.net/weixin_44742132/article/details/105721684) 
+> Font 选择 Big
