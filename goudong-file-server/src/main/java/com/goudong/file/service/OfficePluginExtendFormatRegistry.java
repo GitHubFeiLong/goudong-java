@@ -1,8 +1,8 @@
 package com.goudong.file.service;
 
-import com.goudong.file.jodconverter.document.DocumentFamily;
-import com.goudong.file.jodconverter.document.DocumentFormat;
-import com.goudong.file.jodconverter.document.SimpleDocumentFormatRegistry;
+import org.artofsolving.jodconverter.document.DocumentFamily;
+import org.artofsolving.jodconverter.document.DocumentFormat;
+import org.artofsolving.jodconverter.document.SimpleDocumentFormatRegistry;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

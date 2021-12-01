@@ -1,6 +1,6 @@
 package com.goudong.file.service.cache.impl;
 
-import com.goudong.file.jodconverter.ConfigUtils;
+import org.artofsolving.jodconverter.ConfigUtils;
 import com.goudong.file.service.cache.CacheService;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;

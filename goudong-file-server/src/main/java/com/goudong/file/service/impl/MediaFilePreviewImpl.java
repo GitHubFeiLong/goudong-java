@@ -1,7 +1,7 @@
 package com.goudong.file.service.impl;
 
 import com.goudong.file.config.ConfigConstants;
-import com.goudong.file.jodconverter.ConfigUtils;
+import org.artofsolving.jodconverter.ConfigUtils;
 import com.goudong.file.model.FileAttribute;
 import com.goudong.file.model.FileType;
 import com.goudong.file.model.ReturnResponse;

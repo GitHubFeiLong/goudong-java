@@ -1,14 +1,21 @@
 package com.goudong.user;
 
 import com.goudong.commons.constant.BasePackageConst;
+import com.goudong.commons.utils.LogUtil;
 import com.goudong.user.config.UIProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.SpringVersion;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.StopWatch;
 
 /**
  * 类描述：
@@ -23,8 +30,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
+@Slf4j
 public class UserApplication {
     public static void main(String[] args) {
-        SpringApplication.run(UserApplication.class, args);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(UserApplication.class)
+                .logStartupInfo(false)
+                .main(SpringVersion.class)
+                .bannerMode(Banner.Mode.CONSOLE)
+                .run(args);
+        stopWatch.stop();
+        Integer port = context.getBean(ServerProperties.class).getPort();
+        LogUtil.info(log, "goudong-user-server 服务启动完成，耗时:{}s，服务访问地址: http://127.0.0.1:{} ", stopWatch.getTotalTimeSeconds(), port);
     }
 }

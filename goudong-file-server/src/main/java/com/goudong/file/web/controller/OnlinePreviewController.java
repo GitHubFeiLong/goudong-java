@@ -12,7 +12,7 @@ import fr.opensagres.xdocreport.core.io.IOUtils;
 import io.mola.galimatias.GalimatiasParseException;
 import jodd.io.NetUtil;
 import org.apache.commons.codec.binary.Base64;
-import com.goudong.file.jodconverter.PlatformUtils;
+import org.artofsolving.jodconverter.PlatformUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,6 @@
 package com.goudong.file.service;
 
-import com.goudong.file.jodconverter.OfficeDocumentConverter;
+import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

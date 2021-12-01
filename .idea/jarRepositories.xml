@@ -17,6 +17,11 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/groups/public-jboss/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="jboss-public-repository" />
+      <option name="name" value="jboss-public-repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/groups/public-jboss/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="aliyunmaven" />
       <option name="name" value="aliyunmaven" />
       <option name="url" value="https://maven.aliyun.com/repository/public" />
@@ -50,6 +55,16 @@
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="http://10.82.132.36:9004/nexus/content/groups/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="aliyun-public-repository" />
+      <option name="url" value="http://maven.aliyun.com/nexus/content/repositories/central/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="central repository" />
+      <option name="url" value="http://maven.aliyun.com/nexus/content/repositories/central/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

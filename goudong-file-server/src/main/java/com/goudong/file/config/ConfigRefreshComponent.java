@@ -1,10 +1,11 @@
 package com.goudong.file.config;
 
-import com.goudong.file.jodconverter.ConfigUtils;
+import org.artofsolving.jodconverter.ConfigUtils;
+import org.artofsolving.jodconverter.office.OfficeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import com.goudong.file.jodconverter.office.OfficeUtils;
+
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.FileReader;
