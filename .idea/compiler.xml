@@ -9,16 +9,17 @@
         <outputRelativeToContentRoot value="true" />
         <module name="goudong-oauth2-server" />
         <module name="goudong-gateway-server" />
+        <module name="goudong-file-server" />
         <module name="goudong-commodity-server" />
         <module name="goudong-message-server" />
         <module name="goudong-commons" />
         <module name="goudong-user-server" />
-        <module name="goudong-file-online-preview-server" />
         <module name="goudong-security-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="filepreview" target="1.8" />
+      <module name="goudong-file-online-preview" target="8" />
       <module name="goudong-oaa-server" target="1.8" />
       <module name="kkFileView" target="1.8" />
       <module name="nacos-address" target="1.8" />
@@ -46,13 +47,13 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="goudong-commodity-server" options="-parameters" />
       <module name="goudong-commons" options="-parameters" />
-      <module name="goudong-file-online-preview-server" options="-parameters" />
+      <module name="goudong-file-server" options="-parameters" />
       <module name="goudong-gateway-server" options="-parameters" />
-      <module name="goudong-java" options="-parameters" />
+      <module name="goudong-java" options="" />
       <module name="goudong-message-server" options="-parameters" />
       <module name="goudong-oauth2-server" options="-parameters" />
       <module name="goudong-security-server" options="-parameters" />
-      <module name="goudong-user-server" options="-parameters -extdirs D:\workspaces\github-repository\goudong-java\goudong-user-server/lib" />
+      <module name="goudong-user-server" options="-parameters -extdirs D:\workspace\my-workspace\goudong-java\goudong-user-server/lib" />
       <module name="kkFileView" options="-parameters" />
       <module name="office-plugin" options="-parameters" />
       <module name="sentinel-dashboard" options="-parameters" />

@@ -11,6 +11,14 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
 
+    <developers>
+        <developer>
+            <id>goudong</id>
+            <name>cfl</name>
+            <email>1696741038@qq.com</email>
+        </developer>
+    </developers>
+
     <!--Spring Boot-->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -27,7 +35,7 @@
         <module>goudong-message-server</module>
         <module>goudong-oauth2-server</module>
         <module>goudong-commodity-server</module>
-        <module>goudong-file-online-preview-server</module>
+        <module>goudong-file-server</module>
     </modules>
 
     <properties>
