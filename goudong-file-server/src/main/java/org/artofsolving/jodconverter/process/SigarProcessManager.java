@@ -31,7 +31,6 @@ import java.io.IOException;
 public class SigarProcessManager implements ProcessManager {
 
     public long findPid(ProcessQuery query) throws IOException {
-        System.out.println(222);
         Sigar sigar = new Sigar();
         try {
             long[] pids = ProcessFinder.find(sigar, "State.Name.eq=" + query.getCommand());

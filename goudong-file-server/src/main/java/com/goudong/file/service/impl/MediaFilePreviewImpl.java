@@ -1,7 +1,6 @@
 package com.goudong.file.service.impl;
 
 import com.goudong.file.config.ConfigConstants;
-import org.artofsolving.jodconverter.ConfigUtils;
 import com.goudong.file.model.FileAttribute;
 import com.goudong.file.model.FileType;
 import com.goudong.file.model.ReturnResponse;
@@ -9,6 +8,7 @@ import com.goudong.file.service.FileHandlerService;
 import com.goudong.file.service.FilePreview;
 import com.goudong.file.utils.DownloadUtils;
 import com.goudong.file.web.filter.BaseUrlFilter;
+import org.artofsolving.jodconverter.util.ConfigUtils;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;

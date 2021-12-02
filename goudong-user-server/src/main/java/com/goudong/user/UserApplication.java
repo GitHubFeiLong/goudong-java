@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StopWatch;
 
@@ -41,7 +41,24 @@ public class UserApplication {
                 .bannerMode(Banner.Mode.CONSOLE)
                 .run(args);
         stopWatch.stop();
-        Integer port = context.getBean(ServerProperties.class).getPort();
-        LogUtil.info(log, "goudong-user-server 服务启动完成，耗时:{}s，服务访问地址: http://127.0.0.1:{} ", stopWatch.getTotalTimeSeconds(), port);
+
+        // 获取环境变量
+        Environment environment = context.getBean(Environment.class);
+        Integer port = environment.getProperty("server.port", Integer.class);
+        String contextPath = environment.getProperty("server.servlet.context-path");
+        String applicationName = environment.getProperty("spring.application.name");
+
+
+
+        LogUtil.info(log, "{} 服务启动完成，耗时:{}s，服务访问地址: http://127.0.0.1:{}{}/doc.html ",
+                applicationName,
+                stopWatch.getTotalTimeSeconds(),
+                port,
+                contextPath);
+
+        System.out.println("\033[30;4m--------------------------\033[0m");
+        System.out.println("http://127.0.0.1:{}{}/doc.html");
+        System.out.println("--------------------------");
     }
+
 }

@@ -1,7 +1,9 @@
 package com.goudong.file.config;
 
-import org.artofsolving.jodconverter.ConfigUtils;
+// import org.artofsolving.jodconverter.ConfigUtils;
+
 import org.artofsolving.jodconverter.office.OfficeUtils;
+import org.artofsolving.jodconverter.util.ConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

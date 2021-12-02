@@ -110,7 +110,6 @@ class ManagedOfficeProcess {
 
 	private void doStartProcessAndConnect() throws OfficeException {
 		try {
-			System.out.println(1111111);
 			process.start();
 			new Retryable() {
 				protected void attempt() throws TemporaryException, Exception {

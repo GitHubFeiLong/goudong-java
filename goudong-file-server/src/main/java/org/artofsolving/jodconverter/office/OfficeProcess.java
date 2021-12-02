@@ -15,7 +15,7 @@ package org.artofsolving.jodconverter.office;
 import org.apache.commons.io.FileUtils;
 import org.artofsolving.jodconverter.process.ProcessManager;
 import org.artofsolving.jodconverter.process.ProcessQuery;
-import org.artofsolving.jodconverter.PlatformUtils;
+import org.artofsolving.jodconverter.util.PlatformUtils;
 
 import java.io.File;
 import java.io.IOException;

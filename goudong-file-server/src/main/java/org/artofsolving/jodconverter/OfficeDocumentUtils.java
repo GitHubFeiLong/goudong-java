@@ -16,7 +16,8 @@ import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XServiceInfo;
 import org.artofsolving.jodconverter.document.DocumentFamily;
 import org.artofsolving.jodconverter.office.OfficeException;
-import org.artofsolving.jodconverter.office.OfficeUtils;
+
+import static org.artofsolving.jodconverter.office.OfficeUtils.cast;
 
 class OfficeDocumentUtils {
 
@@ -25,7 +26,7 @@ class OfficeDocumentUtils {
     }
 
     public static DocumentFamily getDocumentFamily(XComponent document) throws OfficeException {
-        XServiceInfo serviceInfo = OfficeUtils.cast(XServiceInfo.class, document);
+        XServiceInfo serviceInfo = cast(XServiceInfo.class, document);
         if (serviceInfo.supportsService("com.sun.star.text.GenericTextDocument")) {
             // NOTE: a GenericTextDocument is either a TextDocument, a WebDocument, or a GlobalDocument
             // but this further distinction doesn't seem to matter for conversions

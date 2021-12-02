@@ -23,10 +23,11 @@ import com.sun.star.util.XCloseable;
 import org.artofsolving.jodconverter.office.OfficeContext;
 import org.artofsolving.jodconverter.office.OfficeException;
 import org.artofsolving.jodconverter.office.OfficeTask;
-import org.artofsolving.jodconverter.office.OfficeUtils;
 
 import java.io.File;
 import java.util.Map;
+
+import static org.artofsolving.jodconverter.office.OfficeUtils.*;
 
 public abstract class AbstractConversionTask implements OfficeTask {
 
@@ -54,7 +55,7 @@ public abstract class AbstractConversionTask implements OfficeTask {
             throw new OfficeException("conversion failed", exception);
         } finally {
             if (document != null) {
-                XCloseable closeable = OfficeUtils.cast(XCloseable.class, document);
+                XCloseable closeable = cast(XCloseable.class, document);
                 if (closeable != null) {
                     try {
                         closeable.close(true);
@@ -72,11 +73,11 @@ public abstract class AbstractConversionTask implements OfficeTask {
         if (!inputFile.exists()) {
             throw new OfficeException("input document not found");
         }
-        XComponentLoader loader = OfficeUtils.cast(XComponentLoader.class, context.getService(OfficeUtils.SERVICE_DESKTOP));
+        XComponentLoader loader = cast(XComponentLoader.class, context.getService(SERVICE_DESKTOP));
         Map<String,?> loadProperties = getLoadProperties(inputFile);
         XComponent document = null;
         try {
-            document = loader.loadComponentFromURL(OfficeUtils.toUrl(inputFile), "_blank", 0, OfficeUtils.toUnoProperties(loadProperties));
+            document = loader.loadComponentFromURL(toUrl(inputFile), "_blank", 0, toUnoProperties(loadProperties));
         } catch (IllegalArgumentException illegalArgumentException) {
             throw new OfficeException("could not load document: " + inputFile.getName(), illegalArgumentException);
         } catch (ErrorCodeIOException errorCodeIOException) {
@@ -109,7 +110,7 @@ public abstract class AbstractConversionTask implements OfficeTask {
             throw new OfficeException("unsupported conversion");
         }
         try {
-            OfficeUtils.cast(XStorable.class, document).storeToURL(OfficeUtils.toUrl(outputFile), OfficeUtils.toUnoProperties(storeProperties));
+            cast(XStorable.class, document).storeToURL(toUrl(outputFile), toUnoProperties(storeProperties));
         } catch (ErrorCodeIOException errorCodeIOException) {
             throw new OfficeException("could not store document: " + outputFile.getName() + "; errorCode: " + errorCodeIOException.ErrCode, errorCodeIOException);
         } catch (IOException ioException) {

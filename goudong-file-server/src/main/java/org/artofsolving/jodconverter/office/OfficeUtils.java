@@ -14,8 +14,8 @@ package org.artofsolving.jodconverter.office;
 
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.uno.UnoRuntime;
-import org.artofsolving.jodconverter.ConfigUtils;
-import org.artofsolving.jodconverter.PlatformUtils;
+import org.artofsolving.jodconverter.util.ConfigUtils;
+import org.artofsolving.jodconverter.util.PlatformUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

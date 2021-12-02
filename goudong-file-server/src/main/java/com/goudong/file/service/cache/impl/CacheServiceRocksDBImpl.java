@@ -1,7 +1,8 @@
 package com.goudong.file.service.cache.impl;
 
-import org.artofsolving.jodconverter.ConfigUtils;
+
 import com.goudong.file.service.cache.CacheService;
+import org.artofsolving.jodconverter.util.ConfigUtils;
 import org.rocksdb.RocksDB;
 import org.rocksdb.RocksDBException;
 import org.slf4j.Logger;

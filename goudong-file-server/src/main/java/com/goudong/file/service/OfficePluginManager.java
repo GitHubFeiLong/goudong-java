@@ -1,11 +1,11 @@
 package com.goudong.file.service;
 
+import com.sun.star.document.UpdateDocMode;
+import org.apache.commons.lang3.StringUtils;
 import org.artofsolving.jodconverter.OfficeDocumentConverter;
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 import org.artofsolving.jodconverter.office.OfficeUtils;
-import com.sun.star.document.UpdateDocMode;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

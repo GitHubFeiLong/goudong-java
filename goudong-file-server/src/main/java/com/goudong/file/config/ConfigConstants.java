@@ -1,6 +1,6 @@
 package com.goudong.file.config;
 
-import org.artofsolving.jodconverter.ConfigUtils;
+import org.artofsolving.jodconverter.util.ConfigUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

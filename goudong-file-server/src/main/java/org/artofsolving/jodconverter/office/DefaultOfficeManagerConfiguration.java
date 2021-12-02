@@ -16,7 +16,7 @@ import org.artofsolving.jodconverter.process.LinuxProcessManager;
 import org.artofsolving.jodconverter.process.ProcessManager;
 import org.artofsolving.jodconverter.process.PureJavaProcessManager;
 import org.artofsolving.jodconverter.process.SigarProcessManager;
-import org.artofsolving.jodconverter.PlatformUtils;
+import org.artofsolving.jodconverter.util.PlatformUtils;
 
 import java.io.File;
 

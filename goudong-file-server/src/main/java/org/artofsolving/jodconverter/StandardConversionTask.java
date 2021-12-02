@@ -17,11 +17,12 @@ import com.sun.star.util.XRefreshable;
 import org.artofsolving.jodconverter.document.DocumentFamily;
 import org.artofsolving.jodconverter.document.DocumentFormat;
 import org.artofsolving.jodconverter.office.OfficeException;
-import org.artofsolving.jodconverter.office.OfficeUtils;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.artofsolving.jodconverter.office.OfficeUtils.cast;
 
 public class StandardConversionTask extends AbstractConversionTask {
 
@@ -45,7 +46,7 @@ public class StandardConversionTask extends AbstractConversionTask {
 
     @Override
     protected void modifyDocument(XComponent document) throws OfficeException {
-        XRefreshable refreshable = OfficeUtils.cast(XRefreshable.class, document);
+        XRefreshable refreshable = cast(XRefreshable.class, document);
         if (refreshable != null) {
             refreshable.refresh();
         }
