@@ -4,6 +4,7 @@ import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.utils.LogUtil;
 import com.goudong.user.config.UIProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,10 @@ import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StopWatch;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -56,9 +61,38 @@ public class UserApplication {
                 port,
                 contextPath);
 
-        System.out.println("\033[30;4m--------------------------\033[0m");
-        System.out.println("http://127.0.0.1:{}{}/doc.html");
-        System.out.println("--------------------------");
+        logApplicationStartup(environment);
+    }
+
+    private static void logApplicationStartup(Environment env) {
+        String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");
+        String serverPort = env.getProperty("server.port");
+        String contextPath = Optional
+                .ofNullable(env.getProperty("server.servlet.context-path"))
+                .filter(StringUtils::isNotBlank)
+                .orElse("/");
+        String hostAddress = "localhost";
+        try {
+            hostAddress = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            log.warn("The host name could not be determined, using `localhost` as fallback");
+        }
+        log.info(
+                "\n----------------------------------------------------------\n\t" +
+                        "Application '{}' is running! Access URLs:\n\t" +
+                        "Local: \t\t{}://localhost:{}{}\n\t" +
+                        "External: \t{}://{}:{}{}\n\t" +
+                        "Profile(s): \t{}\n----------------------------------------------------------",
+                env.getProperty("spring.application.name"),
+                protocol,
+                serverPort,
+                contextPath,
+                protocol,
+                hostAddress,
+                serverPort,
+                contextPath,
+                env.getActiveProfiles()
+        );
     }
 
 }
