@@ -15,6 +15,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityIgnoreResourceDO {
     @ApiModelProperty(value = "uuid")
     private String uuid;

@@ -1,10 +1,10 @@
 package com.goudong.user;
 
+import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.utils.LogUtil;
 import com.goudong.user.config.UIProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,10 +17,6 @@ import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StopWatch;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Optional;
 
 /**
  * 类描述：
@@ -37,6 +33,7 @@ import java.util.Optional;
 @EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
 @Slf4j
 public class UserApplication {
+
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -49,50 +46,20 @@ public class UserApplication {
 
         // 获取环境变量
         Environment environment = context.getBean(Environment.class);
-        Integer port = environment.getProperty("server.port", Integer.class);
-        String contextPath = environment.getProperty("server.servlet.context-path");
-        String applicationName = environment.getProperty("spring.application.name");
 
-
-
-        LogUtil.info(log, "{} 服务启动完成，耗时:{}s，服务访问地址: http://127.0.0.1:{}{}/doc.html ",
-                applicationName,
+        LogUtil.info(log, "{} 服务启动完成，耗时:{}s。\n" +
+                        "\tswagger地址:\t http://127.0.0.1:{}{}/doc.html\n" +
+                        "\t用户名：\t{}\n" +
+                        "\t密码：\t{}\n",
+                environment.getProperty("spring.application.name"),
                 stopWatch.getTotalTimeSeconds(),
-                port,
-                contextPath);
+                environment.getProperty("server.port"),
+                environment.getProperty("server.servlet.context-path"),
+                environment.getProperty("knife4j.basic.username"),
+                environment.getProperty("knife4j.basic.password")
+                );
 
-        logApplicationStartup(environment);
-    }
-
-    private static void logApplicationStartup(Environment env) {
-        String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");
-        String serverPort = env.getProperty("server.port");
-        String contextPath = Optional
-                .ofNullable(env.getProperty("server.servlet.context-path"))
-                .filter(StringUtils::isNotBlank)
-                .orElse("/");
-        String hostAddress = "localhost";
-        try {
-            hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            log.warn("The host name could not be determined, using `localhost` as fallback");
-        }
-        log.info(
-                "\n----------------------------------------------------------\n\t" +
-                        "Application '{}' is running! Access URLs:\n\t" +
-                        "Local: \t\t{}://localhost:{}{}\n\t" +
-                        "External: \t{}://{}:{}{}\n\t" +
-                        "Profile(s): \t{}\n----------------------------------------------------------",
-                env.getProperty("spring.application.name"),
-                protocol,
-                serverPort,
-                contextPath,
-                protocol,
-                hostAddress,
-                serverPort,
-                contextPath,
-                env.getActiveProfiles()
-        );
+        LogApplicationStartup.logApplicationStartup(environment);
     }
 
 }

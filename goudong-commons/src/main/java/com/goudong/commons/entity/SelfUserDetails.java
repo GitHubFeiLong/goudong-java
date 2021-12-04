@@ -13,6 +13,7 @@ import java.util.Set;
  *
  * 自定义UserDetails
  */
+@Deprecated
 public class SelfUserDetails implements UserDetails, Serializable {
 
     /**

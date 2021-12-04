@@ -28,6 +28,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Deprecated
 public class AuthorityUserDO implements Serializable {
     @ApiModelProperty(value = "用户表主键uuid")
     private String uuid;

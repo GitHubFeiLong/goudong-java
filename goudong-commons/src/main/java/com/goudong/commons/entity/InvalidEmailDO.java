@@ -11,6 +11,7 @@ import java.util.Date;
  * @Version 1.0
  */
 @Data
+@Deprecated
 public class InvalidEmailDO {
     /**
      * 主键

@@ -13,6 +13,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityRoleDO {
     @ApiModelProperty(value = "角色表主键uuid")
     private String uuid;

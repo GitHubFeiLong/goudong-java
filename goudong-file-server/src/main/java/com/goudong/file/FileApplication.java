@@ -1,5 +1,6 @@
 package com.goudong.file;
 
+import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.utils.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
@@ -38,6 +39,8 @@ public class FileApplication {
 
         Integer port = context.getBean(ServerProperties.class).getPort();
         LogUtil.info(log, "goudong-file-server 服务启动完成，耗时:{}s，服务访问地址: http://127.0.0.1:{} ", stopWatch.getTotalTimeSeconds(), port);
+
+        LogApplicationStartup.logApplicationStartup(context.getEnvironment());
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityMenuDO {
     @ApiModelProperty(value = "菜单表uuid")
     private String uuid;

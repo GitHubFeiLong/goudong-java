@@ -1,5 +1,5 @@
 logging:
-  config: classpath:log4j2-prod.xml
+  config: classpath:log4j2/log4j2-prod.xml
   level:
     ROOT: INFO
     com.goudong.user: INFO
@@ -96,6 +96,15 @@ mybatis:
     supportMethodsArguments: true
     params: count=countSql
 
+knife4j:
+  enable: true         # 是否开启Knife4j增强模式，默认值为false
+  production: false    # 生产环境开启
+  basic:
+    enable: true       # BasicHttp功能，默认为false
+    username: knife4j  # 用户名
+    password: knife4j  # 密码
+  setting:             # 前端Ui的个性化配置属性
+    enableDebug: true  # 启用调试，默认为true 无效
 
 # 自定义配置
 goudong:

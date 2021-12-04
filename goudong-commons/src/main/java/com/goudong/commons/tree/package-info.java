@@ -1,6 +1,8 @@
 /**
- * 树形处理包
- * TreeStructureHandler {@link com.goudong.commons.tree.TreeStructureHandler} 用来处理树结构
- * GeneralStructureHandler {@link com.goudong.commons.tree.GeneralStructureHandler} 用来处理一般结构
+ * 包描述：
+ * 树形处理包，可以将一级对象集合，转换为有层级的集合
+ * @author msi
+ * @date 2021/12/4 17:35
+ * @version 1.0
  */
 package com.goudong.commons.tree;

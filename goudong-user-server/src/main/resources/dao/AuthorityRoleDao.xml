@@ -29,6 +29,5 @@
             </if>
         </where>
     </select>
-    <insert id="insert"></insert>
 
 </mapper>
