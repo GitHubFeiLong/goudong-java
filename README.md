@@ -7,10 +7,11 @@
 
 1. 公用包：goudong-commons
 2. 商品服务：goudong-commodity-server
-3. 网关服务：goudong-gateway-server
-4. 消息服务：goudong-message-server
-5. 认证服务：goudong-oauth2-server
-6. 用户服务：goudong-user-server
+3. 网关服务：goudong-gateway-server(端口号：10000)
+4. 消息服务：goudong-message-server(端口号：10002)
+5. 认证服务：goudong-oauth2-server(端口号：10003)
+6. 用户服务：goudong-user-server(端口号：10001)
+7. 文件服务：goudong-file-server(端口号：10004)
 
 
 

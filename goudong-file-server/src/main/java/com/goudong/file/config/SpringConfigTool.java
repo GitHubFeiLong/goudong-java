@@ -1,4 +1,4 @@
-package com.goudong.commons.config;
+package com.goudong.file.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
