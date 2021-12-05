@@ -140,4 +140,8 @@ knife4j:
 file:
   upload:
     enable-full-path-model: false
-
+    root-dir: file
+    file-types:
+      - type: JPG
+        lenght: 20
+        fileLengthUnit: MB

@@ -1,8 +1,9 @@
 package com.goudong.file.properties;
 
+import com.goudong.file.pojo.FileType;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 类描述：
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Component;
  * @date 2021/12/4 21:07
  */
 @Data
-@Component
-@ConfigurationProperties(prefix = "file.upload", ignoreUnknownFields = true)
 public class FileUploadProperties {
 
     /**
@@ -25,4 +24,9 @@ public class FileUploadProperties {
      * 上传文件的目录
      */
     private String rootDir = "files";
+
+    /**
+     * 文件类型
+     */
+    private List<FileType> fileTypes;
 }

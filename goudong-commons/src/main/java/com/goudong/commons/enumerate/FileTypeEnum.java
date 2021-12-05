@@ -1,6 +1,4 @@
-package com.goudong.file.enums;
-
-import com.goudong.commons.enumerate.FileLengthUnit;
+package com.goudong.commons.enumerate;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,19 +9,28 @@ import java.util.stream.Stream;
  *
  * @author msi
  * @version 1.0
- * @date 2021/12/4 22:21
+ * @date 2021/12/5 18:41
  */
 public enum FileTypeEnum {
-    JPG(10L, FileLengthUnit.MB),
-    JPEG(10L, FileLengthUnit.MB);
+    JPG,
+    JPEG,
+    PNG,
+    GIF,
+    SVG,
 
-    private Long length;
-    private FileLengthUnit fileLengthUnit;
+    XLS,
+    XLSX,
+    DOC,
+    DOCX,
+    PPT,
+    PPTX,
 
-    FileTypeEnum( Long length, FileLengthUnit fileLengthUnit) {
-        this.length = length;
-        this.fileLengthUnit = fileLengthUnit;
-    }
+    PDF,
+
+    TXT,
+
+    MD,
+    ;
 
     /**
      * 获取有效值
