@@ -136,18 +136,8 @@ knife4j:
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
 
-
+# 自定义配置
 file:
   upload:
-    root-dir: /files
-    file-type:
-      - jpg
-      - jpeg
-      - png
-      - gif
-      - xls
-      - xlsx
-      - doc
-      - docx
-      - pdf
-      - txt
+    enable-full-path-model: false
+

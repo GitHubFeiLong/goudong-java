@@ -3,7 +3,6 @@ package com.goudong.file;
 import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.utils.LogUtil;
-import com.goudong.file.properties.UploadProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,7 +23,7 @@ import org.springframework.util.StopWatch;
  */
 @Slf4j
 @SpringBootApplication(scanBasePackages = {BasePackageConst.FILE})
-@EnableConfigurationProperties({UploadProperties.class})
+@EnableConfigurationProperties
 public class FileApplication {
 
     public static void main(String[] args) {
@@ -45,7 +44,7 @@ public class FileApplication {
                         "\t用户名：\t{}\n" +
                         "\t密码：\t{}\n",
                 environment.getProperty("spring.application.name"),
-                stopWatch.getTotalTimeSeconds(),
+                (int)stopWatch.getTotalTimeSeconds(),
                 environment.getProperty("server.port"),
                 environment.getProperty("server.servlet.context-path"),
                 environment.getProperty("knife4j.basic.username"),
