@@ -1,5 +1,6 @@
 package com.goudong.file.properties;
 
+import com.goudong.file.pojo.FileUpload;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -19,5 +20,5 @@ public class FileProperties {
      * 文件上传的配置
      */
     @NestedConfigurationProperty
-    private FileUploadProperties upload;
+    private FileUpload upload;
 }

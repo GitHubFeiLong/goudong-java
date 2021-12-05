@@ -1,6 +1,5 @@
-package com.goudong.file.properties;
+package com.goudong.file.pojo;
 
-import com.goudong.file.pojo.FileType;
 import lombok.Data;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
  * @date 2021/12/4 21:07
  */
 @Data
-public class FileUploadProperties {
+public class FileUpload {
 
     /**
      * 开启全路径模式

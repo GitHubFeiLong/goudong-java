@@ -24,11 +24,6 @@ public class SimpleController {
     @Resource
     private FileProperties fileProperties;
 
-    @RequestMapping("/demo")
-    public String demo(){
-        System.out.println("file = " + fileProperties);
-        return "demo";
-    }
     // private final String fileDir = ConfigConstants.getFileDir();
     // private final String demoDir = "demo";
     // private final String demoPath = demoDir + File.separator;

@@ -22,6 +22,7 @@ public class FileAutoConfiguration {
 
     private final FileProperties fileProperties;
 
+
     public FileAutoConfiguration(FileProperties fileProperties) {
         this.fileProperties = fileProperties;
     }
