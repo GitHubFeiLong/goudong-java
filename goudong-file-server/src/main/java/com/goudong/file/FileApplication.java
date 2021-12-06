@@ -2,12 +2,10 @@ package com.goudong.file;
 
 import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.commons.utils.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
@@ -23,7 +21,6 @@ import org.springframework.util.StopWatch;
  */
 @Slf4j
 @SpringBootApplication(scanBasePackages = {BasePackageConst.FILE})
-@EnableConfigurationProperties
 public class FileApplication {
 
     public static void main(String[] args) {

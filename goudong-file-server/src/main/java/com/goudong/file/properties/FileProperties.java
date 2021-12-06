@@ -1,6 +1,6 @@
 package com.goudong.file.properties;
 
-import com.goudong.file.pojo.FileUpload;
+import com.goudong.file.core.FileUpload;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;

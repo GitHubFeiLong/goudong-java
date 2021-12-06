@@ -142,6 +142,6 @@ file:
     enable-full-path-model: false
     root-dir: file
     file-types:
-      - type: JPG
-        lenght: 20
+      - type: jpg
+        length: 10
         fileLengthUnit: MB

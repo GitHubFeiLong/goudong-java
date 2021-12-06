@@ -1,4 +1,4 @@
-package com.goudong.file.pojo;
+package com.goudong.file.core;
 
 import lombok.Data;
 

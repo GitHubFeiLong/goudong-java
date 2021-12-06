@@ -1,8 +1,10 @@
 package com.goudong.file.autoconfigure;
 
+import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -28,8 +30,24 @@ public class FileAutoConfiguration {
     }
 
 
-    // @Bean
-    // public FileUploadProperties FileUploadProperties() {
-    //     return null;
-    // }
+    /**
+     * 注入
+     * @return
+     */
+    @Bean
+    public FileUpload fileUpload() {
+        FileUpload upload = fileProperties.getUpload();
+        String rootDir = upload.getRootDir();
+        // if (SystemEnvConst.IS_WIN) {
+        //     rootDir = rootDir.indexOf()
+        // }
+        // if (rootDir.indexOf("")) {
+        //
+        // }
+        if (upload.getEnableFullPathModel()) {
+
+        }
+
+        return upload;
+    }
 }

@@ -1,4 +1,4 @@
-package com.goudong.file.pojo;
+package com.goudong.file.core;
 
 import com.goudong.commons.enumerate.FileLengthUnit;
 import com.goudong.commons.enumerate.FileTypeEnum;
@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * 类描述：
@@ -20,6 +21,7 @@ public class FileType {
     /**
      * 文件类型
      */
+    @NotNull
     private FileTypeEnum type;
 
     /**
@@ -32,4 +34,9 @@ public class FileType {
      * 文件大小单位
      */
     private FileLengthUnit fileLengthUnit = FileLengthUnit.MB;
+
+    /**
+     * 是否禁用该类文件上传，默认都是允许上传
+     */
+    private Boolean enabled = true;
 }
