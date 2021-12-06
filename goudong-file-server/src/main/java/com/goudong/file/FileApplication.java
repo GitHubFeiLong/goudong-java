@@ -39,19 +39,7 @@ public class FileApplication {
         // 获取环境变量
         Environment environment = context.getBean(Environment.class);
 
-        LogUtil.info(log, "{} 服务启动完成，耗时:{}s。\n" +
-                        "\tswagger地址:\t http://127.0.0.1:{}{}/doc.html\n" +
-                        "\t用户名：\t{}\n" +
-                        "\t密码：\t{}\n",
-                environment.getProperty("spring.application.name"),
-                (int)stopWatch.getTotalTimeSeconds(),
-                environment.getProperty("server.port"),
-                environment.getProperty("server.servlet.context-path"),
-                environment.getProperty("knife4j.basic.username"),
-                environment.getProperty("knife4j.basic.password")
-        );
-
-        LogApplicationStartup.logApplicationStartup(environment);
+        LogApplicationStartup.logApplicationStartup(environment, (int)stopWatch.getTotalTimeSeconds());
     }
 
 }

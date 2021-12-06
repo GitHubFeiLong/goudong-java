@@ -45,8 +45,7 @@ public class GatewayApplication {
                 .run(args);
         stopWatch.stop();
 
-        log.info("服务成功启动，耗时:{}s。",(int)stopWatch.getTotalTimeSeconds());
-        LogApplicationStartup.logApplicationStartup(context.getBean(Environment.class));
+        LogApplicationStartup.logApplicationStartup(context.getBean(Environment.class), (int)stopWatch.getTotalTimeSeconds());
     }
 
     /**

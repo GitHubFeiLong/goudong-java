@@ -44,17 +44,6 @@ public class MessageApplication {
         // 获取环境变量
         Environment environment = context.getBean(Environment.class);
 
-        log.info("服务启动完成，耗时:{}s。\n" +
-                        "\tswagger地址:\t http://127.0.0.1:{}{}/doc.html\n" +
-                        "\t用户名：\t{}\n" +
-                        "\t密码：\t{}\n",
-                (int)stopWatch.getTotalTimeSeconds(),
-                environment.getProperty("server.port"),
-                environment.getProperty("server.servlet.context-path"),
-                environment.getProperty("knife4j.basic.username"),
-                environment.getProperty("knife4j.basic.password")
-        );
-
-        LogApplicationStartup.logApplicationStartup(context.getBean(Environment.class));
+        LogApplicationStartup.logApplicationStartup(context.getBean(Environment.class), (int)stopWatch.getTotalTimeSeconds());
     }
 }
