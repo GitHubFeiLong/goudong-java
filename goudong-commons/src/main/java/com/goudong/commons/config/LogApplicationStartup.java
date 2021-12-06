@@ -1,6 +1,5 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.utils.LogUtil;
 import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +7,6 @@ import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -26,8 +24,6 @@ public class LogApplicationStartup {
      * @param env
      */
     public static void logApplicationStartup(Environment env, int totalTimeSecond) {
-
-
 
         String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");
         String serverPort = env.getProperty("server.port");
@@ -49,29 +45,29 @@ public class LogApplicationStartup {
         StringBuilder allMessage = new StringBuilder();
 
         allMessage.append(
-                StringUtil.format("\n----------------------------------------------------------\n\t" +
-                                "Application '{}' is running,耗时:{}s! Access URLs:\n\t" +
-                                "Local: \t\t{}://localhost:{}{}\n\t" +
-                                "External: \t{}://{}:{}{}\n\t",
-                        env.getProperty("spring.application.name"),
-                        totalTimeSecond,
-                        protocol,
-                        serverPort,
-                        contextPath,
-                        protocol,
-                        hostAddress,
-                        serverPort,
-                        contextPath
-                )
+            StringUtil.format("\n---------------------------------------------------------------------------\n\t" +
+                            "Application '{}' is running,耗时:{}s! Access URLs:\n\t" +
+                            "Local: \t\t{}://localhost:{}{}\n\t" +
+                            "External: \t{}://{}:{}{}\n\t",
+                    env.getProperty("spring.application.name"),
+                    totalTimeSecond,
+                    protocol,
+                    serverPort,
+                    contextPath,
+                    protocol,
+                    hostAddress,
+                    serverPort,
+                    contextPath
+            )
         );
 
         if (knife4jEnabled) {
             allMessage.append(
-                    StringUtil.format("swagger地址:\t http://{}:{}{}/doc.html\n\t",
-                            hostAddress,
-                            serverPort,
-                            contextPath
-                    )
+                StringUtil.format("swagger地址:\t http://{}:{}{}/doc.html\n\t",
+                        hostAddress,
+                        serverPort,
+                        contextPath
+                )
             );
 
             // 是否启用认证
@@ -79,32 +75,22 @@ public class LogApplicationStartup {
                     .orElse(false);
             if (basicEnabled) {
                 allMessage.append(
-                        StringUtil.format("用户名：\t{}\n\t" +
-                                        "密码：\t{}\n\t",
-                                env.getProperty("knife4j.basic.username"),
-                                env.getProperty("knife4j.basic.password")
-                        )
+                    StringUtil.format("用户名：\t{}\n\t" +
+                                    "密码：\t{}\n\t",
+                            env.getProperty("knife4j.basic.username"),
+                            env.getProperty("knife4j.basic.password")
+                    )
                 );
             }
         }
 
-       
-        log.info(
-                "\n----------------------------------------------------------\n\t" +
-                        "Application '{}' is running! Access URLs:\n\t" +
-                        "Local: \t\t{}://localhost:{}{}\n\t" +
-                        "External: \t{}://{}:{}{}\n\t" +
-
-                env.getProperty("spring.application.name"),
-                protocol,
-                serverPort,
-                contextPath,
-                protocol,
-                hostAddress,
-                serverPort,
-                contextPath,
-                env.getActiveProfiles()
+        allMessage.append(
+            StringUtil.format(
+                    "Profile(s): \t{}\n---------------------------------------------------------------------------",
+                    env.getActiveProfiles())
         );
+       
+        log.info(allMessage.toString());
     }
 
     private LogApplicationStartup(){
