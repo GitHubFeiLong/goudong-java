@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "file.upload.file-types",
+      "type": "java.util.List<com.goudong.file.core.FileType>",
+      "description": "配置支持上传文件类型及其大小限制,默认`FileTypeEnum`的元素都能进行上传，并且大小限制到10MB。您可以单独配置某一种类型上传大小，也可以配置关闭某种类型不允许上传.",
+      "sourceType": "com.goudong.file.properties.FileProperties"
+    }
+  ]
+}

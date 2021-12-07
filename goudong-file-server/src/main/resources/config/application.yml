@@ -139,9 +139,10 @@ knife4j:
 # 自定义配置
 file:
   upload:
-    enable-full-path-model: false
-    root-dir: file
+    root-dir: /Users
     file-types:
       - type: jpg
-        length: 10
+        length: 18
         fileLengthUnit: MB
+      - type: png
+        enabled: false

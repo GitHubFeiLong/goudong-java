@@ -3,9 +3,7 @@ package com.goudong.file.core;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 类描述：
@@ -23,12 +21,12 @@ public class FileUpload {
     private Boolean enableFullPathModel = false;
 
     /**
-     * 上传文件的目录
+     * 上传文件的目录,不论操作系统都使用'/'作为目录分隔符 默认值是 '/goudong-file-server'.
      */
-    private String rootDir = "/files";
+    private String rootDir = "/goudong-file-server";
 
     /**
      * 文件类型
      */
-    private Set<FileType> fileTypes = new HashSet<>();
+    private List<FileType> fileTypes = new ArrayList<>();
 }

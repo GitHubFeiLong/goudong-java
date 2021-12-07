@@ -1,7 +1,9 @@
 package com.goudong.commons.utils;
 
-import org.springframework.lang.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
+
+import java.io.File;
 
 /**
  * 扩展 Assert
@@ -9,6 +11,7 @@ import org.springframework.util.Assert;
  * @Date 2021-05-07 15:29
  * @Version 1.0
  */
+@Slf4j
 public class AssertUtil extends Assert{
     /**
      * 手机号正则表达式
@@ -54,6 +57,22 @@ public class AssertUtil extends Assert{
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(message);
         }
+    }
 
+    /**
+     * 断言，diskPath是有效的磁盘路径
+     * @param diskPath 磁盘路径
+     * @param message 错误信息
+     */
+    public static void isDiskPath (String diskPath, String message) {
+        Assert.hasLength(diskPath, "diskPath 无效");
+        // 判断是否正确
+        File file = new File(diskPath);
+        if (!file.exists()) {
+            boolean mkdirs = file.mkdirs();
+            if (!mkdirs) {
+                throw new IllegalArgumentException(message);
+            }
+        }
     }
 }
