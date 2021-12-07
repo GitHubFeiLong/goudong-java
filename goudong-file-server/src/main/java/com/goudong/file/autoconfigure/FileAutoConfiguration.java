@@ -109,12 +109,14 @@ public class FileAutoConfiguration {
         upload.setFileTypes(defaultFileTypes);
 
         StringBuilder body = new StringBuilder();
-
+        body.append("\t[序号]\t[类型]\t\t[上限]\n");
         AtomicInteger integer = new AtomicInteger(1);
         int border = defaultFileTypes.size();
         defaultFileTypes.stream().forEach(p->{
-            body.append("\t").append(integer.get()).append(".").append(p.getType())
-                    .append("文件类型，允许上传的文件上限为:").append(p.getLength()).append(p.getFileLengthUnit());
+            StringBuilder space = getSpace(p);
+            body.append("\t").append(integer.get())
+                    .append("\t").append(p.getType())
+                    .append(space).append(p.getLength()).append(p.getFileLengthUnit());
             if(integer.getAndIncrement() < border){
                 body.append("\n");
             }
@@ -123,4 +125,20 @@ public class FileAutoConfiguration {
                 body.toString());
         return upload;
     }
+
+    /**
+     * 获取相对应的空白字符串，使其表格对齐
+     * @param p
+     * @return
+     */
+    private StringBuilder getSpace(FileType p) {
+        int length = p.getType().name().length();
+        int num = 8 - length;
+        StringBuilder spaceSB = new StringBuilder();
+        for (int i = 0; i < num; i++) {
+            spaceSB.append(" ");
+        }
+        return spaceSB;
+    }
+
 }
