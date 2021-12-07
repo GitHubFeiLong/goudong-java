@@ -2,7 +2,10 @@ package com.goudong.file.core;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 类描述：
@@ -22,10 +25,10 @@ public class FileUpload {
     /**
      * 上传文件的目录
      */
-    private String rootDir = "files";
+    private String rootDir = "/files";
 
     /**
      * 文件类型
      */
-    private List<FileType> fileTypes;
+    private Set<FileType> fileTypes = new HashSet<>();
 }

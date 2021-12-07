@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * 类描述：
@@ -39,4 +40,17 @@ public class FileType {
      * 是否禁用该类文件上传，默认都是允许上传
      */
     private Boolean enabled = true;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileType)) return false;
+        FileType fileType = (FileType) o;
+        return type == fileType.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
+    }
 }

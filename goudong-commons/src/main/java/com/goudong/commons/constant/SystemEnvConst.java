@@ -1,4 +1,4 @@
-package com.goudong.file.constant;
+package com.goudong.commons.constant;
 
 import java.io.File;
 import java.util.Objects;

@@ -1,5 +1,6 @@
 package com.goudong.commons.enumerate;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,10 +37,10 @@ public enum FileTypeEnum {
      * 获取有效值
      * @return
      */
-    public static Set<FileTypeEnum> listValues() {
-        Set<FileTypeEnum> values = Stream.of(FileTypeEnum.values()).filter(f -> {
+    public static List<FileTypeEnum> listValues() {
+        List<FileTypeEnum> values = Stream.of(FileTypeEnum.values()).filter(f -> {
             return true;
-        }).collect(Collectors.toSet());
+        }).collect(Collectors.toList());
         return values;
     }
 }
