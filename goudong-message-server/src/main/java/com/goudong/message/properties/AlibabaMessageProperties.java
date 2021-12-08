@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * 类描述：
- *
+ * 阿里巴巴的短信配置
  * @Author e-Feilong.Chen
  * @Date 2021/12/8 12:59
  */
@@ -13,11 +13,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("message.alibaba.message")
 public class AlibabaMessageProperties {
     /**
-     * AK
+     * 访问密钥Id
      */
     private String accessKeyId;
     /**
-     * SK
+     * 访问密钥
      */
     private String accessKeySecret;
 

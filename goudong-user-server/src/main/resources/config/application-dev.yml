@@ -139,8 +139,9 @@ knife4j:
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
 
-# 下面都是自定义配置 #
-#  # 自定义定时器
-#  scheduler:
-#    scanIgnoreResource: # 扫描白名单
-#      cron: "-" #定时器表达式（-）（0/10 * * * * ?）
+# 自定义配置
+user:
+  page:
+    bind-page: http://localhost:9998/bindPage.html
+    transition-page: http://localhost:9998/transition.html
+    index-page: http://localhost:9998/index.html

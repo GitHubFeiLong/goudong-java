@@ -128,13 +128,17 @@ knife4j:
 
 
 # 自定义配置
-goudong:
+message:
   alibaba:
     message:
       accessKeyId: ${ALIBABA_MESSAGE_ACCESS_KEY_ID}
       accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
       signName: ${ALIBABA_MESSAGE_SIGN_NAME}
       templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
+goudong:
+  alibaba:
+    message:
+
   # 自定义定时器
   scheduler:
     scanIgnoreResource: # 扫描白名单

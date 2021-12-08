@@ -131,6 +131,13 @@ knife4j:
 
 
 # 自定义配置
+message:
+  alibaba:
+    message:
+      accessKeyId: ${ALIBABA_MESSAGE_ACCESS_KEY_ID}
+      accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
+      signName: ${ALIBABA_MESSAGE_SIGN_NAME}
+      templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
 goudong:
   alibaba:
     message:
