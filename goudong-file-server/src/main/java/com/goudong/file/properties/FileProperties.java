@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @date 2021/12/5 13:22
  */
 @Data
-@ConfigurationProperties(prefix = "file", ignoreUnknownFields = true)
+@ConfigurationProperties(prefix = "file")
 public class FileProperties {
 
     /**

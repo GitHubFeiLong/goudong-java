@@ -1,15 +1,18 @@
 package com.goudong.file;
 
 import com.goudong.commons.config.LogApplicationStartup;
-import com.goudong.commons.constant.BasePackageConst;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StopWatch;
+
+import static com.goudong.commons.constant.BasePackageConst.*;
 
 
 /**
@@ -20,7 +23,9 @@ import org.springframework.util.StopWatch;
  * @version 1.0
  */
 @Slf4j
-@SpringBootApplication(scanBasePackages = {BasePackageConst.FILE})
+@SpringBootApplication(scanBasePackages = {FILE, COMMONS})
+@MapperScan(basePackages = {USER_MAPPER, COMMONS_MAPPER})
+@EnableFeignClients(basePackages = {OPENFEIGN})
 public class FileApplication {
 
     public static void main(String[] args) {

@@ -16,6 +16,11 @@ import java.util.List;
 public class FileUpload {
 
     /**
+     * 是否开启文件上传接口
+     */
+    private Boolean enabled = true;
+
+    /**
      * 开启全路径模式
      */
     private Boolean enableFullPathModel = false;
