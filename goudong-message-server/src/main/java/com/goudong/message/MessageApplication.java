@@ -25,9 +25,9 @@ import org.springframework.util.StopWatch;
  * @Date 2021-05-04 22:36
  * @Version 1.0
  */
+@SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
 @EnableFeignClients(basePackages = {BasePackageConst.OPENFEIGN})
 @EnableDiscoveryClient
-@SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
 @MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling
 @Slf4j
@@ -41,8 +41,6 @@ public class MessageApplication {
                 .bannerMode(Banner.Mode.CONSOLE)
                 .run(args);
         stopWatch.stop();
-        // 获取环境变量
-        Environment environment = context.getBean(Environment.class);
 
         LogApplicationStartup.logApplicationStartup(context.getBean(Environment.class), (int)stopWatch.getTotalTimeSeconds());
     }

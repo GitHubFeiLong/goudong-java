@@ -4,33 +4,20 @@ import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.teaopenapi.models.Config;
 import com.goudong.commons.utils.AssertUtil;
+import com.goudong.message.core.AlibabaMessage;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Data
 @Component
 @ConfigurationProperties(prefix = "goudong.alibaba.message")
 public class SendSms {
 
-    /**
-     * AK
-     */
-    private String accessKeyId;
-    /**
-     * SK
-     */
-    private String accessKeySecret;
-
-    /**
-     * 签名名称
-     */
-    private String signName;
-
-    /**
-     * 模版CODE
-     */
-    private String templateCode;
+    @Resource
+    private AlibabaMessage alibabaMessage;
 
     /**
      * 使用AK&SK初始化账号Client
@@ -40,9 +27,9 @@ public class SendSms {
     public  Client createClient() throws Exception {
         Config config = new Config()
                 // 您的AccessKey ID
-                .setAccessKeyId(this.accessKeyId)
+                .setAccessKeyId(alibabaMessage.getAccessKeyId())
                 // 您的AccessKey Secret
-                .setAccessKeySecret(this.accessKeySecret);
+                .setAccessKeySecret(alibabaMessage.getAccessKeySecret());
         // 访问的域名
         config.endpoint = "dysmsapi.aliyuncs.com";
         return new Client(config);
@@ -61,11 +48,11 @@ public class SendSms {
         SendSmsRequest sendSmsRequest = new SendSmsRequest()
                 .setPhoneNumbers(phone)
                 // 签名名称
-                .setSignName(this.signName)
+                .setSignName(alibabaMessage.getSignName())
                 // 变量替换
                 .setTemplateParam("{code:'"+ code +"'}")
                 // 模版CODE
-                .setTemplateCode(this.templateCode);
+                .setTemplateCode(alibabaMessage.getTemplateCode());
         // 复制代码运行请自行打印 API 的返回值
         client.sendSms(sendSmsRequest);
     }
