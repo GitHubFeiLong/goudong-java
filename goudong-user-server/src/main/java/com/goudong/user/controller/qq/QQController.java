@@ -10,8 +10,8 @@ import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.utils.RedisOperationsUtil;
 import com.goudong.commons.vo.BaseToken2CreateVO;
-import com.goudong.user.config.UIProperties;
 import com.goudong.user.controller.token.BaseTokenController;
+import com.goudong.user.core.UserPage;
 import com.goudong.user.entity.OtherUserInfoBean;
 import com.goudong.user.enumerate.OtherUserTypeEnum;
 import com.goudong.user.service.AuthorityUserService;
@@ -49,8 +49,9 @@ import java.util.ArrayList;
 @Controller
 @RequestMapping("/qq")
 public class QQController {
+
     @Resource
-    private UIProperties uiProperties;
+    private UserPage userPage;
 
     @Resource
     private AuthorityUserService userService;
@@ -110,7 +111,7 @@ public class QQController {
             // openId未使用，可以绑定
             if (authorityUserPO == null) {
                 OtherUserInfoBean otherUserInfoBean = new OtherUserInfoBean(openID, userInfoBean.getNickname(), userInfoBean.getAvatar().getAvatarURL30(), OtherUserTypeEnum.QQ.name());
-                String qqBindRedirectUriFull = uiProperties.getBindPageUrl(otherUserInfoBean);
+                String qqBindRedirectUriFull = userPage.getBindPageUrl(otherUserInfoBean);
                 log.info("qqBindRedirectUriFull:{}", qqBindRedirectUriFull);
                 response.sendRedirect(qqBindRedirectUriFull);
             } else {
@@ -131,10 +132,10 @@ public class QQController {
 
                 Transition transition = Transition.builder()
                         .token(token)
-                        .redirectUrl(uiProperties.getIndexPage())
+                        .redirectUrl(userPage.getIndexPage())
                         .build();
                 // 重定向首页，并带上token参数
-                response.sendRedirect(uiProperties.getTransitionPageUrl(transition));
+                response.sendRedirect(userPage.getTransitionPageUrl(transition));
             }
         }
 

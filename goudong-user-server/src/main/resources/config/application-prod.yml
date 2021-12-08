@@ -107,8 +107,8 @@ knife4j:
     enableDebug: true  # 启用调试，默认为true 无效
 
 # 自定义配置
-goudong:
-  ui:
+user:
+  page:
     bind-page: http://www.goudong.shop/bindPage.html
     transition-page: http://www.goudong.shop/transition.html
     index-page: http://www.goudong.shop/index.html

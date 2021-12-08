@@ -1,12 +1,12 @@
-package com.goudong.user.config;
+package com.goudong.user.core;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.LogUtil;
 import com.goudong.user.entity.OtherUserInfoBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
@@ -15,17 +15,14 @@ import java.util.Map;
 
 /**
  * 类描述：
- * 前端ui 页面属性
- * @Author msi
- * @Date 2021-05-03 11:55
- * @Version 1.0
+ * 用户页面对象
+ * @Author e-Feilong.Chen
+ * @Date 2021/12/8 12:30
  */
-@Slf4j
 @Data
-@SuppressWarnings("ALL")
-@ConfigurationProperties(prefix = "goudong.ui", ignoreUnknownFields = true)
-public class UIProperties {
-
+@Slf4j
+@Validated
+public class UserPage {
     /**
      * qq登陆成功需要绑定账号跳转页面
      */
@@ -79,7 +76,7 @@ public class UIProperties {
                 if (value instanceof Collection) {
                     sb.append(String.join(",", (Collection) value));
                 } else if (value.getClass().isArray()) {
-                    log.error("属性是数组类型，这里需要进行修改");
+                    LogUtil.error(log, "属性是数组类型，这里需要进行修改");
                 } else {
                     sb.append(String.join(",", value.toString()));
                 }

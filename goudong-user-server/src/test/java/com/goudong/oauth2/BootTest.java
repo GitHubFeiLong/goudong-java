@@ -3,7 +3,7 @@ package com.goudong.oauth2;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.user.config.UIProperties;
+import com.goudong.user.core.UserPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 @SpringBootTest
 public class BootTest {
     @Resource
-    private UIProperties uiProperties;
+    private UserPage userPage;
 
     @Test
     public void test1 () {
@@ -28,10 +28,10 @@ public class BootTest {
 
         Transition transition = Transition.builder()
                 .token(token)
-                .redirectUrl(uiProperties.getIndexPage())
+                .redirectUrl(userPage.getIndexPage())
                 .build();
         // 重定向首页，并带上token参数
-        System.out.println(uiProperties.getTransitionPageUrl(transition));
+        System.out.println(userPage.getTransitionPageUrl(transition));
     }
 
     /**

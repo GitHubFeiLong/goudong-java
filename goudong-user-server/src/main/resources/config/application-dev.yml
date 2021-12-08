@@ -140,16 +140,7 @@ knife4j:
     enableDebug: true  # 启用调试，默认为true 无效
 
 # 下面都是自定义配置 #
-goudong:
-  # 前端页面路径配置
-  ui:
-    # 绑定账号页面
-    bind-page: http://localhost:9998/bindPage.html
-    # 后端路径传参给页面
-    transition-page: http://localhost:9998/transition.html
-    # 前端首页
-    index-page: http://localhost:9998/index.html
-  # 自定义定时器
-  scheduler:
-    scanIgnoreResource: # 扫描白名单
-      cron: "-" #定时器表达式（-）（0/10 * * * * ?）
+#  # 自定义定时器
+#  scheduler:
+#    scanIgnoreResource: # 扫描白名单
+#      cron: "-" #定时器表达式（-）（0/10 * * * * ?）

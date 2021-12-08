@@ -2,14 +2,11 @@ package com.goudong.user;
 
 import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.commons.utils.LogUtil;
-import com.goudong.user.config.UIProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -25,7 +22,6 @@ import org.springframework.util.StopWatch;
  * @Date 2021/2/9 19:20
  * @Vsion 1.0
  */
-@EnableConfigurationProperties({UIProperties.class})
 @SpringBootApplication(scanBasePackages = {BasePackageConst.USER, BasePackageConst.COMMONS/*, BasePackageConst.SECURITY*/})
 @MapperScan(basePackages = {BasePackageConst.USER_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling
