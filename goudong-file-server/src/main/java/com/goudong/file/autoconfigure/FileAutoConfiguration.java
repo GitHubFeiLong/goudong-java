@@ -4,6 +4,7 @@ import com.goudong.commons.constant.SystemEnvConst;
 import com.goudong.commons.enumerate.FileTypeEnum;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.LogUtil;
+import com.goudong.commons.utils.StringUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
@@ -109,14 +110,13 @@ public class FileAutoConfiguration {
         upload.setFileTypes(defaultFileTypes);
 
         StringBuilder body = new StringBuilder();
-        body.append("\t[序号]\t[类型]\t\t[上限]\n");
+        body.append("\t[序号]\t[类型]\t[上限]\n");
         AtomicInteger integer = new AtomicInteger(1);
         int border = defaultFileTypes.size();
         defaultFileTypes.stream().forEach(p->{
-            StringBuilder space = getSpace(p);
             body.append("\t").append(integer.get())
-                    .append("\t").append(p.getType())
-                    .append(space).append(p.getLength()).append(p.getFileLengthUnit());
+                    .append("\t\t").append(StringUtil.fillSpace(p.getType().toString(), 8))
+                    .append(p.getLength()).append(p.getFileLengthUnit());
             if(integer.getAndIncrement() < border){
                 body.append("\n");
             }
@@ -124,21 +124,6 @@ public class FileAutoConfiguration {
         LogUtil.info(log, "\n应用中文件上传的磁盘目录为:'{}',支持上传的文件类型及最大限制如下:\n{}", rootDir,
                 body.toString());
         return upload;
-    }
-
-    /**
-     * 获取相对应的空白字符串，使其表格对齐
-     * @param p
-     * @return
-     */
-    private StringBuilder getSpace(FileType p) {
-        int length = p.getType().name().length();
-        int num = 8 - length;
-        StringBuilder spaceSB = new StringBuilder();
-        for (int i = 0; i < num; i++) {
-            spaceSB.append(" ");
-        }
-        return spaceSB;
     }
 
 }

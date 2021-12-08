@@ -1,6 +1,7 @@
 package com.goudong.commons.utils;
 
 import com.goudong.commons.exception.ServerException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 类描述：
@@ -9,6 +10,7 @@ import com.goudong.commons.exception.ServerException;
  * @Date 2021-08-15 14:38
  * @Version 1.0
  */
+@Slf4j
 public class StringUtil {
 
     private static final String LEFT_BRACKET = "{";
@@ -80,6 +82,31 @@ public class StringUtil {
         } catch (StringIndexOutOfBoundsException e) {
             throw ServerException.serverException("错误" + e.getMessage());
         }
+    }
+
+    /**
+     * 将字符串填充至指定长度
+     * @param string 指定字符串
+     * @param totalLength 填充至指定长度
+     * @return 指定长度的字符串，使用空白字符填充
+     */
+    public static String fillSpace(String string, int totalLength) {
+        if (totalLength < 1) {
+            LogUtil.warn(log, "参数 totalLength:{} 不能小于 1.", string, totalLength);
+            return string;
+        }
+        int length = string.length();
+        if (length >= totalLength) {
+            LogUtil.warn(log, "字符串:{},长度不能大于需要定义的长度 {}", string, totalLength);
+            return string;
+        }
+
+        StringBuilder space = new StringBuilder();
+        for (int i = 0, size = totalLength - length; i < size; i++) {
+            space.append(" ");
+        }
+
+        return string + space;
     }
 
     public static void main(String[] args) {
