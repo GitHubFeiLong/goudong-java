@@ -1,6 +1,9 @@
 package com.goudong.file.core;
 
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,4 +37,21 @@ public class FileUpload {
      * 文件类型
      */
     private List<FileType> fileTypes = new ArrayList<>();
+
+
+    public void a (MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        String fileType = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+
+
+
+        fileTypes.forEach(p->{
+            long size = file.getSize();
+            long maxSize = p.getFileLengthUnit().toBytes(p.getLength());
+            if (size > maxSize) {
+                throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件超过配置的大小");
+            }
+
+        });
+    }
 }

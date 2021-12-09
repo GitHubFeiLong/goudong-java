@@ -1,6 +1,7 @@
 package com.goudong.commons.dto.file;
 
 import com.goudong.commons.enumerate.FileLengthUnit;
+import lombok.Data;
 
 /**
  * 类描述：
@@ -9,6 +10,7 @@ import com.goudong.commons.enumerate.FileLengthUnit;
  * @version 1.0
  * @date 2021/12/8 20:38
  */
+@Data
 public class ResponseUploadDTO {
     /**
      * 原始文件名
@@ -23,7 +25,7 @@ public class ResponseUploadDTO {
     /**
      * 文件大小，单位字节
      */
-    private Long byteSize;
+    private Long size;
 
     /**
      * 文件大小

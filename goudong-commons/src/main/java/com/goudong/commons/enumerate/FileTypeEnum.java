@@ -1,10 +1,8 @@
 package com.goudong.commons.enumerate;
 
 import jodd.util.StringUtil;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +14,7 @@ import java.util.stream.Stream;
  * @date 2021/12/5 18:41
  */
 public enum FileTypeEnum {
+    FILE,
     JPG,
     JPEG,
     PNG,

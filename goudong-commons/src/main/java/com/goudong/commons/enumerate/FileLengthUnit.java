@@ -66,12 +66,12 @@ public enum FileLengthUnit {
     };
 
     // Handy constants for conversion methods
-    static final long C0 = 1L;
-    static final long C1 = C0 * 8L;
-    static final long C2 = C1 * 1024L;
-    static final long C3 = C2 * 1024L;
-    static final long C4 = C3 * 1024L;
-    static final long C5 = C4 * 1024L;
+    public static final long C0 = 1L;
+    public static final long C1 = C0 * 8L;
+    public static final long C2 = C1 * 1024L;
+    public static final long C3 = C2 * 1024L;
+    public static final long C4 = C3 * 1024L;
+    public static final long C5 = C4 * 1024L;
 
     static final long MAX = Long.MAX_VALUE;
 
