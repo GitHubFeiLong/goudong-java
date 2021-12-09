@@ -1,5 +1,8 @@
 package com.goudong.commons.enumerate;
 
+import jodd.util.StringUtil;
+import org.springframework.util.StringUtils;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,5 +45,17 @@ public enum FileTypeEnum {
             return true;
         }).collect(Collectors.toList());
         return values;
+    }
+
+    /**
+     * 字符串转枚举
+     * @param fileType 文件类型字符串
+     * @return
+     */
+    public static FileTypeEnum convert(String fileType) {
+        if (StringUtil.isBlank(fileType)) {
+            throw new IllegalArgumentException("参数不能为空，转枚举时失败");
+        }
+        return FileTypeEnum.valueOf(fileType.toUpperCase());
     }
 }
