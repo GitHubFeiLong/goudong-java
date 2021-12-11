@@ -1,5 +1,6 @@
 package com.goudong.file.controller.upload;
 
+import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.goudong.commons.dto.file.RequestUploadDTO;
@@ -12,10 +13,12 @@ import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
+import com.goudong.file.core.Filename;
 import com.goudong.file.util.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -115,33 +119,30 @@ public class UploadController {
         // 检查
         check(Lists.newArrayList(file));
 
-        String originalFilename = requestUploadDTO.getOriginalFilename();
-
-        int pos = originalFilename.lastIndexOf(".");
-
-        if (pos == -1) {
-            String fileType = originalFilename.substring(pos + 1);
+        String originalFilename = file.getOriginalFilename();
+        Filename filename = FileUtils.getFilename(originalFilename);
+        String customerFilename = requestUploadDTO.getOriginalFilename();
+        if (StringUtils.isNotBlank(customerFilename)) {
+            filename.setFilename(customerFilename);
         }
 
-
-        // 获取文件名
-        // String originalFilename = Optional.ofNullable().orElse(file.getOriginalFilename());
-
-        // escaping dangerous characters to prevent XSS
-        ///fileName = HtmlUtils.htmlEscape(fileName, StandardCharsets.UTF_8.name());
-
         ResponseUploadDTO responseUploadDTO = new ResponseUploadDTO();
-        responseUploadDTO.setOriginalFilename(originalFilename);
+        responseUploadDTO.setOriginalFilename(filename.getFilename());
+        responseUploadDTO.setFileType(filename.getFileTypeEnum());
+
+        // 当前文件名，使用规则生成
+        String uuid = IdUtil.simpleUUID();
+        responseUploadDTO.setCurrentFileName(uuid);
         long size = file.getSize();
-        responseUploadDTO.setSize(size);
+        responseUploadDTO.setSize(file.getSize());
 
         // 设置合适的大小和单位
         ImmutablePair<Long, FileLengthUnit> fileSizePair = FileUtils.adaptiveSize(size);
         responseUploadDTO.setFileLength(fileSizePair.getLeft());
         responseUploadDTO.setFileLengthUnit(fileSizePair.getRight());
 
-        String dir = FileUtils.getDir(fileUpload.getRootDir());
-
+        File newFile= FileUtils.createFile(fileUpload.getRootDir(), (responseUploadDTO.getCurrentFileName() + "." + responseUploadDTO.getFileType()));
+        String diskPath = newFile.getPath();
 
 
         // // Check for Unix-style path
@@ -169,7 +170,7 @@ public class UploadController {
         //     logger.error("文件上传失败", e);
         //     return new ObjectMapper().writeValueAsString(ReturnResponse.failure());
         // }
-        return null;
+        return Result.ofSuccess(responseUploadDTO);
     }
 
     // @RequestMapping(value = "deleteFile", method = RequestMethod.GET)

@@ -1,8 +1,12 @@
 package com.goudong.file.util;
 
+import cn.hutool.core.util.IdUtil;
 import com.goudong.commons.enumerate.FileLengthUnit;
+import com.goudong.commons.enumerate.FileTypeEnum;
+import com.goudong.file.core.Filename;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.time.LocalDateTime;
 
@@ -51,18 +55,52 @@ public class FileUtils {
     }
 
     /**
-     * 获取文件上传的目录地址（指定目录下再创建日期文件夹）
-     * @param rootDir 指定目录下
-     * @return /rootDir/yyyy-mm-dd
+     * 创建File对象，并不创建磁盘文件
+     *
+     * 拼接路径地址格式为：/rootDir/yyyy-mm-dd/uuid.xxx
+     * @param rootDir 配置上传的指定目录
+     * @param filename 携带后缀的文件名
+     * @return File对象
      */
-    public static String getDir (String rootDir) {
+    public static File createFile (String rootDir, String filename) {
         String dateDir = LocalDateTime.now().toLocalDate().toString();
-        return rootDir + File.separator + dateDir;
+        File file = new File(rootDir + File.separator + dateDir + File.separator + filename);
+        if (file.exists()) {
+            throw new IllegalArgumentException("文件名重复");
+        }
+        return file;
+    }
+
+    /**
+     * 根据文件名进行构造对象
+     *
+     * @param originalFilename 文件名
+     * @return
+     */
+    public static Filename getFilename(@NotBlank String originalFilename) {
+
+        int index = originalFilename.lastIndexOf(".");
+        String filename;
+        String suffix;
+        FileTypeEnum fileTypeEnum;
+        switch (index) {
+            case -1:
+                return new Filename(originalFilename, null, null);
+            case 0:
+                suffix = originalFilename.substring(1);
+                fileTypeEnum = FileTypeEnum.valueOf(suffix.toUpperCase());
+                return new Filename(null, suffix, fileTypeEnum);
+            default:
+                filename = originalFilename.substring(0, index);
+                suffix = originalFilename.substring(index + 1);
+                fileTypeEnum = FileTypeEnum.valueOf(suffix.toUpperCase());
+                return new Filename(filename, suffix, fileTypeEnum);
+        }
     }
 
 
     public static void main(String[] args) {
-        ImmutablePair immutablePair = FileUtils.adaptiveSize(1024);
-        System.out.println("immutablePair = " + immutablePair);
+        String s = IdUtil.simpleUUID();
+        System.out.println("s = " + s);
     }
 }

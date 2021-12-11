@@ -1,13 +1,18 @@
 package com.goudong.oauth2;
 
+import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.SpringVersion;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.util.StopWatch;
 
 /**
  * http://localhost:10003/oauth/authorize?response_type=code&client_id=admin&redirect_uri=http://www.baidu.com&scope=all&state=normal
@@ -27,6 +32,14 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 @MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER, BasePackageConst.COMMONS_MAPPER})
 public class Oauth2Application {
     public static void main(String[] args) {
-        SpringApplication.run(Oauth2Application.class, args);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(Oauth2Application.class)
+                .logStartupInfo(false)
+                .main(SpringVersion.class)
+                .bannerMode(Banner.Mode.CONSOLE)
+                .run(args);
+        stopWatch.stop();
+        LogApplicationStartup.logApplicationStartup(context.getEnvironment(), (int) stopWatch.getTotalTimeSeconds());
     }
 }

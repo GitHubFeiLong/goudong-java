@@ -1,5 +1,6 @@
 package com.goudong.user;
 
+import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.config.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +11,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StopWatch;
 
 /**
@@ -24,7 +25,7 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication(scanBasePackages = {BasePackageConst.USER, BasePackageConst.COMMONS/*, BasePackageConst.SECURITY*/})
 @MapperScan(basePackages = {BasePackageConst.USER_MAPPER, BasePackageConst.COMMONS_MAPPER})
-@EnableScheduling
+// @EnableScheduling
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
 @Slf4j
@@ -38,12 +39,13 @@ public class UserApplication {
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)
                 .run(args);
-        stopWatch.stop();
 
         // 获取环境变量
         Environment environment = context.getBean(Environment.class);
-
+        stopWatch.stop();
         LogApplicationStartup.logApplicationStartup(environment, (int)stopWatch.getTotalTimeSeconds());
     }
+
+
 
 }

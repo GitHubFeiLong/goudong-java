@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
@@ -24,7 +23,7 @@ import java.util.Arrays;
  * @version 1.0
  */
 @Aspect
-@Component
+// @Component
 public class LoggingAop {
 
     private final Environment env;

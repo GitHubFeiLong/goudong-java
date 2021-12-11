@@ -1,6 +1,7 @@
 package com.goudong.commons.dto.file;
 
 import com.goudong.commons.enumerate.FileLengthUnit;
+import com.goudong.commons.enumerate.FileTypeEnum;
 import lombok.Data;
 
 /**
@@ -21,6 +22,11 @@ public class ResponseUploadDTO {
      * 现在文件名
      */
     private String currentFileName;
+
+    /**
+     * 文件类型
+     */
+    private FileTypeEnum fileType;
 
     /**
      * 文件大小，单位字节
