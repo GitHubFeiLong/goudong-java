@@ -4,7 +4,7 @@ import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

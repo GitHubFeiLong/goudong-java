@@ -26,12 +26,10 @@ import java.util.stream.Stream;
  */
 public class Screw {
 
-    private static final Screw SCREW = new Screw();
-
     /**
      * spring的环境
      */
-    private Environment environment;
+    private final Environment environment;
     /**
      * 忽略表
      */
@@ -47,15 +45,9 @@ public class Screw {
      */
     private ArrayList<String> ignoreSuffixList = new ArrayList<>();
 
-    private Screw(){}
-
-    /**
-     * 获取实例
-     * @param environment
-     * @return
-     */
-    public static Screw getInstance(Environment environment){
-        return SCREW.environment(environment);
+    public Screw(Environment environment){
+        this.environment = environment;
+        this.create();
     }
 
     /**
@@ -131,10 +123,6 @@ public class Screw {
         return this;
     }
 
-    public Screw environment(Environment environment) {
-        this.environment = environment;
-        return this;
-    }
     public Screw ignoreTableNames(ArrayList<String> ignoreTableNameList){
         this.ignoreTableNameList = ignoreTableNameList;
         return this;

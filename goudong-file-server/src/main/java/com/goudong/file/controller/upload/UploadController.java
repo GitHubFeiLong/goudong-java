@@ -13,7 +13,7 @@ import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.LogUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;

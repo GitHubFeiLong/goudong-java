@@ -8,7 +8,7 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
 import com.goudong.oauth2.mapper.SelfAuthorityUserMapper;
 import org.springframework.http.HttpMethod;

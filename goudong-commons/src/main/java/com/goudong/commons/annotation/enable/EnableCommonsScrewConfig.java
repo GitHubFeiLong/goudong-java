@@ -17,4 +17,5 @@ import java.lang.annotation.*;
 @Documented
 @Import({ScrewConfig.class})
 public @interface EnableCommonsScrewConfig {
+
 }

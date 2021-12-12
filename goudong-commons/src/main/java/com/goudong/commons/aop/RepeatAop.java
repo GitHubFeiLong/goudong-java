@@ -6,7 +6,7 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

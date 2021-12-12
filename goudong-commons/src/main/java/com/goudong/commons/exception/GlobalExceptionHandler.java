@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -49,14 +48,18 @@ public class GlobalExceptionHandler {
     /**
      * 请求对象
      */
-    @Resource
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     /**
      * 响应对象
      */
-    @Resource
-    private HttpServletResponse response;
+    private final HttpServletResponse response;
+
+    public GlobalExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
+        this.request = request;
+        this.response = response;
+    }
+
 
     /**
      * 当sentinel资源未配置 blockHandler、fallback 和 defaultFallback   异常

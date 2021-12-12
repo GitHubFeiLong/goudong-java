@@ -1,10 +1,9 @@
-package com.goudong.commons.utils.redis;
+package com.goudong.commons.core.redis;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.GenerateRedisKeyUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

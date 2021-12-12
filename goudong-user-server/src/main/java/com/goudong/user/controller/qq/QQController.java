@@ -8,7 +8,7 @@ import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 import com.goudong.user.controller.token.BaseTokenController;
 import com.goudong.user.core.UserPage;

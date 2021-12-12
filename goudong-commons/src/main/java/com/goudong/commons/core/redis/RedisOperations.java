@@ -1,4 +1,4 @@
-package com.goudong.commons.utils.redis;
+package com.goudong.commons.core.redis;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.RedisKeyEnum;

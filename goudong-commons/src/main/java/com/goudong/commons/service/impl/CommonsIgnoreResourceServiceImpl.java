@@ -10,7 +10,7 @@ import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,8 +1,6 @@
 package com.goudong.commons.annotation.enable;
 
 import com.goudong.commons.config.FeignConfig;
-import com.goudong.commons.constant.BasePackageConst;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -18,6 +16,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import(FeignConfig.class)
-@EnableFeignClients(basePackages = {BasePackageConst.OPENFEIGN})
 public @interface EnableCommonsFeignConfig {
 }

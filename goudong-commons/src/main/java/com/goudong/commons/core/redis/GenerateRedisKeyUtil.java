@@ -1,6 +1,7 @@
-package com.goudong.commons.utils;
+package com.goudong.commons.core.redis;
 
 import com.goudong.commons.exception.ServerException;
+import com.goudong.commons.utils.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 

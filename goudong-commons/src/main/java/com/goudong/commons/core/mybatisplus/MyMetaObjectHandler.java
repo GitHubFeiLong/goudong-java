@@ -3,6 +3,7 @@ package com.goudong.commons.core.mybatisplus;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.goudong.commons.enumerate.BasicPoFieldEnum;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @Date 2021-08-14 14:17
  * @Version 1.0
  */
-// @Component
+@Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
     /**
      * 执行insert时填充数据

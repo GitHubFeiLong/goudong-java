@@ -1,6 +1,6 @@
 package com.goudong.security.config;
 
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;

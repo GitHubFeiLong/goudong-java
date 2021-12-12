@@ -3,7 +3,7 @@ package com.goudong.user.config.commons;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.aop.RepeatAop;
 import com.goudong.commons.utils.AuthorityUserUtil;
-import com.goudong.commons.utils.redis.RedisOperationsUtil;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

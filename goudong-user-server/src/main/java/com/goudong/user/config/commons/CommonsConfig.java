@@ -2,7 +2,6 @@ package com.goudong.user.config.commons;
 
 import com.goudong.commons.config.ApplicationRunnerConfig;
 import com.goudong.commons.core.mvc.error.ErrorAttributes;
-import com.goudong.commons.core.screw.Screw;
 import com.goudong.commons.quartz.JobQuartzManager;
 import com.goudong.commons.service.CommonsAuthorityMenuService;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
@@ -50,14 +49,4 @@ public class CommonsConfig {
         return new ApplicationRunnerConfig();
     }
 
-    /**
-     * 数据库文档生成
-     * @param environment
-     * @return
-     */
-    @Bean
-    public Screw screw(Environment environment) {
-        Screw screw = Screw.getInstance(environment).create();
-        return screw;
-    }
 }

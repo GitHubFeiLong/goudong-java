@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.goudong.commons.core.mybatisplus.MyMetaObjectHandler;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 类描述：
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.Bean;
  * @Author e-Feilong.Chen
  * @Date 2021/8/10 18:11
  */
-// @Configuration
+@Configuration
 public class MybatisPlusConfig {
 
     /**

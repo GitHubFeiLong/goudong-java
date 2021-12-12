@@ -1,6 +1,6 @@
 package com.goudong.commons.annotation.enable;
 
-import com.goudong.commons.exception.GlobalExceptionHandler;
+import com.goudong.commons.config.GlobalExceptionConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -15,6 +15,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({GlobalExceptionHandler.class})
+@Import({GlobalExceptionConfig.class})
 public @interface EnableCommonsGlobalExceptionHandler {
 }
