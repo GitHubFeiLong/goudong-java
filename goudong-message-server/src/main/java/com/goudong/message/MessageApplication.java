@@ -1,14 +1,16 @@
 package com.goudong.message;
 
-import com.goudong.commons.config.LogApplicationStartup;
+import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.constant.BasePackageConst;
+import com.goudong.commons.core.LogApplicationStartup;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
@@ -25,8 +27,11 @@ import org.springframework.util.StopWatch;
  * @Date 2021-05-04 22:36
  * @Version 1.0
  */
-@SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
-@EnableFeignClients(basePackages = {BasePackageConst.OPENFEIGN})
+// @SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
+@SpringBootApplication
+@EnableCommonsWebMvcConfig
+@EnableCommonsRedisConfig
+@EnableCommonsFeignConfig
 @EnableDiscoveryClient
 @MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling

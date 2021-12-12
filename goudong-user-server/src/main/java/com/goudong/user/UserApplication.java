@@ -1,17 +1,14 @@
 package com.goudong.user;
 
-import com.goudong.commons.aop.LoggingAop;
-import com.goudong.commons.config.LogApplicationStartup;
+import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.constant.BasePackageConst;
-import lombok.extern.slf4j.Slf4j;
+import com.goudong.commons.core.LogApplicationStartup;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StopWatch;
@@ -23,12 +20,10 @@ import org.springframework.util.StopWatch;
  * @Date 2021/2/9 19:20
  * @Vsion 1.0
  */
-@SpringBootApplication(scanBasePackages = {BasePackageConst.USER, BasePackageConst.COMMONS/*, BasePackageConst.SECURITY*/})
+@SpringBootApplication(scanBasePackages = {BasePackageConst.USER, BasePackageConst.COMMONS})
 @MapperScan(basePackages = {BasePackageConst.USER_MAPPER, BasePackageConst.COMMONS_MAPPER})
-// @EnableScheduling
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
-@Slf4j
+@EnableCommonsFeignConfig
 public class UserApplication {
 
     public static void main(String[] args) {

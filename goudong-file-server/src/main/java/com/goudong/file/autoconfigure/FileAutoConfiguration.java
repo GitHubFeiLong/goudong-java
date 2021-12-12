@@ -9,6 +9,7 @@ import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +34,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(FileProperties.class)
-// @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class FileAutoConfiguration {
 
     private final FileProperties fileProperties;
@@ -57,7 +57,7 @@ public class FileAutoConfiguration {
      */
     @Bean
     public FileUpload fileUpload() {
-        FileUpload upload = fileProperties.getUpload();
+        FileUpload upload = Optional.ofNullable(fileProperties.getUpload()).orElse(new FileUpload());
         final String settingRootDir = upload.getRootDir();
         String rootDir = upload.getRootDir();
 
@@ -76,12 +76,10 @@ public class FileAutoConfiguration {
             // 判断是否正确
             AssertUtil.isDiskPath(rootDir, String.format("配置的路径无效(file.upload.root-dir=%s)", rootDir));
         } else {
-            final String forwardSlash = "/";
-            boolean startsWith = rootDir.startsWith(forwardSlash);
-            if (!startsWith) {
-                rootDir = forwardSlash + rootDir;
+            if (StringUtils.isNotBlank(rootDir) && ! rootDir.startsWith("/")) {
+                rootDir = "/" + rootDir;
             }
-            rootDir = rootDir.replace(forwardSlash, SystemEnvConst.SEPARATOR);
+            rootDir = rootDir.replace("/", SystemEnvConst.SEPARATOR);
 
             rootDir = SystemEnvConst.USER_HOME + SystemEnvConst.SEPARATOR + applicationName + rootDir;
 

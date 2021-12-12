@@ -23,7 +23,6 @@ import java.util.Arrays;
  * @version 1.0
  */
 @Aspect
-// @Component
 public class LoggingAop {
 
     private final Environment env;

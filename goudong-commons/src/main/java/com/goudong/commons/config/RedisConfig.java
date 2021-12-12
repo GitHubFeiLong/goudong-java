@@ -9,9 +9,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.redis.RedisOperationsUtil;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -22,12 +21,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * redis key 使用字符串
+ * redis 配置
  * @Author msi
  * @Date 2021-04-09 10:55
  * @Version 1.0
  */
-@Configuration
 public class RedisConfig {
     /**
      * 配置RedisTemplate

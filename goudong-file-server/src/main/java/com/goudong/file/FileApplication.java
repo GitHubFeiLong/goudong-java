@@ -1,18 +1,20 @@
 package com.goudong.file;
 
-import com.goudong.commons.config.LogApplicationStartup;
+import com.goudong.commons.annotation.enable.EnableCommonsGlobalExceptionHandler;
+import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
+import com.goudong.commons.core.LogApplicationStartup;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.util.StopWatch;
-
-import static com.goudong.commons.constant.BasePackageConst.*;
 
 
 /**
@@ -23,9 +25,14 @@ import static com.goudong.commons.constant.BasePackageConst.*;
  * @version 1.0
  */
 @Slf4j
-@SpringBootApplication(scanBasePackages = {FILE, COMMONS})
-@MapperScan(basePackages = {USER_MAPPER, COMMONS_MAPPER})
-@EnableFeignClients(basePackages = {OPENFEIGN})
+@SpringBootApplication
+@EnableCommonsRedisConfig
+@EnableCommonsWebMvcConfig
+@EnableCommonsGlobalExceptionHandler
+// @EnableCommonsJpaConfig
+@EnableJpaAuditing()
+@EntityScan("com.goudong.file.po")
+@EnableJpaRepositories(basePackages = {"com.goudong.file.repository"})
 public class FileApplication {
 
     public static void main(String[] args) {

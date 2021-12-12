@@ -1,6 +1,6 @@
 package com.goudong.security.filter;
 
-import com.goudong.commons.config.SpringConfigTool;
+import com.goudong.commons.config.SpringBeanConfig;
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
@@ -8,7 +8,7 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
 import com.goudong.security.mapper.SelfAuthorityUserMapper;
 import org.springframework.http.HttpMethod;
@@ -48,12 +48,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     /**
      * 获取 Redis操作bean
      */
-    private RedisOperationsUtil redisOperationsUtil = (RedisOperationsUtil)SpringConfigTool.getBean("redisOperationsUtil");
+    private RedisOperationsUtil redisOperationsUtil = (RedisOperationsUtil) SpringBeanConfig.getBean("redisOperationsUtil");
 
     /**
      * 用户dao
      */
-    private SelfAuthorityUserMapper selfAuthorityUserMapper = (SelfAuthorityUserMapper)SpringConfigTool.getBean("selfAuthorityUserMapper");
+    private SelfAuthorityUserMapper selfAuthorityUserMapper = (SelfAuthorityUserMapper) SpringBeanConfig.getBean("selfAuthorityUserMapper");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

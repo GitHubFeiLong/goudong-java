@@ -11,7 +11,7 @@ import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.Result;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.redis.RedisOperationsUtil;
 import com.goudong.message.config.CodeDirectRabbitConfig;
 import com.goudong.message.sender.EmailCodeRoutingKeySender;
 import io.swagger.annotations.Api;

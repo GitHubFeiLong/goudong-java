@@ -6,7 +6,7 @@ import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.GenerateRedisKeyUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.redis.RedisOperationsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.RLock;

@@ -57,4 +57,12 @@ public enum FileTypeEnum {
         }
         return FileTypeEnum.valueOf(fileType.toUpperCase());
     }
+
+    /**
+     * 使用类型作为后缀，拼接小数点和小写后缀名
+     * @return
+     */
+    public String lowerName() {
+        return this.name().toLowerCase();
+    }
 }

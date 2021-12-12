@@ -73,6 +73,7 @@
         <quartz.version>2.3.2</quartz.version>
         <httpclient.version>4.5.13</httpclient.version>
         <screw-maven-plugin.version>1.0.5</screw-maven-plugin.version>
+        <screw-core.version>1.0.5</screw-core.version>
     </properties>
 
     <dependencies>
@@ -266,6 +267,12 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient.version}</version>
+            </dependency>
+            <!--screw-->
+            <dependency>
+                <groupId>cn.smallbun.screw</groupId>
+                <artifactId>screw-core</artifactId>
+                <version>${screw-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

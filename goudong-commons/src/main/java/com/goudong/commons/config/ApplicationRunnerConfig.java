@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -28,7 +27,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Slf4j
-@Component
+// @Component
 public class ApplicationRunnerConfig implements ApplicationRunner {
     /**
      * 应用上下文路径

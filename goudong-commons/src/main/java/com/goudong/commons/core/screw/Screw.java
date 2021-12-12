@@ -6,6 +6,7 @@ import cn.smallbun.screw.core.engine.EngineFileType;
 import cn.smallbun.screw.core.engine.EngineTemplateType;
 import cn.smallbun.screw.core.execute.DocumentationExecute;
 import cn.smallbun.screw.core.process.ProcessConfig;
+import com.goudong.commons.constant.SpringProfileConst;
 import com.goudong.commons.constant.SystemEnvConst;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -65,7 +66,7 @@ public class Screw {
         String[] activeProfiles = environment.getActiveProfiles();
 
         // dev 和 test 才生成文档
-        long count = Stream.of(activeProfiles).filter(f -> Objects.equals("dev", f) || Objects.equals("test", f))
+        long count = Stream.of(activeProfiles).filter(f -> Objects.equals(SpringProfileConst.DEVELOPMENT, f) || Objects.equals(SpringProfileConst.TEST, f))
                 .count();
 
         if (count > 0) {

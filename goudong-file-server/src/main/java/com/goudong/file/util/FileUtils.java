@@ -55,23 +55,6 @@ public class FileUtils {
     }
 
     /**
-     * 创建File对象，并不创建磁盘文件
-     *
-     * 拼接路径地址格式为：/rootDir/yyyy-mm-dd/uuid.xxx
-     * @param rootDir 配置上传的指定目录
-     * @param filename 携带后缀的文件名
-     * @return File对象
-     */
-    public static File createFile (String rootDir, String filename) {
-        String dateDir = LocalDateTime.now().toLocalDate().toString();
-        File file = new File(rootDir + File.separator + dateDir + File.separator + filename);
-        if (file.exists()) {
-            throw new IllegalArgumentException("文件名重复");
-        }
-        return file;
-    }
-
-    /**
      * 根据文件名进行构造对象
      *
      * @param originalFilename 文件名
@@ -98,6 +81,18 @@ public class FileUtils {
         }
     }
 
+    public static File getFileDir(String rootDir) {
+        String dateDir = LocalDateTime.now().toLocalDate().toString();
+        return new File(rootDir + File.separator + dateDir);
+    }
+
+    /**
+     * 获取文件存储的父目录名
+     * @return yyyy-mm-dd
+     */
+    private static String getDateDir() {
+        return LocalDateTime.now().toLocalDate().toString();
+    }
 
     public static void main(String[] args) {
         String s = IdUtil.simpleUUID();

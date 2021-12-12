@@ -3,11 +3,10 @@ package com.goudong.commons.aop;
 import com.goudong.commons.annotation.Repeat;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.RedisOperationsUtil;
+import com.goudong.commons.utils.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -33,7 +31,6 @@ import java.util.Objects;
  */
 @Slf4j
 @Aspect
-@Component
 public class RepeatAop {
 
 	@Resource

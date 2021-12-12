@@ -1,64 +1,49 @@
 package com.goudong.commons.config;
 
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
-import java.util.stream.Collectors;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * 类描述：
- * 注入Spring bean
+ * 获取Spring容器中的Bean工具类
  * @Author e-Feilong.Chen
- * @Date 2021/8/13 12:37
+ * @Date 2021/8/11 15:25
  */
-@Configuration
-public class SpringBeanConfig {
+@Component
+public class SpringBeanConfig implements ApplicationContextAware {
 
-    /**
-     * openfeign 需要HTTP MessageConverters
-     * @param converters
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
-        return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
+    private static ApplicationContext ac = null;
+    private static SpringBeanConfig springConfigTool = null;
+
+    public synchronized static SpringBeanConfig init() {
+        if (springConfigTool == null) {
+            springConfigTool = new SpringBeanConfig();
+        }
+        return springConfigTool;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext)throws BeansException {
+        ac = applicationContext;
     }
 
     /**
-     * 跨域
+     * 根据bean的名字从spring容器中获取bean
+     * @param beanName
      * @return
      */
-    @Bean
-    public CorsFilter corsFilter() {
-        //1.添加CORS配置信息
-        CorsConfiguration config = new CorsConfiguration();
-        //1) 允许的域,不要写*，否则cookie就无法使用了
-        config.addAllowedOrigin("*");
-        //3) 允许的请求方式
-        config.addAllowedMethod(HttpMethod.OPTIONS.name());
-        config.addAllowedMethod(HttpMethod.POST.name());
-        config.addAllowedMethod(HttpMethod.PUT.name());
-        config.addAllowedMethod(HttpMethod.GET.name());
-        config.addAllowedMethod(HttpMethod.PATCH.name());
-        config.addAllowedMethod(HttpMethod.DELETE.name());
-        // 4）允许的头信息
-        config.addAllowedHeader("*");
-
-        //初始化Cors配置源
-        UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
-        //2.添加映射路径，我们拦截一切请求
-        configSource.registerCorsConfiguration("/**", config);
-
-        //3.返回CorsFilter实例.参数:cors配置源
-        return new CorsFilter(configSource);
+    public synchronized static Object getBean(String beanName) {
+        return ac.getBean(beanName);
     }
+
+    /**
+     * 根据bean的名字从spring容器中获取bean
+     * @param beanName
+     * @return
+     */
+    // public synchronized static Object getBean(String beanName, Class<?> clazz) {
+    //     return (clazz)ac.getBean(beanName);
+    // }
 }

@@ -3,17 +3,22 @@ package com.goudong.file.controller.upload;
 import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
+import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
-import com.goudong.commons.dto.file.ResponseUploadDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.FileLengthUnit;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.pojo.Result;
+import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.LogUtil;
+import com.goudong.commons.utils.redis.RedisOperationsUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
+import com.goudong.file.po.FilePO;
+import com.goudong.file.repository.FileRepository;
 import com.goudong.file.util.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.core.env.Environment;
+import org.springframework.util.StreamUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.io.File;
+import java.io.*;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -55,12 +62,17 @@ public class UploadController {
     @Resource
     private Environment environment;
 
+    @Resource
+    private RedisOperationsUtil redisOperationsUtil;
+
+    @Resource
+    private FileRepository fileRepository;
+
     /**
      * 检查文件是否允许上传
      * @param files
      */
     public void check(List<MultipartFile> files) {
-        // TODO 上传文件接口禁用
         // 检查是否激活文件上传功能
         if (!fileUpload.getEnabled()) {
             String applicationName = environment.getProperty("spring.application.name");
@@ -107,13 +119,10 @@ public class UploadController {
         }
 
     }
-    // private final String fileDir = ConfigConstants.getFileDir();
-    // private final String demoDir = "demo";
-    // private final String demoPath = demoDir + File.separator;
 
     @ApiOperation("上传单文件")
     @PostMapping("/upload")
-    public Result<ResponseUploadDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws JsonProcessingException {
+    public Result<FileDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws JsonProcessingException {
         MultipartFile file = requestUploadDTO.getFile();
 
         // 检查
@@ -126,51 +135,51 @@ public class UploadController {
             filename.setFilename(customerFilename);
         }
 
-        ResponseUploadDTO responseUploadDTO = new ResponseUploadDTO();
-        responseUploadDTO.setOriginalFilename(filename.getFilename());
-        responseUploadDTO.setFileType(filename.getFileTypeEnum());
+        // 文件保存的 目录
+        String dir = fileUpload.getRootDir() + File.separator + LocalDateTime.now().toLocalDate().toString();
+        File dirFile = new File(dir);
+        // 不存在文件夹，再创建文件夹
+        if (!dirFile.exists() && !dirFile.mkdirs()) {
+            LogUtil.warn(log, "创建文件夹失败");
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
+        }
 
+        FilePO filePO = new FilePO();
         // 当前文件名，使用规则生成
-        String uuid = IdUtil.simpleUUID();
-        responseUploadDTO.setCurrentFileName(uuid);
-        long size = file.getSize();
-        responseUploadDTO.setSize(file.getSize());
+        filePO.setCurrentFilename(IdUtil.simpleUUID());
+        // 原文件名
+        filePO.setOriginalFilename(filename.getFilename());
+        // 文件类型
+        filePO.setFileType(filename.getFileTypeEnum().lowerName());
+        // 文件大小
+        filePO.setSize(file.getSize());
 
         // 设置合适的大小和单位
-        ImmutablePair<Long, FileLengthUnit> fileSizePair = FileUtils.adaptiveSize(size);
-        responseUploadDTO.setFileLength(fileSizePair.getLeft());
-        responseUploadDTO.setFileLengthUnit(fileSizePair.getRight());
+        ImmutablePair<Long, FileLengthUnit> fileSizePair = FileUtils.adaptiveSize(file.getSize());
+        // 文件长度
+        filePO.setFileLength(fileSizePair.getLeft());
+        // 长度单位
+        filePO.setFileLengthUnit(fileSizePair.getRight().name().toLowerCase());
 
-        File newFile= FileUtils.createFile(fileUpload.getRootDir(), (responseUploadDTO.getCurrentFileName() + "." + responseUploadDTO.getFileType()));
-        String diskPath = newFile.getPath();
+        // 判断文件是否存在
+        String newFullFilename = dir + File.separator + filePO.getCurrentFilename()+ "." + filePO.getFileType();
+        File newFile = new File(newFullFilename);
+        if (newFile.exists()) {
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
+        }
+        // 创建文件
+        try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {
+            StreamUtils.copy(in, out);
+            filePO.setFileLink("");
+            filePO.setFilePath("");
 
+            fileRepository.save(filePO);
+            return Result.ofSuccess("创建成功", BeanUtil.copyProperties(filePO, FileDTO.class));
+        } catch (IOException e) {
+            log.error("文件上传失败", e);
+            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败");
+        }
 
-        // // Check for Unix-style path
-        // int unixSep = fileName.lastIndexOf('/');
-        // // Check for Windows-style path
-        // int winSep = fileName.lastIndexOf('\\');
-        // // Cut off at latest possible point
-        // int pos = (Math.max(winSep, unixSep));
-        // if (pos != -1)  {
-        //     fileName = fileName.substring(pos + 1);
-        // }
-        // // 判断是否存在同名文件
-        // if (existsFile(fileName)) {
-        //     return new ObjectMapper().writeValueAsString(ReturnResponse.failure("存在同名文件，请先删除原有文件再次上传"));
-        // }
-        // File outFile = new File(fileDir + demoPath);
-        // if (!outFile.exists() && !outFile.mkdirs()) {
-        //     logger.error("创建文件夹【{}】失败，请检查目录权限！",fileDir + demoPath);
-        // }
-        // logger.info("上传文件：{}", fileDir + demoPath + fileName);
-        // try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(fileDir + demoPath + fileName)) {
-        //     StreamUtils.copy(in, out);
-        //     return new ObjectMapper().writeValueAsString(ReturnResponse.success(null));
-        // } catch (IOException e) {
-        //     logger.error("文件上传失败", e);
-        //     return new ObjectMapper().writeValueAsString(ReturnResponse.failure());
-        // }
-        return Result.ofSuccess(responseUploadDTO);
     }
 
     // @RequestMapping(value = "deleteFile", method = RequestMethod.GET)

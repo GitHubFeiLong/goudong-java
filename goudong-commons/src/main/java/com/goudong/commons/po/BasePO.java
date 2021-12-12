@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.goudong.commons.validated.Update;
+import com.goudong.commons.service.validated.Update;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

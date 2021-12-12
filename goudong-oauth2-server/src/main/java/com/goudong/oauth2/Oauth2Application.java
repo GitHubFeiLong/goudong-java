@@ -1,6 +1,6 @@
 package com.goudong.oauth2;
 
-import com.goudong.commons.config.LogApplicationStartup;
+import com.goudong.commons.core.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
