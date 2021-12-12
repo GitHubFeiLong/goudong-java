@@ -41,20 +41,21 @@ spring:
       ddl-auto: none
     show-sql: true
     open-in-view: false
-
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: GMT+8
   redis:
     database: 0   # Redis数据库索引（默认为0）
     host: 127.0.0.1 # Redis服务器地址
     port: 6379
     password: ${REDIS_PASSWORD}
     timeout: 3000
-
   flyway:
     enabled: true
     baseline-version: 0
     baseline-on-migrate: true
     table: goudong_file_server_flyway_schema_history
-
 # redisson配置
 redisson:
   password: ${spring.redis.password}
@@ -76,11 +77,3 @@ knife4j:
     enableDebug: true  # 启用调试，默认为true 无效
 
 # 自定义配置
-#file:
-#  upload:
-#    file-types:
-#      - type: jpg
-#        length: 1
-#        fileLengthUnit: KB
-#      - type: png
-#        enabled: false
