@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "goudong.alibaba.message")
 public class SendSms {
 
     @Resource

@@ -1,5 +1,6 @@
 package com.goudong.gateway;
 
+import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.core.LogApplicationStartup;
 import com.goudong.commons.constant.BasePackageConst;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
         scanBasePackages = {BasePackageConst.GATEWAY}
         , exclude = {DataSourceAutoConfiguration.class}
 )
+@EnableCommonsRedisConfig
 @Slf4j
 public class GatewayApplication {
     public static void main(String[] args) {

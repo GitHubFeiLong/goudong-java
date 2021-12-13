@@ -118,6 +118,12 @@
             <artifactId>flyway-core</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- mybatis-plus-boot-starter -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--mysql-->
         <dependency>
             <groupId>mysql</groupId>

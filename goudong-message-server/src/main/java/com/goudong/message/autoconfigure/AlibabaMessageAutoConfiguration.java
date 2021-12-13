@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 类描述：
- *
+ * 啊里巴巴短信自动配置
  * @author msi
  * @version 1.0
  * @date 2021/12/8 19:52
