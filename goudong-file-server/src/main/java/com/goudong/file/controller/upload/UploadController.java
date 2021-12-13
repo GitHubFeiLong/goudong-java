@@ -171,7 +171,7 @@ public class UploadController {
         try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {
             StreamUtils.copy(in, out);
             filePO.setFileLink("");
-            filePO.setFilePath("");
+            filePO.setFilePath(newFullFilename);
 
             fileRepository.save(filePO);
             return Result.ofSuccess("创建成功", BeanUtil.copyProperties(filePO, FileDTO.class));

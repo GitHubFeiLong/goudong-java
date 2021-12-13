@@ -17,5 +17,4 @@ import java.lang.annotation.*;
 @Documented
 @Import({JpaConfig.class})
 public @interface EnableCommonsJpaConfig {
-
 }
