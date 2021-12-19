@@ -1,6 +1,6 @@
 package com.goudong.oauth2.filter;
 
-import com.goudong.commons.config.SpringBeanConfig;
+import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
@@ -8,7 +8,6 @@ import com.goudong.commons.enumerate.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.StringUtil;
 import com.goudong.oauth2.mapper.SelfAuthorityUserMapper;
 import org.springframework.http.HttpMethod;
@@ -21,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.AntPathMatcher;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -49,12 +49,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     /**
      * 获取 Redis操作bean
      */
-    private RedisOperationsUtil redisOperationsUtil = (RedisOperationsUtil) SpringBeanConfig.getBean("redisOperationsUtil");
+    // private RedisOperationsUtil redisOperationsUtil = (RedisOperationsUtil) SpringBeanConfig.getBean("redisOperationsUtil");
+    @Resource
+    private RedisOperationsUtil redisOperationsUtil;
 
     /**
      * 用户dao
      */
-    private SelfAuthorityUserMapper selfAuthorityUserMapper = (SelfAuthorityUserMapper) SpringBeanConfig.getBean("selfAuthorityUserMapper");
+    // private SelfAuthorityUserMapper selfAuthorityUserMapper = (SelfAuthorityUserMapper) SpringBeanConfig.getBean("selfAuthorityUserMapper");
+    @Resource
+    private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

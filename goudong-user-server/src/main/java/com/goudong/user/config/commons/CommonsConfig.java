@@ -2,7 +2,7 @@ package com.goudong.user.config.commons;
 
 import com.goudong.commons.config.ApplicationRunnerConfig;
 import com.goudong.commons.core.mvc.error.ErrorAttributes;
-import com.goudong.commons.quartz.JobQuartzManager;
+import com.goudong.commons.core.quartz.JobQuartzManager;
 import com.goudong.commons.service.CommonsAuthorityMenuService;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

@@ -3,7 +3,6 @@ package com.goudong.commons.config;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 /**
  * 类描述：
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @Author e-Feilong.Chen
  * @Date 2021/8/11 15:25
  */
-@Component
+// @Component
 public class SpringBeanConfig implements ApplicationContextAware {
 
     private static ApplicationContext ac = null;

@@ -1,4 +1,4 @@
-package com.goudong.commons.quartz;
+package com.goudong.commons.core.quartz;
 
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.BeansException;

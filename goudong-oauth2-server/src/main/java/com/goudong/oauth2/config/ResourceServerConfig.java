@@ -1,6 +1,5 @@
 package com.goudong.oauth2.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -23,7 +22,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
      * 配置令牌校验服务，客户端携带令牌访问资源，作为资源端，必须校验令牌的真伪
      * @return
      */
-    @Bean
+    // @Bean
     public RemoteTokenServices tokenServices() {
         // 远程调用授权服务的check_token进行令牌的校验
         RemoteTokenServices services = new RemoteTokenServices();

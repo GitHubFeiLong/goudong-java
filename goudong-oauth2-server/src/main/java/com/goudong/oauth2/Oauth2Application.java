@@ -1,15 +1,17 @@
 package com.goudong.oauth2;
 
-import com.goudong.commons.core.LogApplicationStartup;
+import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.constant.BasePackageConst;
+import com.goudong.commons.core.LogApplicationStartup;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.util.StopWatch;
@@ -24,12 +26,20 @@ import org.springframework.util.StopWatch;
  * @Date 2021-05-25 14:06
  * @Version 1.0
  */
-@SpringBootApplication(scanBasePackages = {BasePackageConst.OAUTH2, BasePackageConst.COMMONS})
+@SpringBootApplication
 @EnableAuthorizationServer
 @EnableResourceServer
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = BasePackageConst.OPENFEIGN)
-@MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER, BasePackageConst.COMMONS_MAPPER})
+// @MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER, BasePackageConst.COMMONS_MAPPER})
+@MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER})
+@EnableCommonsWebMvcConfig
+@EnableCommonsGlobalExceptionHandler
+
+@EnableCommonsRedisConfig
+@EnableCommonsFeignConfig
+@EnableCommonsJpaConfig
+@EntityScan("com.goudong.oauth2.po")
+@EnableJpaRepositories(basePackages = {"com.goudong.oauth2.repository"})
 public class Oauth2Application {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();

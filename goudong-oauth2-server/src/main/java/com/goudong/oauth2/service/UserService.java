@@ -28,7 +28,7 @@ import java.util.Set;
  * @date 2021/8/29 19:33
  */
 @Service
-public class SelfUserDetailsService implements UserDetailsService {
+public class UserService implements UserDetailsService {
     private List<User> userList;
 
     @Resource

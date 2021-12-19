@@ -1,5 +1,6 @@
-package com.goudong.commons.quartz;
+package com.goudong.commons.core.quartz;
 
+import com.goudong.commons.core.quartz.job.AbstractTask;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;

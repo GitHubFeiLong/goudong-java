@@ -1,7 +1,7 @@
 package com.goudong.user.controller.other;
 
-import com.goudong.commons.quartz.JobQuartzManager;
-import com.goudong.commons.quartz.JobTask;
+import com.goudong.commons.core.quartz.JobQuartzManager;
+import com.goudong.commons.core.quartz.job.JobTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

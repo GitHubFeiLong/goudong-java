@@ -24,7 +24,7 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-public abstract class BaseEntity implements Serializable {
+public abstract class BasePO implements Serializable {
 
     private static final String ID_GEN = "com.goudong.commons.core.jpa.MyIdentifierGenerator";
     private static final long serialVersionUID = -2935429857751851837L;

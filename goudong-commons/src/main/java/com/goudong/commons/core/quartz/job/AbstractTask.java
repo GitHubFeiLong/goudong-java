@@ -1,4 +1,4 @@
-package com.goudong.commons.quartz;
+package com.goudong.commons.core.quartz.job;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.openfeign.UserService;
 import com.goudong.commons.pojo.Result;
-import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.vo.AuthorityUserVO;
@@ -37,8 +36,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Resource
     private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
-    @Resource
-    private AuthorityUserUtil authorityUserUtil;
+    // @Resource
+    // private AuthorityUserUtil authorityUserUtil;
 
     @Resource
     private UserService userService;
@@ -81,7 +80,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
 
         // 将用户登录信息保存到redis中
-        authorityUserUtil.login(token, authorityUserDTO);
+        // authorityUserUtil.login(token, authorityUserDTO);
 
         out.flush();
         out.close();

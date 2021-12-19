@@ -1,5 +1,5 @@
 logging:
-  config: classpath:log4j2-dev.xml
+  config: classpath:log4j2/log4j2-dev.xml
   level:
     ROOT: INFO
     com.goudong.oauth2: DEBUG
@@ -24,6 +24,15 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: GMT+8
   redis:
     database: 0
     host: localhost

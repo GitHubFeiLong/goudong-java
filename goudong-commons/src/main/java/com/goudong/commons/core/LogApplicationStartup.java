@@ -63,7 +63,7 @@ public class LogApplicationStartup {
 
         if (knife4jEnabled) {
             allMessage.append(
-                StringUtil.format("swagger地址:\t http://{}:{}{}/doc.html\n\t",
+                StringUtil.format("swagger:\thttp://{}:{}{}/doc.html\n\t",
                         hostAddress,
                         serverPort,
                         contextPath
