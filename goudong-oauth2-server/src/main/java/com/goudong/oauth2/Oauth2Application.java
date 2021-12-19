@@ -30,11 +30,9 @@ import org.springframework.util.StopWatch;
 @EnableAuthorizationServer
 @EnableResourceServer
 @EnableDiscoveryClient
-// @MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER})
 @EnableCommonsWebMvcConfig
 @EnableCommonsGlobalExceptionHandler
-
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig
