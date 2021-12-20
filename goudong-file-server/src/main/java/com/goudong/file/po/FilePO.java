@@ -1,6 +1,6 @@
 package com.goudong.file.po;
 
-import com.goudong.commons.core.jpa.BaseEntity;
+import com.goudong.commons.core.jpa.BasePO;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "file")
-public class FilePO extends BaseEntity {
+public class FilePO extends BasePO {
 
     /**
      * 原始文件名
