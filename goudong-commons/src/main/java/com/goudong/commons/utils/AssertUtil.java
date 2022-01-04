@@ -1,9 +1,16 @@
 package com.goudong.commons.utils;
 
+import com.goudong.commons.enumerate.FileTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 扩展 Assert
@@ -48,13 +55,35 @@ public class AssertUtil extends Assert{
      * 断言，name是枚举clazz的成员
      * @param name 成员名称
      * @param clazz 枚举class对象
+     */
+    public static void isEnum (String name, Class clazz) {
+        isEnum(name, clazz, null);
+    }
+    /**
+     * 断言，name是枚举clazz的成员
+     * @param name 成员名称
+     * @param clazz 枚举class对象
      * @param message 错误信息
      */
     public static void isEnum (String name, Class clazz, String message) {
         Assert.hasLength(name, "枚举成员不能是null");
         try {
-            Enum.valueOf(clazz, name);
+            Enum anEnum = Enum.valueOf(clazz, name);
         } catch (IllegalArgumentException e) {
+
+            // 不为空，使用自定义异常
+            if (StringUtils.isNotBlank(message)) {
+                throw new IllegalArgumentException(message);
+            }
+
+            // message为空，使用通用异常信息(这里会多一个$VALUES)
+            Field[] declaredFields = clazz.getDeclaredFields();
+            List<String> fieldNames = Stream.of(declaredFields)
+                    .map(Field::getName)
+                    .filter(f-> !Objects.equals("$VALUES", f))
+                    .collect(Collectors.toList());
+            message = String.format("参数错误,'%s'不是有效值,请使用以下值作参数：%s", name, StringUtils.join(fieldNames, ","));
+
             throw new IllegalArgumentException(message);
         }
     }
