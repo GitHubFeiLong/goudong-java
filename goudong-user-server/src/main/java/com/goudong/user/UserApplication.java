@@ -31,6 +31,7 @@ public class UserApplication {
         stopWatch.start();
         ConfigurableApplicationContext context = new SpringApplicationBuilder(UserApplication.class)
                 .logStartupInfo(false)
+
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)
                 .run(args);

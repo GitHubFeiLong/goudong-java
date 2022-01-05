@@ -1,4 +1,4 @@
-package com.goudong.commons.enumerate;
+package com.goudong.commons.enumerate.file;
 
 import jodd.util.StringUtil;
 
@@ -14,7 +14,6 @@ import java.util.stream.Stream;
  * @date 2021/12/5 18:41
  */
 public enum FileTypeEnum {
-    FILE,
     JPG,
     JPEG,
     PNG,

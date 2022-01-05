@@ -30,12 +30,12 @@ import org.springframework.util.StopWatch;
 @EnableCommonsJpaConfig
 @EntityScan("com.goudong.file.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.file.repository"})
-public class FileApplication {
+public class GoudongFileServer {
 
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(FileApplication.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongFileServer.class)
                 .logStartupInfo(false)
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)

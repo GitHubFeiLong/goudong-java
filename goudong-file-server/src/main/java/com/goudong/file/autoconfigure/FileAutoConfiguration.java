@@ -1,7 +1,7 @@
 package com.goudong.file.autoconfigure;
 
 import com.goudong.commons.constant.SystemEnvConst;
-import com.goudong.commons.enumerate.FileTypeEnum;
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.utils.LogUtil;
 import com.goudong.commons.utils.StringUtil;
@@ -44,6 +44,7 @@ public class FileAutoConfiguration {
      * 拼接完整的上传路径， 默认值 goudong-file-server
      */
     private final String applicationName;
+
     public FileAutoConfiguration(FileProperties fileProperties, Environment environment) {
         this.fileProperties = fileProperties;
         this.environment = environment;

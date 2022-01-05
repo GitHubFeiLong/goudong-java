@@ -1,6 +1,6 @@
 package com.goudong.file.core;
 
-import com.goudong.commons.enumerate.FileTypeEnum;
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

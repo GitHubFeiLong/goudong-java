@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.enumerate.FileLengthUnit;
+import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;

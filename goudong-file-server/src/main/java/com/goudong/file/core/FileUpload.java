@@ -1,6 +1,8 @@
 package com.goudong.file.core;
 
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import lombok.Data;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +33,79 @@ public class FileUpload {
     private String rootDir = "";
 
     /**
+     * jpg类型
+     */
+    @NestedConfigurationProperty
+    private FileType jpg = new FileType(FileTypeEnum.JPG);
+    /**
+     * jpeg类型
+     */
+    @NestedConfigurationProperty
+    private FileType jpeg = new FileType(FileTypeEnum.JPEG);
+    /**
+     * png类型
+     */
+    @NestedConfigurationProperty
+    private FileType png = new FileType(FileTypeEnum.PNG);
+    /**
+     * gif类型
+     */
+    @NestedConfigurationProperty
+    private FileType gif = new FileType(FileTypeEnum.GIF);
+    /**
+     * svg类型
+     */
+    @NestedConfigurationProperty
+    private FileType svg = new FileType(FileTypeEnum.SVG);
+    /**
+     * xls类型
+     */
+    @NestedConfigurationProperty
+    private FileType xls = new FileType(FileTypeEnum.XLS);
+    /**
+     * xlsx类型
+     */
+    @NestedConfigurationProperty
+    private FileType xlsx = new FileType(FileTypeEnum.XLSX);
+    /**
+     * doc类型
+     */
+    @NestedConfigurationProperty
+    private FileType doc = new FileType(FileTypeEnum.DOC);
+    /**
+     * docx类型
+     */
+    @NestedConfigurationProperty
+    private FileType docx = new FileType(FileTypeEnum.DOCX);
+    /**
+     * ppt类型
+     */
+    @NestedConfigurationProperty
+    private FileType ppt = new FileType(FileTypeEnum.PPT);
+    /**
+     * pptx类型
+     */
+    @NestedConfigurationProperty
+    private FileType pptx = new FileType(FileTypeEnum.PPTX);
+    /**
+     * pdf类型
+     */
+    @NestedConfigurationProperty
+    private FileType pdf = new FileType(FileTypeEnum.PDF);
+    /**
+     * txt类型
+     */
+    @NestedConfigurationProperty
+    private FileType txt = new FileType(FileTypeEnum.TXT);
+    /**
+     * md类型
+     */
+    @NestedConfigurationProperty
+    private FileType md = new FileType(FileTypeEnum.MD);
+
+    /**
      * 文件类型
      */
+    @Deprecated
     private List<FileType> fileTypes = new ArrayList<>();
 }

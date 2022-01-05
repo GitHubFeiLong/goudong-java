@@ -1,8 +1,8 @@
 package com.goudong.file.util;
 
 import cn.hutool.core.util.IdUtil;
-import com.goudong.commons.enumerate.FileLengthUnit;
-import com.goudong.commons.enumerate.FileTypeEnum;
+import com.goudong.commons.enumerate.file.FileLengthUnit;
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.file.core.Filename;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.time.LocalDateTime;
 
-import static com.goudong.commons.enumerate.FileLengthUnit.*;
+import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
 
 /**
  * 类描述：

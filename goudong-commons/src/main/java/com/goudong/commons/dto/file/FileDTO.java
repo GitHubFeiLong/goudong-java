@@ -1,5 +1,7 @@
 package com.goudong.commons.dto.file;
 
+import com.goudong.commons.enumerate.file.FileLengthUnit;
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,7 +30,7 @@ public class FileDTO {
 
     /**
      * 文件类型
-     * @see com.goudong.commons.enumerate.FileTypeEnum
+     * @see FileTypeEnum
      */
     @ApiModelProperty(value = "文件类型")
     private String fileType;
@@ -47,7 +49,7 @@ public class FileDTO {
 
     /**
      * 文件大小单位
-     * @see com.goudong.commons.enumerate.FileLengthUnit
+     * @see FileLengthUnit
      */
     @ApiModelProperty(value = "文件大小单位")
     private String fileLengthUnit;

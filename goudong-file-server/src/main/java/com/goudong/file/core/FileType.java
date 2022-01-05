@@ -1,7 +1,7 @@
 package com.goudong.file.core;
 
-import com.goudong.commons.enumerate.FileLengthUnit;
-import com.goudong.commons.enumerate.FileTypeEnum;
+import com.goudong.commons.enumerate.file.FileLengthUnit;
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
@@ -40,6 +40,19 @@ public class FileType {
      * 是否禁用该类文件上传，默认都是允许上传
      */
     private Boolean enabled = true;
+
+    public FileType() {
+    }
+
+    public FileType(FileTypeEnum type) {
+        this.type = type;
+    }
+
+    public FileType(FileTypeEnum type, Long length, FileLengthUnit fileLengthUnit) {
+        this.type = type;
+        this.length = length;
+        this.fileLengthUnit = fileLengthUnit;
+    }
 
     @Override
     public boolean equals(Object o) {

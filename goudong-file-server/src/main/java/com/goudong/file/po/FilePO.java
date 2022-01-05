@@ -1,6 +1,8 @@
 package com.goudong.file.po;
 
 import com.goudong.commons.core.jpa.BasePO;
+import com.goudong.commons.enumerate.file.FileLengthUnit;
+import com.goudong.commons.enumerate.file.FileTypeEnum;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -36,7 +38,7 @@ public class FilePO extends BasePO {
 
     /**
      * 文件类型
-     * @see com.goudong.commons.enumerate.FileTypeEnum
+     * @see FileTypeEnum
      */
     @Length(max = 8)
     @Column(name = "file_type", nullable = false)
@@ -56,7 +58,7 @@ public class FilePO extends BasePO {
 
     /**
      * 文件大小单位
-     * @see com.goudong.commons.enumerate.FileLengthUnit
+     * @see FileLengthUnit
      */
     @Column(name = "file_length_unit", nullable = false)
     private String fileLengthUnit;
