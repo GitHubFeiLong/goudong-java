@@ -1,6 +1,7 @@
 package com.goudong.commons.utils;
 
 import com.goudong.commons.enumerate.FileTypeEnum;
+import com.goudong.commons.enumerate.RedisKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -79,13 +80,17 @@ public class AssertUtil extends Assert{
             // message为空，使用通用异常信息(这里会多一个$VALUES)
             Field[] declaredFields = clazz.getDeclaredFields();
             List<String> fieldNames = Stream.of(declaredFields)
+                    .filter(f->Objects.equals(f.getType().getName(), clazz.getName()))
                     .map(Field::getName)
-                    .filter(f-> !Objects.equals("$VALUES", f))
                     .collect(Collectors.toList());
             message = String.format("参数错误,'%s'不是有效值,请使用以下值作参数：%s", name, StringUtils.join(fieldNames, ","));
 
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static void main(String[] args) {
+        isEnum("REPEAT_URI1", RedisKeyEnum.class);
     }
 
     /**
