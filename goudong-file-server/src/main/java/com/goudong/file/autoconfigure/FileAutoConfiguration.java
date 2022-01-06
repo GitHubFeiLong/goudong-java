@@ -1,5 +1,6 @@
 package com.goudong.file.autoconfigure;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.constant.SystemEnvConst;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.utils.AssertUtil;
@@ -10,16 +11,16 @@ import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -62,16 +63,20 @@ public class FileAutoConfiguration {
         final String settingRootDir = upload.getRootDir();
         String rootDir = upload.getRootDir();
 
-        // 获取所有类型
-        List<FileType> defaultFileTypes = new ArrayList<>();
-        FileTypeEnum.listValues().stream().forEach(p->{
-            FileType fileType = new FileType();
-            fileType.setType(p);
-            defaultFileTypes.add(fileType);
-        });
+        /*
+            配置的类型及限制
+         */
+        List<FileType> fileTypeList = new ArrayList<>();
+        Arrays.stream(upload.getClass().getDeclaredFields())
+                .filter(f -> Objects.equals(f.getType().getName(), FileType.class.getName()))
+                .map(Field::getName)
+                .forEach(f->{
+                    fileTypeList.add(BeanUtil.getProperty(upload, f));
+                });
 
-        // 用户配置的类型
-        List<FileType> settingFileTypes = new ArrayList<>(upload.getFileTypes());
+        // 将其设置到属性中，避免后面额外去取值
+        upload.setFileTypes(fileTypeList);
+
         // 开启全路径，那么就不需要修改路径。
         if (upload.getEnableFullPathModel()) {
             // 判断是否正确
@@ -89,30 +94,12 @@ public class FileAutoConfiguration {
                     "您可以尝试配置\"file.upload.enable-full-path-model=true\"", settingRootDir, rootDir));
             upload.setRootDir(rootDir);
         }
-        Iterator<FileType> iterator = defaultFileTypes.iterator();
-        while (iterator.hasNext()) {
-            FileType fileType = iterator.next();
-
-            if (settingFileTypes.contains(fileType)) {
-                int indexOf = settingFileTypes.indexOf(fileType);
-                FileType settingFileType = settingFileTypes.get(indexOf);
-                Boolean enabled = settingFileType.getEnabled();
-                if (!enabled) {
-                    iterator.remove();
-                } else {
-                    fileType.setLength(settingFileType.getLength());
-                    fileType.setFileLengthUnit(settingFileType.getFileLengthUnit());
-                }
-            }
-        }
-
-        upload.setFileTypes(defaultFileTypes);
 
         StringBuilder body = new StringBuilder();
         body.append("\t[序号]\t[类型]\t[上限]\n");
         AtomicInteger integer = new AtomicInteger(1);
-        int border = defaultFileTypes.size();
-        defaultFileTypes.stream().forEach(p->{
+        int border = fileTypeList.size();
+        fileTypeList.stream().forEach(p->{
             body.append("\t").append(integer.get())
                     .append("\t\t").append(StringUtil.fillSpace(p.getType().toString(), 8))
                     .append(p.getLength()).append(p.getFileLengthUnit());

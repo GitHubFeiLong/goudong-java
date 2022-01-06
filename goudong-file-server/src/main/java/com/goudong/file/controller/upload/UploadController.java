@@ -96,7 +96,10 @@ public class UploadController {
                 // 存在后缀，就比较后缀是否通过
                 String suffix = originalFilename.substring(pos + 1);
                 Optional<FileType> first = fileTypes.stream().
-                        filter(f -> Objects.equals(suffix.toUpperCase(), f.getType().name())).findFirst();
+                        filter(f -> Objects.equals(suffix.toUpperCase(), f.getType().name()))
+                        .filter(f-> f.getEnabled())
+                        .findFirst();
+                
                 FileType fileType = first.
                         orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.BAD_REQUEST,
                                 String.format("文件服务，暂不支持上传%s类型文件", suffix)));

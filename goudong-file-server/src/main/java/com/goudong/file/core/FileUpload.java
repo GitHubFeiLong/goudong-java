@@ -106,6 +106,5 @@ public class FileUpload {
     /**
      * 文件类型
      */
-    @Deprecated
     private List<FileType> fileTypes = new ArrayList<>();
 }
