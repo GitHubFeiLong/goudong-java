@@ -3,6 +3,7 @@ package com.goudong.user.controller.open;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.dto.user.BaseUserByPhoneDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.AuthorityUserPO;
@@ -50,12 +51,7 @@ public class OpenUerController {
     @Resource
     private AuthorityUserUtil authorityUserUtil;
 
-    @GetMapping("/demo")
-    @ApiOperation("测试日志接口")
-    public Result demo(String name, String address) {
-        authorityUserService.demo(name, address, 100);
-        return Result.ofSuccess("return");
-    }
+
 
     /**
      * 根据手机号获取账号
@@ -67,10 +63,9 @@ public class OpenUerController {
     @ApiOperation(value = "根据手机号获取账号")
     @ApiImplicitParam(name = "phone", value = "手机号")
     @IgnoreResource("根据手机号获取账号")
-    public Result<AuthorityUserVO> getUserByPhone(@PathVariable String phone) {
+    public Result<BaseUserByPhoneDTO> getUserByPhone(@PathVariable String phone) {
         AssertUtil.isPhone(phone, "手机号码格式不正确，获取用户失败");
-        LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
-        lambdaQueryWrapper.eq(AuthorityUserPO::getPhone, phone);
+
         AuthorityUserPO authorityUserPO = authorityUserService.getOne(lambdaQueryWrapper);
         AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(authorityUserPO, AuthorityUserVO.class);
         return Result.ofSuccess(authorityUserVO);

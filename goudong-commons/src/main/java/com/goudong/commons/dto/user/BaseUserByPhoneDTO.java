@@ -1,6 +1,6 @@
-package com.goudong.commons.vo;
+package com.goudong.commons.dto.user;
 
-import com.goudong.commons.po.BasePO;
+import com.goudong.commons.core.jpa.BasePO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,13 +8,15 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * authority_user
- * @author
+ * 类描述：
+ * 根据手机号获取用户
+ * @auther msi
+ * @date 2022/1/7 17:41
+ * @version 1.0
  */
 @Data
-@ApiModel(value="generate.AuthorityUserVO用户基本信息表")
-@Deprecated
-public class AuthorityUserVO extends BasePO {
+@ApiModel(value="根据手机号获取用户信息")
+public class BaseUserByPhoneDTO extends BasePO {
 
     private static final long serialVersionUID = 6520160201127140443L;
 

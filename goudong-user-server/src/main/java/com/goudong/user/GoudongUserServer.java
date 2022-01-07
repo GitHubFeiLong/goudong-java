@@ -2,6 +2,7 @@ package com.goudong.user;
 
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsMybatisPlusConfig;
 import com.goudong.commons.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,8 +24,9 @@ import org.springframework.util.StopWatch;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCommonsFeignConfig
+@EnableCommonsMybatisPlusConfig
 @EnableCommonsJpaConfig
-@EntityScan("com.goudong.file.po")
+@EntityScan("com.goudong.user.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.user.repository"})
 public class GoudongUserServer {
 
