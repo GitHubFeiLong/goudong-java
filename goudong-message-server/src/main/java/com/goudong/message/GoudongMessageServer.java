@@ -36,11 +36,11 @@ import org.springframework.util.StopWatch;
 @MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling
 @Slf4j
-public class MessageApplication {
+public class GoudongMessageServer {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(MessageApplication.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongMessageServer.class)
                 .logStartupInfo(false)
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)

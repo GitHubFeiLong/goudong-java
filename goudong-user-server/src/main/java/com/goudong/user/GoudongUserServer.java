@@ -24,12 +24,12 @@ import org.springframework.util.StopWatch;
 @MapperScan(basePackages = {BasePackageConst.USER_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableDiscoveryClient
 @EnableCommonsFeignConfig
-public class UserApplication {
+public class GoudongUserServer {
 
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(UserApplication.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongUserServer.class)
                 .logStartupInfo(false)
 
                 .main(SpringVersion.class)

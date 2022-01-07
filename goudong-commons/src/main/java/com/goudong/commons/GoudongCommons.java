@@ -10,8 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  */
 @SpringBootApplication
-public class CommonsApplication {
+public class GoudongCommons {
     public static void main(String[] args) {
-        SpringApplication.run(CommonsApplication.class, args);
+        SpringApplication.run(GoudongCommons.class, args);
     }
 }

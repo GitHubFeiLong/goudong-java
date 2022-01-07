@@ -13,8 +13,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @SpringBootApplication(scanBasePackages = {BasePackageConst.COMMODITY, BasePackageConst.COMMONS})
 @MapperScan(basePackages = {"com.goudong.commodity.dao"})
-public class CommodityApplication {
+public class GoudongCommodityServer {
     public static void main(String[] args) {
-        SpringApplication.run(CommodityApplication.class, args);
+        SpringApplication.run(GoudongCommodityServer.class, args);
     }
 }

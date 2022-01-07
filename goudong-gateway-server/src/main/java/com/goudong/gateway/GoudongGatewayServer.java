@@ -23,11 +23,11 @@ import org.springframework.util.StopWatch;
 @EnableCommonsFeignConfig
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableCommonsRedisConfig
-public class GatewayApplication {
+public class GoudongGatewayServer {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(GatewayApplication.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongGatewayServer.class)
                 .logStartupInfo(false)
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)
