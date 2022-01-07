@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
  * @Version 1.0
  */
 @Data
+@Deprecated
 public class BasePO implements Serializable {
     private static final long serialVersionUID = 8647446252613184267L;
     /**

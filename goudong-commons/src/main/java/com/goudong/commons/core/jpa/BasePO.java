@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * 类描述：
@@ -39,7 +40,7 @@ public abstract class BasePO implements Serializable {
      */
     @CreatedDate
     @Column(name = "create_time", nullable = false)
-    private Instant createTime;
+    private LocalDateTime createTime;
 
     /**
      * 创建人id
@@ -53,7 +54,7 @@ public abstract class BasePO implements Serializable {
      */
     @LastModifiedDate
     @Column(name = "update_time", nullable = false)
-    private Instant updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 更新人id
