@@ -80,15 +80,6 @@ spring:
     password: ${REDIS_PASSWORD}
     timeout: 3000
 
-  ## flyway数据迁移
-  flyway:
-    #是否开启
-    enabled: true
-    locations: classpath:db/migration #迁移脚本的位置，默认db/migration
-    baseline-on-migrate: true
-    out-of-order: false
-    table: flyway_schema_history
-
 # redisson配置
 redisson:
   password: ${spring.redis.password}
