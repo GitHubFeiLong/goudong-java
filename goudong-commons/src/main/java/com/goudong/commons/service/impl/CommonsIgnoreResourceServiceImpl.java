@@ -3,14 +3,14 @@ package com.goudong.commons.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
-import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.mapper.CommonsIgnoreResourceMapper;
 import com.goudong.commons.po.BaseIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -3,7 +3,7 @@ package com.goudong.commons.tree;
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.utils.StringUtil;
+import com.goudong.commons.utils.core.StringUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 

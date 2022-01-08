@@ -7,6 +7,7 @@ import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.enumerate.RequestMappingEnum;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.pojo.ResourceAntMatcher;
+import com.goudong.commons.utils.core.StringUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

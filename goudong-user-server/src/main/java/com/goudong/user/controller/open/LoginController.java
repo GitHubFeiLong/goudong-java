@@ -1,7 +1,7 @@
 package com.goudong.user.controller.open;
 
 import com.goudong.commons.annotation.IgnoreResource;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

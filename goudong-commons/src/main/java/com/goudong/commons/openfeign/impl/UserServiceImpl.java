@@ -3,7 +3,7 @@ package com.goudong.commons.openfeign.impl;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseTokenDTO;
 import com.goudong.commons.openfeign.UserService;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 
 import java.util.List;

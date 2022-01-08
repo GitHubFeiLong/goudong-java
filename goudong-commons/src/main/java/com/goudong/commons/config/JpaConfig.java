@@ -1,6 +1,6 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.core.jpa.MyAuditorAware;
+import com.goudong.commons.frame.jpa.MyAuditorAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

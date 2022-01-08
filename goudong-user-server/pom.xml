@@ -110,12 +110,6 @@
             <artifactId>spring-boot-starter-aop</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--apache 通用工具包-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!--flyway-->
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -167,7 +161,24 @@
             </exclusions>
             <optional>true</optional>
         </dependency>
-
+        <!--apache 通用工具包-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- commons-collections4 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--commons-io-->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->
@@ -219,30 +230,6 @@
                         <version>${mysql-connector-java.version}</version>
                     </dependency>
                 </dependencies>
-                <configuration>
-                    <!--username-->
-                    <username>root</username>
-                    <!--password-->
-                    <password>l(=8gp_04h*&amp;</password>
-                    <!--driver-->
-                    <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
-                    <!--jdbc url-->
-                    <jdbcUrl>jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC</jdbcUrl>
-                    <!--生成文件类型-->
-                    <fileType>HTML</fileType>
-                    <!--打开文件输出目录-->
-                    <openOutputDir>false</openOutputDir>
-                    <!--生成模板-->
-                    <produceType>freemarker</produceType>
-                    <!--文档名称 为空时:将采用[数据库名称-描述-版本号]作为文档名称-->
-                    <fileName>测试文档名称</fileName>
-                    <!--描述-->
-                    <description>数据库文档生成</description>
-                    <!--版本-->
-                    <version>${project.version}</version>
-                    <!--标题-->
-                    <title>数据库文档</title>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>compile</phase>

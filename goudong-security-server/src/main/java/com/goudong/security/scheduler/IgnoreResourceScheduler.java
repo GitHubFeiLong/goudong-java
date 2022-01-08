@@ -1,11 +1,11 @@
 package com.goudong.security.scheduler;
 
-import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.po.BaseIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
-import com.goudong.commons.core.redis.GenerateRedisKeyUtil;
+import com.goudong.commons.frame.redis.GenerateRedisKeyUtil;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.security.mapper.BaseIgnoreResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

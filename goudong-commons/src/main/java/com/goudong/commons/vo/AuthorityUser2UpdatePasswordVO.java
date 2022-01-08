@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -17,6 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityUser2UpdatePasswordVO implements Serializable {
 
     private static final long serialVersionUID = 7929990337110946181L;

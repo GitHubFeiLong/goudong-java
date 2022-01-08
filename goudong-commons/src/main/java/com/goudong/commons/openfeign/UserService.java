@@ -2,7 +2,7 @@ package com.goudong.commons.openfeign;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseTokenDTO;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,6 @@ public interface UserService {
      * @return
      */
     @GetMapping("/open/user/detail-info/{login-name}")
-    @ResponseBody
     Result<AuthorityUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName);
 
     /**

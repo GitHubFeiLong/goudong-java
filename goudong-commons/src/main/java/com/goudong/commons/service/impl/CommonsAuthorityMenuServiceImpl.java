@@ -2,7 +2,7 @@ package com.goudong.commons.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.AuthorityMenuDTO;
-import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.po.AuthorityMenuPO;
 import com.goudong.commons.mapper.CommonsAuthorityMenuMapper;
 import com.goudong.commons.service.CommonsAuthorityMenuService;

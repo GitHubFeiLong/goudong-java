@@ -2,12 +2,12 @@ package com.goudong.commons.aop;
 
 import com.goudong.commons.annotation.Repeat;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
-import com.goudong.commons.utils.StringUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
+import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;

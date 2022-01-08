@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

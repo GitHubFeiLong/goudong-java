@@ -1,6 +1,6 @@
 package com.goudong.commons.utils;
 
-import com.goudong.commons.enumerate.RedisKeyEnum;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;

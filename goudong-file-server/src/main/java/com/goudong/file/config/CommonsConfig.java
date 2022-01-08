@@ -2,10 +2,10 @@ package com.goudong.file.config;
 
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.aop.RepeatAop;
-import com.goudong.commons.core.mvc.error.ErrorAttributes;
-import com.goudong.commons.core.mvc.error.ErrorController;
+import com.goudong.commons.frame.mvc.error.ErrorAttributes;
+import com.goudong.commons.frame.mvc.error.ErrorController;
 import com.goudong.commons.utils.AuthorityUserUtil;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;

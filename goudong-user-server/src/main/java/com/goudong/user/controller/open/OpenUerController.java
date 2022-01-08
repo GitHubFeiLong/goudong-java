@@ -1,31 +1,27 @@
 package com.goudong.user.controller.open;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.goudong.commons.annotation.IgnoreResource;
-import com.goudong.commons.dto.AuthorityUserDTO;
+import cn.hutool.core.bean.BeanUtil;
+import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.commons.dto.user.BaseUser2CreateDTO;
 import com.goudong.commons.dto.user.BaseUserByPhoneDTO;
+import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.po.AuthorityUserPO;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.enumerate.user.AccountRadioEnum;
+import com.goudong.commons.exception.user.UserException;
+import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.AuthorityUserUtil;
-import com.goudong.commons.utils.BeanUtil;
-import com.goudong.commons.vo.AuthorityUser2CreateVO;
-import com.goudong.commons.vo.AuthorityUser2UpdateOpenIdVO;
-import com.goudong.commons.vo.AuthorityUser2UpdatePasswordVO;
-import com.goudong.commons.vo.AuthorityUserVO;
-import com.goudong.user.service.AuthorityUserService;
+import com.goudong.user.po.BaseUserPO;
+import com.goudong.user.repository.BaseUserRepository;
+import com.goudong.user.service.BaseUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -42,16 +38,32 @@ import java.util.List;
 @RequestMapping("/open/user")
 public class OpenUerController {
 
-    @Resource
-    private AuthorityUserService authorityUserService;
+    // @Resource
+    // private AuthorityUserService authorityUserService;
+    //
+    // @Resource
+    // private HttpServletRequest request;
+    //
+    // @Resource
+    // private AuthorityUserUtil authorityUserUtil;
 
-    @Resource
-    private HttpServletRequest request;
+    /**
+     * 用户持久层接口
+     */
+    private final BaseUserRepository baseUserRepository;
 
-    @Resource
-    private AuthorityUserUtil authorityUserUtil;
+    /**
+     * 用户服务层接口
+     */
+    private final BaseUserService baseUserService;
 
-
+    /**
+     * 构造方法注入Bean
+     */
+    public OpenUerController(BaseUserRepository baseUserRepository, BaseUserService baseUserService) {
+        this.baseUserRepository = baseUserRepository;
+        this.baseUserService = baseUserService;
+    }
 
     /**
      * 根据手机号获取账号
@@ -62,13 +74,12 @@ public class OpenUerController {
     @GetMapping("/phone/{phone}")
     @ApiOperation(value = "根据手机号获取账号")
     @ApiImplicitParam(name = "phone", value = "手机号")
-    @IgnoreResource("根据手机号获取账号")
+    @Whitelist("根据手机号获取账号")
     public Result<BaseUserByPhoneDTO> getUserByPhone(@PathVariable String phone) {
         AssertUtil.isPhone(phone, "手机号码格式不正确，获取用户失败");
-
-        AuthorityUserPO authorityUserPO = authorityUserService.getOne(lambdaQueryWrapper);
-        AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(authorityUserPO, AuthorityUserVO.class);
-        return Result.ofSuccess(authorityUserVO);
+        BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
+        BaseUserByPhoneDTO baseUserByPhoneDTO = BeanUtil.copyProperties(baseUserPO, BaseUserByPhoneDTO.class);
+        return Result.ofSuccess(baseUserByPhoneDTO);
     }
 
     /**
@@ -80,9 +91,9 @@ public class OpenUerController {
     @GetMapping("/check-username/{username}")
     @ApiOperation(value = "检查用户名是否存在", notes = "注册时，检查用户名是否可用。可用时，返回空集合；\n当不可用时，返回3个可用的用户名")
     @ApiImplicitParam(name = "username", value = "用户名")
-    @IgnoreResource("检查用户名是否存在")
+    @Whitelist("检查用户名是否存在")
     public Result<List<String>> getUserByUsername(@PathVariable String username) {
-        List<String> strings = authorityUserService.generateUserName(username);
+        List<String> strings = baseUserService.generateUserName(username);
         return Result.ofSuccess(strings);
     }
 
@@ -94,33 +105,33 @@ public class OpenUerController {
      */
     @GetMapping("/check-email/{email}")
     @ApiOperation(value = "检查邮箱能否使用", notes = "当返回对象的data属性为True时，表示可以使用；当邮箱不可以使用时，使用 dataMap.status 进行判断：0 邮箱不正确；1 邮箱正确")
-    @IgnoreResource("检查邮箱能否使用")
+    @Whitelist("检查邮箱能否使用")
     public Result<Boolean> checkEmailInUse(@PathVariable String email) {
         AssertUtil.isEmail(email, "邮箱格式错误");
-        LambdaQueryWrapper<AuthorityUserPO> lambdaQueryWrapper = new LambdaQueryWrapper();
-        lambdaQueryWrapper.eq(AuthorityUserPO::getEmail, email);
-        AuthorityUserPO authorityUserPO = authorityUserService.getOne(lambdaQueryWrapper);
 
-        Result<Boolean> result = Result.ofSuccess(authorityUserPO==null);
+        BaseUserPO byEmail = baseUserRepository.findByEmail(email);
+
+        Result<Boolean> result = Result.ofSuccess(byEmail==null);
         return result;
     }
 
     /**
      * 新增或修改用户
-     * @param createVO
+     * @param createDTO
      * @return
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "创建普通账号", notes = "注册用户")
-    @IgnoreResource("创建普通账号")
-    public Result createUser(@RequestBody @Validated AuthorityUser2CreateVO createVO) {
-        AssertUtil.isPhone(createVO.getPhone(), "手机号格式错误");
+    @Whitelist("创建普通账号")
+    public Result createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
+        AssertUtil.isPhone(createDTO.getPhone(), "手机号格式错误");
+        AssertUtil.isEnum(createDTO.getAccountRadio(), AccountRadioEnum.class);
 
-        AuthorityUserDTO userDTO = BeanUtil.copyProperties(createVO, AuthorityUserDTO.class);
-        AuthorityUserDTO user = authorityUserService.createUser(userDTO);
-        AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(user, AuthorityUserVO.class);
-        return Result.ofSuccess(authorityUserVO);
+        BaseUserDTO userDTO = BeanUtil.copyProperties(createDTO, BaseUserDTO.class);
+        BaseUserDTO user = baseUserService.createUser(userDTO);
+
+        return Result.ofSuccess(user);
     }
 
     /**
@@ -131,56 +142,56 @@ public class OpenUerController {
     @GetMapping("/info/{login-name}")
     @ApiOperation(value = "根据登录用户名获取用户信息", notes = "登陆用户名包括，用户名，邮箱及密码")
     @ApiImplicitParam(name = "login-name", value = "登陆用户名")
-    @IgnoreResource("根据账户名查询基本信息")
+    @Whitelist("根据账户名查询基本信息")
     public Result getUserByLoginName(@PathVariable("login-name") String loginName){
-
-        AuthorityUserDTO authorityUserDTO = authorityUserService.getUserByLoginName(loginName);
-        if (authorityUserDTO == null) {
-            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在");
+        List<BaseUserPO> userByLoginName = baseUserService.getUserByLoginName(loginName);
+        if (CollectionUtils.isEmpty(userByLoginName)) {
+            throw new UserException(ClientExceptionEnum.NOT_FOUND, "用户不存在");
         }
-        return Result.ofSuccess(authorityUserDTO);
+        BaseUserDTO baseUserDTO = BeanUtil.copyProperties(userByLoginName.get(0), BaseUserDTO.class, "password");
+        return Result.ofSuccess(baseUserDTO);
     }
 
-    /**
-     * 修改用户密码
-     * @param updatePasswordVO
-     * @return
-     */
-    @PatchMapping("/password")
-    @ApiOperation(value = "修改密码")
-    @IgnoreResource("修改密码")
-    public Result<AuthorityUserVO> updatePassword(@RequestBody @Validated AuthorityUser2UpdatePasswordVO updatePasswordVO){
-        AuthorityUserDTO var0 = BeanUtil.copyProperties(updatePasswordVO, AuthorityUserDTO.class);
-        AuthorityUserDTO var1 = authorityUserService.updatePassword(var0);
-
-        return Result.ofSuccess(BeanUtil.copyProperties(var1, AuthorityUserVO.class));
-    }
-
-    /**
-     * 绑定openId
-     * @param updateOpenIdVO
-     * @return
-     */
-    @PatchMapping("/bind-open-id")
-    @ApiOperation(value = "绑定openId", hidden = true)
-    public Result updateOpenId(@RequestBody @Validated AuthorityUser2UpdateOpenIdVO updateOpenIdVO){
-        AuthorityUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdVO, AuthorityUserDTO.class);
-
-        AuthorityUserDTO userDTO1 = authorityUserService.updateOpenId(userDTO);
-        AuthorityUserVO userVO = BeanUtil.copyProperties(userDTO1, AuthorityUserVO.class);
-        return Result.ofSuccess(userVO);
-    }
-
-    /**
-     * 查询用户的详细信息
-     * @param loginName 用户名/手机号/邮箱
-     * @return
-     */
-    @GetMapping("/detail-info/{login-name}")
-    @ApiOperation(value = "查询用户的详细信息")
-    @ApiImplicitParam(name = "login-name", value = "账户名")
-    public Result<AuthorityUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName){
-        AuthorityUserDTO authorityUserDTO = authorityUserService.getUserDetailByLoginName(loginName);
-        return Result.ofSuccess(authorityUserDTO);
-    }
+    // /**
+    //  * 修改用户密码
+    //  * @param user2UpdatePasswordDTO
+    //  * @return
+    //  */
+    // @PatchMapping("/password")
+    // @ApiOperation(value = "修改密码")
+    // @IgnoreResource("修改密码")
+    // public Result<AuthorityUserVO> updatePassword(@RequestBody @Validated BaseUser2UpdatePasswordDTO user2UpdatePasswordDTO){
+    //     BaseUserDTO baseUserDTO = BeanUtil.copyProperties(user2UpdatePasswordDTO, BaseUserDTO.class);
+    //     AuthorityUserDTO var1 = authorityUserService.updatePassword(baseUserDTO);
+    //
+    //     return Result.ofSuccess(BeanUtil.copyProperties(var1, AuthorityUserVO.class));
+    // }
+    //
+    // /**
+    //  * 绑定openId
+    //  * @param updateOpenIdVO
+    //  * @return
+    //  */
+    // @PatchMapping("/bind-open-id")
+    // @ApiOperation(value = "绑定openId", hidden = true)
+    // public Result updateOpenId(@RequestBody @Validated AuthorityUser2UpdateOpenIdVO updateOpenIdVO){
+    //     AuthorityUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdVO, AuthorityUserDTO.class);
+    //
+    //     AuthorityUserDTO userDTO1 = authorityUserService.updateOpenId(userDTO);
+    //     AuthorityUserVO userVO = BeanUtil.copyProperties(userDTO1, AuthorityUserVO.class);
+    //     return Result.ofSuccess(userVO);
+    // }
+    //
+    // /**
+    //  * 查询用户的详细信息
+    //  * @param loginName 用户名/手机号/邮箱
+    //  * @return
+    //  */
+    // @GetMapping("/detail-info/{login-name}")
+    // @ApiOperation(value = "查询用户的详细信息")
+    // @ApiImplicitParam(name = "login-name", value = "账户名")
+    // public Result<AuthorityUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName){
+    //     AuthorityUserDTO authorityUserDTO = authorityUserService.getUserDetailByLoginName(loginName);
+    //     return Result.ofSuccess(authorityUserDTO);
+    // }
 }

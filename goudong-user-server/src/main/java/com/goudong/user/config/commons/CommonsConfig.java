@@ -1,11 +1,7 @@
 package com.goudong.user.config.commons;
 
 import com.goudong.commons.config.ApplicationRunnerConfig;
-import com.goudong.commons.core.mvc.error.ErrorAttributes;
-import com.goudong.commons.core.quartz.JobQuartzManager;
-import com.goudong.commons.service.CommonsAuthorityMenuService;
-import com.goudong.commons.service.CommonsIgnoreResourceService;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import com.goudong.commons.frame.mvc.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -43,8 +39,8 @@ public class CommonsConfig {
      * @param environment
      * @return
      */
-    @Bean
-    @ConditionalOnClass(value = {CommonsIgnoreResourceService.class, CommonsAuthorityMenuService.class, JobQuartzManager.class})
+    // @Bean
+    // @ConditionalOnClass(value = {CommonsIgnoreResourceService.class, CommonsAuthorityMenuService.class, JobQuartzManager.class})
     public ApplicationRunnerConfig applicationRunnerConfig(Environment environment) {
         return new ApplicationRunnerConfig();
     }

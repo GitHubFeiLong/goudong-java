@@ -1,15 +1,16 @@
 package com.goudong.oauth2.po;
 
-import com.goudong.commons.core.jpa.BasePO;
+import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 类描述：
@@ -29,6 +30,7 @@ public class BaseUserPO extends BasePO {
     /**
      * 用户名
      */
+    @NotBlank(message = "username不能为空")
     @Column(name = "username", nullable = false)
     private String username;
 
@@ -74,4 +76,9 @@ public class BaseUserPO extends BasePO {
      */
     @Column(name = "qq_open_id")
     private String qqOpenId;
+
+    @ManyToMany(targetEntity= BaseRolePO.class)
+    @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns={@JoinColumn(name = "role_id")})
+    private List<BaseRolePO> roles = new ArrayList<>();
 }

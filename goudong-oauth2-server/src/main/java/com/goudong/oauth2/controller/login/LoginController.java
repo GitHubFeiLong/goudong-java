@@ -1,8 +1,8 @@
 package com.goudong.oauth2.controller.login;
 
-import com.goudong.commons.core.redis.RedisOperationsUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

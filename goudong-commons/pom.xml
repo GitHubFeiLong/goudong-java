@@ -18,6 +18,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <optional>true</optional>
             <!-- 排除springboot默认的logback日志框架，这样 log4j才能起作用 -->
             <exclusions>
                 <exclusion>
@@ -54,6 +55,7 @@
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
             <!--排除其它依赖-->
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -64,7 +66,6 @@
                     <artifactId>spring-boot-starter-actuator</artifactId>
                 </exclusion>
             </exclusions>
-            <optional>true</optional>
         </dependency>
         <!--validation-->
         <dependency>

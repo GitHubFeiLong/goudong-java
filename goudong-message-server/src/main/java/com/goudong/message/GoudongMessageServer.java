@@ -4,7 +4,7 @@ import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.commons.core.LogApplicationStartup;
+import com.goudong.commons.frame.core.LogApplicationStartup;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;

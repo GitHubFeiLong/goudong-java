@@ -3,7 +3,7 @@ package com.goudong.user.core;
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.LogUtil;
+import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.user.entity.OtherUserInfoBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

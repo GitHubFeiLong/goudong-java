@@ -1,6 +1,6 @@
 package com.goudong.commons.dto.user;
 
-import com.goudong.commons.core.jpa.BasePO;
+import com.goudong.commons.frame.jpa.BasePO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

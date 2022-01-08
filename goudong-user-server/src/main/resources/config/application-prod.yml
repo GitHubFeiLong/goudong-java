@@ -23,7 +23,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     druid:
@@ -82,19 +82,6 @@ spring:
     locations: classpath:db/migration #迁移脚本的位置，默认db/migration
     baseline-on-migrate: true
     out-of-order: false
-
-mybatis:
-  #  mapper-locations: classpath:dao/*.xml
-  mapper-locations: classpath*:/dao/*.xml #其他包的也能扫描到
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出sql语句
-    map-underscore-to-camel-case: true #开启驼峰命名转换
-  # mybatis使用分页插件
-  pagehelper:
-    helperDialect: mysql
-    reasonable: true
-    supportMethodsArguments: true
-    params: count=countSql
 
 knife4j:
   enable: true         # 是否开启Knife4j增强模式，默认值为false

@@ -1,8 +1,7 @@
 package com.goudong.commons.http.restTemplate.example;
 
 import com.goudong.commons.http.restTemplate.config.BeanConfig;
-import com.goudong.commons.http.restTemplate.enumerate.ApiInfoEnum;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import org.springframework.web.client.RestTemplate;
 
 /**

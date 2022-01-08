@@ -1,13 +1,13 @@
 package com.goudong.user.po;
 
-import com.goudong.commons.core.jpa.BasePO;
+import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 角色
@@ -39,4 +39,9 @@ public class BaseRolePO extends BasePO {
      */
     @Column(name = "remark")
     private String remark;
+
+    @ManyToMany(targetEntity=BaseUserPO.class)
+    @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns={@JoinColumn(name = "user_id")})
+    private List<BaseUserPO> users = new ArrayList<>();
 }

@@ -1,7 +1,7 @@
 package com.goudong.commons.openfeign.impl;
 
 import com.goudong.commons.openfeign.MessageService;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 
 /**
  * 类描述：

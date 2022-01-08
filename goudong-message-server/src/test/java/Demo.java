@@ -1,7 +1,3 @@
-import com.goudong.commons.enumerate.RedisKeyEnum;
-
-import java.util.Random;
-
 /**
  * 类描述：
  *

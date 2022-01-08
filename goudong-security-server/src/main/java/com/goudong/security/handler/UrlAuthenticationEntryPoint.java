@@ -3,7 +3,7 @@ package com.goudong.security.handler;
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2021-08-14 9:46
  * @Version 1.0
  */
+@Deprecated
 @Getter
 public enum RequestMappingEnum {
 

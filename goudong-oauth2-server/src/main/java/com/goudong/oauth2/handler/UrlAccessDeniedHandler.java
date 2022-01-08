@@ -2,7 +2,7 @@ package com.goudong.oauth2.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

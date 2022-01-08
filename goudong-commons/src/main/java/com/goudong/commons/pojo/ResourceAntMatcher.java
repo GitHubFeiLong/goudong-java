@@ -3,7 +3,6 @@ package com.goudong.commons.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpMethod;
 
 import java.io.Serializable;
 
@@ -13,6 +12,7 @@ import java.io.Serializable;
  * @Author e-Feilong.Chen
  * @Date 2021/8/16 10:54
  */
+@Deprecated
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

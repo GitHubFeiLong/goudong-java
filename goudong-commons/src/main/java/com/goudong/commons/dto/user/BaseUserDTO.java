@@ -1,9 +1,10 @@
 package com.goudong.commons.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.goudong.commons.core.jpa.BasePO;
+import com.goudong.commons.frame.jpa.BasePO;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityRoleDTO;
+import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -68,6 +69,7 @@ public class BaseUserDTO extends BasePO {
 
     /**
      * 账号单选框值：空字符串、MY_SELF、NOT_MY_SELF
+     * @see AccountRadioEnum
      */
     private String accountRadio;
 

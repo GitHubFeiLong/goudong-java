@@ -4,7 +4,7 @@ import com.goudong.commons.annotation.enable.EnableCommonsGlobalExceptionHandler
 import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
-import com.goudong.commons.core.LogApplicationStartup;
+import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

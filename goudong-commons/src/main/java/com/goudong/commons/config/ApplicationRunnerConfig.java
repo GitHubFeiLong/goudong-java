@@ -3,7 +3,7 @@ package com.goudong.commons.config;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.pojo.ResourceAntMatcher;
-import com.goudong.commons.core.quartz.JobQuartzManager;
+import com.goudong.commons.frame.quartz.JobQuartzManager;
 import com.goudong.commons.service.CommonsAuthorityMenuService;
 import com.goudong.commons.service.CommonsIgnoreResourceService;
 import com.goudong.commons.utils.BeanUtil;

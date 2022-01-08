@@ -18,6 +18,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityUser2CreateVO implements Serializable {
 
     private static final long serialVersionUID = -6516564683484609510L;

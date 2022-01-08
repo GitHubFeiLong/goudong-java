@@ -1,6 +1,7 @@
 package com.goudong.user.service;
 
-import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.dto.user.BaseUserDTO;
+import com.goudong.user.po.BaseUserPO;
 
 import java.util.List;
 
@@ -19,19 +20,19 @@ public interface BaseUserService {
      */
     List<String> generateUserName(String username);
 
-    // /**
-    //  * 新增用户
-    //  * @param authorityUserDTO
-    //  * @return
-    //  */
-    // AuthorityUserDTO createUser(AuthorityUserDTO authorityUserDTO);
-    //
-    // /**
-    //  * 根据 登录账号，查询用户基本信息
-    //  * @param loginName 登录账号
-    //  * @return
-    //  */
-    // AuthorityUserDTO getUserByLoginName(String loginName);
+    /**
+     * 新增用户
+     * @param baseUserDTO
+     * @return
+     */
+    BaseUserDTO createUser(BaseUserDTO baseUserDTO);
+
+    /**
+     * 根据 用户名、手机号、邮箱 查询用户基本信息
+     * @param loginName 用户名、手机号、邮箱
+     * @return
+     */
+    List<BaseUserPO> getUserByLoginName(String loginName);
     //
     // /**
     //  * 绑定opendId

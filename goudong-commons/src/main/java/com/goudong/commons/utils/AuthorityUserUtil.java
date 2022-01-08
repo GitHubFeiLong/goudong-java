@@ -4,8 +4,8 @@ import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.RedisKeyEnum;
-import com.goudong.commons.core.redis.RedisOperationsUtil;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

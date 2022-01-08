@@ -2,7 +2,7 @@ package com.goudong.oauth2.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.pojo.Result;
+import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;

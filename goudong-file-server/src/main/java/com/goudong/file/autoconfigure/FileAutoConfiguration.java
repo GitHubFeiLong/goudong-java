@@ -2,16 +2,14 @@ package com.goudong.file.autoconfigure;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.constant.SystemEnvConst;
-import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.utils.AssertUtil;
-import com.goudong.commons.utils.LogUtil;
-import com.goudong.commons.utils.StringUtil;
+import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.commons.utils.core.StringUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +18,6 @@ import org.springframework.core.env.Environment;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * 类描述：

@@ -1,9 +1,7 @@
 package com.goudong.oauth2;
 
 import com.goudong.commons.annotation.enable.*;
-import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.commons.core.LogApplicationStartup;
-import org.mybatis.spring.annotation.MapperScan;
+import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -30,9 +28,7 @@ import org.springframework.util.StopWatch;
 @EnableAuthorizationServer
 @EnableResourceServer
 @EnableDiscoveryClient
-@MapperScan(basePackages = {BasePackageConst.OAUTH2_MAPPER})
 @EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig
