@@ -33,6 +33,7 @@ import java.util.stream.Stream;
  * @Author e-Feilong.Chen
  * @Date 2021/8/16 10:37
  */
+@Deprecated
 public class ResourceUtil {
 
     /**

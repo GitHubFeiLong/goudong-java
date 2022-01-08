@@ -152,6 +152,12 @@ public class OpenUerController {
         return Result.ofSuccess(baseUserDTO);
     }
 
+    @RequestMapping(value = "/demo/demo", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiOperation(value = "根据登录用户名获取用户信息", notes = "登陆用户名包括，用户名，邮箱及密码")
+    @Whitelist("根据账户名查询基本信息")
+    public Result demo(){
+        return Result.ofSuccess();
+    }
     // /**
     //  * 修改用户密码
     //  * @param user2UpdatePasswordDTO

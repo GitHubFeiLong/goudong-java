@@ -1,10 +1,9 @@
 package com.goudong.commons.frame.core;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 类描述：
@@ -14,8 +13,6 @@ import java.io.Serializable;
  * @version 1.0
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ResourceAntMatcher implements Serializable {
     /**
      * 请求资源路径(使用ant方式)
@@ -24,14 +21,15 @@ public class ResourceAntMatcher implements Serializable {
     /**
      * 请求方式
      */
-    protected String method;
+    protected List<String> methods;
     /**
      * 备注
      */
     private String remark;
 
-    public ResourceAntMatcher(String pattern, String method) {
+    public ResourceAntMatcher(String pattern, List<String> methods, String remark) {
         this.pattern = pattern;
-        this.method = method;
+        this.methods = methods;
+        this.remark = remark;
     }
 }

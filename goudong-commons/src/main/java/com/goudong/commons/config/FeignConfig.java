@@ -34,6 +34,7 @@ public class FeignConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;
     }

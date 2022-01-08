@@ -3,7 +3,7 @@ package com.goudong.oauth2.handler;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.openfeign.UserService;
+import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
@@ -40,7 +40,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     // private AuthorityUserUtil authorityUserUtil;
 
     @Resource
-    private UserService userService;
+    private GoudongUserServerService userService;
 
 
     /**

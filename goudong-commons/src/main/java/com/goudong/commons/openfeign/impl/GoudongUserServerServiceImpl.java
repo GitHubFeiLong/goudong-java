@@ -2,7 +2,9 @@ package com.goudong.commons.openfeign.impl;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseTokenDTO;
-import com.goudong.commons.openfeign.UserService;
+import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 
@@ -15,7 +17,19 @@ import java.util.Optional;
  * @Author e-Feilong.Chen
  * @Date 2021/8/13 10:49
  */
-public class UserServiceImpl implements UserService {
+public class GoudongUserServerServiceImpl implements GoudongUserServerService {
+
+    /**
+     * 新增白名单
+     *
+     * @param createDTOS
+     * @return
+     */
+    @Override
+    public Result<List<BaseWhitelistDTO>> addWhitelist(List<BaseWhitelist2CreateDTO> createDTOS) {
+        return null;
+    }
+
     /**
      * 查询用户的详细信息,包括角色权限
      *

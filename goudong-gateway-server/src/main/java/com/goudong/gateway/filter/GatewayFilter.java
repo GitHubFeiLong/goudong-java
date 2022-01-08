@@ -6,7 +6,7 @@ import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.openfeign.UserService;
+import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
@@ -43,7 +43,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     private RedisOperationsUtil redisOperationsUtil;
 
     @Resource
-    private UserService userService;
+    private GoudongUserServerService userService;
 
     /**
      * 用户名密码登录接口

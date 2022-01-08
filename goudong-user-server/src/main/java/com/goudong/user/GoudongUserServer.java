@@ -1,9 +1,6 @@
 package com.goudong.user;
 
-import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsWhitelistConfig;
+import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,8 +22,9 @@ import org.springframework.util.StopWatch;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCommonsWebMvcConfig
-@EnableCommonsWhitelistConfig
+@EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
+@EnableCommonsWhitelistConfig
 @EnableCommonsJpaConfig
 @EntityScan("com.goudong.user.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.user.repository"})

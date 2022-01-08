@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `base_whitelist`;
 CREATE TABLE `base_whitelist` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
     `pattern` varchar(255) NOT NULL COMMENT '路径Pattern',
-    `method` json NOT NULL COMMENT '请求方式json数组',
+    `methods` json NOT NULL COMMENT '请求方式json数组',
     `remark` varchar(255) DEFAULT NULL COMMENT '备注',
     `is_system` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否是系统预置的',
     `deleted` tinyint(1) DEFAULT '0' COMMENT '是否被删除',
@@ -14,7 +14,7 @@ CREATE TABLE `base_whitelist` (
     UNIQUE KEY `uq_base_whitelist_pattern_deleted` (`pattern`,`deleted`) USING BTREE COMMENT 'pattern唯一'
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='不需要授权就能访问的资源';
 
-INSERT INTO `base_whitelist` (`id`, `pattern`, `method`, `remark`, `is_system`)
+INSERT INTO `base_whitelist` (`id`, `pattern`, `methods`, `remark`, `is_system`)
 VALUES
 (1, '/**/*.html*', '["GET"]', 'html', true),
 (2, '/**/*.css*', '["GET"]', 'css', true),

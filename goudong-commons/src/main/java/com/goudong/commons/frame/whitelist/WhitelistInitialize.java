@@ -1,12 +1,18 @@
 package com.goudong.commons.frame.whitelist;
 
-import com.goudong.commons.frame.redis.RedisOperations;
+import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.frame.core.ResourceAntMatcher;
+import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.commons.utils.core.ResourceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,28 +29,26 @@ public class WhitelistInitialize implements ApplicationRunner {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    /**
-     * 应用名称
-     */
-    @Value("${spring.application.name}")
-    private String applicationName;
+    private final GoudongUserServerService goudongUserServerService;
 
-    private final WhitelistDao whitelistDao;
-    private final RedisOperations redisOperations;
-
-    public WhitelistInitialize(WhitelistDao whitelistDao, RedisOperations redisOperations) {
-        this.whitelistDao = whitelistDao;
-        this.redisOperations = redisOperations;
+    public WhitelistInitialize(GoudongUserServerService goudongUserServerService) {
+        this.goudongUserServerService = goudongUserServerService;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         LogUtil.info(log, "开始处理白名单");
-        List<BaseWhitelistPO> all = whitelistDao.findAll();
+        List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanWhitelist(contextPath);
 
-        // 存储到redis中。 TODO 使用feign，保存到指定库中
+        // 将其转换成指定类型集合
+        List<BaseWhitelist2CreateDTO> baseWhitelist2CreateDTOS = new ArrayList<>(resourceAntMatchers.size());
+        resourceAntMatchers.stream().forEach(p->{
+            baseWhitelist2CreateDTOS.add(new BaseWhitelist2CreateDTO(p.getPattern(), p.getMethods(), p.getRemark(), false));
+        });
 
-        LogUtil.info(log, "结束处理白名单");
+        // 使用feign，保存到指定库中
+        Result<List<BaseWhitelistDTO>> result = goudongUserServerService.addWhitelist(baseWhitelist2CreateDTOS);
+        LogUtil.info(log, "结束处理白名单:\n{}", result.getData());
     }
 
 }

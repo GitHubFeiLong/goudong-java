@@ -12,6 +12,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/1/8 16:54
  */
+@Deprecated
 public class WhitelistDao {
     /**
      * 插入sql语句

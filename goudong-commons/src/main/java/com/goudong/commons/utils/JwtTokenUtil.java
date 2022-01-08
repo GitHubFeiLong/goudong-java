@@ -12,7 +12,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.openfeign.UserService;
+import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +69,10 @@ public class JwtTokenUtil {
     /**
      * 用户服务Feign
      */
-    private static UserService userService;
+    private static GoudongUserServerService userService;
 
     @Autowired
-    public void setOauth2Service(UserService userService) {
+    public void setOauth2Service(GoudongUserServerService userService) {
         JwtTokenUtil.userService = userService;
     }
 

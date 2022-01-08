@@ -1,11 +1,11 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.frame.redis.RedisOperations;
-import com.goudong.commons.frame.whitelist.WhitelistDao;
 import com.goudong.commons.frame.whitelist.WhitelistInitialize;
+import com.goudong.commons.openfeign.GoudongUserServerService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.Import;
 
 /**
  * 类描述：
@@ -15,15 +15,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @date 2022/1/8 17:52
  */
 @Configuration
+@Import(FeignConfig.class)
 public class WhitelistConfig {
 
     @Bean
-    public WhitelistDao whitelistDao(JdbcTemplate jdbcTemplate) {
-        return new WhitelistDao(jdbcTemplate);
-    }
-
-    @Bean
-    public WhitelistInitialize whitelistInitialize(WhitelistDao whitelistDao, RedisOperations redisOperations) {
-        return new WhitelistInitialize(whitelistDao, redisOperations);
+    @ConditionalOnMissingBean
+    public WhitelistInitialize whitelistInitialize(GoudongUserServerService goudongUserServerService) {
+        return new WhitelistInitialize(goudongUserServerService);
     }
 }

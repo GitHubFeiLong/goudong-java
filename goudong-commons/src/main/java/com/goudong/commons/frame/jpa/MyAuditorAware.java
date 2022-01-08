@@ -20,7 +20,7 @@ public class MyAuditorAware implements AuditorAware<Long> {
     public Optional<Long> getCurrentAuditor() {
         Long id = null;
         if (id == null) {
-            id = 0L;
+            id = 1L;
         }
         return Optional.of(id);
     }

@@ -2,6 +2,8 @@ package com.goudong.commons.dto.user;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 类描述：
  * 保存白名单的参数
@@ -20,7 +22,7 @@ public class BaseWhitelist2CreateDTO {
      * 请求的方法
      * json数组字符串
      */
-    private String[] methods;
+    private List<String> methods;
     /**
      * 备注
      */
@@ -30,7 +32,7 @@ public class BaseWhitelist2CreateDTO {
      */
     private Boolean isSystem;
 
-    public BaseWhitelist2CreateDTO(String pattern, String[] method, String remark, Boolean isSystem) {
+    public BaseWhitelist2CreateDTO(String pattern, List<String> methods, String remark, Boolean isSystem) {
         this.pattern = pattern;
         this.methods = methods;
         this.remark = remark;

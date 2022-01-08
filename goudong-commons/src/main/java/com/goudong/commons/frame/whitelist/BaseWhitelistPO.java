@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
  * @date 2022/1/8 16:46
  */
 @Data
+@Deprecated
 public class BaseWhitelistPO extends BasePO implements RowMapper {
 
     /**

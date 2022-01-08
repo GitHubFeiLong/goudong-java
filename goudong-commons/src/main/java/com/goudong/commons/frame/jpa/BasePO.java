@@ -26,7 +26,7 @@ import java.util.Date;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public abstract class BasePO implements Serializable {
 
-    private static final String ID_GEN = "com.goudong.commons.core.jpa.MyIdentifierGenerator";
+    private static final String ID_GEN = "com.goudong.commons.frame.jpa.MyIdentifierGenerator";
     private static final long serialVersionUID = -2935429857751851837L;
 
     @Id

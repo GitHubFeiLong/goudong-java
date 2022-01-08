@@ -4,10 +4,9 @@ import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.constant.CommonConst;
-import com.goudong.commons.enumerate.RequestMappingEnum;
+import com.goudong.commons.enumerate.core.RequestMappingEnum;
 import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.frame.ResourceAntMatcher;
-import io.swagger.annotations.ApiOperation;
+import com.goudong.commons.frame.core.ResourceAntMatcher;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -24,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -68,21 +68,20 @@ public class ResourceUtil {
      * @throws ClassNotFoundException
      */
     public static List<ResourceAntMatcher> scanWhitelist(String contextPath) throws IOException, ClassNotFoundException {
-        List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.generateResourceAntMatchers(contextPath, true);
-        // 将路径参数变为*
-        resourceAntMatchers.parallelStream().forEach(p->{
-            p.setPattern(StringUtil.replacePathVariable2Asterisk(p.getPattern()));
-        });
-        return resourceAntMatchers;
+        return ResourceUtil.scanResourceByType(contextPath, ScanTypeEnum.WHITELIST);
     }
 
     /**
-     * 扫描所有接口
+     * 根据类型，扫描资源接口
+     * @param contextPath 服务设置的上下文路径
+     * @param scanTypeEnum 扫描类型
      * @return
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private static List<ResourceAntMatcher> generateResourceAntMatchers(String contextPath, boolean isIgnoreResource) throws IOException, ClassNotFoundException {
+    private static List<ResourceAntMatcher> scanResourceByType (String contextPath, ScanTypeEnum scanTypeEnum)
+            throws IOException, ClassNotFoundException {
+
         // 获取类路径下的资源
         List<Resource> resources = ResourceUtil.generateClassResources();
 
@@ -117,35 +116,41 @@ public class ResourceUtil {
                         if (httpMethodAnnotation != null) {
                             // 接口备注（白名单备注|菜单备注）。
                             String remark = "api";
-                            // 当是获取白名单资源时
-                            if (isIgnoreResource) {
-                                Whitelist whitelist = method.getAnnotation(Whitelist.class);
-                                if (whitelist != null) {
-                                    remark = whitelist.value();
-                                    resourceAntMatchers.addAll(
-                                            ResourceUtil.annotation2ResourceAntMatcher(httpMethodAnnotation, prefixArr, remark)
-                                    );
-                                }
 
-                                // 跳过本次循环
-                                continue;
+                            switch (scanTypeEnum) {
+                                case WHITELIST: // 当是获取白名单资源时
+                                    Whitelist whitelist = method.getAnnotation(Whitelist.class);
+                                    if (whitelist != null) {
+                                        remark = whitelist.value();
+                                        resourceAntMatchers.addAll(
+                                                ResourceUtil.annotation2ResourceAntMatcher(httpMethodAnnotation, prefixArr, remark)
+                                        );
+                                    }
+
+                                    // 跳过本次循环
+                                    continue;
                             }
 
                             // 默认是获取菜单资源
-                            ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
-                            if (apiOperation != null) {
-                                remark = apiOperation.value();
-                            }
-
-                            resourceAntMatchers.addAll(
-                                    ResourceUtil.annotation2ResourceAntMatcher(httpMethodAnnotation, prefixArr, remark)
-                            );
+                            // ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+                            // if (apiOperation != null) {
+                            //     remark = apiOperation.value();
+                            // }
+                            //
+                            // resourceAntMatchers.addAll(
+                            //         ResourceUtil.annotation2ResourceAntMatcher(httpMethodAnnotation, prefixArr, remark)
+                            // );
                         }
                     }
                 }
 
             }
         }
+
+        // 将路径参数变为*
+        resourceAntMatchers.parallelStream().forEach(p->{
+            p.setPattern(StringUtil.replacePathVariable2Asterisk(p.getPattern()));
+        });
 
         return resourceAntMatchers;
     }
@@ -180,6 +185,7 @@ public class ResourceUtil {
         // 接口请求Mapping，自定义的枚举
         RequestMappingEnum[] values = RequestMappingEnum.values();
         for (int i = 0; i < values.length; i++) {
+            // 获取方法上的Restful的请求注解
             Annotation annotation = method.getAnnotation(values[i].getMapping());
             // 方法是一个web接口
             if (annotation != null) {
@@ -203,6 +209,9 @@ public class ResourceUtil {
             RequestMapping requestMapping = (RequestMapping) annotation;
             // 请求方式
             RequestMethod[] methods = requestMapping.method();
+            if (methods.length == 0) {
+                methods = RequestMethod.values();
+            }
             // 请求地址
             String[] value = requestMapping.value();
             // 请求路径
@@ -284,10 +293,9 @@ public class ResourceUtil {
      */
     private static List<ResourceAntMatcher> addResourceAntMatcher(String remark, RequestMethod[] methods, String[] path) {
         List<ResourceAntMatcher> var0 = new ArrayList<>();
+        List<String> httpMethods = Stream.of(methods).map(RequestMethod::name).collect(Collectors.toList());
         for (int i = 0; i < path.length; i++) {
-            for (int j = 0; j < methods.length; j++) {
-                var0.add(new ResourceAntMatcher(path[i], methods[j].name(), remark));
-            }
+            var0.add(new ResourceAntMatcher(path[i], httpMethods, remark));
         }
         return var0;
     }
@@ -339,4 +347,15 @@ public class ResourceUtil {
         return result.toArray(new String[result.size()]);
     }
 
+    /**
+     * 扫描类型枚举
+     */
+    enum ScanTypeEnum {
+        /**
+         * 白名单
+         */
+        WHITELIST,
+
+        ;
+    }
 }

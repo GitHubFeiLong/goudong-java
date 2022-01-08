@@ -40,6 +40,7 @@ public class CommonConst {
     /**
      * 超级管理员角色
      */
+    @Deprecated
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     /**
      * 普通用户角色

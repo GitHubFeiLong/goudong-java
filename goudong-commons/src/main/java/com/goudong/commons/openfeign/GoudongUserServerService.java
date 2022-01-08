@@ -2,6 +2,8 @@ package com.goudong.commons.openfeign;
 
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.BaseTokenDTO;
+import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.user.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.vo.BaseToken2CreateVO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,7 +18,15 @@ import java.util.Optional;
  */
 @FeignClient(name="goudong-user-server", path = "/api/user")
 @ResponseBody
-public interface UserService {
+public interface GoudongUserServerService {
+
+    /**
+     * 新增白名单
+     * @param createDTOS
+     * @return
+     */
+    @PostMapping("/whitelist/whitelist")
+    Result<List<BaseWhitelistDTO>> addWhitelist(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS);
 
     /**
      * 查询用户的详细信息,包括角色权限

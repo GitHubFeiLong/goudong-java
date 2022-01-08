@@ -1,12 +1,13 @@
 package com.goudong.user.controller.whitelist;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
+import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.user.WhitelistException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.user.po.BaseWhitelistPO;
-import com.goudong.user.repository.BaseWhitelistRepository;
+import com.goudong.user.service.BaseWhitelistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +15,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -33,10 +37,10 @@ import java.util.List;
 @RequestMapping("/whitelist")
 public class BaseWhitelistController {
 
-    private final BaseWhitelistRepository baseWhitelistRepository;
+    private final BaseWhitelistService baseWhitelistService;
 
-    public BaseWhitelistController(BaseWhitelistRepository baseWhitelistRepository) {
-        this.baseWhitelistRepository = baseWhitelistRepository;
+    public BaseWhitelistController(BaseWhitelistService baseWhitelistService) {
+        this.baseWhitelistService = baseWhitelistService;
     }
 
 
@@ -46,27 +50,29 @@ public class BaseWhitelistController {
      * @return
      */
     @ApiOperation(value = "保存白名单", notes = "该接口将查询所有的白名单，并和参数进行一一比对，然后再决定进行更新或新增白名单")
-    @PostMapping("/")
+    @PostMapping("/whitelist")
     @Transactional
-    public Result addWhitelist(List<BaseWhitelist2CreateDTO> createDTOS) {
+    public Result<List<BaseWhitelistDTO>> addWhitelist(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS) {
         /*
             参数校验
          */
         if (CollectionUtils.isEmpty(createDTOS)) {
             LogUtil.warn(log, "添加白名单接口，参数为空：{}", createDTOS);
-            return Result.ofSuccess();
+            return Result.ofSuccess(new ArrayList<>());
         }
         // 不为空，具体校验 method
-        createDTOS.stream().
+        createDTOS.stream().forEach(p->{
+            List<String> upper = p.getMethods().stream().map(m -> m.toUpperCase()).collect(Collectors.toList());
+            p.setMethods(upper);
+            if (!HttpMethodConst.ALL_HTTP_METHOD.containsAll(upper)) {
+                String serverMessage = String.format("保存白名单错误，methods成员不正确:%s", p.getMethods());
+                throw new WhitelistException(ClientExceptionEnum.BAD_REQUEST, serverMessage);
+            }
+        });
 
-        List<BaseWhitelistPO> baseWhitelistPOS = baseWhitelistRepository.findAll();
-        List<BaseWhitelistPO> var0 = BeanUtil.copyToList(createDTOS, BaseWhitelistPO.class, CopyOptions.create());
-        // 数据库没数据直接保存
-        if (CollectionUtils.isEmpty(baseWhitelistPOS)) {
-            baseWhitelistRepository.saveAll(var0);
-            return Result.ofSuccess(var0);
-        }
+        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.addWhitelist(createDTOS);
 
-        return Result.ofSuccess();
+        return Result.ofSuccess(baseWhitelistDTOS);
+
     }
 }

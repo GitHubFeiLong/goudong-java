@@ -8,7 +8,7 @@ import com.goudong.commons.annotation.Repeat;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.openfeign.UserService;
+import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.AssertUtil;
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
@@ -70,7 +70,7 @@ public class CodeController {
     }
 
     @Resource
-    private UserService userService;
+    private GoudongUserServerService userService;
 
     @GetMapping("/demo1")
     @ApiOperation("测试")

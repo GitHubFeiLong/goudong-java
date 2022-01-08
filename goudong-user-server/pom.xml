@@ -26,6 +26,12 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--spring boot starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

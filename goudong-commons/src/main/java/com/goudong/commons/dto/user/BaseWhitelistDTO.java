@@ -49,7 +49,7 @@ public class BaseWhitelistDTO {
      * 请求的方法
      * json数组字符串
      */
-    private String method;
+    private String methods;
     /**
      * 备注
      */
