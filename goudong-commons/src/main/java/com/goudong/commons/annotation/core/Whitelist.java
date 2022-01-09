@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * 类描述：
+ * 注解描述：
  * 放在控制层接口方法上，表明这个资源被加入白名单
  * @author msi
  * @date 2022/1/8 16:17

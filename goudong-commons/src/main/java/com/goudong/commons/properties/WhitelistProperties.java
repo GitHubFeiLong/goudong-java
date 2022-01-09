@@ -5,11 +5,12 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 类描述：
- * 白名单树形配置
+ * 白名单属性配置
  * @author msi
  * @version 1.0
  * @date 2022/1/9 10:51
@@ -29,7 +30,7 @@ public class WhitelistProperties {
      * 自定义白名单配置
      */
     @NestedConfigurationProperty
-    private List<BaseWhitelistDTO> whitelists;
+    private List<BaseWhitelistDTO> whitelists = new ArrayList<>();
     //~methods
     //==================================================================================================================
 

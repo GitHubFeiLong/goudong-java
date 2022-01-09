@@ -93,4 +93,4 @@ CREATE TABLE `base_role_menu`
     KEY `idx_base_role_menu_menu_id` (`menu_id`),
     CONSTRAINT `fk_base_role_menu_role_id` FOREIGN KEY (`role_id`) REFERENCES `base_role` (`id`),
     CONSTRAINT `fk_base_role_menu_menu_id` FOREIGN KEY (`menu_id`) REFERENCES `base_menu` (`id`)
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '用户角色映射表';
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '角色菜单映射表';

@@ -53,6 +53,7 @@ public class WhitelistAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean
     public WhitelistProperties whitelistProperties(WhitelistProperties whitelistProperties){
         /*
             参数校验

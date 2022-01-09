@@ -13,7 +13,7 @@ import lombok.Data;
 public class BaseWhitelistDTO {
 
     /**
-     * 匹配模式,example: /api/user/*
+     * 匹配模式使用ant模式,example: /api/user/*.
      */
     private String pattern;
     /**
@@ -22,7 +22,7 @@ public class BaseWhitelistDTO {
      */
     private String methods;
     /**
-     * 备注
+     * 备注,描述
      */
     private String remark;
     /**

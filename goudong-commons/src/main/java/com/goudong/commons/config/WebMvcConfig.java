@@ -1,5 +1,6 @@
 package com.goudong.commons.config;
 
+import com.goudong.commons.frame.mvc.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,6 +10,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
@@ -34,6 +37,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     //     registry.addInterceptor(userInterceptor).addPathPatterns("/**");
     // }
 
+    private final HttpServletRequest request;
+
+    public WebMvcConfig(HttpServletRequest request) {
+        this.request = request;
+    }
     /**
      * mvc 添加静态资源
      * @param registry
@@ -81,5 +89,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         //3.返回CorsFilter实例.参数:cors配置源
         return new CorsFilter(configSource);
+    }
+
+    /**
+     * 自定义异常逻辑，返回自定义格式的json错误信息
+     * @return
+     */
+    @Bean
+    public ErrorAttributes errorAttributes () {
+        return new ErrorAttributes(request);
     }
 }

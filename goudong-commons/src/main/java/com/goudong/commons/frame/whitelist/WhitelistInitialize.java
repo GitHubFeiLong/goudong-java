@@ -16,6 +16,7 @@ import org.springframework.boot.ApplicationRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,7 +53,7 @@ public class WhitelistInitialize implements ApplicationRunner {
         List<BaseWhitelist2CreateDTO> baseWhitelist2CreateDTOS = new ArrayList<>();
 
         // 将自定义配置文件的白名单，放进集合
-        List<com.goudong.commons.frame.whitelist.BaseWhitelistDTO> whitelists = whitelistProperties.getWhitelists();
+        List<com.goudong.commons.frame.whitelist.BaseWhitelistDTO> whitelists = Optional.ofNullable(whitelistProperties.getWhitelists()).orElseGet(()->new ArrayList<>());
         whitelists.stream().forEach(p->{
             // 参数校验
             String s = p.getMethods().toUpperCase();

@@ -120,8 +120,12 @@ knife4j:
 
 # commons配置
 commons:
+  # 白名单配置
   whitelist:
     enable: true
+    whitelists:
+      - pattern: /aa
+        methods: GET
 
 # 自定义配置
 user:

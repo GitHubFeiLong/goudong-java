@@ -127,27 +127,7 @@ pause
 
 在Flyway的约定上，加上本项目自己的一些约定。
 
-#### 约定1：脚本文件命名
-
-使用简短的字符串，大致表示脚本功能，例如：`V1.0.0__DT_user.sql` `V1.0.0__DT_user#roles.sql`
-
-下面罗列出常见的：
-
-| 功能         | 关键字                                                       | 示例                                                | 解释                                    |
-| ------------ | ------------------------------------------------------------ | --------------------------------------------------- | --------------------------------------- |
-| 初始化表数据 | INIT:<br/>truncate table [表名] ；<br/>create table [表名]；<br/>insert into [表名] | R1.0__INIT_user.sql                                 | 创建全新的表并插入基本信息              |
-| 删除整张表   | DT:<br />DROP TABLE tablename                                | `V1.0__DT_user.sql`,<br />`V1.0__DT_user#role.sql`  | 删除user表，删除user和role 两张表       |
-| 修改表       | AT<br />ALTER TABLE 简写                                     | `v1.0__AT_user.sql`                                 | user表修改字段（AT是ATM，ATA，ATD超集） |
-| 修改表字段   | ATM:<br />ALTER TABLE tablename MODIFY [COLUMN] column_definition [FIRST] [AFTER col_name] | `V1.0__ATM_user.sql`<br />`V1.0__ATM_user#role.sql` | 修改user表和role表的某些字段            |
-| 增加表字段   | ATA<br />ALTER TABLE tablename ADD [COLUMN] column_definition [FIRST \|AFTER col_umn] | `v1.0__ATA_user.sql`                                | user表新增某些字段                      |
-| 删除表字段   | ATD<br />ALTER TABLE tablename DROP [COLUMN] col_name        | `v1.0__ATD_user.sql`                                | user表删除某些字段                      |
-| 插入记录     | IT<br />INSERT INTO tablename (filed1,filed2,...,filedn) values(value1,value2,...,valuen); | `v1.0__IT_user.sql`                                 | user表插入记录                          |
-| 更新记录     | UT<br />UPDATE tablename SET filed1=value1,filed2=value2,...,filedn=valuen [WHERE CONDITION] | `v1.0__UT_user.sql`                                 | user表更新记录                          |
-| 删除记录     | dt<br />DELETE FROM tablename [WHERE CONDITION]              | `v1.0__dt_user.sql`                                 | user表删除记录                          |
-
-> 如果一张表和其他表没有关联关系，那么可以使用`R`开头的脚本，例如`R__init_table.sql` ，这样脚本更改后，就会执行
-
-### POJO
+### 实体类型
 
 #### 简介
 
@@ -174,8 +154,6 @@ pause
 ### HTTP 响应代码
 
 项目基本参照 [规范](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status) 来正确返回响应码
-
-
 
 ## 日志
 
@@ -213,21 +191,47 @@ pause
 
 
 
-## 用户角色权限
+## 模块功能描述
+
+### goudong-user-server
+
+用户服务，包含的功能：用户，角色，权限，白名单的增删改查。
 
 
 
 ## 出色功能
 
-### 防止重复提交
+### 接口防重复调用
 
-需要使用注解@Repeat，可以定义时间段
+这里使用aop进行简单的限制
 
-### 扫描白名单接口
+1. 注入Bean RepeatAop
+2. 给需要的接口添加@Repeat注解，默认是2秒内，也可以自定义配置属性time和timeUnit
 
-使用注解@IgnoreResource，将接口保存到白名单（数据库中），程序启动后会定时扫描。
+
+
+### 白名单
+
+在Restful接口上使用注解@Whitelist，标明这个Restful接口是一个白名单。
+
+在配置文件中配置属性值`commons.whitelist.enable=true`，项目启动成功后，会扫描项目中定义的所有白名单，并将其持久化到MySQL数据库中（使用OpenFeign调用用户服务中保存白名单接口，校验数据后保存到MySQL），并更新Redis中的白名单内容。
+
+```yml
+commons:
+  whitelist:
+    enable: true # 是否开启白名单
+```
+
+> 还可以配置一些自定义的白名单，只需要配置属性`commons.whitelist.whitelists` 该属性是一个集合，详情请看`com.goudong.commons.frame.whitelist.BaseWhitelistDTO`
+>
+> 在网关中判断用户请求的uri是否满足白名单，当满足时直接放行
+
+
 
 ### 接口请求日志
+
+1. 注入Bean LoggingAop
+2. 开发环境，在配置文件配置属性:`logging.level.包名: DEBUG`，开启
 
 使用AOP进行接口请求日志打印，将请求路径，请求参数，响应数据，异常等信息打印日志
 
@@ -235,9 +239,12 @@ pause
 
 RedisOperationsUtil，主要是因为整个系统的redis key 进行统一枚举处理（RedisKeyEnum），需要将key模板解析，redis失效等额外信息进行处理封装。
 
+
+
 ## 其它
+
 ### banner 使用
 在[banner在线设计网页](http://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type%20Something%20) 中设计banner。
 > 其它颜色的用法参考：[用了自定义Banner后，SpringBoot瞬间变的高大上了...](https://blog.csdn.net/weixin_44742132/article/details/105721684) 
 > Font 选择 Big
->
+
