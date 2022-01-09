@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "commons.whitelist.whitelists",
+      "type": "java.util.List<com.goudong.commons.frame.whitelist.BaseWhitelistDTO>",
+      "description": "白名单集合.",
+      "sourceType": "com.goudong.commons.properties.WhitelistProperties"
+    }
+  ]
+}

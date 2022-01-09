@@ -2,7 +2,7 @@ package com.goudong.file.autoconfigure;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.constant.SystemEnvConst;
-import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import com.goudong.file.core.FileType;

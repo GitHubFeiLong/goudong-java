@@ -1,6 +1,6 @@
 package com.goudong.commons.aop;
 
-import com.goudong.commons.annotation.Repeat;
+import com.goudong.commons.annotation.core.Repeat;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
@@ -42,7 +42,7 @@ public class RepeatAop {
 	/**
 	 * 定义切点：使用了注解@RepeatSubmitAnnotation的所有方法和类
 	 */
-	@Pointcut(value = "@annotation(com.goudong.commons.annotation.Repeat)")
+	@Pointcut(value = "@annotation(com.goudong.commons.annotation.core.Repeat)")
 	public void repeat(){
 		// aop 切点，避免代码检测报错问题
 	}

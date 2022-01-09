@@ -1,6 +1,6 @@
 package com.goudong.message.sender;
 
-import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.message.config.CodeDirectRabbitConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;

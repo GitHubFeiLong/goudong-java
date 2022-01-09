@@ -6,6 +6,7 @@ import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.BaseIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
+import com.goudong.commons.utils.core.AssertUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
 

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Date 2020/6/11 19:33
  * @Version 1.0
  */
+@Deprecated
 public class IpAddressUtil {
     public static final String UNKNOWN = "unknown";
     /**

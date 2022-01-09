@@ -5,21 +5,26 @@ import com.goudong.commons.dto.user.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.ResourceAntMatcher;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.openfeign.GoudongUserServerService;
+import com.goudong.commons.properties.WhitelistProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.ResourceUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * 系统启动就先加载热数据到redis中
- * @Author msi
- * @Date 2021-04-09 10:24
- * @Version 1.0
+ * 类描述：
+ * 白名单处理保存到数据库
+ * @author msi
+ * @date 2022/1/9 11:57
+ * @version 1.0
  */
 @Slf4j
 public class WhitelistInitialize implements ApplicationRunner {
@@ -30,25 +35,48 @@ public class WhitelistInitialize implements ApplicationRunner {
     private String contextPath;
 
     private final GoudongUserServerService goudongUserServerService;
+    /**
+     * 配置文件配置的白名单
+     */
+    private final WhitelistProperties whitelistProperties;
 
-    public WhitelistInitialize(GoudongUserServerService goudongUserServerService) {
+    public WhitelistInitialize(GoudongUserServerService goudongUserServerService, WhitelistProperties whitelistProperties) {
         this.goudongUserServerService = goudongUserServerService;
+        this.whitelistProperties = whitelistProperties;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         LogUtil.info(log, "开始处理白名单");
+        // 记录白名单集合
+        List<BaseWhitelist2CreateDTO> baseWhitelist2CreateDTOS = new ArrayList<>();
+
+        // 将自定义配置文件的白名单，放进集合
+        List<com.goudong.commons.frame.whitelist.BaseWhitelistDTO> whitelists = whitelistProperties.getWhitelists();
+        whitelists.stream().forEach(p->{
+            // 参数校验
+            String s = p.getMethods().toUpperCase();
+
+            List<String> methods = Stream.of(p.getMethods().toUpperCase().split(",")).collect(Collectors.toList());
+
+            baseWhitelist2CreateDTOS.add(new BaseWhitelist2CreateDTO(p.getPattern(), methods, p.getRemark(), p.getIsSystem()));
+        });
+
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanWhitelist(contextPath);
 
-        // 将其转换成指定类型集合
-        List<BaseWhitelist2CreateDTO> baseWhitelist2CreateDTOS = new ArrayList<>(resourceAntMatchers.size());
         resourceAntMatchers.stream().forEach(p->{
             baseWhitelist2CreateDTOS.add(new BaseWhitelist2CreateDTO(p.getPattern(), p.getMethods(), p.getRemark(), false));
         });
 
-        // 使用feign，保存到指定库中
-        Result<List<BaseWhitelistDTO>> result = goudongUserServerService.addWhitelist(baseWhitelist2CreateDTOS);
-        LogUtil.info(log, "结束处理白名单:\n{}", result.getData());
+        if (CollectionUtils.isNotEmpty(baseWhitelist2CreateDTOS)) {
+            // 使用feign，保存到指定库中
+            Result<List<BaseWhitelistDTO>> result = goudongUserServerService.addWhitelist(baseWhitelist2CreateDTOS);
+            LogUtil.info(log, "结束处理白名单:\n{}", result.getData());
+            return;
+        }
+
+        LogUtil.info(log, "没有白名单需要保存");
+
     }
 
 }

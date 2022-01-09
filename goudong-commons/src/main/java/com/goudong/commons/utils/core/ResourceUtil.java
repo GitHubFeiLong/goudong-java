@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.constant.CommonConst;
+import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.enumerate.core.RequestMappingEnum;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.frame.core.ResourceAntMatcher;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -42,6 +44,34 @@ public class ResourceUtil {
             BasePackageConst.OAUTH2_CONTROLLER,
             BasePackageConst.MESSAGE_CONTROLLER,
     };
+
+    /**
+     * 是否是有效的方法
+     * @param methods
+     * @return
+     */
+    public static boolean validMethods(String methods) {
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(methods)) {
+            // 转大写，使用逗号进行分割变为list集合
+            List<String> httpMethods = Stream.of(methods.toUpperCase().split(",")).collect(Collectors.toList());
+            return ResourceUtil.validMethods(httpMethods);
+        }
+        return false;
+    }
+    /**
+     * 是否是有效的方法
+     * @param methods http请求方法
+     * @return
+     */
+    public static boolean validMethods(List<String> methods) {
+        if (CollectionUtils.isNotEmpty(methods)) {
+            // 等于0表示都在指定范围内
+            return HttpMethodConst.ALL_HTTP_METHOD.containsAll(methods);
+        }
+
+        return false;
+    }
+
     //
     // /**
     //  * 生成菜单资源

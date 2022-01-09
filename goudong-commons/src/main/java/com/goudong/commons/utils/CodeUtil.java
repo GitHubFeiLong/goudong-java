@@ -9,6 +9,7 @@ import java.util.Random;
  * @Date 2021-05-07 13:02
  * @Version 1.0
  */
+@Deprecated
 public class CodeUtil {
     private static final String SYMBOLS = "0123456789";
     private static final Random RANDOM = new SecureRandom();

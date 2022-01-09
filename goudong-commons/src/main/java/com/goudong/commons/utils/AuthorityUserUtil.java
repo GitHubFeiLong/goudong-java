@@ -19,6 +19,7 @@ import java.util.List;
  * @Author e-Feilong.Chen
  * @Date 2021/8/17 16:22
  */
+@Deprecated
 @Component
 public class AuthorityUserUtil {
 

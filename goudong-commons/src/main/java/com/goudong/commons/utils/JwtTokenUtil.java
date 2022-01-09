@@ -13,6 +13,7 @@ import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.openfeign.GoudongUserServerService;
+import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import java.util.Date;
  * @Date 2020/6/12 19:57
  * @Version 1.0
  */
+@Deprecated
 @Component
 @Slf4j
 public class JwtTokenUtil {

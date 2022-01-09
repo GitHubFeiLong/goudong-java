@@ -1,4 +1,4 @@
-package com.goudong.commons.utils;
+package com.goudong.commons.utils.core;
 
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import lombok.extern.slf4j.Slf4j;

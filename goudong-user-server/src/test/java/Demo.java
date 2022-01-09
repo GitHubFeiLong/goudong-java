@@ -1,4 +1,4 @@
-import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.user.enumerate.OtherUserTypeEnum;
 import lombok.Data;
 

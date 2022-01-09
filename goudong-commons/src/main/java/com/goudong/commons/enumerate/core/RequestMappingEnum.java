@@ -7,7 +7,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * 类描述：
@@ -47,19 +46,6 @@ public enum RequestMappingEnum {
     PATCH_MAPPING(PatchMapping.class, Lists.newArrayList(HttpMethod.PATCH.name())),
 
     ;
-
-    /**
-     * 是否是有效的方法
-     * @param methods http请求方法
-     * @return
-     */
-    public static boolean validMethod(List<String> methods) {
-        // 等于0表示都在指定范围内
-        long count = Stream.of(methods).filter(f -> !HttpMethodConst.ALL_HTTP_METHOD.contains(f)).count();
-
-        return count == 0;
-    }
-
     /**
      * api接口的注解（@RequestMapping）
      */

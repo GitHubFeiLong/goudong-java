@@ -1,6 +1,6 @@
 package com.goudong.commons.constant;
 
-import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.core.AssertUtil;
 
 import java.io.File;
 

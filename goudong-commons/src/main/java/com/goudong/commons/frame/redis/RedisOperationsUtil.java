@@ -3,7 +3,7 @@ package com.goudong.commons.frame.redis;
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
-import com.goudong.commons.utils.AssertUtil;
+import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

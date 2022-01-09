@@ -84,12 +84,14 @@ public class LogApplicationStartup {
             }
         }
 
-        allMessage.append(
-            StringUtil.format(
-                    "Profile(s): \t{}\n---------------------------------------------------------------------------",
-                    env.getActiveProfiles())
-        );
-       
+        if (env.getActiveProfiles().length > 0) {
+            allMessage.append(
+                    StringUtil.format(
+                            "Profile(s): \t{}\n---------------------------------------------------------------------------",
+                            env.getActiveProfiles())
+            );
+        }
+
         log.info(allMessage.toString());
     }
 

@@ -24,7 +24,6 @@ import org.springframework.util.StopWatch;
 @EnableCommonsWebMvcConfig
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
-@EnableCommonsWhitelistConfig
 @EnableCommonsJpaConfig
 @EntityScan("com.goudong.user.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.user.repository"})
