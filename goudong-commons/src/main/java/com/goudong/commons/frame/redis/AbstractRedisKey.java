@@ -1,8 +1,6 @@
 package com.goudong.commons.frame.redis;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -17,8 +15,6 @@ import java.util.concurrent.TimeUnit;
  * @Date 2022/1/10 13:34
  */
 @Getter
-@NoArgsConstructor
-@Builder
 public abstract class AbstractRedisKey {
 
     //~fields
@@ -50,7 +46,7 @@ public abstract class AbstractRedisKey {
     /**
      * redis-key 过期时长, 默认-1,当值小于0时，表示不设置失效时间.
      */
-    protected long time= -1;
+    protected long time = -1;
 
     /**
      * redis-key 过期时长单位

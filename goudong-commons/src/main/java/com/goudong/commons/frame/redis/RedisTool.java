@@ -1,10 +1,12 @@
 package com.goudong.commons.frame.redis;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -97,7 +99,7 @@ public class RedisTool extends RedisTemplate {
      * @param timeUnit
      * @param param
      */
-    public boolean expire(AbstractRedisKey redisKey, int time, @NotNull TimeUnit timeUnit, Object... param) {
+    public boolean expire(AbstractRedisKey redisKey, long time, @NotNull TimeUnit timeUnit, Object... param) {
 
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
 
@@ -141,52 +143,169 @@ public class RedisTool extends RedisTemplate {
     }
 
     /**
-     * 设置数据到redis
-     * @param redisKey
-     * @param value
-     * @param param
+     * 类似门面,设置数据到redis,根据{@link AbstractRedisKey#redisType}和{@link AbstractRedisKey#javaType}进行设置值.
+     * @param redisKey redis-key对象
+     * @param value 需要被保存的值
+     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
      * @return
      */
     public boolean set(@Valid AbstractRedisKey redisKey, Object value, Object... param){
-        /*
-            参数校验
-         */
-        DataType dataType = Optional.ofNullable(redisKey.getDataType())
-                .orElseThrow(()->new RedisToolException(ServerExceptionEnum.SERVER_ERROR, "AbstractRedisKey.dataType不能为null"));
+        DataType dataType = redisKey.getRedisType();
         // TODO Class先不做校验，看下注解是否有效
-
-        Class clazz = redisKey.getClazz();
-
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
-        int time = redisKey.getTime();
-
         switch (dataType) {
             case STRING:
-                setString(redisKey, value, param);
-                break;
+                return setString(redisKey, value, param);
+            case HASH:
+                return setHash(redisKey, value, param);
+            case LIST:
+                return setList(redisKey, value, param);
+            case SET:
+                return setSet(redisKey, value, param);
             default:
-                LogUtil.error(log,"暂不支持redis设置【{}】类型的数据", dataType.code());
-                return false;
+                String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
+                throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
         }
-
-        return true;
 
     }
 
-    private void setString(AbstractRedisKey redisKey, Object value, Object... param) {
+    /**
+     * 设置String类型数据到redis中
+     * @see DataType#STRING
+     * @param redisKey redis-key对象
+     * @param value 需要被保存的值
+     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @return
+     */
+    private boolean setString(AbstractRedisKey redisKey, Object value, Object... param) {
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        if (redisKey.getTime() > 0) {
+            super.opsForValue().set(key, value, redisKey.getTime(), redisKey.getTimeUnit());
+        } else {
+            super.opsForValue().set(key, value);
+        }
+        return true;
+
+        // throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
+        //         String.format("设置String到redis中失败!redisType:%s,javaType:%s,value:%s",
+        //                 redisKey.getRedisType(),
+        //                 redisKey.getJavaType(),
+        //                 value)
+        // );
+    }
+
+    /**
+     * 设置Hash类型数据到redis中.
+     * @see DataType#HASH
+     * @param redisKey redis-key对象
+     * @param value 需要被保存的值
+     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @return
+     */
+    private boolean setHash(AbstractRedisKey redisKey, Object value, Object... param){
         /*
             参数校验
          */
-        if (redisKey.getClazz().isInstance(value)) {
+        if (redisKey.getJavaType().isInstance(value)) {
+            // 获取完整的 key
             String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
-            if (redisKey.getTime() < 0) {
-                super.opsForValue().set(key, value);
-            } else {
-                // 设置到 redis中
-                super.opsForValue().set(key, value, redisKey.getTime(), redisKey.getTimeUnit());
+            // TODO 这里需要使用Lua脚本进行修改
+            super.opsForHash().putAll(key, BeanUtil.beanToMap(value));
+            if (redisKey.getTime() > 0) {
+                // 设置过期时常
+                return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
             }
+
+            return true;
         }
 
-        LogUtil.error(log, "redis-key");
+        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
+                String.format("设置Hash到redis中失败!redisType:%s,javaType:%s,value:%s",
+                        redisKey.getRedisType(),
+                        redisKey.getJavaType(),
+                        value)
+        );
     }
+
+    /**
+     * 设置List类型数据到redis中.
+     * @see DataType#LIST
+     * @param redisKey redis-key对象
+     * @param value 需要被保存的值
+     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @return
+     */
+    private boolean setList(AbstractRedisKey redisKey, Object value, Object[] param) {
+        /*
+            参数校验
+        */
+        List list = (List)value;
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        // 当value为空集合时添加会报错,所以这里判断下
+        if (CollectionUtils.isEmpty(list)) {
+            // 删除key
+            if (super.hasKey(key)) {
+                super.delete(key);
+            }
+
+            super.opsForList().leftPushAll(key, list);
+            if (redisKey.getTime() > 0) {
+                return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+            }
+
+            return true;
+        }
+        // 类型比较
+        if (redisKey.getJavaType().isInstance(list.get(0))) {
+            // 删除key
+            if (super.hasKey(key)) {
+                super.delete(key);
+            }
+
+            super.opsForList().leftPushAll(key, list);
+            if (redisKey.getTime() > 0) {
+                return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+            }
+            return true;
+        }
+
+        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
+                String.format("设置List到redis中失败!redisType:%s,javaType:%s,value:%s",
+                        redisKey.getRedisType(),
+                        redisKey.getJavaType(),
+                        value)
+        );
+    }
+
+    /**
+     * 设置List类型数据到redis中.
+     * @see DataType#SET
+     * @param redisKey redis-key对象
+     * @param value 需要被保存的值
+     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @return
+     */
+    private boolean setSet(AbstractRedisKey redisKey, Object value, Object[] param) {
+        Set set = (Set)value;
+        if (CollectionUtils.isEmpty(set)) {
+
+        }
+        Object obj = set.stream().findFirst().get();
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        // 类型比较
+        if (redisKey.getJavaType().isInstance(obj)) {
+            super.opsForSet().add(key, set);
+            return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+        }
+
+        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
+                String.format("设置List到redis中失败!redisType:%s,javaType:%s,value:%s",
+                        redisKey.getRedisType(),
+                        redisKey.getJavaType(),
+                        value)
+        );
+
+    }
+
 }
