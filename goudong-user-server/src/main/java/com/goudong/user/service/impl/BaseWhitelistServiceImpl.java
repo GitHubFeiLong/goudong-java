@@ -4,11 +4,13 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.user.mapper.BaseWhitelistMapper;
 import com.goudong.user.po.BaseWhitelistPO;
 import com.goudong.user.repository.BaseWhitelistRepository;
 import com.goudong.user.service.BaseWhitelistService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +30,15 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
 
     private final BaseWhitelistMapper baseWhitelistMapper;
     private final BaseWhitelistRepository baseWhitelistRepository;
+    private final RedisTool redisTool;
 
     public BaseWhitelistServiceImpl(BaseWhitelistMapper baseWhitelistMapper,
-                                   BaseWhitelistRepository baseWhitelistRepository) {
+                                   BaseWhitelistRepository baseWhitelistRepository,
+                                    RedisTool redisTool
+    ) {
         this.baseWhitelistMapper = baseWhitelistMapper;
         this.baseWhitelistRepository = baseWhitelistRepository;
+        this.redisTool = redisTool;
     }
 
 
@@ -50,7 +56,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
 
         List<BaseWhitelistPO> copyToList = baseWhitelistMapper.createDTOS2POS(createDTOS);
 
-        // pattern相等，就需要更新其它树形
+        // pattern相等，就需要更新其它属性
         baseWhitelistPOS.stream().forEach(p1->{
             copyToList.stream().forEach(p2->{
                 // 相等，那么就更新
@@ -70,6 +76,9 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
         if (CollectionUtils.isNotEmpty(saveBaseWhitelistPOList)) {
             baseWhitelistRepository.saveAll(saveBaseWhitelistPOList);
         }
+
+        // 更新redis中的值
+
 
         return BeanUtil.copyToList(saveBaseWhitelistPOList, BaseWhitelistDTO.class, CopyOptions.create());
     }

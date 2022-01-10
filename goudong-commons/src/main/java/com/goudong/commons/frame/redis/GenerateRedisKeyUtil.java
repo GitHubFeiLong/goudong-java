@@ -20,6 +20,16 @@ public class GenerateRedisKeyUtil {
 
     /**
      * 聪明的生成redis的key，需要替换表达式
+     * @param redisKey redisKey对象
+     * @param keys
+     * @return
+     */
+    public static String generateByClever (AbstractRedisKey redisKey, Object... keys) {
+        return GenerateRedisKeyUtil.generateByClever(redisKey.getKey(), keys);
+    }
+
+    /**
+     * 聪明的生成redis的key，需要替换表达式
      * @param keyTemplate   redis key 模板
      * @param keys
      * @return
@@ -74,7 +84,4 @@ public class GenerateRedisKeyUtil {
 
         return result.toString();
     }
-
-
-
 }

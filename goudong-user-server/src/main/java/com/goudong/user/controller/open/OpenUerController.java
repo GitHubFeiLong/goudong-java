@@ -9,7 +9,9 @@ import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.AssertUtil;
+import com.goudong.user.core.UserServerRedisKey;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
@@ -58,11 +60,29 @@ public class OpenUerController {
     private final BaseUserService baseUserService;
 
     /**
+     * RedisTool
+     */
+    private final RedisTool redisTool;
+
+    /**
      * 构造方法注入Bean
      */
-    public OpenUerController(BaseUserRepository baseUserRepository, BaseUserService baseUserService) {
+    public OpenUerController(BaseUserRepository baseUserRepository,
+                             BaseUserService baseUserService,
+                             RedisTool redisTool
+    ) {
         this.baseUserRepository = baseUserRepository;
         this.baseUserService = baseUserService;
+        this.redisTool = redisTool;
+    }
+
+    @RequestMapping(value = "/redis", method = {RequestMethod.GET, RequestMethod.POST})
+    @ApiOperation(value = "测试redis", notes = "测试")
+    @Whitelist("根据账户名查询基本信息")
+    public Result demo(){
+        boolean boo = redisTool.set(UserServerRedisKey.TEST, "我是测试value");
+
+        return Result.ofSuccess(boo);
     }
 
     /**
@@ -152,12 +172,6 @@ public class OpenUerController {
         return Result.ofSuccess(baseUserDTO);
     }
 
-    @RequestMapping(value = "/demo/demo", method = {RequestMethod.GET, RequestMethod.POST})
-    @ApiOperation(value = "根据登录用户名获取用户信息", notes = "登陆用户名包括，用户名，邮箱及密码")
-    @Whitelist("根据账户名查询基本信息")
-    public Result demo(){
-        return Result.ofSuccess();
-    }
     // /**
     //  * 修改用户密码
     //  * @param user2UpdatePasswordDTO

@@ -88,12 +88,12 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(UndeclaredThrowableException.class)
-    public Result blockExceptionDispose(BlockException e){
-        e.printStackTrace();
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 200, 200, "服务器繁忙，请重试", e.getRule().toString());
-        return Result.ofFail();
-    }
+    // @ExceptionHandler(UndeclaredThrowableException.class)
+    // public Result blockExceptionDispose(BlockException e){
+    //     e.printStackTrace();
+    //     log.error(GlobalExceptionHandler.LOG_ERROR_INFO, 200, 200, "服务器繁忙，请重试", e.getRule().toString());
+    //     return Result.ofFail();
+    // }
 
     /**
      * 全局处理自定义异常

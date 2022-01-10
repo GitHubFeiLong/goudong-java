@@ -1,5 +1,8 @@
 package com.goudong.commons.enumerate.core;
 
+import com.goudong.commons.dto.user.BaseWhitelist2RedisDTO;
+import com.goudong.commons.frame.redis.AbstractRedisKey;
+import com.goudong.commons.po.core.BasePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import lombok.Getter;
 import org.springframework.data.redis.connection.DataType;
@@ -9,17 +12,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * 类描述：
  * redis 的key，及 过期时间，及时间的单位
+ * @deprecated 这个不太好扩展,并且所有key都放在一个枚举里面，不太好分类管理，推荐使用新版的方式{@link AbstractRedisKey}
+ *
  * @Author msi
  * @Date 2021/1/7 11:21
  * @Version 1.0
  */
 @Getter
+@Deprecated
 public enum RedisKeyEnum {
 
     /**
      * 白名单
      */
-    WHITELIST("gd:user:whitelist", -1, null, DataType.LIST),
+    WHITELIST("goudong:goudong-user-server:whitelist", -1, null, DataType.LIST, BaseWhitelist2RedisDTO.class),
 
     /**
      * 重复提交uri记录
@@ -65,8 +71,6 @@ public enum RedisKeyEnum {
     MESSAGE_AUTH_CODE("gd:message:email-phone-code:${email|phone}", 10, TimeUnit.MINUTES, DataType.STRING, String.class),
 
     ;
-
-
     /**
      * redis key template
      */

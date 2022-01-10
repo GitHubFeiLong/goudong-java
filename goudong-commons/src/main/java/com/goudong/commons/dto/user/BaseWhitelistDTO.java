@@ -6,7 +6,7 @@ import java.util.Date;
 
 /**
  * 类描述：
- * 白名单
+ * 白名单DTO
  * @author msi
  * @version 1.0
  * @date 2022/1/8 21:04

@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @author e-Feilong.Chen
  * @date 2021/8/11 10:24
  */
+@Deprecated
 public interface RedisOperations {
 
     /**

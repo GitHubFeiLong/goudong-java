@@ -22,6 +22,7 @@ import org.springframework.util.StopWatch;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCommonsWebMvcConfig
+@EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig

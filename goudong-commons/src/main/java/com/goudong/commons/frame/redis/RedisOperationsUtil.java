@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 2021/8/11 12:32
  */
 @Slf4j
+@Deprecated
 public class RedisOperationsUtil extends RedisTemplate implements RedisOperations{
 
     /**
