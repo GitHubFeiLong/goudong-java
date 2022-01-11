@@ -1,5 +1,78 @@
-##定时器配置
-#scheduler:
-#  ScanIgnoreResourceScheduler:
-#    fixedRate: 10000 #扫描白名单接口时间间隔单位毫秒
-#    initialDelay: 3000 # 启动完项目等一段时间再执行。
+logging:
+#  config: classpath:log4j2/log4j2-dev.xml
+  level:
+    ROOT: INFO
+    com.goudong: DEBUG
+
+server:
+  port: 11111
+  servlet:
+    context-path: /api/commons
+spring:
+  profiles:
+  #    active: dev #默认使用开发环境
+  main:
+    allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false #工程中的资源文件建立映射
+  application:
+    name: goudong-commons-server #微服务名
+  # json日期格式化
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: GMT+8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+  redis:
+    database: 0   # Redis数据库索引（默认为0）
+    host: 127.0.0.1 # Redis服务器地址
+    port: 6379
+    password: ${REDIS_PASSWORD}
+    timeout: 3000
+
+# redisson配置
+redisson:
+  password: ${spring.redis.password}
+  singleServerConfig:
+    address: ${spring.redis.host}:${spring.redis.port}
+ribbon:
+  ReadTimeout: 5000 #建立连接所用时间（避免超时）
+  ConnectTimeout: 5000 #连接后接口调用时间（避免超时）
+
+mybatis-plus:
+  #  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath*:/mapper/*.xml #其他包的也能扫描到
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      logic-delete-field: deleted #配置逻辑删除，也可以在字段上加注解 @TableLogic(value = "0",delval = "1")
+      logic-delete-value: 1 # 删除1
+      logic-not-delete-value: 0
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: assign_id
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

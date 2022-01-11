@@ -6,24 +6,17 @@ import com.goudong.user.po.BaseUserPO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.connection.DataType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 class OpenUerControllerTest {
 
-    @Resource
-    private RedisTool redisTool;
-    @Test
-    void demo() {
-        redisTool.set(UserServerRedisKey.STRING, "as");
-        BaseUserPO user = new BaseUserPO();
-        user.setUsername("张三");
-        user.setPassword("面膜123123123");
 
-        redisTool.set(UserServerRedisKey.HASH, user);
-        redisTool.set(UserServerRedisKey.LIST, Lists.newArrayList("a", "b", "c"));
-    }
 }

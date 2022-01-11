@@ -1,6 +1,8 @@
 package com.goudong.commons.frame.redis;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -15,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 2022/1/10 13:34
  */
 @Getter
+@SuperBuilder
 public abstract class AbstractRedisKey {
 
     //~fields
@@ -24,7 +27,7 @@ public abstract class AbstractRedisKey {
      * redis-key模板字符串，使用`{}`包裹需替换的字符串.
      */
     @NotBlank
-    protected String key;
+    public String key;
 
     /**
      * 保存到redis中的数据类型,默认是String
@@ -32,7 +35,7 @@ public abstract class AbstractRedisKey {
      * @see DataType
      */
     @NotNull
-    protected DataType redisType;
+    public DataType redisType;
 
     /**
      * 使用RedisTool工具类，在获取key数据后，将其转为javaType
@@ -41,17 +44,17 @@ public abstract class AbstractRedisKey {
      * javaType=用户对象
      */
     @NotNull
-    protected Class javaType;
+    public Class javaType;
 
     /**
      * redis-key 过期时长, 默认-1,当值小于0时，表示不设置失效时间.
      */
-    protected long time = -1;
+    public long time = -1;
 
     /**
      * redis-key 过期时长单位
      */
-    protected TimeUnit timeUnit;
+    public TimeUnit timeUnit;
 
     //~construct methods
     //==================================================================================================================

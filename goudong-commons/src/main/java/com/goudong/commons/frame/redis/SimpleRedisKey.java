@@ -1,9 +1,5 @@
-package com.goudong.user.core;
+package com.goudong.commons.frame.redis;
 
-import com.goudong.commons.dto.user.BaseWhitelist2RedisDTO;
-import com.goudong.commons.frame.redis.AbstractRedisKey;
-import com.goudong.user.po.BaseUserPO;
-import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.redis.connection.DataType;
 
@@ -11,18 +7,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
- * 用户服务RedisKey实现
+ *
  * @Author e-Feilong.Chen
- * @Date 2022/1/10 13:55
+ * @Date 2022/1/11 12:30
  */
 @SuperBuilder
-public class UserServerRedisKey extends AbstractRedisKey {
+public class SimpleRedisKey extends AbstractRedisKey{
     //~fields
     //==================================================================================================================
-    /**
-     * 白名单
-     */
-    public static final AbstractRedisKey WHITELIST = new UserServerRedisKey("goudong:goudong-user-server:whitelist", DataType.LIST, BaseWhitelist2RedisDTO.class);
 
     //~construct methods
     //==================================================================================================================
@@ -31,7 +23,7 @@ public class UserServerRedisKey extends AbstractRedisKey {
      * @param redisType redis数据类型
      * @param javaType  java数据类型
      */
-    public UserServerRedisKey(String key, DataType redisType, Class javaType) {
+    public SimpleRedisKey(String key, DataType redisType, Class javaType) {
         super(key, redisType, javaType);
     }
 
@@ -42,7 +34,10 @@ public class UserServerRedisKey extends AbstractRedisKey {
      * @param time      过期时长
      * @param timeUnit  过期时长单位
      */
-    public UserServerRedisKey(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit) {
+    public SimpleRedisKey(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit) {
         super(key, redisType, javaType, time, timeUnit);
     }
+
+    //~methods
+    //==================================================================================================================
 }

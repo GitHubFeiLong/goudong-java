@@ -76,18 +76,6 @@ public class OpenUerController {
         this.redisTool = redisTool;
     }
 
-    @RequestMapping(value = "/redis", method = {RequestMethod.GET, RequestMethod.POST})
-    @ApiOperation(value = "测试redis", notes = "测试")
-    @Whitelist("根据账户名查询基本信息")
-    public Result demo(){
-        // boolean boo = redisTool.set(UserServerRedisKey.STRING, "我是测试value");
-        boolean boo = redisTool.set(UserServerRedisKey.STRING, "我是测试value");
-        // boolean boo = redisTool.set(UserServerRedisKey.STRING, "我是测试value");
-        // boolean boo = redisTool.set(UserServerRedisKey.STRING, "我是测试value");
-
-        return Result.ofSuccess(boo);
-    }
-
     /**
      * 根据手机号获取账号
      *

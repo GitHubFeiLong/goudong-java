@@ -1,7 +1,9 @@
 package com.goudong.commons.frame.redis;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
+import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
@@ -13,13 +15,13 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
- *
+ * Redis操作AbstractRedisKey
+ * TODO 这里需要使用Lua脚本进行修改，避免执行一半成功一半失败
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
  */
@@ -33,22 +35,28 @@ public class RedisTool extends RedisTemplate {
     /**
      * 删除单个key
      *
-     * @param redisKey
-     * @param param
+     * @param redisKey redisKey对象
+     * @param param 替换模板的参数
      */
-    public void deleteKey(AbstractRedisKey redisKey, Object... param) {
+    public boolean deleteKey(AbstractRedisKey redisKey, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
-        super.delete(key);
-        LogUtil.debug(log, "redis-key:{}已被删除", key);
+        boolean delete = super.delete(key);
+        if (delete) {
+            LogUtil.debug(log, "redis-key:{}已被删除", key);
+        } else {
+            LogUtil.warn(log, "redis-key:{}删除失败", key);
+        }
+
+        return delete;
     }
 
     /**
      * 删除多个key
      * 删除指定的key，注意长度必须一致！！！
      *
-     * @param redisKeys
-     * @param params
+     * @param redisKeys redisKey对象集合
+     * @param params 替换模板的参数
      */
     public void deleteKeys(List<AbstractRedisKey> redisKeys, Object[][] params) {
         AssertUtil.notEmpty(redisKeys, "删除key时,redisKeys不能为空");
@@ -69,8 +77,8 @@ public class RedisTool extends RedisTemplate {
     /**
      * 检查key是否存在
      *
-     * @param redisKey
-     * @param param
+     * @param redisKey redisKey对象
+     * @param param 替换模板的参数
      * @return
      */
     public boolean hasKey(AbstractRedisKey redisKey, Object... param) {
@@ -169,7 +177,7 @@ public class RedisTool extends RedisTemplate {
     }
 
     /**
-     * 设置String类型数据到redis中
+     * 设置String类型数据到redis中,允许存储的值：空字符串、null、字符串
      * @see DataType#STRING
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
@@ -184,17 +192,10 @@ public class RedisTool extends RedisTemplate {
             super.opsForValue().set(key, value);
         }
         return true;
-
-        // throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
-        //         String.format("设置String到redis中失败!redisType:%s,javaType:%s,value:%s",
-        //                 redisKey.getRedisType(),
-        //                 redisKey.getJavaType(),
-        //                 value)
-        // );
     }
 
     /**
-     * 设置Hash类型数据到redis中.
+     * 设置Hash类型数据到redis中,不能是null,且对象中的属性值为null时不设置值.
      * @see DataType#HASH
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
@@ -202,32 +203,31 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     private boolean setHash(AbstractRedisKey redisKey, Object value, Object... param){
-        /*
-            参数校验
-         */
-        if (redisKey.getJavaType().isInstance(value)) {
-            // 获取完整的 key
-            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
-            // TODO 这里需要使用Lua脚本进行修改
-            super.opsForHash().putAll(key, BeanUtil.beanToMap(value));
-            if (redisKey.getTime() > 0) {
-                // 设置过期时常
-                return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
-            }
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        // 需要将为空的过滤掉
+        Map<String, Object> stringObjectMap = BeanUtil.beanToMap(value, false, true);
+        if (stringObjectMap == null) {
+            LogUtil.warn(log, "设置Hash到redis中失败, value为空");
+            return false;
+        }
+        super.opsForHash().putAll(key, stringObjectMap);
+        if (redisKey.getTime() > 0) {
+            // 设置过期时常
+            super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+        }
 
+        if (redisKey.getJavaType().isInstance(value)) {
+            LogUtil.debug(log, "设置Hash到redis中成功, redisType与javaType匹配！");
             return true;
         }
 
-        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
-                String.format("设置Hash到redis中失败!redisType:%s,javaType:%s,value:%s",
-                        redisKey.getRedisType(),
-                        redisKey.getJavaType(),
-                        value)
-        );
+        LogUtil.warn(log, "设置Hash到redis中成功, redisType与javaType不匹配！");
+        return false;
     }
 
     /**
-     * 设置List类型数据到redis中.
+     * 设置List类型数据到redis中，list不能为null也不能为空集合.
      * @see DataType#LIST
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
@@ -235,50 +235,39 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     private boolean setList(AbstractRedisKey redisKey, Object value, Object[] param) {
-        /*
-            参数校验
-        */
+        // 转换list
         List list = (List)value;
-        // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
-        // 当value为空集合时添加会报错,所以这里判断下
-        if (CollectionUtils.isEmpty(list)) {
+
+        // Values must not be 'null' or empty.当value为空集合时添加会报错,所以这里判断下
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 获取完整的 key
+            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
             // 删除key
             if (super.hasKey(key)) {
                 super.delete(key);
             }
-
+            // 添加
             super.opsForList().leftPushAll(key, list);
+            // 设置过期时间
             if (redisKey.getTime() > 0) {
-                return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+                super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+            }
+            // 类型比较
+            if (redisKey.getJavaType().isInstance(list.get(0))) {
+                LogUtil.debug(log, "设置List到redis中成功, redisType与javaType匹配！");
+            } else {
+                LogUtil.warn(log, "设置List到redis中成功, redisType与javaType不匹配！");
             }
 
             return true;
         }
-        // 类型比较
-        if (redisKey.getJavaType().isInstance(list.get(0))) {
-            // 删除key
-            if (super.hasKey(key)) {
-                super.delete(key);
-            }
 
-            super.opsForList().leftPushAll(key, list);
-            if (redisKey.getTime() > 0) {
-                return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
-            }
-            return true;
-        }
-
-        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
-                String.format("设置List到redis中失败!redisType:%s,javaType:%s,value:%s",
-                        redisKey.getRedisType(),
-                        redisKey.getJavaType(),
-                        value)
-        );
+        LogUtil.warn(log, "设置List到redis中失败, Values must not be 'null' or empty！");
+        return false;
     }
 
     /**
-     * 设置List类型数据到redis中.
+     * 设置List类型数据到redis中, set为null，空集合都能正常设置.
      * @see DataType#SET
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
@@ -286,26 +275,126 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     private boolean setSet(AbstractRedisKey redisKey, Object value, Object[] param) {
-        Set set = (Set)value;
-        if (CollectionUtils.isEmpty(set)) {
-
+        Set set;
+        try {
+            set = (Set)value;
+        } catch (ClassCastException e) {
+            LogUtil.error(log, "设置Set到redis中失败!value:{}, errMsg: ", value, e.getMessage());
+            return false;
         }
-        Object obj = set.stream().findFirst().get();
+
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
-        // 类型比较
-        if (redisKey.getJavaType().isInstance(obj)) {
-            super.opsForSet().add(key, set);
-            return super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+        super.opsForSet().add(key, set);
+        if (redisKey.getTime() > 0) {
+            super.expire(key, redisKey.getTime(), redisKey.timeUnit);
         }
 
-        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR,
-                String.format("设置List到redis中失败!redisType:%s,javaType:%s,value:%s",
-                        redisKey.getRedisType(),
-                        redisKey.getJavaType(),
-                        value)
-        );
+        if (CollectionUtils.isNotEmpty(set)) {
+            Object obj = set.stream().findFirst().get();
+            // 类型比较
+            if (redisKey.getJavaType().isInstance(obj)) {
+                LogUtil.debug(log, "设置Set到redis中成功, redisType与javaType匹配！");
+            } else {
+                LogUtil.warn(log, "设置Set到redis中失败, redisType与javaType不匹配！");
+            }
+        }
 
+
+        return true;
+    }
+
+
+    /**
+     * 类似门面,设置数据到redis,根据{@link AbstractRedisKey#redisType}和{@link AbstractRedisKey#javaType}进行获取值.
+     * @param redisKey redis-key对象
+     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @return
+     */
+    public Object get(@Valid AbstractRedisKey redisKey, Object... param){
+        DataType dataType = redisKey.getRedisType();
+        Class javaType = redisKey.getJavaType();
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        switch (dataType) {
+            case STRING:
+                return getString(redisKey, param);
+            case HASH:
+                return BeanUtil.toBean(super.opsForHash().entries(key), javaType);
+            case LIST:
+                return getList(redisKey, redisKey.getJavaType(), param);
+            case SET:
+                return getSet(redisKey, redisKey.getJavaType(), param);
+            default:
+                String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
+                throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
+        }
+    }
+    /**
+     * 获取 dataType 为String的value
+     *
+     * @param redisKey
+     * @param param
+     * @return
+     */
+    public String getString(AbstractRedisKey redisKey, Object... param) {
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+
+        return (String) super.opsForValue().get(key);
+    }
+
+    /**
+     * 获取 dataType 为Hash的所有元素
+     *
+     * @param <T> 返回的类型
+     * @param redisKey
+     * @param clazz
+     * @param param
+     * @return
+     */
+    public <T> T getHash(AbstractRedisKey redisKey, Class<T> clazz, Object... param) {
+        if (Objects.equals(clazz, redisKey.getJavaType())) {
+            // 获取完整的 key
+            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+            // 将Map转为Bean
+            return BeanUtil.toBean(super.opsForHash().entries(key), clazz);
+        }
+
+        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, "类型不正确");
+    }
+
+    /**
+     * 获取 dataType 为List的所有元素
+     *
+     * @param redisKey
+     * @param param
+     * @return
+     */
+    public <T> List<T> getList(AbstractRedisKey redisKey, Class<T> clazz, Object... param) {
+        if (Objects.equals(clazz, redisKey.getJavaType())) {
+            // 获取完整的 key
+            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+            // 获取list（此时元素是LinkedHashMap）
+            List range = super.opsForList().range(key, 0, -1);
+
+            return BeanUtil.copyToList(range, clazz, CopyOptions.create());
+        }
+
+        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, "类型不正确");
+    }
+
+    /**
+     * 获取 dataType 为Set的所有元素
+     *
+     * @param redisKey
+     * @param param
+     * @return
+     */
+    public <T> Set<T> getSet(AbstractRedisKey redisKey,  Class<T> clazz, Object... param) {
+        // 获取完整的 key
+        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+
+        return super.opsForSet().members(key);
     }
 
 }
