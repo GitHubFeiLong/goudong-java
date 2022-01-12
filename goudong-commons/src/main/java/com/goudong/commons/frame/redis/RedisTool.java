@@ -83,10 +83,10 @@ public class RedisTool extends RedisTemplate {
      * 检查key是否存在
      *
      * @param redisKey redisKey对象
-     * @param param 替换模板的参数, 避免调用了{@link RedisTemplate#hasKey(Object)}
+     * @param param 替换模板的参数
      * @return
      */
-    public boolean hasKey(@Valid RedisKeyProvider redisKey, Object[] param) {
+    public boolean existKey(@Valid RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         boolean hasKey = super.hasKey(key);
@@ -101,7 +101,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 替换模板的参数
      */
     public boolean refresh(RedisKeyProvider redisKey, Object... param) {
-        return this.expire(redisKey, redisKey.getTime(), redisKey.getTimeUnit(), param);
+        return this.expireByCustom(redisKey, redisKey.getTime(), redisKey.getTimeUnit(), param);
     }
 
     /**
@@ -112,7 +112,7 @@ public class RedisTool extends RedisTemplate {
      * @param timeUnit 过期时长单位
      * @param param 替换参数，避免调用父类的方法
      */
-    public boolean expire(RedisKeyProvider redisKey, long time, @NotNull TimeUnit timeUnit, Object[] param) {
+    public boolean expireByCustom(RedisKeyProvider redisKey, long time, @NotNull TimeUnit timeUnit, Object... param) {
 
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
 

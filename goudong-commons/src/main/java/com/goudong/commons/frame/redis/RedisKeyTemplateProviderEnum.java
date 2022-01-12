@@ -1,9 +1,6 @@
 package com.goudong.commons.frame.redis;
 
-import com.goudong.commons.dto.user.BaseWhitelist2RedisDTO;
 import com.goudong.commons.po.core.BasePO;
-import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
-import lombok.Getter;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -18,23 +15,23 @@ import java.util.concurrent.TimeUnit;
  * @Date 2021/1/7 11:21
  * @Version 1.0
  */
-public enum RedisKeyTemplateEnum implements RedisKeyProvider{
+public enum RedisKeyTemplateProviderEnum implements RedisKeyProvider{
     DELETE_KEY("test:delete-key:string", DataType.STRING, String.class),
     DELETE_KEYS_1("test:delete-keys:string1", DataType.STRING, String.class),
     DELETE_KEYS_2("test:delete-keys:string2", DataType.STRING, String.class),
     HAS_KEY("test:has-key:string2", DataType.STRING, String.class),
     REFRESH_KEY("test:refresh-key:string2", DataType.STRING, String.class, 10, TimeUnit.SECONDS),
     EXPIRE_KEY("test:expire-key:string1", DataType.STRING, String.class, 10, TimeUnit.SECONDS),
-    GET_EXPIRE1("test:get-expire:string1:{id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
-    GET_EXPIRE2("test:get-expire:string2:{id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
-    GET_EXPIRE3("test:get-expire:string3:{id}", DataType.HASH, BasePO.class),
+    GET_EXPIRE1("test:get-expire:string1:${id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
+    GET_EXPIRE2("test:get-expire:string2:${id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
+    GET_EXPIRE3("test:get-expire:string3:${id}", DataType.HASH, BasePO.class),
     // GET_EXPIRE("test:get-expire:string:{id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
     ;
     //~fields
     //==================================================================================================================
 
     /**
-     * redis-key模板字符串，使用`{}`包裹需替换的字符串.
+     * redis-key模板字符串，使用`${}`包裹需替换的字符串.
      */
     @NotBlank
     public String key;
@@ -75,7 +72,7 @@ public enum RedisKeyTemplateEnum implements RedisKeyProvider{
      * @param redisType redis数据类型
      * @param javaType java数据类型
      */
-    RedisKeyTemplateEnum(String key, DataType redisType, Class javaType){
+    RedisKeyTemplateProviderEnum(String key, DataType redisType, Class javaType){
         this.key = key;
         this.redisType = redisType;
         this.javaType = javaType;
@@ -89,7 +86,7 @@ public enum RedisKeyTemplateEnum implements RedisKeyProvider{
      * @param time 过期时长
      * @param timeUnit 过期时长单位
      */
-    RedisKeyTemplateEnum(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit){
+    RedisKeyTemplateProviderEnum(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit){
         this.key = key;
         this.redisType = redisType;
         this.javaType = javaType;

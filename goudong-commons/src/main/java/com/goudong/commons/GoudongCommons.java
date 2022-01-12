@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  */
 @SpringBootApplication
-@MapperScan(basePackages = {BasePackageConst.COMMONS_MAPPER})
+@MapperScan(BasePackageConst.COMMONS_MAPPER)
 public class GoudongCommons {
     public static void main(String[] args) {
         SpringApplication.run(GoudongCommons.class, args);

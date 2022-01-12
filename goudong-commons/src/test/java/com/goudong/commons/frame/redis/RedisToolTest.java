@@ -30,51 +30,51 @@ class RedisToolTest {
 
     @Test
     void deleteKey() {
-        boolean boo1 = redisTool.deleteKey(RedisKeyTemplateEnum.DELETE_KEY);
+        boolean boo1 = redisTool.deleteKey(RedisKeyTemplateProviderEnum.DELETE_KEY);
         Assert.isTrue(!boo1, "删除的key不存在时，应该返回false");
-        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateEnum.DELETE_KEY);
+        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateProviderEnum.DELETE_KEY);
         redisTool.opsForValue().set(key, 123456, 30, TimeUnit.SECONDS);
-        boolean boo = redisTool.deleteKey(RedisKeyTemplateEnum.DELETE_KEY);
+        boolean boo = redisTool.deleteKey(RedisKeyTemplateProviderEnum.DELETE_KEY);
         Boolean hasKey = redisTool.hasKey(key);
         Assert.isTrue(!hasKey, "删除key失败");
     }
 
     @Test
     void deleteKeys() {
-        redisTool.opsForValue().set(RedisKeyTemplateEnum.DELETE_KEYS_1.getKey(), 123, 30, TimeUnit.SECONDS);
-        redisTool.opsForValue().set(RedisKeyTemplateEnum.DELETE_KEYS_2.getKey(), 456, 30, TimeUnit.SECONDS);
-        redisTool.deleteKeys(Lists.newArrayList(RedisKeyTemplateEnum.DELETE_KEYS_1, RedisKeyTemplateEnum.DELETE_KEYS_2), new Object[][]{{},{}});
-        boolean fail = redisTool.hasKey(RedisKeyTemplateEnum.DELETE_KEYS_1.getKey()) || redisTool.hasKey(RedisKeyTemplateEnum.DELETE_KEYS_2.getKey());
+        redisTool.opsForValue().set(RedisKeyTemplateProviderEnum.DELETE_KEYS_1.getKey(), 123, 30, TimeUnit.SECONDS);
+        redisTool.opsForValue().set(RedisKeyTemplateProviderEnum.DELETE_KEYS_2.getKey(), 456, 30, TimeUnit.SECONDS);
+        redisTool.deleteKeys(Lists.newArrayList(RedisKeyTemplateProviderEnum.DELETE_KEYS_1, RedisKeyTemplateProviderEnum.DELETE_KEYS_2), new Object[][]{{},{}});
+        boolean fail = redisTool.hasKey(RedisKeyTemplateProviderEnum.DELETE_KEYS_1.getKey()) || redisTool.hasKey(RedisKeyTemplateProviderEnum.DELETE_KEYS_2.getKey());
         Assert.isTrue(!fail, "删除失败");
     }
 
     @Test
     void hasKey() {
-        Boolean hasKey = redisTool.hasKey(RedisKeyTemplateEnum.HAS_KEY, new Object[]{});
+        Boolean hasKey = redisTool.existKey(RedisKeyTemplateProviderEnum.HAS_KEY);
         Assert.isTrue(!hasKey, "此时还未设置该key，不应该存在key");
-        redisTool.opsForValue().set(RedisKeyTemplateEnum.HAS_KEY.getKey(), "123123", 30, TimeUnit.SECONDS);
-        hasKey = redisTool.hasKey(RedisKeyTemplateEnum.HAS_KEY, new Object[]{});
+        redisTool.opsForValue().set(RedisKeyTemplateProviderEnum.HAS_KEY.getKey(), "123123", 30, TimeUnit.SECONDS);
+        hasKey = redisTool.existKey(RedisKeyTemplateProviderEnum.HAS_KEY);
         Assert.isTrue(hasKey, "该key已经设置了，应该存在在Redis中");
     }
 
     @Test
     void refresh() throws InterruptedException {
         // 设置key
-        redisTool.set(RedisKeyTemplateEnum.REFRESH_KEY, 1);
+        redisTool.set(RedisKeyTemplateProviderEnum.REFRESH_KEY, 1);
         // 等待一段时间在刷新key
         Thread.sleep(5000L);
         // 查看key的失效时间是否正确
-        redisTool.refresh(RedisKeyTemplateEnum.REFRESH_KEY);
-        Long expire = redisTool.getExpire(RedisKeyTemplateEnum.REFRESH_KEY.getKey());
-        Assert.isTrue(RedisKeyTemplateEnum.REFRESH_KEY.getTime() - expire < 5, "过期时间未刷新");
+        redisTool.refresh(RedisKeyTemplateProviderEnum.REFRESH_KEY);
+        Long expire = redisTool.getExpire(RedisKeyTemplateProviderEnum.REFRESH_KEY.getKey());
+        Assert.isTrue(RedisKeyTemplateProviderEnum.REFRESH_KEY.getTime() - expire < 5, "过期时间未刷新");
     }
 
     @Test
     void expire() {
         // 设置key
-        String key = RedisKeyTemplateEnum.EXPIRE_KEY.getKey();
+        String key = RedisKeyTemplateProviderEnum.EXPIRE_KEY.getKey();
         redisTool.opsForValue().set(key, "123", 10, TimeUnit.SECONDS);
-        redisTool.expire(RedisKeyTemplateEnum.EXPIRE_KEY, 60, TimeUnit.SECONDS, new Object[]{});
+        redisTool.expireByCustom(RedisKeyTemplateProviderEnum.EXPIRE_KEY, 60, TimeUnit.SECONDS);
         Long expire = redisTool.getExpire(key);
         Assert.isTrue(expire > 10, "设置失效时间失败");
     }
@@ -82,7 +82,7 @@ class RedisToolTest {
     @Test
     void getExpire() {
         Object[] param = {1};
-        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateEnum.GET_EXPIRE1.getKey(), param);
+        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateProviderEnum.GET_EXPIRE1.getKey(), param);
         BasePO basePO = new BasePO();
         basePO.setId(0L);
         basePO.setDeleted(false);
@@ -94,25 +94,29 @@ class RedisToolTest {
         redisTool.opsForHash().putAll(key, BeanUtil.beanToMap(basePO));
         redisTool.expire(key, 30, TimeUnit.SECONDS);
 
-        long expire = redisTool.getExpire(RedisKeyTemplateEnum.GET_EXPIRE1, param);
+        long expire = redisTool.getExpire(RedisKeyTemplateProviderEnum.GET_EXPIRE1, param);
 
         Assert.isTrue(expire > 0, "获取的值错误：" + expire);
 
-        long expire1 = redisTool.getExpire(RedisKeyTemplateEnum.GET_EXPIRE2, param);
+        long expire1 = redisTool.getExpire(RedisKeyTemplateProviderEnum.GET_EXPIRE2, param);
         Assert.isTrue(expire1 == -2, "该key不存在");
 
-        String key2 = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateEnum.GET_EXPIRE3, param);
+        String key2 = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateProviderEnum.GET_EXPIRE3, param);
         redisTool.opsForHash().putAll(key2, BeanUtil.beanToMap(basePO));
-        long expire2 = redisTool.getExpire(RedisKeyTemplateEnum.GET_EXPIRE3, param);
+        long expire2 = redisTool.getExpire(RedisKeyTemplateProviderEnum.GET_EXPIRE3, param);
 
         Assert.isTrue(expire2 == -1, "该key的ttl值应该是-1, expire2=" + expire2);
 
     }
 
-    /**
-     * 设置String
-     */
     @Test
+    void set() {
+        setString();
+        setHash();
+        setList();
+        setSet();
+    }
+
     void setString() {
         boolean boo1 = redisTool.set(SimpleRedisKey.builder()
                         .key("goudong:goudong-user-server:test:string1")
@@ -137,10 +141,6 @@ class RedisToolTest {
         Assert.isTrue(boo3, "设置\"\"到redis失败");
     }
 
-    /**
-     * 设置Hash
-     */
-    @Test
     void setHash() {
         // 设置HASH
         User user1 = new User();
@@ -169,7 +169,6 @@ class RedisToolTest {
         Assert.isTrue(!boo3, "设置 null 到redis失败");
     }
 
-    @Test
     void setList() {
 
         // null设置到redis中
@@ -204,7 +203,6 @@ class RedisToolTest {
         Assert.isTrue(boo3, "设置"+user3+"到redis失败");
     }
 
-    @Test
     void setSet() {
         // 设置Set
         boolean boo1 = redisTool.set(

@@ -1,6 +1,5 @@
 package com.goudong.commons.frame.redis;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.redis.connection.DataType;
@@ -13,20 +12,19 @@ import java.util.concurrent.TimeUnit;
  * 类描述：
  * redisKey的公共属性和行为定义，其它服务需要继承
  *
- * @deprecated 使用枚举比较好 {@link RedisKeyEnum}
+ * 使用枚举比较好 {@link RedisKeyTemplateProviderEnum}
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 13:34
  */
 @Getter
 @SuperBuilder
-@Deprecated
 public abstract class AbstractRedisKey implements RedisKeyProvider{
 
     //~fields
     //==================================================================================================================
 
     /**
-     * redis-key模板字符串，使用`{}`包裹需替换的字符串.
+     * redis-key模板字符串，使用`${}`包裹需替换的字符串.
      */
     @NotBlank
     public String key;
