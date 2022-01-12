@@ -13,12 +13,14 @@ import java.util.concurrent.TimeUnit;
  * 类描述：
  * redisKey的公共属性和行为定义，其它服务需要继承
  *
+ * @deprecated 使用枚举比较好 {@link RedisKeyEnum}
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 13:34
  */
 @Getter
 @SuperBuilder
-public abstract class AbstractRedisKey {
+@Deprecated
+public abstract class AbstractRedisKey implements RedisKeyProvider{
 
     //~fields
     //==================================================================================================================

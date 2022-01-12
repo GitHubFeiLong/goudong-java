@@ -35,7 +35,7 @@ import java.util.Date;
  * @Version 1.0
  */
 @Deprecated
-@Component
+// @Component
 @Slf4j
 public class JwtTokenUtil {
     /**

@@ -1,10 +1,10 @@
 package com.goudong.commons.frame.redis;
+import java.time.LocalDateTime;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.goudong.commons.po.core.BasePO;
+import lombok.*;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,13 +15,99 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 class RedisToolTest {
 
+    //~ 常量
+    //==================================================================================================================
+
     @Resource
     private RedisTool redisTool;
+
+    @Test
+    void deleteKey() {
+        boolean boo1 = redisTool.deleteKey(RedisKeyTemplateEnum.DELETE_KEY);
+        Assert.isTrue(!boo1, "删除的key不存在时，应该返回false");
+        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateEnum.DELETE_KEY);
+        redisTool.opsForValue().set(key, 123456, 30, TimeUnit.SECONDS);
+        boolean boo = redisTool.deleteKey(RedisKeyTemplateEnum.DELETE_KEY);
+        Boolean hasKey = redisTool.hasKey(key);
+        Assert.isTrue(!hasKey, "删除key失败");
+    }
+
+    @Test
+    void deleteKeys() {
+        redisTool.opsForValue().set(RedisKeyTemplateEnum.DELETE_KEYS_1.getKey(), 123, 30, TimeUnit.SECONDS);
+        redisTool.opsForValue().set(RedisKeyTemplateEnum.DELETE_KEYS_2.getKey(), 456, 30, TimeUnit.SECONDS);
+        redisTool.deleteKeys(Lists.newArrayList(RedisKeyTemplateEnum.DELETE_KEYS_1, RedisKeyTemplateEnum.DELETE_KEYS_2), new Object[][]{{},{}});
+        boolean fail = redisTool.hasKey(RedisKeyTemplateEnum.DELETE_KEYS_1.getKey()) || redisTool.hasKey(RedisKeyTemplateEnum.DELETE_KEYS_2.getKey());
+        Assert.isTrue(!fail, "删除失败");
+    }
+
+    @Test
+    void hasKey() {
+        Boolean hasKey = redisTool.hasKey(RedisKeyTemplateEnum.HAS_KEY, new Object[]{});
+        Assert.isTrue(!hasKey, "此时还未设置该key，不应该存在key");
+        redisTool.opsForValue().set(RedisKeyTemplateEnum.HAS_KEY.getKey(), "123123", 30, TimeUnit.SECONDS);
+        hasKey = redisTool.hasKey(RedisKeyTemplateEnum.HAS_KEY, new Object[]{});
+        Assert.isTrue(hasKey, "该key已经设置了，应该存在在Redis中");
+    }
+
+    @Test
+    void refresh() throws InterruptedException {
+        // 设置key
+        redisTool.set(RedisKeyTemplateEnum.REFRESH_KEY, 1);
+        // 等待一段时间在刷新key
+        Thread.sleep(5000L);
+        // 查看key的失效时间是否正确
+        redisTool.refresh(RedisKeyTemplateEnum.REFRESH_KEY);
+        Long expire = redisTool.getExpire(RedisKeyTemplateEnum.REFRESH_KEY.getKey());
+        Assert.isTrue(RedisKeyTemplateEnum.REFRESH_KEY.getTime() - expire < 5, "过期时间未刷新");
+    }
+
+    @Test
+    void expire() {
+        // 设置key
+        String key = RedisKeyTemplateEnum.EXPIRE_KEY.getKey();
+        redisTool.opsForValue().set(key, "123", 10, TimeUnit.SECONDS);
+        redisTool.expire(RedisKeyTemplateEnum.EXPIRE_KEY, 60, TimeUnit.SECONDS, new Object[]{});
+        Long expire = redisTool.getExpire(key);
+        Assert.isTrue(expire > 10, "设置失效时间失败");
+    }
+
+    @Test
+    void getExpire() {
+        Object[] param = {1};
+        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateEnum.GET_EXPIRE1.getKey(), param);
+        BasePO basePO = new BasePO();
+        basePO.setId(0L);
+        basePO.setDeleted(false);
+        basePO.setCreateUserId(10L);
+        basePO.setUpdateUserId(20L);
+        basePO.setUpdateTime(LocalDateTime.now());
+        basePO.setCreateTime(LocalDateTime.now());
+
+        redisTool.opsForHash().putAll(key, BeanUtil.beanToMap(basePO));
+        redisTool.expire(key, 30, TimeUnit.SECONDS);
+
+        long expire = redisTool.getExpire(RedisKeyTemplateEnum.GET_EXPIRE1, param);
+
+        Assert.isTrue(expire > 0, "获取的值错误：" + expire);
+
+        long expire1 = redisTool.getExpire(RedisKeyTemplateEnum.GET_EXPIRE2, param);
+        Assert.isTrue(expire1 == -2, "该key不存在");
+
+        String key2 = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateEnum.GET_EXPIRE3, param);
+        redisTool.opsForHash().putAll(key2, BeanUtil.beanToMap(basePO));
+        long expire2 = redisTool.getExpire(RedisKeyTemplateEnum.GET_EXPIRE3, param);
+
+        Assert.isTrue(expire2 == -1, "该key的ttl值应该是-1, expire2=" + expire2);
+
+    }
 
     /**
      * 设置String
@@ -80,7 +166,7 @@ class RedisToolTest {
                         .javaType(User.class).build(),
                 null);
 
-        Assert.isTrue(boo3, "设置 null 到redis失败");
+        Assert.isTrue(!boo3, "设置 null 到redis失败");
     }
 
     @Test
@@ -93,7 +179,7 @@ class RedisToolTest {
                         .redisType(DataType.LIST)
                         .javaType(User.class).build(),
                 null);
-        Assert.isTrue(boo1, "设置null到redis失败");
+        Assert.isTrue(!boo1, "设置null到redis失败");
 
         // 空集合会设置到redis中
         ArrayList<User> list2 = Lists.newArrayList();
@@ -103,7 +189,7 @@ class RedisToolTest {
                         .redisType(DataType.LIST)
                         .javaType(User.class).build(),
                 list2);
-        Assert.isTrue(boo2, "设置"+list2+"到redis失败");
+        Assert.isTrue(!boo2, "设置"+list2+"到redis失败");
 
         // 设置集合
         ArrayList<User> user3 = Lists.newArrayList(User.builder().username("user1").password("123456").build(),
@@ -119,40 +205,95 @@ class RedisToolTest {
     }
 
     @Test
-    void setRedisData() {
+    void setSet() {
         // 设置Set
-        redisTool.set(
+        boolean boo1 = redisTool.set(
                 SimpleRedisKey.builder()
-                        .key("goudong:goudong-user-server:set1")
+                        .key("goudong:goudong-user-server:test:set1")
                         .redisType(DataType.SET)
                         .javaType(String.class).build(),
                 null);
-        redisTool.set(
+        Assert.isTrue(boo1, "设置 null 到 Set失败");
+
+        boolean boo2 = redisTool.set(
                 SimpleRedisKey.builder()
-                        .key("goudong:goudong-user-server:set2")
+                        .key("goudong:goudong-user-server:test:set2")
                         .redisType(DataType.SET)
                         .javaType(String.class).build(),
                 new HashSet<>());
+        Assert.isTrue(boo2, "设置 空集合 到 Set失败");
 
         HashSet<Object> hashSet = new HashSet<>();
         hashSet.addAll(Lists.newArrayList("a", "b", "c"));
-        redisTool.set(
+        boolean boo3 = redisTool.set(
                 SimpleRedisKey.builder()
-                        .key("goudong:goudong-user-server:set3")
+                        .key("goudong:goudong-user-server:test:set3")
                         .redisType(DataType.SET)
                         .javaType(String.class).build(),
                 hashSet);
+        Assert.isTrue(boo3, String.format("设置 %s 到 Set失败", hashSet));
+    }
 
+    @Test
+    void getString(){
+        String str1 = redisTool.getString(SimpleRedisKey.builder()
+                .key("goudong:goudong-user-server:test:string1")
+                .redisType(DataType.STRING)
+                .javaType(String.class).build());
+        Assert.isTrue(Objects.equals("as", str1), "错误：" + str1);
+
+        String str2 = redisTool.getString(SimpleRedisKey.builder()
+                .key("goudong:goudong-user-server:test:string2")
+                .redisType(DataType.STRING)
+                .javaType(String.class).build());
+        Assert.isTrue(Objects.equals(null, str2), "错误：" + str1);
+
+        String str3 = redisTool.getString(SimpleRedisKey.builder()
+                .key("goudong:goudong-user-server:test:string3")
+                .redisType(DataType.STRING)
+                .javaType(String.class).build());
+        Assert.isTrue(Objects.equals("", str3), "错误：" + str1);
+
+    }
+
+    @Test
+    void getHash() {
+        // 设置HASH
+        User user1 = new User();
+        user1.setUsername("张三");
+        user1.setPassword("面膜123123123");
+        User user = redisTool.getHash(SimpleRedisKey.builder()
+                        .key("goudong:goudong-user-server:test:hash1")
+                        .redisType(DataType.HASH)
+                        .javaType(User.class).build(),
+                User.class);
+        Assert.isTrue(user1.equals(user), "获取对象不相等");
+
+        User user2 = new User();
+        User user3 = redisTool.getHash(SimpleRedisKey.builder()
+                .key("goudong:goudong-user-server:test:hash2")
+                .redisType(DataType.HASH)
+                .javaType(User.class).build(),User.class);
+        Assert.isTrue(Objects.equals(user2, user3), "错误对象不相等");
+
+        User user4 = redisTool.getHash(SimpleRedisKey.builder()
+                        .key("goudong:goudong-user-server:test:hash3")
+                        .redisType(DataType.HASH)
+                        .javaType(User.class).build(),
+                User.class);
+
+        Assert.isTrue(user4 == null, "获取无效key错误");
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
+    @EqualsAndHashCode
     static class User {
         private String username;
         private String password;
         private Long id;
-        private int age;
+        private Integer age;
     }
 }

@@ -2,11 +2,13 @@ package com.goudong.commons.frame.redis;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.util.StrUtil;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.connection.DataType;
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
- * Redis操作AbstractRedisKey
+ * Redis操作RedisKeyProvider
  * TODO 这里需要使用Lua脚本进行修改，避免执行一半成功一半失败
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
@@ -37,10 +39,13 @@ public class RedisTool extends RedisTemplate {
      *
      * @param redisKey redisKey对象
      * @param param 替换模板的参数
+     * @return 删除成功时返回true,当删除的key不存在时,返回false.
      */
-    public boolean deleteKey(AbstractRedisKey redisKey, Object... param) {
+    public boolean deleteKey(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        // String key = StringUtil.format(redisKey.getKey(), param);
+        // key 不存在时，删除失败，返回false
         boolean delete = super.delete(key);
         if (delete) {
             LogUtil.debug(log, "redis-key:{}已被删除", key);
@@ -58,7 +63,7 @@ public class RedisTool extends RedisTemplate {
      * @param redisKeys redisKey对象集合
      * @param params 替换模板的参数
      */
-    public void deleteKeys(List<AbstractRedisKey> redisKeys, Object[][] params) {
+    public void deleteKeys(List<RedisKeyProvider> redisKeys, Object[][] params) {
         AssertUtil.notEmpty(redisKeys, "删除key时,redisKeys不能为空");
         AssertUtil.notEmpty(params, "删除key时,params数组不能为空");
 
@@ -78,36 +83,36 @@ public class RedisTool extends RedisTemplate {
      * 检查key是否存在
      *
      * @param redisKey redisKey对象
-     * @param param 替换模板的参数
+     * @param param 替换模板的参数, 避免调用了{@link RedisTemplate#hasKey(Object)}
      * @return
      */
-    public boolean hasKey(AbstractRedisKey redisKey, Object... param) {
+    public boolean hasKey(@Valid RedisKeyProvider redisKey, Object[] param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         boolean hasKey = super.hasKey(key);
-        LogUtil.debug(log, "redis-key:{}{}", key, hasKey ? "存在" : "不存在");
+        LogUtil.debug(log, "redis-key:{} {}", key, hasKey ? "存在" : "不存在");
         return hasKey;
     }
 
     /**
      * 刷新指定key的过期时长
      *
-     * @param redisKey
-     * @param param
+     * @param redisKey redisKey对象
+     * @param param 替换模板的参数
      */
-    public boolean refresh(AbstractRedisKey redisKey, Object... param) {
+    public boolean refresh(RedisKeyProvider redisKey, Object... param) {
         return this.expire(redisKey, redisKey.getTime(), redisKey.getTimeUnit(), param);
     }
 
     /**
      * 设置key指定过期时长
      *
-     * @param redisKey
-     * @param time
-     * @param timeUnit
-     * @param param
+     * @param redisKey redisKey对象
+     * @param time 过期时长
+     * @param timeUnit 过期时长单位
+     * @param param 替换参数，避免调用父类的方法
      */
-    public boolean expire(AbstractRedisKey redisKey, long time, @NotNull TimeUnit timeUnit, Object... param) {
+    public boolean expire(RedisKeyProvider redisKey, long time, @NotNull TimeUnit timeUnit, Object[] param) {
 
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
 
@@ -136,7 +141,7 @@ public class RedisTool extends RedisTemplate {
      * @param param
      * @return
      */
-    public long getExpire(AbstractRedisKey redisKey, Object... param) {
+    public long getExpire(RedisKeyProvider redisKey, Object... param) {
         //此方法返回单位为秒过期时长
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         long ttl = super.opsForValue().getOperations().getExpire(key);
@@ -151,13 +156,13 @@ public class RedisTool extends RedisTemplate {
     }
 
     /**
-     * 类似门面,设置数据到redis,根据{@link AbstractRedisKey#redisType}和{@link AbstractRedisKey#javaType}进行设置值.
+     * 类似门面,设置数据到redis,根据{@link RedisKeyProvider#getKey()}和{@link RedisKeyProvider#getJavaType()}进行设置值.
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
-     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    public boolean set(@Valid AbstractRedisKey redisKey, Object value, Object... param){
+    public boolean set(@Valid RedisKeyProvider redisKey, Object value, Object... param){
         DataType dataType = redisKey.getRedisType();
         // TODO Class先不做校验，看下注解是否有效
         switch (dataType) {
@@ -181,10 +186,10 @@ public class RedisTool extends RedisTemplate {
      * @see DataType#STRING
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
-     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    private boolean setString(AbstractRedisKey redisKey, Object value, Object... param) {
+    private boolean setString(RedisKeyProvider redisKey, Object value, Object... param) {
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         if (redisKey.getTime() > 0) {
             super.opsForValue().set(key, value, redisKey.getTime(), redisKey.getTimeUnit());
@@ -199,10 +204,10 @@ public class RedisTool extends RedisTemplate {
      * @see DataType#HASH
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
-     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    private boolean setHash(AbstractRedisKey redisKey, Object value, Object... param){
+    private boolean setHash(RedisKeyProvider redisKey, Object value, Object... param){
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         // 需要将为空的过滤掉
@@ -214,7 +219,7 @@ public class RedisTool extends RedisTemplate {
         super.opsForHash().putAll(key, stringObjectMap);
         if (redisKey.getTime() > 0) {
             // 设置过期时常
-            super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+            super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
         }
 
         if (redisKey.getJavaType().isInstance(value)) {
@@ -231,10 +236,10 @@ public class RedisTool extends RedisTemplate {
      * @see DataType#LIST
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
-     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    private boolean setList(AbstractRedisKey redisKey, Object value, Object[] param) {
+    private boolean setList(RedisKeyProvider redisKey, Object value, Object[] param) {
         // 转换list
         List list = (List)value;
 
@@ -250,7 +255,7 @@ public class RedisTool extends RedisTemplate {
             super.opsForList().leftPushAll(key, list);
             // 设置过期时间
             if (redisKey.getTime() > 0) {
-                super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+                super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
             }
             // 类型比较
             if (redisKey.getJavaType().isInstance(list.get(0))) {
@@ -271,10 +276,10 @@ public class RedisTool extends RedisTemplate {
      * @see DataType#SET
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
-     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    private boolean setSet(AbstractRedisKey redisKey, Object value, Object[] param) {
+    private boolean setSet(RedisKeyProvider redisKey, Object value, Object[] param) {
         Set set;
         try {
             set = (Set)value;
@@ -287,7 +292,7 @@ public class RedisTool extends RedisTemplate {
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         super.opsForSet().add(key, set);
         if (redisKey.getTime() > 0) {
-            super.expire(key, redisKey.getTime(), redisKey.timeUnit);
+            super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
         }
 
         if (CollectionUtils.isNotEmpty(set)) {
@@ -306,12 +311,12 @@ public class RedisTool extends RedisTemplate {
 
 
     /**
-     * 类似门面,设置数据到redis,根据{@link AbstractRedisKey#redisType}和{@link AbstractRedisKey#javaType}进行获取值.
+     * 类似门面,设置数据到redis,根据{@link RedisKeyProvider#getKey()}和{@link RedisKeyProvider#getJavaType()}进行获取值.
      * @param redisKey redis-key对象
-     * @param param 模板字符串的参数，用于替换{@link AbstractRedisKey#key}的模板参数
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    public Object get(@Valid AbstractRedisKey redisKey, Object... param){
+    public Object get(@Valid RedisKeyProvider redisKey, Object... param){
         DataType dataType = redisKey.getRedisType();
         Class javaType = redisKey.getJavaType();
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
@@ -336,7 +341,7 @@ public class RedisTool extends RedisTemplate {
      * @param param
      * @return
      */
-    public String getString(AbstractRedisKey redisKey, Object... param) {
+    public String getString(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
 
@@ -352,7 +357,7 @@ public class RedisTool extends RedisTemplate {
      * @param param
      * @return
      */
-    public <T> T getHash(AbstractRedisKey redisKey, Class<T> clazz, Object... param) {
+    public <T> T getHash(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         if (Objects.equals(clazz, redisKey.getJavaType())) {
             // 获取完整的 key
             String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
@@ -370,7 +375,7 @@ public class RedisTool extends RedisTemplate {
      * @param param
      * @return
      */
-    public <T> List<T> getList(AbstractRedisKey redisKey, Class<T> clazz, Object... param) {
+    public <T> List<T> getList(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         if (Objects.equals(clazz, redisKey.getJavaType())) {
             // 获取完整的 key
             String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
@@ -390,11 +395,15 @@ public class RedisTool extends RedisTemplate {
      * @param param
      * @return
      */
-    public <T> Set<T> getSet(AbstractRedisKey redisKey,  Class<T> clazz, Object... param) {
+    public <T> Set<T> getSet(RedisKeyProvider redisKey,  Class<T> clazz, Object... param) {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
 
         return super.opsForSet().members(key);
     }
 
+    public static void main(String[] args) {
+        String 吃 = StrUtil.format("陈飞龙 {ad}岁，早饭{}了", "18", "吃");
+        System.out.println("吃 = " + 吃);
+    }
 }

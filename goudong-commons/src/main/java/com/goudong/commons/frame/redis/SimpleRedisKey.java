@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @Author e-Feilong.Chen
  * @Date 2022/1/11 12:30
  */
+@Deprecated
 @SuperBuilder
 public class SimpleRedisKey extends AbstractRedisKey{
     //~fields

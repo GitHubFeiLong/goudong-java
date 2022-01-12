@@ -24,7 +24,7 @@ public class GenerateRedisKeyUtil {
      * @param keys
      * @return
      */
-    public static String generateByClever (AbstractRedisKey redisKey, Object... keys) {
+    public static String generateByClever (RedisKeyProvider redisKey, Object... keys) {
         return GenerateRedisKeyUtil.generateByClever(redisKey.getKey(), keys);
     }
 
