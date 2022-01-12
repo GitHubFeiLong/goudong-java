@@ -1,6 +1,4 @@
 package com.goudong.commons.frame.redis;
-import java.time.LocalDateTime;
-
 import cn.hutool.core.bean.BeanUtil;
 import com.google.common.collect.Lists;
 import com.goudong.commons.po.core.BasePO;
@@ -13,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
@@ -260,6 +259,7 @@ class RedisToolTest {
         User user1 = new User();
         user1.setUsername("张三");
         user1.setPassword("面膜123123123");
+        redisTool.opsForHash().putAll("goudong:goudong-user-server:test:hash1", BeanUtil.beanToMap(user1));
         User user = redisTool.getHash(SimpleRedisKey.builder()
                         .key("goudong:goudong-user-server:test:hash1")
                         .redisType(DataType.HASH)
@@ -267,20 +267,11 @@ class RedisToolTest {
                 User.class);
         Assert.isTrue(user1.equals(user), "获取对象不相等");
 
-        User user2 = new User();
         User user3 = redisTool.getHash(SimpleRedisKey.builder()
                 .key("goudong:goudong-user-server:test:hash2")
                 .redisType(DataType.HASH)
                 .javaType(User.class).build(),User.class);
-        Assert.isTrue(Objects.equals(user2, user3), "错误对象不相等");
-
-        User user4 = redisTool.getHash(SimpleRedisKey.builder()
-                        .key("goudong:goudong-user-server:test:hash3")
-                        .redisType(DataType.HASH)
-                        .javaType(User.class).build(),
-                User.class);
-
-        Assert.isTrue(user4 == null, "获取无效key错误");
+        Assert.isTrue(user3 == null, "获取无效key错误");
     }
 
     @Data

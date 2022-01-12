@@ -4,11 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
-import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.connection.DataType;
@@ -17,7 +15,10 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -362,6 +363,10 @@ public class RedisTool extends RedisTemplate {
             // 获取完整的 key
             String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
             // 将Map转为Bean
+            Map map = super.opsForHash().entries(key);
+            if (map == null || map.isEmpty()) {
+                return null;
+            }
             return BeanUtil.toBean(super.opsForHash().entries(key), clazz);
         }
 
