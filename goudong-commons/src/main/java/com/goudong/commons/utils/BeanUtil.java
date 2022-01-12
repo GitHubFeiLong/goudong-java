@@ -12,7 +12,6 @@ import java.util.List;
  * @Date 2021-05-11 13:46
  * @Version 1.0
  */
-@Deprecated
 public class BeanUtil {
 
     /**
@@ -27,12 +26,22 @@ public class BeanUtil {
         if (source == null) {
             return null;
         }
-        // 强转
-        Object o = clazz.newInstance();
-        // 复制
-        BeanUtils.copyProperties(source, o);
+        return cn.hutool.core.bean.BeanUtil.copyProperties(source, clazz);
+    }
 
-        return (T)o;
+    /**
+     * 复制对象
+     * @param source
+     * @param clazz
+     * @param ignoreProperties
+     * @param <T>
+     * @return
+     */
+    public static <T> T copyProperties(Object source, Class<T> clazz, String... ignoreProperties) {
+        if (source == null) {
+            return null;
+        }
+        return cn.hutool.core.bean.BeanUtil.copyProperties(source, clazz, ignoreProperties);
     }
 
     @SneakyThrows

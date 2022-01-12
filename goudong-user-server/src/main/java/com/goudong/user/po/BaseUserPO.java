@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "base_user")
-@SQLDelete(sql = "update base_user set deleted=true where id=?")
+@SQLDelete(sql = "update base_user set deleted=null where id=?")
 @Where(clause = "deleted=false")
 public class BaseUserPO extends BasePO {
 
