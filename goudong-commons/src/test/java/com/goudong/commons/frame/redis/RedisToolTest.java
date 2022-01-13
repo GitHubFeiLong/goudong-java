@@ -1,8 +1,13 @@
 package com.goudong.commons.frame.redis;
+
 import cn.hutool.core.bean.BeanUtil;
 import com.google.common.collect.Lists;
 import com.goudong.commons.po.core.BasePO;
+import com.goudong.commons.utils.core.LogUtil;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,61 +24,81 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@Slf4j
 class RedisToolTest {
 
     //~ 常量
     //==================================================================================================================
-
+    public static final SimpleRedisKey DELETE_KEY = SimpleRedisKey.builder().key("test:delete-key:string").redisType(DataType.STRING).javaType(String.class).build();
+    public static final SimpleRedisKey DELETE_KEYS_1 = SimpleRedisKey.builder().key("test:delete-keys:string1").redisType(DataType.STRING).javaType(String.class).build();
+    public static final SimpleRedisKey DELETE_KEYS_2 = SimpleRedisKey.builder().key("test:delete-keys:string2").redisType(DataType.STRING).javaType(String.class).build();
+    public static final SimpleRedisKey HAS_KEY = SimpleRedisKey.builder().key("test:has-key:string1").redisType(DataType.STRING).javaType(String.class).build();
+    public static final SimpleRedisKey REFRESH_KEY = SimpleRedisKey.builder().key("test:refresh-key:string2").redisType(DataType.STRING).javaType(String.class).time(10).timeUnit(TimeUnit.SECONDS).build();
+    public static final SimpleRedisKey EXPIRE_KEY = SimpleRedisKey.builder().key("ttest:expire-key:string1").redisType(DataType.STRING).javaType(String.class).time(10).timeUnit(TimeUnit.SECONDS).build();
+    public static final SimpleRedisKey GET_EXPIRE1 = SimpleRedisKey.builder().key("test:get-expire:string1:${id}").redisType(DataType.HASH).javaType(String.class).time(10).timeUnit(TimeUnit.SECONDS).build();
+    public static final SimpleRedisKey GET_EXPIRE2 = SimpleRedisKey.builder().key("test:get-expire:string2:${id}").redisType(DataType.HASH).javaType(String.class).time(10).timeUnit(TimeUnit.SECONDS).build();
+    public static final SimpleRedisKey GET_EXPIRE3 = SimpleRedisKey.builder().key("test:get-expire:string3:${id}").redisType(DataType.HASH).javaType(String.class).build();
     @Resource
     private RedisTool redisTool;
 
+    @BeforeEach
+    void setUp() {
+        LogUtil.info(log, "setUp");
+    }
+
+    @AfterEach
+    void tearDown() {
+        LogUtil.info(log, "tearDown");
+    }
+
+
     @Test
     void deleteKey() {
-        boolean boo1 = redisTool.deleteKey(RedisKeyTemplateProviderEnum.DELETE_KEY);
+        boolean boo1 = redisTool.deleteKey(DELETE_KEY);
         Assert.isTrue(!boo1, "删除的key不存在时，应该返回false");
-        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateProviderEnum.DELETE_KEY);
+        String key = GenerateRedisKeyUtil.generateByClever(DELETE_KEY);
         redisTool.opsForValue().set(key, 123456, 30, TimeUnit.SECONDS);
-        boolean boo = redisTool.deleteKey(RedisKeyTemplateProviderEnum.DELETE_KEY);
+        boolean boo = redisTool.deleteKey(DELETE_KEY);
         Boolean hasKey = redisTool.hasKey(key);
         Assert.isTrue(!hasKey, "删除key失败");
     }
 
     @Test
     void deleteKeys() {
-        redisTool.opsForValue().set(RedisKeyTemplateProviderEnum.DELETE_KEYS_1.getKey(), 123, 30, TimeUnit.SECONDS);
-        redisTool.opsForValue().set(RedisKeyTemplateProviderEnum.DELETE_KEYS_2.getKey(), 456, 30, TimeUnit.SECONDS);
-        redisTool.deleteKeys(Lists.newArrayList(RedisKeyTemplateProviderEnum.DELETE_KEYS_1, RedisKeyTemplateProviderEnum.DELETE_KEYS_2), new Object[][]{{},{}});
-        boolean fail = redisTool.hasKey(RedisKeyTemplateProviderEnum.DELETE_KEYS_1.getKey()) || redisTool.hasKey(RedisKeyTemplateProviderEnum.DELETE_KEYS_2.getKey());
+        redisTool.opsForValue().set(DELETE_KEYS_1.getKey(), 123, 30, TimeUnit.SECONDS);
+        redisTool.opsForValue().set(DELETE_KEYS_2.getKey(), 456, 30, TimeUnit.SECONDS);
+        redisTool.deleteKeys(Lists.newArrayList(DELETE_KEYS_1, DELETE_KEYS_2), new Object[][]{{},{}});
+        boolean fail = redisTool.hasKey(DELETE_KEYS_1.getKey()) || redisTool.hasKey(DELETE_KEYS_2.getKey());
         Assert.isTrue(!fail, "删除失败");
     }
 
     @Test
     void hasKey() {
-        Boolean hasKey = redisTool.existKey(RedisKeyTemplateProviderEnum.HAS_KEY);
+        Boolean hasKey = redisTool.existKey(HAS_KEY);
         Assert.isTrue(!hasKey, "此时还未设置该key，不应该存在key");
-        redisTool.opsForValue().set(RedisKeyTemplateProviderEnum.HAS_KEY.getKey(), "123123", 30, TimeUnit.SECONDS);
-        hasKey = redisTool.existKey(RedisKeyTemplateProviderEnum.HAS_KEY);
+        redisTool.opsForValue().set(HAS_KEY.getKey(), "123123", 30, TimeUnit.SECONDS);
+        hasKey = redisTool.existKey(HAS_KEY);
         Assert.isTrue(hasKey, "该key已经设置了，应该存在在Redis中");
     }
 
     @Test
     void refresh() throws InterruptedException {
         // 设置key
-        redisTool.set(RedisKeyTemplateProviderEnum.REFRESH_KEY, 1);
+        redisTool.set(REFRESH_KEY, 1);
         // 等待一段时间在刷新key
         Thread.sleep(5000L);
         // 查看key的失效时间是否正确
-        redisTool.refresh(RedisKeyTemplateProviderEnum.REFRESH_KEY);
-        Long expire = redisTool.getExpire(RedisKeyTemplateProviderEnum.REFRESH_KEY.getKey());
-        Assert.isTrue(RedisKeyTemplateProviderEnum.REFRESH_KEY.getTime() - expire < 5, "过期时间未刷新");
+        redisTool.refresh(REFRESH_KEY);
+        Long expire = redisTool.getExpire(REFRESH_KEY.getKey());
+        Assert.isTrue(REFRESH_KEY.getTime() - expire < 5, "过期时间未刷新");
     }
 
     @Test
     void expire() {
         // 设置key
-        String key = RedisKeyTemplateProviderEnum.EXPIRE_KEY.getKey();
+        String key = EXPIRE_KEY.getKey();
         redisTool.opsForValue().set(key, "123", 10, TimeUnit.SECONDS);
-        redisTool.expireByCustom(RedisKeyTemplateProviderEnum.EXPIRE_KEY, 60, TimeUnit.SECONDS);
+        redisTool.expireByCustom(EXPIRE_KEY, 60, TimeUnit.SECONDS);
         Long expire = redisTool.getExpire(key);
         Assert.isTrue(expire > 10, "设置失效时间失败");
     }
@@ -81,7 +106,7 @@ class RedisToolTest {
     @Test
     void getExpire() {
         Object[] param = {1};
-        String key = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateProviderEnum.GET_EXPIRE1.getKey(), param);
+        String key = GenerateRedisKeyUtil.generateByClever(GET_EXPIRE1.getKey(), param);
         BasePO basePO = new BasePO();
         basePO.setId(0L);
         basePO.setDeleted(false);
@@ -93,16 +118,16 @@ class RedisToolTest {
         redisTool.opsForHash().putAll(key, BeanUtil.beanToMap(basePO));
         redisTool.expire(key, 30, TimeUnit.SECONDS);
 
-        long expire = redisTool.getExpire(RedisKeyTemplateProviderEnum.GET_EXPIRE1, param);
+        long expire = redisTool.getExpire(GET_EXPIRE1, param);
 
         Assert.isTrue(expire > 0, "获取的值错误：" + expire);
 
-        long expire1 = redisTool.getExpire(RedisKeyTemplateProviderEnum.GET_EXPIRE2, param);
+        long expire1 = redisTool.getExpire(GET_EXPIRE2, param);
         Assert.isTrue(expire1 == -2, "该key不存在");
 
-        String key2 = GenerateRedisKeyUtil.generateByClever(RedisKeyTemplateProviderEnum.GET_EXPIRE3, param);
+        String key2 = GenerateRedisKeyUtil.generateByClever(GET_EXPIRE3, param);
         redisTool.opsForHash().putAll(key2, BeanUtil.beanToMap(basePO));
-        long expire2 = redisTool.getExpire(RedisKeyTemplateProviderEnum.GET_EXPIRE3, param);
+        long expire2 = redisTool.getExpire(GET_EXPIRE3, param);
 
         Assert.isTrue(expire2 == -1, "该key的ttl值应该是-1, expire2=" + expire2);
 

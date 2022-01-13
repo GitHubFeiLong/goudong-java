@@ -1,7 +1,6 @@
 package com.goudong.commons.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.goudong.commons.po.BasePO;
+import com.goudong.commons.frame.mybatisplus.BasePO;
 import lombok.Data;
 
 /**

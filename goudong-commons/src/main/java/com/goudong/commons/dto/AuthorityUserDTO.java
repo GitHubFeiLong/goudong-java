@@ -1,11 +1,7 @@
 package com.goudong.commons.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.goudong.commons.po.BasePO;
+import com.goudong.commons.frame.mybatisplus.BasePO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

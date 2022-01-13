@@ -1,6 +1,7 @@
 package com.goudong.commons.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.goudong.commons.frame.mybatisplus.BasePO;
 import lombok.Data;
 
 /**
@@ -12,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @TableName("base_token")
-public class BaseTokenPO extends BasePO{
+public class BaseTokenPO extends BasePO {
     /**
      * 用户id
      */

@@ -1,6 +1,7 @@
 package com.goudong.commons.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.goudong.commons.frame.mybatisplus.BasePO;
 import lombok.Data;
 
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 @Data
 @TableName("authority_menu")
-public class AuthorityMenuPO extends BasePO{
+public class AuthorityMenuPO extends BasePO {
     private static final long serialVersionUID = -6254288573268456187L;
     /**
      * 请求url

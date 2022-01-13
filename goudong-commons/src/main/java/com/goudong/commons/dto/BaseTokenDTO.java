@@ -1,6 +1,6 @@
 package com.goudong.commons.dto;
 
-import com.goudong.commons.po.BasePO;
+import com.goudong.commons.frame.mybatisplus.BasePO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
