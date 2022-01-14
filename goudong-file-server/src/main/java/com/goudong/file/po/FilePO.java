@@ -1,9 +1,12 @@
 package com.goudong.file.po;
 
-import com.goudong.commons.frame.jpa.BasePO;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
+import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
@@ -20,7 +23,10 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "file")
-public class FilePO extends BasePO {
+@SQLDelete(sql = "update file set deleted=true where id=?")
+@Where(clause = "deleted=false")
+@Accessors(chain = true)
+public class FilePO extends BasePO<FilePO> {
 
     /**
      * 原始文件名
@@ -76,4 +82,5 @@ public class FilePO extends BasePO {
     @Length(max = 255)
     @Column(name = "file_path", nullable = false)
     private String filePath;
+
 }

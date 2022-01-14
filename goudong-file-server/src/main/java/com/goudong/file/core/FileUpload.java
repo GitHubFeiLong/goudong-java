@@ -28,7 +28,8 @@ public class FileUpload {
     private Boolean enableFullPathModel = false;
 
     /**
-     * 上传文件的目录,不论操作系统都使用'/'作为目录分隔符 默认值是 '/goudong-file-server'.
+     * 上传文件的目录,不论操作系统都使用'/'作为目录分隔符
+     * 默认值是 用户目录下的'/goudong-file-server',使用日期作为二级目录.
      */
     private String rootDir = "";
 

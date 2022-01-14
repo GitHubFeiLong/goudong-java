@@ -12,7 +12,6 @@ import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
@@ -26,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.core.env.Environment;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,9 +61,6 @@ public class UploadController {
 
     @Resource
     private Environment environment;
-
-    @Resource
-    private RedisOperationsUtil redisOperationsUtil;
 
     @Resource
     private FileRepository fileRepository;
@@ -125,6 +122,7 @@ public class UploadController {
 
     @ApiOperation("上传单文件")
     @PostMapping("/upload")
+    @Transactional
     public Result<FileDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws JsonProcessingException {
         MultipartFile file = requestUploadDTO.getFile();
 
@@ -179,7 +177,7 @@ public class UploadController {
             fileRepository.save(filePO);
             return Result.ofSuccess("创建成功", BeanUtil.copyProperties(filePO, FileDTO.class));
         } catch (IOException e) {
-            log.error("文件上传失败", e);
+            LogUtil.error(log, "文件上传失败:{}", e);
             throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败");
         }
 

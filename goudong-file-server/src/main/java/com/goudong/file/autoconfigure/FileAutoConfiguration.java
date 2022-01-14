@@ -2,7 +2,7 @@ package com.goudong.file.autoconfigure;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.constant.SystemEnvConst;
-import com.goudong.commons.utils.core.AssertUtil;
+import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import com.goudong.file.core.FileType;
@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,18 +78,18 @@ public class FileAutoConfiguration {
         // 开启全路径，那么就不需要修改路径。
         if (upload.getEnableFullPathModel()) {
             // 判断是否正确
-            AssertUtil.isDiskPath(rootDir, String.format("配置的路径无效(file.upload.root-dir=%s)", rootDir));
+            checkPathValid(rootDir);
         } else {
             if (StringUtils.isNotBlank(rootDir) && ! rootDir.startsWith("/")) {
                 rootDir = "/" + rootDir;
             }
             rootDir = rootDir.replace("/", SystemEnvConst.SEPARATOR);
 
+            // 默认放在用户目录下
             rootDir = SystemEnvConst.USER_HOME + SystemEnvConst.SEPARATOR + applicationName + rootDir;
 
             // 判断是否正确
-            AssertUtil.isDiskPath(rootDir, String.format("配置的路径无效(file.upload.root-dir=%s)\n配置后的完整路径是:%s。" +
-                    "您可以尝试配置\"file.upload.enable-full-path-model=true\"", settingRootDir, rootDir));
+            checkPathValid(rootDir, settingRootDir);
             upload.setRootDir(rootDir);
         }
 
@@ -109,4 +110,43 @@ public class FileAutoConfiguration {
         return upload;
     }
 
+    /**
+     * 尝试创建文件夹，检查是否有访问权限
+     * @param diskPath 用户自定义的配置的文件存储路径
+     */
+    private void checkPathValid(String diskPath) {
+        // 判断是否正确
+        File file = new File(diskPath);
+        // 判断是否不存在
+        if (!file.exists()) {
+            boolean mkdirs = file.mkdirs();
+            if (!mkdirs) {
+                // 创建失败，证明文件路径错误
+                throw new ApplicationBootFailedException("配置文件保存路径无效",
+                        String.format("配置的属性file.upload.root-dir=%s 是无效的磁盘路径或者您没有权限访问该路径", diskPath),
+                        "file.upload.root-dir配置有权限正常读写的磁盘路径,或使用默认当前项目根目录");
+            }
+        }
+    }
+
+    /**
+     * 尝试创建文件夹，检查是否有访问权限
+     * @param diskPath 最终拼接后的完整磁盘路径
+     * @param settingRootDir 用户自定义的配置的文件存储路径
+     */
+    private void checkPathValid(String diskPath, String settingRootDir) {
+        // 判断是否正确
+        File file = new File(diskPath);
+        // 判断是否不存在
+        if (!file.exists()) {
+            boolean mkdirs = file.mkdirs();
+            if (!mkdirs) {
+                // 创建失败，证明文件路径错误
+                throw new ApplicationBootFailedException("配置文件保存路径无效",
+                        String.format("配置的属性file.upload.root-dir=%s ，最终值是%s,是无效的磁盘路径或者您没有权限访问该路径",
+                                settingRootDir, diskPath),
+                        "file.upload.root-dir配置有权限正常读写的磁盘路径");
+            }
+        }
+    }
 }

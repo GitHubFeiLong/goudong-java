@@ -122,6 +122,23 @@ pause
 
 
 ## 约定大于配置（重要）
+### 数据库表设计
+每张表应该都有6个属性：id、create_time、create_user_id、update_time、update_user_id、deleted（DEFAULT NULL）
+
+```sql
+CREATE TABLE `table_name` (
+  `id` bigint(20) unsigned NOT NULL COMMENT '主键id',
+  `deleted` bit(1) DEFAULT b'0' COMMENT '是否被删除,逻辑删除和唯一索引因素，这里允许为空',
+  `update_time` datetime(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
+  `create_time` datetime(6) NOT NULL COMMENT '创建时间',
+  `update_user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  `create_user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='xxx';
+```
+
+
+
 
 ### Flyway
 

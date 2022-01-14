@@ -24,21 +24,25 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-public abstract class BasePO implements Serializable {
+public abstract class BasePO<T> implements Serializable {
 
-    private static final String ID_GEN = "com.goudong.commons.frame.jpa.MyIdentifierGenerator";
     private static final long serialVersionUID = -2935429857751851837L;
+
+    /**
+     * id 生成器
+     */
+    private static final String ID_GEN = "com.goudong.commons.frame.jpa.MyIdentifierGenerator";
 
     @Id
     @GenericGenerator(name = "IdGen", strategy = ID_GEN)
     @GeneratedValue(generator = "IdGen")
-    protected Long id;
+    public Long id;
 
     /**
      * 创建时间
      */
     @CreatedDate
-    @Column(name = "create_time", nullable = false)
+    @Column(name = "create_time")
     private Date createTime;
 
     /**
@@ -52,7 +56,7 @@ public abstract class BasePO implements Serializable {
      * 更新时间
      */
     @LastModifiedDate
-    @Column(name = "update_time", nullable = false)
+    @Column(name = "update_time")
     private Date updateTime;
 
     /**
@@ -65,6 +69,7 @@ public abstract class BasePO implements Serializable {
     /**
      * 删除状态 0 正常1 删除
      */
-    @Column(name = "deleted", nullable = false)
+    @Column(name = "deleted")
     private Boolean deleted;
+
 }

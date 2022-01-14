@@ -2,7 +2,7 @@ logging:
   config: classpath:log4j2/log4j2-dev.xml
   level:
     ROOT: INFO
-    com.goudong.user: DEBUG
+    com.goudong: DEBUG
 
 server:
   port: 10004
@@ -33,7 +33,7 @@ spring:
       max-file-size: 10MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&createDatabaseIfNotExist=true
+    url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
   jpa:
@@ -75,4 +75,8 @@ knife4j:
     password: knife4j  # 密码
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
+file:
+  upload:
+    enable-full-path-model: true
+    root-dir: 'd:'
 # 自定义配置

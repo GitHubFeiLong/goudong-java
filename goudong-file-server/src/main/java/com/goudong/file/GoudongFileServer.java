@@ -2,13 +2,13 @@ package com.goudong.file;
 
 import com.goudong.commons.annotation.enable.EnableCommonsGlobalExceptionHandler;
 import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
@@ -24,7 +24,7 @@ import org.springframework.util.StopWatch;
  * @version 1.0
  */
 @SpringBootApplication
-@EnableCommonsRedisConfig
+@EnableDiscoveryClient
 @EnableCommonsWebMvcConfig
 @EnableCommonsGlobalExceptionHandler
 @EnableCommonsJpaConfig
