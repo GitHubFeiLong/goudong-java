@@ -31,7 +31,7 @@
         <module>goudong-commons</module>
         <module>goudong-gateway-server</module>
         <module>goudong-user-server</module>
-        <module>goudong-security-server</module>
+<!--        <module>goudong-security-server</module>-->
         <module>goudong-message-server</module>
         <module>goudong-oauth2-server</module>
         <module>goudong-commodity-server</module>
@@ -278,6 +278,20 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!--spring boot打包成可执行jar-->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+                <!--git信息-->
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <!-- java编译插件 -->
             <plugin>

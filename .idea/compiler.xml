@@ -15,13 +15,13 @@
         <module name="goudong-message-server" />
         <module name="goudong-commons" />
         <module name="goudong-user-server" />
-        <module name="goudong-security-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="filepreview" target="1.8" />
       <module name="goudong-file-online-preview" target="8" />
       <module name="goudong-oaa-server" target="1.8" />
+      <module name="goudong-security-server" target="1.8" />
       <module name="kkFileView" target="1.8" />
       <module name="nacos-address" target="1.8" />
       <module name="nacos-all" target="1.8" />

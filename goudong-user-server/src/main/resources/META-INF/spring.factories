@@ -1,3 +1,7 @@
 # 自动配置，多个使用逗号分隔
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.goudong.user.autoconfigure.UserPageAutoConfiguration
+
+#自定义报错配置
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+  com.goudong.user.analyzer.UserPageSettingFailureAnalyzer

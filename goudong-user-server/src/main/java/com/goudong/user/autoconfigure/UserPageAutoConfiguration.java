@@ -33,7 +33,6 @@ public class UserPageAutoConfiguration {
         userPage.setBindPage(userPageProperties.getBindPage());
         userPage.setTransitionPage(userPageProperties.getTransitionPage());
         userPage.setIndexPage(userPageProperties.getIndexPage());
-
         return userPage;
     }
 }
