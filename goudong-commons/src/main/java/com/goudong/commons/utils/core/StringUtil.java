@@ -3,6 +3,9 @@ package com.goudong.commons.utils.core;
 import com.goudong.commons.exception.ServerException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 类描述：
  * 自定义字符串工具类
@@ -17,6 +20,7 @@ public class StringUtil {
     private static final String RIGHT_BRACKET = "}";
     private static final String ASTERISK = "*";
 
+    private static final Pattern URL_PATTERN = Pattern.compile("(ht|f)tp(s?)\\:\\/\\/[0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\.\\?\\,\\'\\/\\\\&%\\+\\$#_=]*)?");
     /**
      * 替换路径参数 `{xxxx}`为`*`
      * @param uri 请求地址
@@ -109,10 +113,21 @@ public class StringUtil {
         return string + space;
     }
 
+    /**
+     * 正则校验是否是一个http路径
+     * @return
+     */
+    public static boolean regexUrl(String url) {
+        Matcher matcher = URL_PATTERN.matcher(url);
+        return matcher.matches();
+    }
+
+
     public static void main(String[] args) {
-        String 陈飞龙 = format("{", "}", "我是{}，今年：{}岁了,参数{{}，{}}", "陈飞龙{}{}", 18,11);
-        System.out.println("陈飞龙 = " + 陈飞龙);
-        String a1 = String.format("%s,%s", 1, "陈", 123123);
-        System.out.println(a1);
+        // String 陈飞龙 = format("{", "}", "我是{}，今年：{}岁了,参数{{}，{}}", "陈飞龙{}{}", 18,11);
+        // System.out.println("陈飞龙 = " + 陈飞龙);
+        // String a1 = String.format("%s,%s", 1, "陈", 123123);
+        // System.out.println(a1);
+
     }
 }

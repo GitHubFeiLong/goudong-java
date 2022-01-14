@@ -11,7 +11,6 @@ import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.user.core.UserServerRedisKey;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
