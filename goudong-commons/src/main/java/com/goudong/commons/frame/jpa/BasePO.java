@@ -24,7 +24,7 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-public abstract class BasePO<T> implements Serializable {
+public abstract class BasePO implements Serializable {
 
     private static final long serialVersionUID = -2935429857751851837L;
 

@@ -26,7 +26,7 @@ import javax.persistence.Table;
 @SQLDelete(sql = "update file set deleted=true where id=?")
 @Where(clause = "deleted=false")
 @Accessors(chain = true)
-public class FilePO extends BasePO<FilePO> {
+public class FilePO extends BasePO {
 
     /**
      * 原始文件名
