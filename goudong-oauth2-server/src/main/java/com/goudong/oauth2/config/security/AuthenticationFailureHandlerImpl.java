@@ -19,7 +19,7 @@ import java.io.IOException;
 
 /**
  * 类描述：
- * 自定义登录失败处理器
+ * 认证失败处理器
  * @author msi
  * @date 2022/1/15 19:56
  * @version 1.0

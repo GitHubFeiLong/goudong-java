@@ -17,7 +17,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 类描述：
- * 自定义认证
+ * 自定义认证处理
+ *
  * @author msi
  * @date 2022/1/15 20:26
  * @version 1.0
@@ -41,7 +42,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      * @throws UsernameNotFoundException
      * @throws AccountExpiredException
      * @throws BadCredentialsException
-     * @return
+     * @return 认证成功对象
      */
     @Override
     public Authentication authenticate(Authentication authentication) {

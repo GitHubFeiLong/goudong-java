@@ -14,10 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 登录成功处理器
- * @Author msi
- * @Date 2021-04-02 13:33
- * @Version 1.0
+ * 类描述：
+ * 认证成功处理器
+ * @author msi
+ * @date 2022/1/15 21:46
+ * @version 1.0
  */
 @Slf4j
 @Component
