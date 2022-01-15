@@ -1,6 +1,7 @@
-package com.goudong.oauth2.handler;
+package com.goudong.oauth2.config.security;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
@@ -15,13 +16,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * @author Andon
- * @date 2019/3/20
- * <p>
+ * 类描述：
  * 自定义注销成功处理器：返回状态码200
+ * @author msi
+ * @date 2022/1/15 20:07
+ * @version 1.0
  */
 @Component
-public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
+public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 
     // @Resource
     // private AuthorityUserUtil authorityUserUtil;
@@ -50,7 +52,7 @@ public class UrlLogoutSuccessHandler implements LogoutSuccessHandler {
             // authorityUserUtil.logout(token, authorityUserDTO.getId());
         }
 
-        out.flush();
-        out.close();
+        String json = new ObjectMapper().writeValueAsString("");
+        httpServletResponse.getWriter().write(json);
     }
 }

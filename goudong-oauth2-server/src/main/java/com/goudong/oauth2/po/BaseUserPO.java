@@ -80,7 +80,7 @@ public class BaseUserPO extends BasePO implements UserDetails {
     @Column(name = "qq_open_id")
     private String qqOpenId;
 
-    @ManyToMany(targetEntity= BaseRolePO.class)
+    @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
     private List<BaseRolePO> roles = new ArrayList<>();
@@ -128,5 +128,20 @@ public class BaseUserPO extends BasePO implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseUserPO{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", remark='" + remark + '\'' +
+                ", validTime=" + validTime +
+                ", qqOpenId='" + qqOpenId + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }

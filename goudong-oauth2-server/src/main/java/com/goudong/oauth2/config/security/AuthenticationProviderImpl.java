@@ -1,4 +1,4 @@
-package com.goudong.oauth2.config;
+package com.goudong.oauth2.config.security;
 
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
@@ -16,20 +16,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * 自定义登录认证
- * @Author msi
- * @Date 2021-04-02 13:14
- * @Version 1.0
+ * 类描述：
+ * 自定义认证
+ * @author msi
+ * @date 2022/1/15 20:26
+ * @version 1.0
  */
 @Slf4j
 @Component
-public class SelfAuthenticationProvider implements AuthenticationProvider {
+public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     private static final BCryptPasswordEncoder BCRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     private final BaseUserService baseUserService;
 
-    public SelfAuthenticationProvider(BaseUserService baseUserService) {
+    public AuthenticationProviderImpl(BaseUserService baseUserService) {
         this.baseUserService = baseUserService;
     }
 
@@ -58,8 +59,7 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
 
         // 用户不存在
         if (userInfo == null) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码");
-            // throw new UsernameNotFoundException("用户不存在");
+            throw new UsernameNotFoundException("用户不存在");
         }
 
         // 使用 BCrypt 加密的方式进行匹配

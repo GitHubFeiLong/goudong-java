@@ -1,4 +1,4 @@
-package com.goudong.oauth2.config;
+package com.goudong.oauth2.config.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDecisionManager;
@@ -14,14 +14,13 @@ import java.util.Collection;
 /**
  * 类描述：
  * 自定义权限判断管理器
- * @ClassName SelfAccessDecisionManager
  * @Author msi
  * @Date 2021-05-02 10:41
  * @Version 1.0
  */
 @Slf4j
 @Component
-public class SelfAccessDecisionManager implements AccessDecisionManager {
+public class AccessDecisionManagerImpl implements AccessDecisionManager {
 
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {

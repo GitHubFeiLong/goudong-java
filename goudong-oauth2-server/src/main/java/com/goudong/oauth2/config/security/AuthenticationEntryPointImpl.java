@@ -1,6 +1,6 @@
-package com.goudong.oauth2.handler;
+package com.goudong.oauth2.config.security;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
@@ -14,13 +14,14 @@ import java.io.IOException;
 
 /**
  * 类描述：
- * 自定义未登录时：返回状态码401
+ * 认证出现错误端点
+ *
  * @Author msi
  * @Date 2021-04-03 9:01
  * @Version 1.0
  */
 @Component
-public class UrlAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
@@ -30,6 +31,7 @@ public class UrlAuthenticationEntryPoint implements AuthenticationEntryPoint {
         httpServletResponse.setStatus(notAuthentication.getStatus());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        httpServletResponse.getWriter().write(JSON.toJSONString(result));
+        String json = new ObjectMapper().writeValueAsString(result);
+        httpServletResponse.getWriter().write(json);
     }
 }

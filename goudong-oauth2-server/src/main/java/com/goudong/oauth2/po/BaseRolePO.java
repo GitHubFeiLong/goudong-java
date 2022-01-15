@@ -41,7 +41,7 @@ public class BaseRolePO extends BasePO implements GrantedAuthority {
     @Column(name = "remark")
     private String remark;
 
-    @ManyToMany(targetEntity=BaseUserPO.class)
+    @ManyToMany(targetEntity=BaseUserPO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns={@JoinColumn(name = "user_id")})
     private List<BaseUserPO> users = new ArrayList<>();
@@ -49,5 +49,15 @@ public class BaseRolePO extends BasePO implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return this.roleName;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseRolePO{" +
+                "roleName='" + roleName + '\'' +
+                ", roleNameCn='" + roleNameCn + '\'' +
+                ", remark='" + remark + '\'' +
+                ", users=" + users +
+                '}';
     }
 }

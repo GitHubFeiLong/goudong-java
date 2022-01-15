@@ -75,7 +75,4 @@ knife4j:
 # 配置commons
 commons:
   whitelist:
-    enable: false
-    whitelists:
-      - pattern: /api/user/{id}
-        methods: get,post
+    enable: true

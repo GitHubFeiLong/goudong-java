@@ -1,6 +1,6 @@
-package com.goudong.oauth2.handler;
+package com.goudong.oauth2.config.security;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.frame.core.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author Andon
- * @date 2019/3/20
- * <p>
+ * 类描述：
  * 自定义权限不足处理器：返回状态码403
+ *
+ * @author msi
+ * @date 2022/1/15 20:00
+ * @version 1.0
  */
 @Slf4j
 @Component
-public class UrlAccessDeniedHandler implements AccessDeniedHandler {
+public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException {
@@ -31,6 +33,7 @@ public class UrlAccessDeniedHandler implements AccessDeniedHandler {
         httpServletResponse.setStatus(notAuthorization.getStatus());
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        httpServletResponse.getWriter().write(JSON.toJSONString(result));
+        String json = new ObjectMapper().writeValueAsString(result);
+        httpServletResponse.getWriter().write(json);
     }
 }

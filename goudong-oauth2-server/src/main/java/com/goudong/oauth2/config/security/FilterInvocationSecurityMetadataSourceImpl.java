@@ -1,4 +1,4 @@
-package com.goudong.oauth2.config;
+package com.goudong.oauth2.config.security;
 
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
+public class FilterInvocationSecurityMetadataSourceImpl implements FilterInvocationSecurityMetadataSource {
 
     // @Resource
     // private SelfAuthorityUserMapper selfAuthorityUserMapper;

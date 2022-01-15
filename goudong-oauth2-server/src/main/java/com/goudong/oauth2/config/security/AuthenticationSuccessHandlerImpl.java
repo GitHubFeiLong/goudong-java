@@ -1,5 +1,6 @@
-package com.goudong.oauth2.handler;
+package com.goudong.oauth2.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.openfeign.GoudongUserServerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -11,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 登录成功处理器
@@ -21,7 +21,7 @@ import java.io.PrintWriter;
  */
 @Slf4j
 @Component
-public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
     // @Resource
     // private SelfAuthorityUserMapper selfAuthorityUserMapper;
@@ -61,7 +61,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = httpServletResponse.getWriter();
+        String json = new ObjectMapper().writeValueAsString("");
+        httpServletResponse.getWriter().write(json);
         // // 转成VO
         // AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserVO.class);
         // out.write(JSON.toJSONString(Result.ofSuccess(authorityUserVO)));
@@ -70,8 +71,5 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         // 将用户登录信息保存到redis中
         // authorityUserUtil.login(token, authorityUserDTO);
-
-        out.flush();
-        out.close();
     }
 }
