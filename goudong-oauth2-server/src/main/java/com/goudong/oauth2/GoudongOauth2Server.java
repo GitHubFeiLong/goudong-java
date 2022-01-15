@@ -11,7 +11,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.util.StopWatch;
 
 /**
@@ -26,10 +25,10 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication
 @EnableAuthorizationServer
-@EnableResourceServer
+// @EnableResourceServer
 @EnableDiscoveryClient
 @EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
+// @EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig

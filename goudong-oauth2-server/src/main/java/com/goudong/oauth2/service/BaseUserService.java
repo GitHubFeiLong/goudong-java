@@ -34,25 +34,6 @@ public class BaseUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
         return baseUserRepository.findByLogin(username);
-        // if (user != null) {
-        //     userInfo.setUsername(user.getUsername());
-        //     userInfo.setPassword(user.getPassword());
-        // } else {
-        //     throw ClientException.clientException(ClientExceptionEnum.UNPROCESSABLE_ENTITY, "用户名或密码错误");
-        // }
-        //
-        // Set<SimpleGrantedAuthority> authoritiesSet = new HashSet<>();
-        // // 查询用户权限
-        // List<String> roles = selfAuthorityUserMapper.selectRoleNameByUserId(user.getId());
-        // for (String roleName : roles) {
-        //     //用户拥有的角色
-        //     SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(roleName);
-        //     authoritiesSet.add(simpleGrantedAuthority);
-        // }
-        // // 设置用户的角色
-        // userInfo.setAuthorities(authoritiesSet);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//         return userInfo;
     }
 }
 

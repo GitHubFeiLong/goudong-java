@@ -1,7 +1,6 @@
 package com.goudong.commons.exception;
 
 
-import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.DatabaseKeyEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
@@ -32,7 +31,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.UnexpectedTypeException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,12 +55,12 @@ public class GlobalExceptionHandler {
     /**
      * 请求对象
      */
-    private final HttpServletRequest request;
+    public final HttpServletRequest request;
 
     /**
      * 响应对象
      */
-    private final HttpServletResponse response;
+    public final HttpServletResponse response;
 
     public GlobalExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
@@ -74,7 +72,7 @@ public class GlobalExceptionHandler {
      * @param exceptionHandlerMethod 异常处理的方法
      * @param exception 异常对象
      */
-    private void printErrorMessage(String exceptionHandlerMethod, Throwable exception) {
+    protected void printErrorMessage(String exceptionHandlerMethod, Throwable exception) {
         // 开启debug就打印堆栈
         if (log.isDebugEnabled()) {
             exception.printStackTrace();

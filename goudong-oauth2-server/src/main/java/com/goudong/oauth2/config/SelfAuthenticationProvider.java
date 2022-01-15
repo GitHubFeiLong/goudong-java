@@ -58,7 +58,8 @@ public class SelfAuthenticationProvider implements AuthenticationProvider {
 
         // 用户不存在
         if (userInfo == null) {
-            throw new UsernameNotFoundException("用户不存在");
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码");
+            // throw new UsernameNotFoundException("用户不存在");
         }
 
         // 使用 BCrypt 加密的方式进行匹配
