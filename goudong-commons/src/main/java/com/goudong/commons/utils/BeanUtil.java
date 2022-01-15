@@ -1,7 +1,8 @@
 package com.goudong.commons.utils;
 
+import cn.hutool.core.bean.copier.CopyOptions;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 public class BeanUtil {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     /**
      * 复制对象
      * @param source
@@ -45,21 +47,12 @@ public class BeanUtil {
     }
 
     @SneakyThrows
-    public static <T> List<T> copyList(List sourceList, Class<T> clazz) {
+    public static <T> List<T> copyToList(List sourceList, Class<T> clazz, CopyOptions copyOptions) {
         if (sourceList == null || sourceList.isEmpty()) {
             return new ArrayList<T>();
         }
 
-        List result = new ArrayList(sourceList.size());
-        for (Object sourceObj : sourceList) {
-            Object targetObj = clazz.newInstance();
-            // 复制
-            BeanUtils.copyProperties(sourceObj, targetObj);
-
-            result.add(targetObj);
-        }
-
-        return result;
+        return cn.hutool.core.bean.BeanUtil.copyToList(sourceList, clazz, copyOptions);
     }
 
 

@@ -1,5 +1,6 @@
 package com.goudong.commons.config;
 
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
 import com.goudong.commons.pojo.ResourceAntMatcher;
@@ -79,7 +80,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
                 menu2InsertVOS.add(new AuthorityMenu2InsertVO(p.getPattern(), p.getMethod(), p.getRemark(), applicationName));
             });
 
-            List<AuthorityMenuDTO> insertDTOS = BeanUtil.copyList(menu2InsertVOS, AuthorityMenuDTO.class);
+            List<AuthorityMenuDTO> insertDTOS = BeanUtil.copyToList(menu2InsertVOS, AuthorityMenuDTO.class, CopyOptions.create());
             commonsAuthorityMenuService.addList(insertDTOS);
         }
     }
@@ -93,7 +94,7 @@ public class ApplicationRunnerConfig implements ApplicationRunner {
         List<ResourceAntMatcher> resourceAntMatchers = ResourceUtil.scanIgnore(contextPath);
         // 有数据，插入数据库
         if (resourceAntMatchers.size() > 0) {
-            List<BaseIgnoreResourceDTO> baseIgnoreResourceDTOS = BeanUtil.copyList(resourceAntMatchers, BaseIgnoreResourceDTO.class);
+            List<BaseIgnoreResourceDTO> baseIgnoreResourceDTOS = BeanUtil.copyToList(resourceAntMatchers, BaseIgnoreResourceDTO.class, CopyOptions.create());
             // 调用接口
             commonsIgnoreResourceService.addList(baseIgnoreResourceDTOS);
         }

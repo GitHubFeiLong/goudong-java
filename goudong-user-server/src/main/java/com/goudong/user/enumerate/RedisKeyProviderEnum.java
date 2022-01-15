@@ -1,6 +1,7 @@
-package com.goudong.commons.frame.redis;
+package com.goudong.user.enumerate;
 
-import com.goudong.commons.po.core.BasePO;
+import com.goudong.commons.frame.redis.RedisKeyProvider;
+import com.goudong.user.core.WhitelistRedisValue;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -9,23 +10,18 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
- * redis 的key，及 过期时间，及时间的单位, 其它服务直接复制使用。
+ * 用户服务的redis key，及 过期时间，及时间的单位
  * 参数使用`${}`进行包裹，例如"user:${user-id}",RedisTool会动态设置参数值
- * @Author msi
- * @Date 2021/1/7 11:21
- * @Version 1.0
+ *
+ * @author msi
+ * @date 2022/1/15 17:46
+ * @version 1.0
  */
-public enum RedisKeyTemplateProviderEnum implements RedisKeyProvider{
-    DELETE_KEY("test:delete-key:string", DataType.STRING, String.class),
-    DELETE_KEYS_1("test:delete-keys:string1", DataType.STRING, String.class),
-    DELETE_KEYS_2("test:delete-keys:string2", DataType.STRING, String.class),
-    HAS_KEY("test:has-key:string2", DataType.STRING, String.class),
-    REFRESH_KEY("test:refresh-key:string2", DataType.STRING, String.class, 10, TimeUnit.SECONDS),
-    EXPIRE_KEY("test:expire-key:string1", DataType.STRING, String.class, 10, TimeUnit.SECONDS),
-    GET_EXPIRE1("test:get-expire:string1:${id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
-    GET_EXPIRE2("test:get-expire:string2:${id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
-    GET_EXPIRE3("test:get-expire:string3:${id}", DataType.HASH, BasePO.class),
-    // GET_EXPIRE("test:get-expire:string:{id}", DataType.HASH, BasePO.class, 2, TimeUnit.HOURS),
+public enum RedisKeyProviderEnum implements RedisKeyProvider {
+    /**
+     * 白名单
+     */
+    WHITELIST("goudong-user-server:whitelist", DataType.LIST, WhitelistRedisValue.class),
     ;
     //~fields
     //==================================================================================================================
@@ -72,7 +68,7 @@ public enum RedisKeyTemplateProviderEnum implements RedisKeyProvider{
      * @param redisType redis数据类型
      * @param javaType java数据类型
      */
-    RedisKeyTemplateProviderEnum(String key, DataType redisType, Class javaType){
+    RedisKeyProviderEnum(String key, DataType redisType, Class javaType){
         this.key = key;
         this.redisType = redisType;
         this.javaType = javaType;
@@ -86,7 +82,7 @@ public enum RedisKeyTemplateProviderEnum implements RedisKeyProvider{
      * @param time 过期时长
      * @param timeUnit 过期时长单位
      */
-    RedisKeyTemplateProviderEnum(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit){
+    RedisKeyProviderEnum(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit){
         this.key = key;
         this.redisType = redisType;
         this.javaType = javaType;

@@ -1,5 +1,6 @@
 package com.goudong.commons.service.impl;
 
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.BaseIgnoreResourceDTO;
@@ -20,11 +21,14 @@ import java.util.List;
 /**
  * 类描述：
  * 白名单服务层实现
+ *
+ * @deprecated 重构项目后，将这个去掉使用新的白名单{@link com.goudong.commons.annotation.core.Whitelist}
  * @Author msi
  * @Date 2021-08-14 11:50
  * @Version 1.0
  */
 @Service
+@Deprecated
 public class CommonsIgnoreResourceServiceImpl extends ServiceImpl<CommonsIgnoreResourceMapper, BaseIgnoreResourcePO> implements CommonsIgnoreResourceService {
 
     @Resource
@@ -38,7 +42,7 @@ public class CommonsIgnoreResourceServiceImpl extends ServiceImpl<CommonsIgnoreR
      */
     @Override
     public List<BaseIgnoreResourceDTO> addList(List<BaseIgnoreResourceDTO> insertDTOList) {
-        List<BaseIgnoreResourcePO> newList = BeanUtil.copyList(insertDTOList, BaseIgnoreResourcePO.class);
+        List<BaseIgnoreResourcePO> newList = BeanUtil.copyToList(insertDTOList, BaseIgnoreResourcePO.class, CopyOptions.create());
         // 先查询数据
         LambdaQueryWrapper<BaseIgnoreResourcePO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(BaseIgnoreResourcePO::getIsSystem, false);
@@ -55,7 +59,7 @@ public class CommonsIgnoreResourceServiceImpl extends ServiceImpl<CommonsIgnoreR
         List<IgnoreResourceAntMatcher> ignoreResourceAntMatchers = IgnoreResourceAntMatcherUtil.ignoreResource2AntMatchers(super.list());
         redisOperationsUtil.setListValue(RedisKeyEnum.OAUTH2_IGNORE_RESOURCE, ignoreResourceAntMatchers);
 
-        return BeanUtil.copyList(insertList, BaseIgnoreResourceDTO.class);
+        return BeanUtil.copyToList(insertList, BaseIgnoreResourceDTO.class, CopyOptions.create());
     }
 
     /**

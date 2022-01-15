@@ -1,5 +1,6 @@
 package com.goudong.commons.service.impl;
 
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
@@ -48,7 +49,7 @@ public class CommonsAuthorityMenuServiceImpl extends ServiceImpl<CommonsAuthorit
         // 先查询菜单
         List<AuthorityMenuPO> list = super.list(null);
 
-        List<AuthorityMenuPO> authorityMenuPOS = BeanUtil.copyList(insetDTOS, AuthorityMenuPO.class);
+        List<AuthorityMenuPO> authorityMenuPOS = BeanUtil.copyToList(insetDTOS, AuthorityMenuPO.class, CopyOptions.create());
 
         // 过滤已存在的菜单
         authorityMenuPOS.removeAll(list);
@@ -70,7 +71,7 @@ public class CommonsAuthorityMenuServiceImpl extends ServiceImpl<CommonsAuthorit
         // 释放锁
         lock.unlock();
 
-        return BeanUtil.copyList(authorityMenuPOS, AuthorityMenuDTO.class);
+        return BeanUtil.copyToList(authorityMenuPOS, AuthorityMenuDTO.class, CopyOptions.create());
     }
 
 }
