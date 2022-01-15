@@ -2,14 +2,17 @@ package com.goudong.oauth2.po;
 
 import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +27,7 @@ import java.util.List;
 @Table(name = "base_user")
 @SQLDelete(sql = "update base_user set deleted=true where id=?")
 @Where(clause = "deleted=false")
-public class BaseUserPO extends BasePO {
+public class BaseUserPO extends BasePO implements UserDetails {
 
     private static final long serialVersionUID = -1209701285445397589L;
     /**
@@ -69,7 +72,7 @@ public class BaseUserPO extends BasePO {
      * 有效截止时间
      */
     @Column(name = "valid_time")
-    private LocalDateTime validTime;
+    private Date validTime;
 
     /**
      * qq登录后，系统获取腾讯的open_id
@@ -81,4 +84,49 @@ public class BaseUserPO extends BasePO {
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
     private List<BaseRolePO> roles = new ArrayList<>();
+
+    /**
+     * 获取用户权限，本质上是用户的角色信息
+     * @return
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
+    }
+
+    /**
+     * 判断账户是否未过期
+     * @return
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return validTime.after(new Date());
+    }
+
+    /**
+     * 判断账户是否未锁定
+     * @return
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    /**
+     * 判断密码是否未过期
+     * @return
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    /**
+     * 判断账户是否可用
+     * @return
+     */
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 @Data
 @Slf4j
 @Validated
+@Deprecated
 public class UserPage {
     /**
      * qq登陆成功需要绑定账号跳转页面

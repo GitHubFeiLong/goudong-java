@@ -29,16 +29,17 @@ import org.springframework.util.StopWatch;
 @EnableResourceServer
 @EnableDiscoveryClient
 @EnableCommonsWebMvcConfig
+@EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig
 @EntityScan("com.goudong.oauth2.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.oauth2.repository"})
-public class Oauth2Application {
+public class GoudongOauth2Server {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(Oauth2Application.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongOauth2Server.class)
                 .logStartupInfo(false)
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)

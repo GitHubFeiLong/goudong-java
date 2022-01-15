@@ -4,6 +4,7 @@ import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 @Table(name = "base_role")
 @SQLDelete(sql = "update base_role set deleted=true where id=?")
 @Where(clause = "deleted=false")
-public class BaseRolePO extends BasePO {
+public class BaseRolePO extends BasePO implements GrantedAuthority {
 
     private static final long serialVersionUID = 3961964136793768410L;
     /**
@@ -44,4 +45,9 @@ public class BaseRolePO extends BasePO {
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns={@JoinColumn(name = "user_id")})
     private List<BaseUserPO> users = new ArrayList<>();
+
+    @Override
+    public String getAuthority() {
+        return this.roleName;
+    }
 }

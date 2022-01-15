@@ -45,10 +45,10 @@ public class LogApplicationStartup {
         StringBuilder allMessage = new StringBuilder();
 
         allMessage.append(
-            StringUtil.format("\n---------------------------------------------------------------------------\n\t" +
-                            "Application '{}' is running,耗时:{}s! Access URLs:\n\t" +
-                            "Local: \t\t{}://localhost:{}{}\n\t" +
-                            "External: \t{}://{}:{}{}\n\t",
+            StringUtil.format("\n---------------------------------------------------------------------------" +
+                            "\n\tApplication '{}' is running,耗时:{}s! Access URLs:" +
+                            "\n\tLocal: \t\t{}://localhost:{}{}" +
+                            "\n\tExternal: \t{}://{}:{}{}",
                     env.getProperty("spring.application.name"),
                     totalTimeSecond,
                     protocol,
@@ -63,7 +63,7 @@ public class LogApplicationStartup {
 
         if (knife4jEnabled) {
             allMessage.append(
-                StringUtil.format("swagger:\thttp://{}:{}{}/doc.html\n\t",
+                StringUtil.format("\n\tswagger:\thttp://{}:{}{}/doc.html",
                         hostAddress,
                         serverPort,
                         contextPath
@@ -75,8 +75,8 @@ public class LogApplicationStartup {
                     .orElse(false);
             if (basicEnabled) {
                 allMessage.append(
-                    StringUtil.format("用户名：\t{}\n\t" +
-                                    "密码：\t{}\n\t",
+                    StringUtil.format("\n\t用户名：\t{}" +
+                                    "\n\t密码：\t{}",
                             env.getProperty("knife4j.basic.username"),
                             env.getProperty("knife4j.basic.password")
                     )
@@ -87,12 +87,12 @@ public class LogApplicationStartup {
         if (env.getActiveProfiles().length > 0) {
             allMessage.append(
                     StringUtil.format(
-                            "Profile(s): \t{}\n",
+                            "\n\tProfile(s): \t{}",
                             env.getActiveProfiles())
             );
         }
 
-        allMessage.append("---------------------------------------------------------------------------");
+        allMessage.append("\n---------------------------------------------------------------------------");
         log.info(allMessage.toString());
     }
 

@@ -1,10 +1,8 @@
 package com.goudong.oauth2.config;
 
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
-import com.goudong.oauth2.mapper.SelfAuthorityUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,8 +23,8 @@ import java.util.Set;
 @Component
 public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-    @Resource
-    private SelfAuthorityUserMapper selfAuthorityUserMapper;
+    // @Resource
+    // private SelfAuthorityUserMapper selfAuthorityUserMapper;
 
     @Resource
     private RedisOperationsUtil redisOperationsUtil;
@@ -50,18 +47,18 @@ public class SelfFilterInvocationSecurityMetadataSource implements FilterInvocat
         String requestMethod = ((FilterInvocation) o).getHttpRequest().getMethod();
         log.info("requestUrI >> {}，requestMethod >> {}", requestUrI, requestMethod);
 
-        // 查询 请求方式的url 需要哪些权限
-        List<String> roleNames = selfAuthorityUserMapper.selectRoleNameByMenu(requestUrI, requestMethod);
-        // 没有角色匹配
-        if (roleNames.isEmpty()) {
-            return SecurityConfig.createList("ROLE_ANONYMOUS");
-        }
-
-        // 将能访问地址的角色添加到集合
-        roleNames.forEach(roleName -> {
-            SecurityConfig securityConfig = new SecurityConfig(roleName);
-            set.add(securityConfig);
-        });
+        // // 查询 请求方式的url 需要哪些权限
+        // List<String> roleNames = selfAuthorityUserMapper.selectRoleNameByMenu(requestUrI, requestMethod);
+        // // 没有角色匹配
+        // if (roleNames.isEmpty()) {
+        //     return SecurityConfig.createList("ROLE_ANONYMOUS");
+        // }
+        //
+        // // 将能访问地址的角色添加到集合
+        // roleNames.forEach(roleName -> {
+        //     SecurityConfig securityConfig = new SecurityConfig(roleName);
+        //     set.add(securityConfig);
+        // });
 
         return set;
     }

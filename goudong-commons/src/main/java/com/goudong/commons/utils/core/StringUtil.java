@@ -20,7 +20,24 @@ public class StringUtil {
     private static final String RIGHT_BRACKET = "}";
     private static final String ASTERISK = "*";
 
+    /**
+     * 网络路径完整路径正则
+     */
     private static final Pattern URL_PATTERN = Pattern.compile("(ht|f)tp(s?)\\:\\/\\/[0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\.\\?\\,\\'\\/\\\\&%\\+\\$#_=]*)?");
+
+    /**
+     * uri正则
+     * 接口地址一般称作uri，不带协议主机端口
+     */
+    private static final Pattern URI_PATTERN = Pattern.compile("(\\/?)([a-zA-Z0-9\\-\\.\\?\\,\\'\\/\\\\&%\\+\\$#_=]*)?");
+
+    /**
+     * uri正则,支持ant匹配
+     * 例如：/api/user/*
+     * 接口地址一般称作uri，不带协议主机端口
+     */
+    private static final Pattern URI_ANT_PATTERN = Pattern.compile("(\\/?)([a-zA-Z0-9\\-\\.\\?\\,\\'\\/\\\\&%\\+\\$#_=]*)?");
+
     /**
      * 替换路径参数 `{xxxx}`为`*`
      * @param uri 请求地址
@@ -114,12 +131,30 @@ public class StringUtil {
     }
 
     /**
-     * 正则校验是否是一个http路径
+     * 正则校验是否是一个网络路径
      * @return
      */
     public static boolean regexUrl(String url) {
         Matcher matcher = URL_PATTERN.matcher(url);
         return matcher.matches();
+    }
+
+    /**
+     * 正则校验是否是一个uri
+     * @param uri
+     * @return
+     */
+    public static boolean regexUri(String uri) {
+        return URI_PATTERN.matcher(uri).matches();
+    }
+
+    /**
+     * 正则校验是否是一个uri
+     * @param uriAnt 支持ant匹配
+     * @return
+     */
+    public static boolean regexUriAnt(String uriAnt) {
+        return URI_ANT_PATTERN.matcher(uriAnt).matches();
     }
 
 

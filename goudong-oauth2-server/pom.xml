@@ -48,6 +48,12 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--oauth2-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -112,6 +118,29 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--hutool-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+        <!--apache 通用工具包-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- commons-collections4 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--flyway-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
@@ -120,6 +149,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!--git信息-->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -29,7 +29,7 @@ public class BaseWhitelistPO extends BasePO {
     /**
      * 请求的方法
      */
-    private String method;
+    private String methods;
     /**
      * 备注
      */

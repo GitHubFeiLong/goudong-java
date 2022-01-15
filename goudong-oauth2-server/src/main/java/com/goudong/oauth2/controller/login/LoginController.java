@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.login;
 
+import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.frame.core.Result;
@@ -41,14 +42,14 @@ public class LoginController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
     })
-    // @IgnoreResource("登录(password)")
+    @Whitelist("登录接口")
     public Result login (String username, String password) {
         return Result.ofSuccess();
     }
 
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
-    // @IgnoreResource("注销")
+    @Whitelist("注销登录接口")
     public Result logout () {
         return Result.ofSuccess();
     }

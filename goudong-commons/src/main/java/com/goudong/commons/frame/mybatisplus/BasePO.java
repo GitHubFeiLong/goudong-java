@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 类描述：
@@ -52,12 +52,12 @@ public class BasePO implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    protected LocalDateTime updateTime;
+    protected Date updateTime;
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    protected LocalDateTime createTime;
+    protected Date createTime;
 }
