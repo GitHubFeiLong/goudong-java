@@ -42,7 +42,6 @@
     <properties>
         <!--自定义服务-->
         <goudong-commons.version>1.0-SNAPSHOT</goudong-commons.version>
-        <goudong-security-server.version>1.0-SNAPSHOT</goudong-security-server.version>
         <goudong-gateway-server.version>1.0-SNAPSHOT</goudong-gateway-server.version>
         <!--框架-->
         <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
@@ -116,12 +115,6 @@
                 <groupId>com.goudong</groupId>
                 <artifactId>goudong-commons</artifactId>
                 <version>${goudong-commons.version}</version>
-            </dependency>
-            <!--security-->
-            <dependency>
-                <groupId>com.goudong</groupId>
-                <artifactId>goudong-security-server</artifactId>
-                <version>${goudong-security-server.version}</version>
             </dependency>
             <!--junit-->
             <dependency>

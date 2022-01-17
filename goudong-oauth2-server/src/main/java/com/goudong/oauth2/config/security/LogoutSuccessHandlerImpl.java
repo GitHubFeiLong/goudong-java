@@ -1,9 +1,7 @@
 package com.goudong.oauth2.config.security;
 
-import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -13,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 类描述：
@@ -24,9 +21,6 @@ import java.io.PrintWriter;
  */
 @Component
 public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
-
-    // @Resource
-    // private AuthorityUserUtil authorityUserUtil;
 
     /**
      * 退出登录
@@ -41,8 +35,6 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;;charset=UTF-8");
-        PrintWriter out = httpServletResponse.getWriter();
-        out.write(JSON.toJSONString(Result.ofSuccess("退出成功")));
 
         // 获取token
         String token = httpServletRequest.getHeader(JwtTokenUtil.TOKEN_HEADER);

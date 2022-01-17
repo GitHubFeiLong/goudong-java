@@ -23,11 +23,6 @@ public class AuthenticationImpl implements Authentication {
     private String username;
 
     /**
-     * 密码
-     */
-    private String password;
-
-    /**
      * 邮箱
      */
     private String email;
@@ -96,7 +91,7 @@ public class AuthenticationImpl implements Authentication {
      */
     @Override
     public String getName() {
-        return null;
+        return this.username;
     }
 
 
