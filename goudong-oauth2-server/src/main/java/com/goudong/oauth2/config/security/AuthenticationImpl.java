@@ -54,31 +54,57 @@ public class AuthenticationImpl implements Authentication {
 
     //~methods
     //==================================================================================================================
+
+    /**
+     * 获取权限
+     * @return
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
+    /**
+     * 密码
+     * @return
+     */
     @Override
     public Object getCredentials() {
         return null;
     }
 
+    /**
+     * 详细信息
+     * @return
+     */
     @Override
     public Object getDetails() {
         return null;
     }
 
+    /**
+     * 用户名
+     * @return
+     */
     @Override
     public Object getPrincipal() {
         return null;
     }
 
+    /**
+     * 是否已经认证
+     * @return
+     */
     @Override
     public boolean isAuthenticated() {
         return false;
     }
 
+    /**
+     * 设置认证状态
+     * @param b
+     * @throws IllegalArgumentException
+     */
     @Override
     public void setAuthenticated(boolean b) throws IllegalArgumentException {
 
