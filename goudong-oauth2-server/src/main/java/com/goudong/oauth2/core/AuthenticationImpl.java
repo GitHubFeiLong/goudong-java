@@ -1,10 +1,15 @@
-package com.goudong.oauth2.config.security;
+package com.goudong.oauth2.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 类描述：
@@ -13,6 +18,8 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/1/15 21:54
  */
+@Getter
+@Setter
 public class AuthenticationImpl implements Authentication {
     //~fields
     //==================================================================================================================
@@ -22,6 +29,11 @@ public class AuthenticationImpl implements Authentication {
      */
     private String username;
 
+    /**
+     * 密码
+     */
+    @JsonIgnore
+    private String password;
     /**
      * 邮箱
      */
@@ -52,6 +64,17 @@ public class AuthenticationImpl implements Authentication {
      */
     private String qqOpenId;
 
+    /**
+     * 角色
+     */
+    @JsonIgnore
+    private List<BaseRole> roles = new ArrayList<>();
+
+    /**
+     * 是否已经认证
+     */
+    private Boolean authenticated = true;
+
     //~methods
     //==================================================================================================================
 
@@ -61,7 +84,7 @@ public class AuthenticationImpl implements Authentication {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles;
     }
 
     /**
@@ -70,7 +93,7 @@ public class AuthenticationImpl implements Authentication {
      */
     @Override
     public Object getCredentials() {
-        return null;
+        return password;
     }
 
     /**
@@ -88,7 +111,7 @@ public class AuthenticationImpl implements Authentication {
      */
     @Override
     public Object getPrincipal() {
-        return null;
+        return username;
     }
 
     /**
@@ -97,7 +120,7 @@ public class AuthenticationImpl implements Authentication {
      */
     @Override
     public boolean isAuthenticated() {
-        return false;
+        return authenticated;
     }
 
     /**
@@ -107,7 +130,7 @@ public class AuthenticationImpl implements Authentication {
      */
     @Override
     public void setAuthenticated(boolean b) throws IllegalArgumentException {
-
+        this.authenticated = b;
     }
 
     /**

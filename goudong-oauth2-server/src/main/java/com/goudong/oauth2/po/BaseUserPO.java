@@ -1,7 +1,9 @@
 package com.goudong.oauth2.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.goudong.commons.frame.jpa.BasePO;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
@@ -22,7 +24,8 @@ import java.util.List;
  * @date 2021/12/19 14:20
  * @version 1.0
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "base_user")
 @SQLDelete(sql = "update base_user set deleted=true where id=?")
@@ -83,6 +86,7 @@ public class BaseUserPO extends BasePO implements UserDetails {
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
+    @JsonIgnoreProperties(value = {"users"})
     private List<BaseRolePO> roles = new ArrayList<>();
 
     /**

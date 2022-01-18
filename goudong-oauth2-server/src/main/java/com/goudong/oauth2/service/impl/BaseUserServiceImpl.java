@@ -34,8 +34,6 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
         BaseUserPO byLogin = baseUserRepository.findByLogin(username);
-        // // 让角色加载
-        // byLogin.getRoles();
         return byLogin;
     }
 

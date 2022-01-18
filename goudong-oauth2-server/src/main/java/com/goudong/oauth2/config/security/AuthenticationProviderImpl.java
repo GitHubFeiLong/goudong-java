@@ -2,13 +2,14 @@ package com.goudong.oauth2.config.security;
 
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.utils.BeanUtil;
+import com.goudong.oauth2.core.AuthenticationImpl;
 import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -77,7 +78,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         }
 
         // 验证通过，返回用户信息
-        return new UsernamePasswordAuthenticationToken(username, userInfo.getPassword(), userInfo.getAuthorities());
+        AuthenticationImpl authentication1 = BeanUtil.copyProperties(userInfo, AuthenticationImpl.class);
+
+        return authentication1;
     }
 
     @Override

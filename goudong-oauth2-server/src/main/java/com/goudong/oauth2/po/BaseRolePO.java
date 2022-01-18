@@ -1,7 +1,9 @@
 package com.goudong.oauth2.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.goudong.commons.frame.jpa.BasePO;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,11 +17,14 @@ import java.util.List;
  * authority_role
  * @author
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "base_role")
 @SQLDelete(sql = "update base_role set deleted=true where id=?")
 @Where(clause = "deleted=false")
+@JsonIgnoreProperties(ignoreUnknown = true, value =
+        {"hibernateLazyInitializer", "handler", "fieldHandler"})
 public class BaseRolePO extends BasePO implements GrantedAuthority {
 
     private static final long serialVersionUID = 3961964136793768410L;
@@ -44,20 +49,11 @@ public class BaseRolePO extends BasePO implements GrantedAuthority {
     @ManyToMany(targetEntity=BaseUserPO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns={@JoinColumn(name = "user_id")})
+    @JsonIgnoreProperties(ignoreUnknown = true, value = {"roles"})
     private List<BaseUserPO> users = new ArrayList<>();
 
     @Override
     public String getAuthority() {
         return this.roleName;
-    }
-
-    @Override
-    public String toString() {
-        return "BaseRolePO{" +
-                "roleName='" + roleName + '\'' +
-                ", roleNameCn='" + roleNameCn + '\'' +
-                ", remark='" + remark + '\'' +
-                ", users=" + users +
-                '}';
     }
 }

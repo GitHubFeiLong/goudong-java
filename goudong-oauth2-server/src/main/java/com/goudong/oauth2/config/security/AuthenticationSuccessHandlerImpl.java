@@ -2,8 +2,10 @@ package com.goudong.oauth2.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.openfeign.GoudongUserServerService;
+import com.goudong.oauth2.core.AuthenticationImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +46,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
+        AuthenticationImpl authenticationImpl = (AuthenticationImpl) authentication;
 
+        // 将其设置到上下文中
+        SecurityContextHolder.getContext().setAuthentication(authenticationImpl);
+
+        // authenticationImpl.setRoles(null);
         httpServletResponse.setCharacterEncoding("UTF-8");
 
         //表单输入的用户名
@@ -62,7 +69,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        String json = new ObjectMapper().writeValueAsString("");
+        String json = new ObjectMapper().writeValueAsString(authentication);
         httpServletResponse.getWriter().write(json);
         // // 转成VO
         // AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserVO.class);

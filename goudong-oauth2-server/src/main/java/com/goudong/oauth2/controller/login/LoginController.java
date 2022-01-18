@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +53,12 @@ public class LoginController {
     @Whitelist("注销登录接口")
     public Result logout () {
         return Result.ofSuccess();
+    }
+
+    @GetMapping("/current-user-info")
+    @ApiOperation("获取登录用户信息")
+    public Result currentUser() {
+        return Result.ofSuccess(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @PostMapping(value = "/token", headers = {JwtTokenUtil.TOKEN_HEADER})
