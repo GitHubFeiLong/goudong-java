@@ -1,19 +1,26 @@
 package com.goudong.oauth2.config.security;
 
+import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.commons.openfeign.GoudongUserServerService;
+import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.oauth2.core.AuthenticationImpl;
+import com.goudong.oauth2.core.TokenExpires;
+import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.properties.TokenExpiresProperties;
+import com.goudong.oauth2.service.BaseTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * 类描述：
@@ -27,15 +34,20 @@ import java.io.IOException;
 @Component
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
-    // @Resource
-    // private SelfAuthorityUserMapper selfAuthorityUserMapper;
+    /**
+     * token服务层接口
+     */
+    private final BaseTokenService baseTokenService;
 
-    // @Resource
-    // private AuthorityUserUtil authorityUserUtil;
+    /**
+     * 令牌过期配置
+     */
+    private final TokenExpiresProperties tokenExpiresProperties;
 
-    @Resource
-    private GoudongUserServerService userService;
-
+    public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService, TokenExpiresProperties tokenExpiresProperties) {
+        this.baseTokenService = baseTokenService;
+        this.tokenExpiresProperties = tokenExpiresProperties;
+    }
 
     /**
      *
@@ -47,38 +59,73 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
-        AuthenticationImpl authenticationImpl = (AuthenticationImpl) authentication;
-
-        // 将其设置到上下文中
-        SecurityContextHolder.getContext().setAuthentication(authenticationImpl);
-
-        // authenticationImpl.setRoles(null);
-        httpServletResponse.setCharacterEncoding("UTF-8");
-
-        //表单输入的用户名
-        String username = (String) authentication.getPrincipal();
-        //
-        //
-        // String token = JwtTokenUtil.generateBearerToken(authorityUserDTO, JwtTokenUtil.VALID_HOUR);
-        //
-        // // 保存token到数据库统一管理
-        // ArrayList<BaseToken2CreateVO> baseToken2CreateVOS = Lists.newArrayList(
-        //         new BaseToken2CreateVO(authorityUserDTO.getId(), token)
-        // );
-        // userService.createTokens(baseToken2CreateVOS);
-        //
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
-        String json = new ObjectMapper().writeValueAsString(authentication);
-        httpServletResponse.getWriter().write(json);
-        // // 转成VO
-        // AuthorityUserVO authorityUserVO = BeanUtil.copyProperties(authorityUserDTO, AuthorityUserVO.class);
-        // out.write(JSON.toJSONString(Result.ofSuccess(authorityUserVO)));
-        // // 设置到响应头里
-        // httpServletResponse.setHeader(JwtTokenUtil.TOKEN_HEADER, token);
 
-        // 将用户登录信息保存到redis中
-        // authorityUserUtil.login(token, authorityUserDTO);
+        AuthenticationImpl authenticationImpl = (AuthenticationImpl) authentication;
+        /*
+            创建令牌
+         */
+
+        BaseTokenDTO baseTokenDTO = new BaseTokenDTO();
+        baseTokenDTO.setAccessToken(IdUtil.simpleUUID());
+        baseTokenDTO.setRefreshToken(IdUtil.simpleUUID());
+        baseTokenDTO.setUserId(authenticationImpl.getId());
+
+        disposeToken(httpServletRequest, baseTokenDTO);
+
+        BaseTokenDTO save = baseTokenService.save(baseTokenDTO);
+
+
+        //表单输入的用户名
+        String username = (String) authentication.getPrincipal();
+
+
+        String json = new ObjectMapper().writeValueAsString(save);
+        httpServletResponse.getWriter().write(json);
+    }
+
+    /**
+     * 处理生成token
+     * @param httpServletRequest
+     * @param baseTokenDTO
+     */
+    private void disposeToken(HttpServletRequest httpServletRequest, BaseTokenDTO baseTokenDTO) {
+        LocalDateTime now = LocalDateTime.now();
+        // app
+        if (Objects.equals(httpServletRequest.getHeader(""), ClientSideEnum.APP.getHeaderValue())) {
+            TokenExpires app = tokenExpiresProperties.getApp();
+            baseTokenDTO.setAccessExpires(
+                    Date.from(
+                            now.plusSeconds(app.getAccessTimeUnit().toSeconds(app.getAccess()))
+                                    .atZone( ZoneId.systemDefault()).toInstant()
+                    )
+            );
+            baseTokenDTO.setRefreshExpires(
+                    Date.from(
+                            now.plusSeconds(app.getRefreshTimeUnit().toSeconds(app.getRefresh()))
+                                    .atZone( ZoneId.systemDefault()).toInstant()
+                    )
+            );
+
+            baseTokenDTO.setClientType(ClientSideEnum.APP.name());
+        } else {
+            // 默认是 browser
+            TokenExpires browser = tokenExpiresProperties.getBrowser();
+            baseTokenDTO.setAccessExpires(
+                    Date.from(
+                            now.plusSeconds(browser.getAccessTimeUnit().toSeconds(browser.getAccess()))
+                                    .atZone( ZoneId.systemDefault()).toInstant()
+                    )
+            );
+            baseTokenDTO.setRefreshExpires(
+                    Date.from(
+                            now.plusSeconds(browser.getRefreshTimeUnit().toSeconds(browser.getRefresh()))
+                                    .atZone( ZoneId.systemDefault()).toInstant()
+                    )
+            );
+            baseTokenDTO.setClientType(ClientSideEnum.BROWSER.name());
+        }
     }
 }

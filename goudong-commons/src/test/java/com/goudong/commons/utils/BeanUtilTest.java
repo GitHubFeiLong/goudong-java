@@ -1,10 +1,11 @@
 package com.goudong.commons.utils;
+
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.google.common.collect.Lists;
 import com.goudong.commons.po.core.BasePO;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 class BeanUtilTest {
@@ -24,16 +25,16 @@ class BeanUtilTest {
         basePO.setDeleted(false);
         basePO.setCreateUserId(1L);
         basePO.setUpdateUserId(1L);
-        basePO.setUpdateTime(LocalDateTime.now());
-        basePO.setCreateTime(LocalDateTime.now());
+        basePO.setUpdateTime(new Date());
+        basePO.setCreateTime(new Date());
 
         BasePO basePO2 = new BasePO();
         basePO2.setId(1L);
         basePO2.setDeleted(false);
         basePO2.setCreateUserId(1L);
         basePO2.setUpdateUserId(1L);
-        basePO2.setUpdateTime(LocalDateTime.now());
-        basePO2.setCreateTime(LocalDateTime.now());
+        basePO2.setUpdateTime(new Date());
+        basePO2.setCreateTime(new Date());
 
         List<BasePO> list = Lists.newArrayList(basePO, basePO2);
         List<BasePO> strings = BeanUtil.copyToList(list, BasePO.class, CopyOptions.create());

@@ -25,6 +25,11 @@ public class AuthenticationImpl implements Authentication {
     //==================================================================================================================
 
     /**
+     * 用户id
+     */
+    private Long id;
+
+    /**
      * 用户名
      */
     private String username;

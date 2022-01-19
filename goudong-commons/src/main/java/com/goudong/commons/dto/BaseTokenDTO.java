@@ -14,6 +14,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel
+@Deprecated
 public class BaseTokenDTO extends BasePO {
 
     @ApiModelProperty(value = "用户id", required = true)

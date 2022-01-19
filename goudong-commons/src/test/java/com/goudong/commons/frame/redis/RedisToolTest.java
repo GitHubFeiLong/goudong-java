@@ -16,8 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -112,8 +112,8 @@ class RedisToolTest {
         basePO.setDeleted(false);
         basePO.setCreateUserId(10L);
         basePO.setUpdateUserId(20L);
-        basePO.setUpdateTime(LocalDateTime.now());
-        basePO.setCreateTime(LocalDateTime.now());
+        basePO.setUpdateTime(new Date());
+        basePO.setCreateTime(new Date());
 
         redisTool.opsForHash().putAll(key, BeanUtil.beanToMap(basePO));
         redisTool.expire(key, 30, TimeUnit.SECONDS);

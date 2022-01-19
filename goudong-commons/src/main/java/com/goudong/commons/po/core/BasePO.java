@@ -3,7 +3,7 @@ package com.goudong.commons.po.core;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 类描述：
@@ -34,9 +34,9 @@ public class BasePO implements Serializable {
     /**
      * 更新时间
      */
-    protected LocalDateTime updateTime;
+    protected Date updateTime;
     /**
      * 创建时间
      */
-    protected LocalDateTime createTime;
+    protected Date createTime;
 }

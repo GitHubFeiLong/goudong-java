@@ -45,7 +45,7 @@ spring:
   ## flyway数据迁移
   flyway:
     #是否开启
-    enabled: false
+    enabled: true
     baseline-version: 0
     baseline-on-migrate: true
     table: goudong_oauth2_server_flyway_schema_history
@@ -76,3 +76,13 @@ knife4j:
 commons:
   whitelist:
     enable: true
+
+# 配置oauth2
+oauth2:
+  # 配置令牌失效时长
+  token-expires:
+    browser:
+      access: 10
+      access-time-unit: hours
+      refresh: 1
+      refresh-time-unit: hours
