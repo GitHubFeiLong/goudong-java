@@ -39,7 +39,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     /**
      * 自定义登录认证
      *
-     * @param authentication
+     * @param authentication 前端传递的认证参数，包含用户名密码
      * @throws UsernameNotFoundException
      * @throws AccountExpiredException
      * @throws BadCredentialsException

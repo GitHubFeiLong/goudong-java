@@ -34,15 +34,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("application/json;;charset=UTF-8");
-
-        // 获取token
-        String token = httpServletRequest.getHeader(JwtTokenUtil.TOKEN_HEADER);
-
-        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
-        if (token != null) {
-            // authorityUserUtil.logout(token, authorityUserDTO.getId());
-        }
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
 
         String json = new ObjectMapper().writeValueAsString("");
         httpServletResponse.getWriter().write(json);
