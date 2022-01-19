@@ -1,6 +1,8 @@
 package com.goudong.oauth2.controller.login;
 
 import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.frame.core.Result;
@@ -58,6 +60,9 @@ public class LoginController {
     @GetMapping("/current-user-info")
     @ApiOperation("获取登录用户信息")
     public Result currentUser() {
+        if (true) {
+            throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, "请登录");
+        }
         return Result.ofSuccess(SecurityContextHolder.getContext().getAuthentication());
     }
 

@@ -1,6 +1,7 @@
 package com.goudong.commons.exception;
 
 
+import cn.hutool.http.Header;
 import com.goudong.commons.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.DatabaseKeyEnum;
 import com.goudong.commons.enumerate.ServerExceptionEnum;
@@ -102,6 +103,9 @@ public class GlobalExceptionHandler {
     public Result<BasicException> basicExceptionDispose(BasicException exception){
         // 设置响应码
         response.setStatus(exception.getStatus());
+        // if (exception.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
+        //     response.setHeader(Header.WWW_AUTHENTICATE.getValue(), "Basic realm=\"\"");
+        // }
         // 打印错误日志
         log.error(GlobalExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage());
         // 堆栈跟踪

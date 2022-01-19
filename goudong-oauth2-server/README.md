@@ -13,3 +13,9 @@
 当认证过期时，需要带上WWW-Authenticate响应头
 WWW-Authenticate: <type> realm=<realm>
 [教程]<https://cloud.tencent.com/developer/section/1190024>
+
+
+# goudong-oauth2-server
+## 流程图
+### 认证流程
+### 请求流程
