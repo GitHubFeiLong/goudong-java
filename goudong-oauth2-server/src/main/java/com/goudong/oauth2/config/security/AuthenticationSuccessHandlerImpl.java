@@ -22,6 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -93,11 +95,8 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
          */
 
 
-        String json =  new Jackson2ObjectMapperBuilder()
-                .simpleDateFormat(DateConst.DATE_TIME_FORMATTER)
-                .build()
-                .writeValueAsString(Result.ofSuccess(tokenDTO));
-        httpServletResponse.getWriter().write(json);
+        httpServletResponse.getWriter()
+                .write(new ObjectMapper().setDateFormat(new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER)).writeValueAsString(tokenDTO));
     }
 
     /**

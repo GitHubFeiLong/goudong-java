@@ -12,9 +12,18 @@ import java.time.format.DateTimeFormatter;
 public class DateConst {
 
     /**
-     * 时间格式 yyyy-MM-dd HH:mm:ss
+     * 日期时间格式 yyyy-MM-dd HH:mm:ss
      */
     public static final String DATE_TIME_FORMATTER = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * 日期格式
+     */
+    public static final String DATE_FORMATTER = "yyyy-MM-dd";
+    /**
+     * 时间格式
+     */
+    public static final String TIME_FORMATTER = "HH:mm:ss";
 
     /**
      * 时间格式Formatter yyyy-MM-dd HH:mm:ss
