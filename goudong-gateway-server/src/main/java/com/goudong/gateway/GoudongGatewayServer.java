@@ -19,9 +19,9 @@ import org.springframework.util.StopWatch;
  * @Date 2021-04-08 14:05
  * @Version 1.0
  */
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableCommonsFeignConfig
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableCommonsRedisConfig
 public class GoudongGatewayServer {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.goudong.user.core;
+package com.goudong.commons.dto.oauth2;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @date 2022/1/15 18:08
  */
 @Data
-public class WhitelistRedisValue implements Serializable {
+public class WhitelistDTO implements Serializable {
     //~fields
     //==================================================================================================================
     private static final long serialVersionUID = 3149283918517679735L;

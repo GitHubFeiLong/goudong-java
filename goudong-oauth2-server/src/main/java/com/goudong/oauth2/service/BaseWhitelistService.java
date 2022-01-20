@@ -1,4 +1,4 @@
-package com.goudong.user.service;
+package com.goudong.oauth2.service;
 
 import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.user.BaseWhitelistDTO;
@@ -19,4 +19,10 @@ public interface BaseWhitelistService {
      * @param createDTOS 新增白名单接口
      */
     List<BaseWhitelistDTO> addWhitelist(List<BaseWhitelist2CreateDTO> createDTOS);
+
+    /**
+     * 查询所有白名单
+     * @return
+     */
+    List<BaseWhitelistDTO> findAll();
 }

@@ -20,14 +20,11 @@ import java.util.Optional;
 @ResponseBody
 public interface GoudongUserServerService {
 
-    /**
-     * 新增白名单
-     * @param createDTOS
-     * @return
-     */
-    @PostMapping("/whitelist/whitelist")
-    Result<List<BaseWhitelistDTO>> addWhitelist(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS);
 
+
+
+
+    //==================
     /**
      * 查询用户的详细信息,包括角色权限
      * @param loginName

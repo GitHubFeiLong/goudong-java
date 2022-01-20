@@ -11,6 +11,7 @@ import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
+import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +64,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("进入网关过滤器, token:{}",exchange.getRequest().getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER));
+        LogUtil.debug(log, "进入网关过滤器");
         ServerHttpRequest request = exchange.getRequest();
         // 检查请求是否能放入
         String tokenMd5Key = checkRequestAccess(request);
@@ -86,8 +87,15 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         String uri = request.getURI().getPath();
         HttpMethod method = request.getMethod();
 
+        /*
+            白名单直接放行
+         */
+
+
         // token
         String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);
+
+
 
         // 登录接口，直接放行
         boolean isLogin = (Objects.equals(uri, LOGIN_PASSWORD_API) && Objects.equals(method, HttpMethod.POST))

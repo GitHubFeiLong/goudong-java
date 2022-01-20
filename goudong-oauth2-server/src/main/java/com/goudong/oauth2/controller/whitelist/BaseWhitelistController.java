@@ -1,4 +1,4 @@
-package com.goudong.user.controller.whitelist;
+package com.goudong.oauth2.controller.whitelist;
 
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
@@ -7,17 +7,14 @@ import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.user.WhitelistException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.user.service.BaseWhitelistService;
+import com.goudong.oauth2.service.BaseWhitelistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +42,7 @@ public class BaseWhitelistController {
 
 
     /**
-     *
+     * 保存白名单
      * @param createDTOS 需要保存或更新的白名单集合
      * @return
      */
@@ -74,5 +71,16 @@ public class BaseWhitelistController {
 
         return Result.ofSuccess(baseWhitelistDTOS);
 
+    }
+
+    /**
+     * 获取所有白名单
+     * @return
+     */
+    @ApiOperation(value = "获取白名单")
+    @GetMapping("/whitelist")
+    public Result<List<BaseWhitelistDTO>> listWhitelist() {
+        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.findAll();
+        return Result.ofSuccess(baseWhitelistDTOS);
     }
 }

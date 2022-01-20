@@ -4,7 +4,7 @@ import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.user.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.ResourceAntMatcher;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.openfeign.GoudongUserServerService;
+import com.goudong.commons.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.WhitelistProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.ResourceUtil;
@@ -35,14 +35,14 @@ public class WhitelistInitialize implements ApplicationRunner {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    private final GoudongUserServerService goudongUserServerService;
+    private final GoudongOauth2ServerService goudongOauth2ServerService;
     /**
      * 配置文件配置的白名单
      */
     private final WhitelistProperties whitelistProperties;
 
-    public WhitelistInitialize(GoudongUserServerService goudongUserServerService, WhitelistProperties whitelistProperties) {
-        this.goudongUserServerService = goudongUserServerService;
+    public WhitelistInitialize(GoudongOauth2ServerService goudongOauth2ServerService, WhitelistProperties whitelistProperties) {
+        this.goudongOauth2ServerService = goudongOauth2ServerService;
         this.whitelistProperties = whitelistProperties;
     }
 
@@ -71,7 +71,7 @@ public class WhitelistInitialize implements ApplicationRunner {
 
         if (CollectionUtils.isNotEmpty(baseWhitelist2CreateDTOS)) {
             // 使用feign，保存到指定库中
-            Result<List<BaseWhitelistDTO>> result = goudongUserServerService.addWhitelist(baseWhitelist2CreateDTOS);
+            Result<List<BaseWhitelistDTO>> result = goudongOauth2ServerService.addWhitelist(baseWhitelist2CreateDTOS);
             LogUtil.info(log, "结束处理白名单:\n{}", result.getData());
             return;
         }
