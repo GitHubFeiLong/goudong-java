@@ -1,6 +1,6 @@
 package com.goudong.oauth2.core;
 
-import com.goudong.commons.dto.oauth2.BaseUser;
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import lombok.Data;
 
@@ -52,7 +52,7 @@ public class LoginInfo {
     /**
      * 用户信息
      */
-    private BaseUser user;
+    private BaseUserDTO user;
     //~construct methods
     //==================================================================================================================
 

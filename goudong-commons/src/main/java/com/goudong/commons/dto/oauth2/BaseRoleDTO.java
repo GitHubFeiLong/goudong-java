@@ -9,7 +9,7 @@ import lombok.Data;
  * @author
  */
 @Data
-public class BaseRole{
+public class BaseRoleDTO {
 
     /**
      * 角色名称(必须以ROLE_起始命名)

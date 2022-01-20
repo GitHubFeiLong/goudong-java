@@ -15,7 +15,7 @@ import javax.persistence.Table;
  * @Date 2021/8/12 15:23
  */
 @Data
-public class BaseMenu {
+public class BaseMenuDTO {
     private static final long serialVersionUID = -4844654607239619613L;
     /**
      * 主键id

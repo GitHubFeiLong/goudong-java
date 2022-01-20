@@ -79,7 +79,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         // 验证通过，返回用户信息
         AuthenticationImpl authentication1 = BeanUtil.copyProperties(userInfo, AuthenticationImpl.class);
-
+        authentication1.setPassword(null);
         return authentication1;
     }
 
