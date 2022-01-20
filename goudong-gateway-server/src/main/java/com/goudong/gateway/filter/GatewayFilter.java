@@ -6,6 +6,8 @@ import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.frame.redis.RedisTool;
+import com.goudong.commons.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
@@ -41,21 +43,44 @@ import java.util.Objects;
 public class GatewayFilter implements GlobalFilter, Ordered {
 
     @Resource
+    @Deprecated
     private RedisOperationsUtil redisOperationsUtil;
 
-    @Resource
-    private GoudongUserServerService userService;
+
 
     /**
      * 用户名密码登录接口
      */
+    @Deprecated
     public static final String LOGIN_PASSWORD_API = "/api/oauth2/login/login";
     /**
      * token登录接口
      */
+    @Deprecated
     public static final String LOGIN_TOKEN_API = "/api/oauth2/login/token";
 
+    @Deprecated
     public static final String DEFAULT_TOKEN_MD5_KEY = null;
+
+    @Resource
+    @Deprecated
+    private GoudongUserServerService userService;
+
+    /**
+     * oauth2服务
+     */
+    private final GoudongOauth2ServerService goudongOauth2ServerService;
+
+    /**
+     * redis工具
+     */
+    private final RedisTool redisTool;
+
+    public GatewayFilter(GoudongOauth2ServerService goudongOauth2ServerService, RedisTool redisTool) {
+        this.goudongOauth2ServerService = goudongOauth2ServerService;
+        this.redisTool = redisTool;
+    }
+
     /**
      * 网管请求入口
      * @param exchange

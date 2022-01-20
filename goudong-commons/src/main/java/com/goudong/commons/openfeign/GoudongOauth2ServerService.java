@@ -4,6 +4,7 @@ import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.user.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,4 +28,11 @@ public interface GoudongOauth2ServerService {
      */
     @PostMapping("/whitelist/whitelist")
     Result<List<BaseWhitelistDTO>> addWhitelist(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS);
+
+    /**
+     * 查询所有白名单
+     * @return
+     */
+    @GetMapping("/whitelist/whitelist")
+    Result<List<BaseWhitelistDTO>> listWhitelist();
 }

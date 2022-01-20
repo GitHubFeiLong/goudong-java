@@ -27,4 +27,14 @@ public class GoudongOauth2ServerServiceImpl implements GoudongOauth2ServerServic
     public Result<List<BaseWhitelistDTO>> addWhitelist(List<BaseWhitelist2CreateDTO> createDTOS) {
         return null;
     }
+
+    /**
+     * 查询所有白名单
+     *
+     * @return
+     */
+    @Override
+    public Result<List<BaseWhitelistDTO>> listWhitelist() {
+        return null;
+    }
 }
