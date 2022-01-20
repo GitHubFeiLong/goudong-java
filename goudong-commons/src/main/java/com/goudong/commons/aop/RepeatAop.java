@@ -1,7 +1,7 @@
 package com.goudong.commons.aop;
 
 import com.goudong.commons.annotation.core.Repeat;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.AuthorityUserUtil;

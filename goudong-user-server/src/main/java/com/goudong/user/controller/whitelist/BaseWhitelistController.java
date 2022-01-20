@@ -3,7 +3,7 @@ package com.goudong.user.controller.whitelist;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.user.BaseWhitelistDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.user.WhitelistException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.core.LogUtil;

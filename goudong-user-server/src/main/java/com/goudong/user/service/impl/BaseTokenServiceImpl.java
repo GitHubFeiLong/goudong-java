@@ -4,7 +4,7 @@
 // import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 // import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 // import com.goudong.commons.dto.BaseTokenDTO;
-// import com.goudong.commons.enumerate.ClientExceptionEnum;
+// import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 // import com.goudong.commons.exception.ClientException;
 // import com.goudong.commons.po.AuthorityUserPO;
 // import com.goudong.commons.po.BaseTokenPO;

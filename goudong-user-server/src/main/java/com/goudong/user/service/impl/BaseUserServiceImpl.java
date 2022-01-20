@@ -2,7 +2,7 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.dto.user.BaseUserDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.core.AssertUtil;

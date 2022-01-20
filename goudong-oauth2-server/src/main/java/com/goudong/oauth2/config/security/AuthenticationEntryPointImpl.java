@@ -1,7 +1,7 @@
 package com.goudong.oauth2.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.security.core.AuthenticationException;

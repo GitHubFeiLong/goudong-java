@@ -1,7 +1,7 @@
 package com.goudong.commons.frame.core;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.goudong.commons.enumerate.ExceptionEnumInterface;
+import com.goudong.commons.enumerate.core.ExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -68,8 +68,6 @@ public class Result<T> implements Serializable {
      * 时间戳
      */
     @ApiModelProperty(value = "时间戳")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date timestamp = new Date();
 
     public Result() {

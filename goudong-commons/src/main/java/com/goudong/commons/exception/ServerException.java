@@ -1,6 +1,6 @@
 package com.goudong.commons.exception;
 
-import com.goudong.commons.enumerate.ServerExceptionEnum;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 
 /**

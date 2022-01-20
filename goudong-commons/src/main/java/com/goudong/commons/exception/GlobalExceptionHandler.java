@@ -1,10 +1,9 @@
 package com.goudong.commons.exception;
 
 
-import cn.hutool.http.Header;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.enumerate.DatabaseKeyEnum;
-import com.goudong.commons.enumerate.ServerExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.DatabaseKeyEnum;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.core.StringUtil;
 import io.swagger.annotations.ApiModelProperty;

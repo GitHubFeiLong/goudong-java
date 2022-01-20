@@ -4,7 +4,7 @@
 // import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 // import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 // import com.goudong.commons.dto.AuthorityUserDTO;
-// import com.goudong.commons.enumerate.ClientExceptionEnum;
+// import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 // import com.goudong.commons.exception.ClientException;
 // import com.goudong.commons.openfeign.MessageService;
 // import com.goudong.commons.po.AuthorityRolePO;

@@ -1,12 +1,11 @@
 package com.goudong.oauth2.controller.login;
 
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.JwtTokenUtil;
+import com.goudong.oauth2.dto.BaseTokenDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -60,11 +59,16 @@ public class LoginController {
     @GetMapping("/current-user-info")
     @ApiOperation("获取登录用户信息")
     public Result currentUser() {
-        if (true) {
-            throw ClientException.clientException(ClientExceptionEnum.UNAUTHORIZED, "请登录");
-        }
         return Result.ofSuccess(SecurityContextHolder.getContext().getAuthentication());
     }
+
+
+    @PostMapping("/demo")
+    @ApiOperation("反序列化")
+    public Result demo(@RequestBody BaseTokenDTO baseTokenDTO) {
+        return Result.ofSuccess(baseTokenDTO);
+    }
+
 
     @PostMapping(value = "/token", headers = {JwtTokenUtil.TOKEN_HEADER})
     @ApiOperation(value = "登录(token)")

@@ -3,6 +3,7 @@ package com.goudong.oauth2.config.security;
 import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
+import com.goudong.commons.frame.core.Result;
 import com.goudong.oauth2.core.AuthenticationImpl;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
@@ -44,9 +45,17 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
      */
     private final TokenExpiresProperties tokenExpiresProperties;
 
-    public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService, TokenExpiresProperties tokenExpiresProperties) {
+    /**
+     * objectMapper
+     */
+    private final ObjectMapper objectMapper;
+
+    public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
+                                            TokenExpiresProperties tokenExpiresProperties,
+                                            ObjectMapper objectMapper) {
         this.baseTokenService = baseTokenService;
         this.tokenExpiresProperties = tokenExpiresProperties;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -75,14 +84,15 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
         disposeToken(httpServletRequest, baseTokenDTO);
 
-        BaseTokenDTO save = baseTokenService.save(baseTokenDTO);
-
+        // 持久化token
+        BaseTokenDTO tokenDTO = baseTokenService.save(baseTokenDTO);
+        // redis存一份
 
         //表单输入的用户名
         String username = (String) authentication.getPrincipal();
 
 
-        String json = new ObjectMapper().writeValueAsString(save);
+        String json = objectMapper.writeValueAsString(Result.ofSuccess(tokenDTO));
         httpServletResponse.getWriter().write(json);
     }
 

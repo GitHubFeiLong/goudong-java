@@ -3,7 +3,7 @@ package com.goudong.user.controller.user;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.user.BaseUser2CreateDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.core.Result;

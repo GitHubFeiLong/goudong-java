@@ -29,6 +29,7 @@ import org.springframework.util.StopWatch;
 @EnableAuthorizationServer
 // @EnableResourceServer
 @EnableDiscoveryClient
+@EnableCommonsJacksonConfig
 @EnableCommonsWebMvcConfig
 @EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig

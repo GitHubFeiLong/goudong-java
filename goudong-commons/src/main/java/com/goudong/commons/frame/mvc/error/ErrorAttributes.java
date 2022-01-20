@@ -1,7 +1,7 @@
 package com.goudong.commons.frame.mvc.error;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;

@@ -1,7 +1,7 @@
 package com.goudong.commons.frame.mybatisplus;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.goudong.commons.enumerate.BasicPoFieldEnum;
+import com.goudong.commons.enumerate.core.BasicPoFieldEnum;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 

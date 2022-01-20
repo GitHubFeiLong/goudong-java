@@ -1,5 +1,6 @@
-package com.goudong.commons.enumerate;
+package com.goudong.commons.enumerate.core;
 
+import com.goudong.commons.enumerate.core.ExceptionEnumInterface;
 import lombok.Getter;
 
 /**

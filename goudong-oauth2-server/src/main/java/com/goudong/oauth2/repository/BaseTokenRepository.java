@@ -13,4 +13,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface BaseTokenRepository extends JpaRepository<BaseTokenPO, Long>, JpaSpecificationExecutor<BaseTokenPO> {
 
+    /**
+     * 根据用户id查询
+     * @param userId 用户表主键
+     * @param clientType 客户端类型
+     * @return
+     */
+    BaseTokenPO findByUserIdAndClientType(Long userId, String clientType);
 }

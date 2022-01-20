@@ -28,13 +28,13 @@ public class TokenExpiresProperties {
      * 浏览器配置令牌失效
      */
     @NestedConfigurationProperty
-    private TokenExpires browser = new TokenExpires(5, TimeUnit.MINUTES);
+    private TokenExpires browser = new TokenExpires(2, TimeUnit.HOURS);
 
     /**
      * app配置令牌失效
      */
     @NestedConfigurationProperty
-    private TokenExpires app = new TokenExpires(7, TimeUnit.MINUTES);
+    private TokenExpires app = new TokenExpires(4, TimeUnit.HOURS);
 
     //~methods
     //==================================================================================================================

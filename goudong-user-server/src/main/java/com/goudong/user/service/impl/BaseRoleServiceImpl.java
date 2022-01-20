@@ -1,7 +1,7 @@
 package com.goudong.user.service.impl;
 
 import com.goudong.commons.constant.user.RoleConst;
-import com.goudong.commons.enumerate.ServerExceptionEnum;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.user.RoleException;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseRoleRepository;

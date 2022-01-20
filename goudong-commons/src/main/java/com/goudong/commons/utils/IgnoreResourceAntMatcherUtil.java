@@ -2,7 +2,7 @@ package com.goudong.commons.utils;
 
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.po.BaseIgnoreResourcePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;

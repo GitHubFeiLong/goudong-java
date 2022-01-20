@@ -1,6 +1,6 @@
 package com.goudong.oauth2.config.security;
 
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.oauth2.core.AuthenticationImpl;

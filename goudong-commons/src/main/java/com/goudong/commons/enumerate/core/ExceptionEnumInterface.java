@@ -1,4 +1,4 @@
-package com.goudong.commons.enumerate;
+package com.goudong.commons.enumerate.core;
 
 /**
  * 接口描述：

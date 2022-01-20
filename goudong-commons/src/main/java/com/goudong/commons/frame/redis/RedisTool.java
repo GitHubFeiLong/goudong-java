@@ -3,7 +3,7 @@ package com.goudong.commons.frame.redis;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
-import com.goudong.commons.enumerate.ServerExceptionEnum;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;

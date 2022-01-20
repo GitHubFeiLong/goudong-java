@@ -3,7 +3,7 @@ package com.goudong.gateway.filter;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
-import com.goudong.commons.enumerate.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.openfeign.GoudongUserServerService;

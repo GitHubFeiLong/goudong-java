@@ -6,6 +6,7 @@ import com.goudong.oauth2.po.BaseTokenPO;
 import com.goudong.oauth2.repository.BaseTokenRepository;
 import com.goudong.oauth2.service.BaseTokenService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 接口描述：
@@ -37,7 +38,17 @@ public class BaseTokenServiceImpl implements BaseTokenService {
      * @return
      */
     @Override
+    @Transactional
     public BaseTokenDTO save(BaseTokenDTO dto) {
+        // 根据用户id,和客户端类型 查询数据
+        BaseTokenPO byUserIdAndClientType = baseTokenRepository.findByUserIdAndClientType(dto.getUserId(), dto.getClientType());
+        if (byUserIdAndClientType != null) {
+            baseTokenRepository.delete(byUserIdAndClientType);
+        }
+        // Hibernate 在实际执行SQL语句时并没有按照代码的顺序执行，而是按照 INSERT, UPDATE, DELETE的顺序执行的
+        // 先执行flush()
+        baseTokenRepository.flush();
+        // 新建
         BaseTokenPO baseTokenPO = BeanUtil.copyProperties(dto, BaseTokenPO.class);
         this.baseTokenRepository.save(baseTokenPO);
         return BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
