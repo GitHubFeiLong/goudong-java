@@ -1,6 +1,6 @@
-package com.goudong.commons.vo;
+package com.goudong.commons.dto.oauth2;
 
-import com.goudong.commons.frame.mybatisplus.BasePO;
+import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
 
 /**
@@ -9,10 +9,8 @@ import lombok.Data;
  * @author
  */
 @Data
-@Deprecated
-public class AuthorityRoleVO extends BasePO {
+public class BaseRole{
 
-    private static final long serialVersionUID = -47431285431777174L;
     /**
      * 角色名称(必须以ROLE_起始命名)
      */

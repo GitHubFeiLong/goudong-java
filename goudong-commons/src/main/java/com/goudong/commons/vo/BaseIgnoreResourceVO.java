@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel
+@Deprecated
 public class BaseIgnoreResourceVO implements Serializable {
     private static final long serialVersionUID = -6522041168978478722L;
 

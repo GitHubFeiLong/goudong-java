@@ -1,6 +1,8 @@
 package com.goudong.oauth2.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.goudong.commons.dto.oauth2.BaseRole;
+import com.goudong.oauth2.po.BaseRolePO;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;
@@ -72,8 +74,7 @@ public class AuthenticationImpl implements Authentication {
     /**
      * 角色
      */
-    @JsonIgnore
-    private List<BaseRole> roles = new ArrayList<>();
+    private List<BaseRolePO> roles = new ArrayList<>();
 
     /**
      * 是否已经认证

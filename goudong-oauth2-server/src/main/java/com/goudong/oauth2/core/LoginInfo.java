@@ -1,12 +1,12 @@
 package com.goudong.oauth2.core;
 
+import com.goudong.commons.dto.oauth2.BaseUser;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 类描述：
@@ -53,17 +53,6 @@ public class LoginInfo {
      * 用户信息
      */
     private BaseUser user;
-
-    /**
-     * 角色
-     */
-    private List<BaseRole> authorities;
-
-    /**
-     * 菜单
-     */
-    private List<BaseMenu> menus;
-
     //~construct methods
     //==================================================================================================================
 

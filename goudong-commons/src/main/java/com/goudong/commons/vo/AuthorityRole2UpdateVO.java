@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityRole2UpdateVO extends BasePO {
     private static final long serialVersionUID = -6893656172143276995L;
     /**

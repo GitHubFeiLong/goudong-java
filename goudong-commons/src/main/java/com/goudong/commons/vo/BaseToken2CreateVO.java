@@ -15,6 +15,7 @@ import lombok.Data;
 @Data
 @ApiModel
 @AllArgsConstructor
+@Deprecated
 public class BaseToken2CreateVO {
 
     @ApiModelProperty(value = "用户id", required = true)

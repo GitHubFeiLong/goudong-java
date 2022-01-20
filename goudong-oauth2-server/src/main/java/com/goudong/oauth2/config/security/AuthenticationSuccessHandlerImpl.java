@@ -2,14 +2,18 @@ package com.goudong.oauth2.config.security;
 
 import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.commons.constant.core.DateConst;
+import com.goudong.commons.dto.oauth2.BaseUser;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.utils.BeanUtil;
 import com.goudong.oauth2.core.AuthenticationImpl;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.properties.TokenExpiresProperties;
 import com.goudong.oauth2.service.BaseTokenService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -45,17 +49,10 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
      */
     private final TokenExpiresProperties tokenExpiresProperties;
 
-    /**
-     * objectMapper
-     */
-    private final ObjectMapper objectMapper;
-
     public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
-                                            TokenExpiresProperties tokenExpiresProperties,
-                                            ObjectMapper objectMapper) {
+                                            TokenExpiresProperties tokenExpiresProperties) {
         this.baseTokenService = baseTokenService;
         this.tokenExpiresProperties = tokenExpiresProperties;
-        this.objectMapper = objectMapper;
     }
 
     /**
@@ -72,27 +69,34 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
 
+        // 转换成自定义的Authentication对象
         AuthenticationImpl authenticationImpl = (AuthenticationImpl) authentication;
+
         /*
             创建令牌
          */
-
         BaseTokenDTO baseTokenDTO = new BaseTokenDTO();
         baseTokenDTO.setAccessToken(IdUtil.simpleUUID());
         baseTokenDTO.setRefreshToken(IdUtil.simpleUUID());
         baseTokenDTO.setUserId(authenticationImpl.getId());
-
         disposeToken(httpServletRequest, baseTokenDTO);
-
         // 持久化token
         BaseTokenDTO tokenDTO = baseTokenService.save(baseTokenDTO);
-        // redis存一份
 
-        //表单输入的用户名
-        String username = (String) authentication.getPrincipal();
+        /*
+            将令牌和用户基本信息存储到redis中
+         */
+        BaseUser baseUser = BeanUtil.copyProperties(authenticationImpl, BaseUser.class);
+
+        /*
+            响应令牌和用户信息
+         */
 
 
-        String json = objectMapper.writeValueAsString(Result.ofSuccess(tokenDTO));
+        String json =  new Jackson2ObjectMapperBuilder()
+                .simpleDateFormat(DateConst.DATE_TIME_FORMATTER)
+                .build()
+                .writeValueAsString(Result.ofSuccess(tokenDTO));
         httpServletResponse.getWriter().write(json);
     }
 

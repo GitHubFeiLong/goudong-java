@@ -11,5 +11,14 @@ import java.time.format.DateTimeFormatter;
  */
 public class DateConst {
 
-    public static final DateTimeFormatter YYYY_MM_DD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    /**
+     * 时间格式 yyyy-MM-dd HH:mm:ss
+     */
+    public static final String DATE_TIME_FORMATTER = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * 时间格式Formatter yyyy-MM-dd HH:mm:ss
+     * @see DateConst#DATE_TIME_FORMATTER
+     */
+    public static final DateTimeFormatter YYYY_MM_DD_HH_MM_SS = DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER);
 }

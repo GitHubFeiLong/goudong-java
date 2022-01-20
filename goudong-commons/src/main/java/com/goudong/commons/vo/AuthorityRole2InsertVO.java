@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @ApiModel
+@Deprecated
 public class AuthorityRole2InsertVO {
     /**
      * 角色名称(必须以ROLE_起始命名)

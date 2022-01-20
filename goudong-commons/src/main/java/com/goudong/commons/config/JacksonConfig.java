@@ -61,7 +61,7 @@ public class JacksonConfig {
         return builder -> builder.serializersByType(map);
     }
 
-    @Bean
+    // @Bean
     public ObjectMapper objectMapper() {
         return new Jackson2ObjectMapperBuilder()
                 .findModulesViaServiceLoader(true)
