@@ -1,6 +1,7 @@
 package com.goudong.gateway;
 
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
@@ -23,6 +24,7 @@ import org.springframework.util.StopWatch;
 @EnableDiscoveryClient
 @EnableCommonsFeignConfig
 @EnableCommonsRedisConfig
+@EnableCommonsJacksonConfig
 public class GoudongGatewayServer {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();

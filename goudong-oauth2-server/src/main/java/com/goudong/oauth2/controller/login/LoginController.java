@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +71,7 @@ public class LoginController {
     }
 
 
-    @PostMapping(value = "/token", headers = {JwtTokenUtil.TOKEN_HEADER})
+    @PostMapping(value = "/token", headers = {HttpHeaders.AUTHORIZATION})
     @ApiOperation(value = "登录(token)")
     // @IgnoreResource("登录(token)")
     public Result login (@RequestHeader(JwtTokenUtil.TOKEN_HEADER) String token) {

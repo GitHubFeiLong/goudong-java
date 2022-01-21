@@ -3,16 +3,17 @@ package com.goudong.gateway.filter;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -92,12 +93,12 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         LogUtil.debug(log, "进入网关过滤器");
         ServerHttpRequest request = exchange.getRequest();
         // 检查请求是否能放入
-        String tokenMd5Key = checkRequestAccess(request);
+        // String tokenMd5Key = checkRequestAccess(request);
 
         // 将token的md5加密后的值保存在token中
         ServerHttpRequest newRequest = exchange.getRequest()
                 .mutate()
-                .header(CommonConst.HEADER_TOKEN_MD5_KEY, tokenMd5Key)
+                // .header(CommonConst.HEADER_TOKEN_MD5_KEY, tokenMd5Key)
                 .build();
         ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
         return chain.filter(newExchange);
@@ -115,7 +116,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         /*
             白名单直接放行
          */
-
+        List<BaseWhitelistDTO> listWhitelist = goudongOauth2ServerService.listWhitelist().getData();
 
         // token
         String headerToken = request.getHeaders().getFirst(JwtTokenUtil.TOKEN_HEADER);

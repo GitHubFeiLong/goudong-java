@@ -1,6 +1,7 @@
 package com.goudong.commons.dto.oauth2;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @date 2022/1/8 21:04
  */
 @Data
+@NoArgsConstructor
 public class BaseWhitelist2CreateDTO {
 
     /**

@@ -137,7 +137,8 @@ CREATE TABLE `table_name` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='xxx';
 ```
 
-
+### 实体类
+强制：必须包含无参构造函数（jackson序列化时有需要无参）
 
 
 ### Flyway

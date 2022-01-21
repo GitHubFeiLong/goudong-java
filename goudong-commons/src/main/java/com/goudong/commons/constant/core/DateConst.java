@@ -1,5 +1,6 @@
 package com.goudong.commons.constant.core;
 
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -25,6 +26,7 @@ public class DateConst {
      */
     public static final String TIME_FORMATTER = "HH:mm:ss";
 
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_TIME_FORMATTER);
     /**
      * 时间格式Formatter yyyy-MM-dd HH:mm:ss
      * @see DateConst#DATE_TIME_FORMATTER
