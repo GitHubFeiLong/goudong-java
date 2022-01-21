@@ -1,5 +1,6 @@
-package com.goudong.commons.dto.user;
+package com.goudong.commons.dto.oauth2;
 
+import com.goudong.commons.po.core.BasePO;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,34 +13,7 @@ import java.util.Date;
  * @date 2022/1/8 21:04
  */
 @Data
-public class BaseWhitelistDTO {
-
-    protected Long id;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 创建人id
-     */
-    private Long createUserId;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 更新人id
-     */
-    private Long updateUserId;
-
-    /**
-     * 删除状态 0 正常1 删除
-     */
-    private Boolean deleted;
+public class BaseWhitelistDTO extends BasePO {
 
     /**
      * 匹配模式

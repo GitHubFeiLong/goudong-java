@@ -1,8 +1,8 @@
 package com.goudong.oauth2.controller.whitelist;
 
 import com.goudong.commons.constant.core.HttpMethodConst;
-import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
-import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.user.WhitelistException;
 import com.goudong.commons.frame.core.Result;

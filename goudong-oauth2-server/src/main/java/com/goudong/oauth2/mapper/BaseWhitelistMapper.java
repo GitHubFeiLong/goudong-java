@@ -2,7 +2,7 @@ package com.goudong.oauth2.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.oauth2.po.BaseWhitelistPO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

@@ -1,4 +1,4 @@
-package com.goudong.commons.dto.user;
+package com.goudong.commons.dto.oauth2;
 
 import lombok.Data;
 

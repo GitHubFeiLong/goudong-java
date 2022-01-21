@@ -1,7 +1,7 @@
 package com.goudong.oauth2.service;
 
-import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
-import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 
 import java.util.List;
 

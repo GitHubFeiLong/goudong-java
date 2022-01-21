@@ -1,8 +1,6 @@
 package com.goudong.commons.enumerate.core;
 
-import com.goudong.commons.dto.user.BaseWhitelist2RedisDTO;
 import com.goudong.commons.frame.redis.AbstractRedisKey;
-import com.goudong.commons.po.core.BasePO;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import lombok.Getter;
 import org.springframework.data.redis.connection.DataType;
@@ -22,10 +20,6 @@ import java.util.concurrent.TimeUnit;
 @Deprecated
 public enum RedisKeyEnum {
 
-    /**
-     * 白名单
-     */
-    WHITELIST("goudong:goudong-user-server:whitelist", -1, null, DataType.LIST, BaseWhitelist2RedisDTO.class),
 
     /**
      * 重复提交uri记录

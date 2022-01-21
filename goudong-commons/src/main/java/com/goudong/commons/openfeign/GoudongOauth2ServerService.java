@@ -1,7 +1,7 @@
 package com.goudong.commons.openfeign;
 
-import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
-import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

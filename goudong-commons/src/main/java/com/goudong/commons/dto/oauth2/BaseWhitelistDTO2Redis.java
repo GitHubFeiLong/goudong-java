@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @date 2022/1/15 18:08
  */
 @Data
-public class WhitelistDTO implements Serializable {
+public class BaseWhitelistDTO2Redis implements Serializable {
     //~fields
     //==================================================================================================================
     private static final long serialVersionUID = 3149283918517679735L;

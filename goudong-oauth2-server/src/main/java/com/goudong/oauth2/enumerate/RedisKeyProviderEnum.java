@@ -1,7 +1,7 @@
 package com.goudong.oauth2.enumerate;
 
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.oauth2.WhitelistDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
 import com.goudong.commons.frame.redis.RedisKeyProvider;
 import org.springframework.data.redis.connection.DataType;
 
@@ -22,7 +22,7 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
     /**
      * 白名单
      */
-    WHITELIST("goudong-user-server:whitelist", DataType.LIST, WhitelistDTO.class, 1, TimeUnit.DAYS),
+    WHITELIST("goudong-user-server:whitelist", DataType.LIST, BaseWhitelistDTO2Redis.class, 1, TimeUnit.DAYS),
 
     /**
      * 认证成的放进redis，由于对象比较复杂，使用json字符串存储更合适

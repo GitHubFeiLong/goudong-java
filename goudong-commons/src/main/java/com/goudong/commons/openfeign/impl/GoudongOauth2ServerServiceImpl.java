@@ -1,7 +1,7 @@
 package com.goudong.commons.openfeign.impl;
 
-import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
-import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.openfeign.GoudongOauth2ServerService;
 

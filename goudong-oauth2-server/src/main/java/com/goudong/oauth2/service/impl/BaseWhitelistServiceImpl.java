@@ -2,12 +2,12 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.goudong.commons.constant.core.HttpHeaderConst;
-import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
-import com.goudong.commons.dto.user.BaseWhitelistDTO;
-import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
+import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.mapper.BaseWhitelistMapper;
 import com.goudong.oauth2.po.BaseWhitelistPO;
@@ -15,7 +15,6 @@ import com.goudong.oauth2.repository.BaseWhitelistRepository;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,16 +96,27 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
             baseWhitelistRepository.saveAll(saveBaseWhitelistPOList);
         }
 
-        // List<WhitelistRedisValue> redisValues = com.goudong.commons.utils.BeanUtil
-        //         .copyToList(baseWhitelistRepository.findAll(), WhitelistRedisValue.class, CopyOptions.create());
-        // // 更新redis中的值
-        // boolean succeed = redisTool.set(RedisKeyProviderEnum.WHITELIST, redisValues);
-        //
-        // if (!succeed) {
-        //     LogUtil.error(log, "更新redis中白名单失败");
-        // }
+        // 查询
+        List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAll();
 
-        return BeanUtil.copyToList(saveBaseWhitelistPOList, BaseWhitelistDTO.class, CopyOptions.create());
+        // 更新redis中白名单列表
+        saveWhitelist2Redis(whitelistPOS);
+
+        return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
+    }
+
+    /**
+     * 更新redis中白名单列表
+     * @param whitelistPOS 白名单集合
+     */
+    private void saveWhitelist2Redis(List<BaseWhitelistPO> whitelistPOS) {
+        List<BaseWhitelistDTO2Redis> redisValues = BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO2Redis.class, CopyOptions.create());
+        // 更新redis中的值
+        boolean succeed = redisTool.set(RedisKeyProviderEnum.WHITELIST, redisValues);
+
+        if (!succeed) {
+            LogUtil.error(log, "更新redis中白名单失败");
+        }
     }
 
     /**
@@ -116,11 +126,19 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
      */
     @Override
     public List<BaseWhitelistDTO> findAll() {
-        String accessToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        ClientSideEnum clientSide = ClientSideEnum.getClientSide(httpServletRequest.getHeader(HttpHeaderConst.CLIENT_SIDE));
+        /*
+            redis存在数据直接返回。
+         */
+        List<BaseWhitelistDTO2Redis> whitelistDTOS = redisTool.getList(RedisKeyProviderEnum.WHITELIST, BaseWhitelistDTO2Redis.class);
+        if (CollectionUtils.isNotEmpty(whitelistDTOS)) {
+            return BeanUtil.copyToList(whitelistDTOS, BaseWhitelistDTO.class, CopyOptions.create());
+        }
 
-        Object o = redisTool.get(RedisKeyProviderEnum.WHITELIST);
-        List<BaseWhitelistPO> all = baseWhitelistRepository.findAll();
-        return BeanUtil.copyToList(all, BaseWhitelistDTO.class, CopyOptions.create());
+        List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAll();
+
+        // 更新redis白名单
+        saveWhitelist2Redis(whitelistPOS);
+
+        return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
     }
 }
