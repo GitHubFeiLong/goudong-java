@@ -1,7 +1,6 @@
 package com.goudong.user.enumerate;
 
 import com.goudong.commons.frame.redis.RedisKeyProvider;
-import com.goudong.commons.dto.oauth2.WhitelistDTO;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -18,10 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  */
 public enum RedisKeyProviderEnum implements RedisKeyProvider {
-    /**
-     * 白名单
-     */
-    WHITELIST("goudong-user-server:whitelist", DataType.LIST, WhitelistDTO.class, 1, TimeUnit.DAYS),
+
     ;
     //~fields
     //==================================================================================================================

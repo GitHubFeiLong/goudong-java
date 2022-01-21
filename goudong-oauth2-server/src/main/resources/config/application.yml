@@ -24,7 +24,7 @@ spring:
         server-addr: localhost:8848 # nacos服务集群
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
   jpa:
