@@ -1,17 +1,14 @@
 package com.goudong.oauth2.controller.login;
 
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
-import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.utils.JwtTokenUtil;
+import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -70,16 +67,6 @@ public class LoginController {
         return Result.ofSuccess(baseTokenDTO);
     }
 
-
-    @PostMapping(value = "/token", headers = {HttpHeaders.AUTHORIZATION})
-    @ApiOperation(value = "登录(token)")
-    // @IgnoreResource("登录(token)")
-    public Result login (@RequestHeader(JwtTokenUtil.TOKEN_HEADER) String token) {
-        // 检查token是否有效
-        AuthorityUserDTO authorityUserDTO = JwtTokenUtil.resolveToken(token);
-        redisOperationsUtil.login(token, authorityUserDTO);
-        return Result.ofSuccess(token);
-    }
 
 
 

@@ -59,6 +59,13 @@ public class JacksonConfig {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
+        // 反序列化设置 关闭反序列化时Jackson发现无法找到对应的对象字段，便会抛出UnrecognizedPropertyException: Unrecognized field xxx异常
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // 序列化设置 关闭日志输出为时间戳的设置
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
+
         //忽略value为null时key的输出
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
@@ -74,6 +81,10 @@ public class JacksonConfig {
         // 时间格式
         objectMapper.registerModule(javaTimeModule());
         objectMapper.registerModule(jdk8TimeModule());
+
+        // 自动查找并注册Java 8相关模块
+        objectMapper.findAndRegisterModules();
+
         mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
         //设置中文编码格式
         List<MediaType> list = new ArrayList<MediaType>();
