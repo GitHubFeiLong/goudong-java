@@ -1,19 +1,25 @@
+
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.user.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.user.BaseWhitelistDTO;
+import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.mapper.BaseWhitelistMapper;
 import com.goudong.oauth2.po.BaseWhitelistPO;
 import com.goudong.oauth2.repository.BaseWhitelistRepository;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,17 +35,30 @@ import java.util.stream.Collectors;
 @Service
 public class BaseWhitelistServiceImpl implements BaseWhitelistService {
 
+    /**
+     * 白名单Mapper
+     */
     private final BaseWhitelistMapper baseWhitelistMapper;
+    /**
+     * 白名单持久层
+     */
     private final BaseWhitelistRepository baseWhitelistRepository;
+    /**
+     * redis工具
+     */
     private final RedisTool redisTool;
+
+    private final HttpServletRequest httpServletRequest;
 
     public BaseWhitelistServiceImpl(BaseWhitelistMapper baseWhitelistMapper,
                                    BaseWhitelistRepository baseWhitelistRepository,
-                                    RedisTool redisTool
+                                    RedisTool redisTool,
+                                    HttpServletRequest httpServletRequest
     ) {
         this.baseWhitelistMapper = baseWhitelistMapper;
         this.baseWhitelistRepository = baseWhitelistRepository;
         this.redisTool = redisTool;
+        this.httpServletRequest = httpServletRequest;
     }
 
 
@@ -97,6 +116,10 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
      */
     @Override
     public List<BaseWhitelistDTO> findAll() {
+        String accessToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        ClientSideEnum clientSide = ClientSideEnum.getClientSide(httpServletRequest.getHeader(HttpHeaderConst.CLIENT_SIDE));
+
+        Object o = redisTool.get(RedisKeyProviderEnum.WHITELIST);
         List<BaseWhitelistPO> all = baseWhitelistRepository.findAll();
         return BeanUtil.copyToList(all, BaseWhitelistDTO.class, CopyOptions.create());
     }
