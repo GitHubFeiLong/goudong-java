@@ -8,7 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="goudong-oauth2-server" />
-        <module name="goudong-resource-server" />
         <module name="goudong-gateway-server" />
         <module name="goudong-file-server" />
         <module name="goudong-commodity-server" />
@@ -21,6 +20,7 @@
       <module name="filepreview" target="1.8" />
       <module name="goudong-file-online-preview" target="8" />
       <module name="goudong-oaa-server" target="1.8" />
+      <module name="goudong-resource-server" target="8" />
       <module name="goudong-security-server" target="1.8" />
       <module name="kkFileView" target="1.8" />
       <module name="nacos-address" target="1.8" />
