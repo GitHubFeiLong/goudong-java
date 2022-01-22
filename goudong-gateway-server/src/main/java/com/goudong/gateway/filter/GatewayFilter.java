@@ -89,6 +89,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // 打印详细日志
         if (log.isDebugEnabled()) {
             log.debug("");
             log.debug("【{}】 {}", exchange.getRequest().getMethodValue(), exchange.getRequest().getURI());
@@ -107,7 +108,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         return chain.filter(newExchange);
     }
 
-    
+
     /**
      * 检查当前请求是否能通过
      * @param request

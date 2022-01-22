@@ -35,4 +35,12 @@ public interface GoudongOauth2ServerService {
      */
     @GetMapping("/whitelist/whitelist")
     Result<List<BaseWhitelistDTO>> listWhitelist();
+
+    /**
+     * 初始化白名单到Redis中去
+     * @return
+     */
+    @GetMapping("/init/whitelist-2-redis")
+    Result<List<BaseWhitelistDTO>> initWhitelist2Redis();
+
 }

@@ -13,12 +13,12 @@ import java.io.IOException;
 
 /**
  * 类描述：
- *
+ * 自定义填充 SecurityContextHolder
  * @author msi
  * @version 1.0
  * @date 2022/1/22 12:59
  */
-public class A extends OncePerRequestFilter {
+public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     //~fields
     //==================================================================================================================
     /**
@@ -29,13 +29,14 @@ public class A extends OncePerRequestFilter {
 
     //~methods
     //==================================================================================================================
-    public A(BaseUserService baseUserService) {
+    public MySecurityContextPersistenceFilter(BaseUserService baseUserService) {
         this.baseUserService = baseUserService;
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        AuthenticationImpl authentication = new AuthenticationImpl();
-        authentication.setId(100L);
+        // 获取认证用户，并将其设置到 SecurityContext中
+        AuthenticationImpl authentication = baseUserService.getAuthentication(httpServletRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(httpServletRequest, httpServletResponse);
         SecurityContextHolder.clearContext();

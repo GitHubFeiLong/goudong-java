@@ -1,7 +1,11 @@
 package com.goudong.oauth2.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.goudong.oauth2.core.AuthenticationImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
@@ -12,7 +16,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 public interface BaseUserService extends UserDetailsService {
 
-
+    /**
+     * 获取当前请求用户认证信息
+     * @param request
+     * @return
+     */
+    AuthenticationImpl getAuthentication(HttpServletRequest request) throws JsonProcessingException;
 
 }
 

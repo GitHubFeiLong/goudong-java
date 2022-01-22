@@ -1,8 +1,7 @@
-package com.goudong.oauth2.controller.login;
+package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -13,12 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 类描述：
- * 登录和退出控制器（只是接口展示方便swagger上查看文档）
+ * 认证相关的接口
  * @Author msi
  * @Date 2021-05-02 13:33
  * @Version 1.0
@@ -27,14 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/login")
-public class LoginController {
-
-    @Resource
-    private RedisOperationsUtil redisOperationsUtil;
-
-    @Resource
-    private HttpServletRequest httpServletRequest;
+@RequestMapping("/authentication")
+public class AuthenticationController {
 
     @PostMapping("/login")
     @ApiOperation(value = "登录(password)")

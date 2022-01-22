@@ -81,6 +81,6 @@ oauth2:
     # 浏览器
     browser:
       access: 1
-      access-time-unit: minutes
+      access-time-unit: days
       refresh: 2
-      refresh-time-unit: minutes
+      refresh-time-unit: days

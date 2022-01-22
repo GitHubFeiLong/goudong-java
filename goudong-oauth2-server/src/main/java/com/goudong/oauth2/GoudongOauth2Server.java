@@ -32,7 +32,7 @@ import org.springframework.util.StopWatch;
 @EnableDiscoveryClient
 @EnableCommonsJacksonConfig
 @EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
+// @EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig

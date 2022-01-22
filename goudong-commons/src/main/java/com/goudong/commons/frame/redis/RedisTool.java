@@ -3,10 +3,12 @@ package com.goudong.commons.frame.redis;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.commons.utils.core.PrimitiveTypeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.connection.DataType;
@@ -192,6 +194,12 @@ public class RedisTool extends RedisTemplate {
      */
     private boolean setString(RedisKeyProvider redisKey, Object value, Object... param) {
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+
+        // 非基本类型需要额外处理成json字符串
+        if (!PrimitiveTypeUtil.isBasicType(value)) {
+            value = JSON.toJSONString(value);
+        }
+
         if (redisKey.getTime() > 0) {
             super.opsForValue().set(key, value, redisKey.getTime(), redisKey.getTimeUnit());
         } else {

@@ -49,7 +49,6 @@ public class BaseRolePO extends BasePO implements GrantedAuthority {
     @ManyToMany(targetEntity=BaseUserPO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns={@JoinColumn(name = "user_id")})
-    @JsonIgnoreProperties(ignoreUnknown = true, value = {"roles"})
     private List<BaseUserPO> users = new ArrayList<>();
 
     @Override

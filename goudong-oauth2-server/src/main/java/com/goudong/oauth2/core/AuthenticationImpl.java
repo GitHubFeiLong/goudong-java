@@ -148,6 +148,11 @@ public class AuthenticationImpl implements Authentication {
         return this.username;
     }
 
-
-
+    /**
+     * 判断账户是否未过期
+     * @return
+     */
+    public boolean isAccountNonExpired() {
+        return validTime.after(new Date());
+    }
 }

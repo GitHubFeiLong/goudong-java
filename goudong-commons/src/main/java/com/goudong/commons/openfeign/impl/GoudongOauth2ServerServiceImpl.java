@@ -37,4 +37,14 @@ public class GoudongOauth2ServerServiceImpl implements GoudongOauth2ServerServic
     public Result<List<BaseWhitelistDTO>> listWhitelist() {
         return null;
     }
+
+    /**
+     * 初始化白名单到Redis中去
+     *
+     * @return
+     */
+    @Override
+    public Result<List<BaseWhitelistDTO>> initWhitelist2Redis() {
+        return null;
+    }
 }
