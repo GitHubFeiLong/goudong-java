@@ -1,8 +1,8 @@
 package com.goudong.oauth2.service;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.goudong.oauth2.core.AuthenticationImpl;
+import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
+import com.goudong.oauth2.po.BaseUserPO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,11 +17,19 @@ import javax.servlet.http.HttpServletRequest;
 public interface BaseUserService extends UserDetailsService {
 
     /**
+     * 保存令牌和用户信息到redis中
+     * @param baseUserPO 用户信息
+     * @param clientSideEnum 客户端类型
+     * @param accessToken 访问令牌
+     */
+    void saveAccessToken2Redis(BaseUserPO baseUserPO, ClientSideEnum clientSideEnum, String accessToken);
+
+    /**
      * 获取当前请求用户认证信息
      * @param request
      * @return
      */
-    AuthenticationImpl getAuthentication(HttpServletRequest request) throws JsonProcessingException;
+    BaseUserPO getAuthentication(HttpServletRequest request);
 
 }
 

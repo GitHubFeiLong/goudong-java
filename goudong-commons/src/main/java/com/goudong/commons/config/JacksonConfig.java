@@ -64,7 +64,8 @@ public class JacksonConfig {
 
         // 序列化设置 关闭日志输出为时间戳的设置
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
+        // 反序列化，不存在属性时反序列化不让它报错（@JsonIgnoreProperties(ignoreUnknown = true)）
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         //忽略value为null时key的输出
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

@@ -1,5 +1,6 @@
 package com.goudong.oauth2.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,8 +32,10 @@ import java.util.List;
 @Table(name = "base_user")
 @SQLDelete(sql = "update base_user set deleted=true where id=?")
 @Where(clause = "deleted=false")
-public class BaseUserPO extends BasePO implements UserDetails {
-
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BaseUserPO extends BasePO implements UserDetails, Authentication {
+    //~fields
+    //==================================================================================================================
     private static final long serialVersionUID = -1209701285445397589L;
     /**
      * 用户名
@@ -83,17 +87,25 @@ public class BaseUserPO extends BasePO implements UserDetails {
     @Column(name = "qq_open_id")
     private String qqOpenId;
 
+    /**
+     * 是否已经认证
+     */
+    @Transient
+    private Boolean authenticated = true;
+
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
-    @JsonIgnoreProperties(value = {"users"})
     private List<BaseRolePO> roles = new ArrayList<>();
 
+    //~methods
+    //==================================================================================================================
     /**
      * 获取用户权限，本质上是用户的角色信息
      * @return
      */
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles;
     }
@@ -112,6 +124,7 @@ public class BaseUserPO extends BasePO implements UserDetails {
      * @return
      */
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
@@ -121,6 +134,7 @@ public class BaseUserPO extends BasePO implements UserDetails {
      * @return
      */
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
@@ -130,9 +144,70 @@ public class BaseUserPO extends BasePO implements UserDetails {
      * @return
      */
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
+
+    /**
+     * 密码
+     * @return
+     */
+    @Override
+    @Transient
+    public Object getCredentials() {
+        return password;
+    }
+
+    /**
+     * 详细信息
+     * @return
+     */
+    @Override
+    public Object getDetails() {
+        return null;
+    }
+
+    /**
+     * 用户名
+     * @return
+     */
+    @Override
+    @Transient
+    public Object getPrincipal() {
+        return username;
+    }
+
+    /**
+     * 是否已经认证
+     * @return
+     */
+    @Override
+    @JsonIgnore
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    /**
+     * 设置认证状态
+     * @param b
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public void setAuthenticated(boolean b) throws IllegalArgumentException {
+        this.authenticated = b;
+    }
+
+    /**
+     * Returns the name of this principal.
+     *
+     * @return the name of this principal.
+     */
+    @Override
+    public String getName() {
+        return this.username;
+    }
+
 
     @Override
     public String toString() {
@@ -145,7 +220,6 @@ public class BaseUserPO extends BasePO implements UserDetails {
                 ", remark='" + remark + '\'' +
                 ", validTime=" + validTime +
                 ", qqOpenId='" + qqOpenId + '\'' +
-                ", roles=" + roles +
                 '}';
     }
 }

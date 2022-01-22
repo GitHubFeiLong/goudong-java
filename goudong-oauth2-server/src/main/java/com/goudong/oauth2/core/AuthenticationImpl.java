@@ -21,6 +21,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Deprecated
 public class AuthenticationImpl implements Authentication {
     //~fields
     //==================================================================================================================

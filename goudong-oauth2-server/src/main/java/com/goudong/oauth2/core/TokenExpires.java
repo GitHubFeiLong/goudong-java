@@ -1,5 +1,7 @@
 package com.goudong.oauth2.core;
 
+import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
+import com.goudong.oauth2.properties.TokenExpiresProperties;
 import lombok.Data;
 
 import java.util.concurrent.TimeUnit;
@@ -38,6 +40,26 @@ public class TokenExpires {
 
     //~methods
     //==================================================================================================================
+
+    /**
+     * 根据客户端类型获取令牌时效配置
+     * @param clientSideEnum
+     * @param tokenExpiresProperties
+     * @return
+     */
+    public static TokenExpires getTokenExpires(ClientSideEnum clientSideEnum, TokenExpiresProperties tokenExpiresProperties) {
+        TokenExpires tokenExpires;
+        switch (clientSideEnum) {
+            case APP:
+                tokenExpires = tokenExpiresProperties.getApp();
+                break;
+            case BROWSER:
+            default:
+                tokenExpires = tokenExpiresProperties.getBrowser();
+                break;
+        }
+        return tokenExpires;
+    }
 
     public TokenExpires(Integer access, TimeUnit accessTimeUnit) {
         this.access = access;

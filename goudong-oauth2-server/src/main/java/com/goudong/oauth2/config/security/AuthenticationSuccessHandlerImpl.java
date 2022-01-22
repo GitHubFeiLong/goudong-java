@@ -8,14 +8,17 @@ import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.oauth2.core.AuthenticationImpl;
 import com.goudong.oauth2.core.LoginInfo;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
+import com.goudong.oauth2.po.BaseTokenPO;
+import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.TokenExpiresProperties;
 import com.goudong.oauth2.service.BaseTokenService;
+import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -53,14 +56,22 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     private final TokenExpiresProperties tokenExpiresProperties;
 
     /**
-     * redis工具
+     * 用户服务
+     */
+    private final BaseUserService baseUserService;
+
+    /**
+     * redis tool
      */
     private final RedisTool redisTool;
 
     public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
-                                            TokenExpiresProperties tokenExpiresProperties, RedisTool redisTool) {
+                                            TokenExpiresProperties tokenExpiresProperties,
+                                            BaseUserService baseUserService,
+                                            RedisTool redisTool) {
         this.baseTokenService = baseTokenService;
         this.tokenExpiresProperties = tokenExpiresProperties;
+        this.baseUserService = baseUserService;
         this.redisTool = redisTool;
     }
 
@@ -81,12 +92,28 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         httpServletResponse.setContentType("application/json;charset=UTF-8");
 
         // 转换成自定义的Authentication对象
-        AuthenticationImpl authenticationImpl = (AuthenticationImpl) authentication;
+        BaseUserPO baseUserPO = (BaseUserPO) authentication;
 
         // 获取请求类型
         ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest.getHeader(HttpHeaderConst.CLIENT_SIDE));
 
         final String clientSide = clientSideEnum.name().toLowerCase(Locale.ROOT);
+
+        // 当关闭同时登陆时，删除redis中旧值
+        if (!tokenExpiresProperties.getEnableRepeatLogin()) {
+            BaseTokenPO baseTokenPO = new BaseTokenPO();
+            baseTokenPO.setUserId(baseUserPO.getId());
+            baseTokenPO.setClientType(clientSide);
+            BaseTokenDTO byExample = baseTokenService.findByExample(Example.of(baseTokenPO));
+            // 令牌过期
+            if (byExample.getAccessExpires().after(new Date())) {
+                // 判断是否存在key，删除key
+                boolean existKey = redisTool.existKey(RedisKeyProviderEnum.AUTHENTICATION, clientSide, byExample.getAccessToken());
+                if (existKey) {
+                    redisTool.deleteKey(RedisKeyProviderEnum.AUTHENTICATION, clientSide, byExample.getAccessToken());
+                }
+            }
+        }
 
         /*
             创建令牌
@@ -94,10 +121,10 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         BaseTokenDTO baseTokenDTO = new BaseTokenDTO();
         baseTokenDTO.setAccessToken(IdUtil.simpleUUID());
         baseTokenDTO.setRefreshToken(IdUtil.simpleUUID());
-        baseTokenDTO.setUserId(authenticationImpl.getId());
+        baseTokenDTO.setUserId(baseUserPO.getId());
         baseTokenDTO.setClientType(clientSide);
         // 默认是 browser
-        TokenExpires tokenExpires = getTokenExpires(clientSideEnum);
+        TokenExpires tokenExpires = TokenExpires.getTokenExpires(clientSideEnum, tokenExpiresProperties);
 
         // 处理过期时间和类型
         disposeToken(tokenExpires, baseTokenDTO);
@@ -107,12 +134,10 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         /*
             将令牌和用户基本信息存储到redis中
          */
-        BaseUserDTO baseUser = BeanUtil.copyProperties(authenticationImpl, BaseUserDTO.class);
+        BaseUserDTO baseUser = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
 
-        // 保存redis并设置过期时长
-        redisTool.set(RedisKeyProviderEnum.AUTHENTICATION, baseUser, clientSide, baseTokenDTO.getAccessToken());
-        redisTool.expireByCustom(RedisKeyProviderEnum.AUTHENTICATION, tokenExpires.getAccess(),
-                tokenExpires.getAccessTimeUnit(), clientSide, baseTokenDTO.getAccessToken());
+        // 保存redis
+        baseUserService.saveAccessToken2Redis(baseUserPO, clientSideEnum, tokenDTO.getAccessToken());
 
         /*
             响应令牌和用户信息
@@ -125,24 +150,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         httpServletResponse.getWriter().write(json);
     }
 
-    /**
-     * 获取当前请求的
-     * @param clientSideEnum 客户端类型
-     * @return
-     */
-    private TokenExpires getTokenExpires(ClientSideEnum clientSideEnum) {
-        TokenExpires tokenExpires;
-        switch (clientSideEnum) {
-            case APP:
-                tokenExpires = tokenExpiresProperties.getApp();
-                break;
-            case BROWSER:
-            default:
-                tokenExpires = tokenExpiresProperties.getBrowser();
-                break;
-        }
-        return tokenExpires;
-    }
     /**
      * 处理生成token
      * @param baseTokenDTO 处理token对象

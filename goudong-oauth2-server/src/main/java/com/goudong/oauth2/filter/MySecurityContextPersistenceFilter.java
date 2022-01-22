@@ -1,6 +1,6 @@
 package com.goudong.oauth2.filter;
 
-import com.goudong.oauth2.core.AuthenticationImpl;
+import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseUserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,8 +36,8 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 获取认证用户，并将其设置到 SecurityContext中
-        AuthenticationImpl authentication = baseUserService.getAuthentication(httpServletRequest);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        BaseUserPO baseUserPO = baseUserService.getAuthentication(httpServletRequest);
+        SecurityContextHolder.getContext().setAuthentication(baseUserPO);
         filterChain.doFilter(httpServletRequest, httpServletResponse);
         SecurityContextHolder.clearContext();
     }

@@ -20,4 +20,12 @@ public interface BaseTokenRepository extends JpaRepository<BaseTokenPO, Long>, J
      * @return
      */
     BaseTokenPO findByUserIdAndClientType(Long userId, String clientType);
+
+    /**
+     * 根据accessToken查询令牌信息
+     * @param accessToken 令牌信息
+     * @param clientType 客户端类型
+     * @return
+     */
+    BaseTokenPO findByAccessTokenAndClientType(String accessToken, String clientType);
 }

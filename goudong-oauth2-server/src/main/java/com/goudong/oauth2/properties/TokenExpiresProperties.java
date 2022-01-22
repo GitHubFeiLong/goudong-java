@@ -25,6 +25,11 @@ public class TokenExpiresProperties {
     //~fields
     //==================================================================================================================
     /**
+     * 是否开启重复登录(单个账号允许多设备同时在线)
+     */
+    private Boolean enableRepeatLogin = false;
+
+    /**
      * 浏览器配置令牌失效
      */
     @NestedConfigurationProperty

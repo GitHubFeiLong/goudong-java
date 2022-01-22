@@ -5,6 +5,7 @@ import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.po.BaseTokenPO;
 import com.goudong.oauth2.repository.BaseTokenRepository;
 import com.goudong.oauth2.service.BaseTokenService;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,4 +54,29 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         this.baseTokenRepository.save(baseTokenPO);
         return BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
     }
+
+    /**
+     * 根据访问令牌,和客户端类型获取令牌信息
+     *
+     * @param accessToken 访问令牌
+     * @param clientType  客户端类型
+     * @return
+     */
+    @Override
+    public BaseTokenDTO findByAccessTokenAndClientType(String accessToken, String clientType) {
+        return BeanUtil.copyProperties(baseTokenRepository.findByAccessTokenAndClientType(accessToken, clientType), BaseTokenDTO.class);
+    }
+
+    /**
+     * 根据构建的example查询令牌
+     *
+     * @param example 构造查询对象
+     * @return
+     */
+    @Override
+    public BaseTokenDTO findByExample(Example<BaseTokenPO> example) {
+        return BeanUtil.copyProperties(this.baseTokenRepository.findOne(example).orElseGet(()->null), BaseTokenDTO.class);
+    }
+
+
 }

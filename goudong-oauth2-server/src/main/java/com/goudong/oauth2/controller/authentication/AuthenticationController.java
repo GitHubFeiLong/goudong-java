@@ -2,7 +2,6 @@ package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.oauth2.dto.BaseTokenDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,6 +25,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/authentication")
 public class AuthenticationController {
 
+    /**
+     * 登录接口
+     * @param username
+     * @param password
+     * @return
+     */
     @PostMapping("/login")
     @ApiOperation(value = "登录(password)")
     @ApiImplicitParams({
@@ -37,6 +42,10 @@ public class AuthenticationController {
         return Result.ofSuccess();
     }
 
+    /**
+     * 注销接口
+     * @return
+     */
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
     @Whitelist("注销登录接口")
@@ -44,22 +53,15 @@ public class AuthenticationController {
         return Result.ofSuccess();
     }
 
+    /**
+     * 获取当前用户
+     * @return
+     */
     @GetMapping("/current-user-info")
     @ApiOperation("获取登录用户信息")
     public Result currentUser() {
         return Result.ofSuccess(SecurityContextHolder.getContext().getAuthentication());
     }
-
-
-    @PostMapping("/demo")
-    @ApiOperation("反序列化")
-    public Result demo(@RequestBody BaseTokenDTO baseTokenDTO) {
-        return Result.ofSuccess(baseTokenDTO);
-    }
-
-
-
-
 
 
 }

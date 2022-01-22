@@ -3,7 +3,7 @@ package com.goudong.oauth2.config.security;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.oauth2.core.AuthenticationImpl;
+import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -78,9 +78,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         }
 
         // 验证通过，返回用户信息
-        AuthenticationImpl authentication1 = BeanUtil.copyProperties(userInfo, AuthenticationImpl.class);
-        authentication1.setPassword(null);
-        return authentication1;
+        BaseUserPO baseUserPO = BeanUtil.copyProperties(userInfo, BaseUserPO.class);
+        baseUserPO.setPassword(null);
+        return baseUserPO;
     }
 
     @Override

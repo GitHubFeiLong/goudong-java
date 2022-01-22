@@ -1,6 +1,5 @@
 package com.goudong.oauth2.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,8 +22,6 @@ import java.util.List;
 @Table(name = "base_role")
 @SQLDelete(sql = "update base_role set deleted=true where id=?")
 @Where(clause = "deleted=false")
-@JsonIgnoreProperties(ignoreUnknown = true, value =
-        {"hibernateLazyInitializer", "handler", "fieldHandler"})
 public class BaseRolePO extends BasePO implements GrantedAuthority {
 
     private static final long serialVersionUID = 3961964136793768410L;
