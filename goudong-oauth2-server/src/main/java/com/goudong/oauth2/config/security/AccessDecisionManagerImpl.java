@@ -13,10 +13,10 @@ import java.util.Collection;
 
 /**
  * 类描述：
- * 自定义权限判断管理器
- * @Author msi
- * @Date 2021-05-02 10:41
- * @Version 1.0
+ * 权限校验
+ * @author msi
+ * @date 2022/1/22 11:34
+ * @version 1.0
  */
 @Slf4j
 @Component

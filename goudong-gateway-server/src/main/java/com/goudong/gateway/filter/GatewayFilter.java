@@ -14,7 +14,6 @@ import com.goudong.commons.openfeign.GoudongUserServerService;
 import com.goudong.commons.pojo.IgnoreResourceAntMatcher;
 import com.goudong.commons.utils.IgnoreResourceAntMatcherUtil;
 import com.goudong.commons.utils.JwtTokenUtil;
-import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -90,10 +89,14 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        LogUtil.debug(log, "进入网关过滤器");
+        if (log.isDebugEnabled()) {
+            log.debug("");
+            log.debug("【{}】 {}", exchange.getRequest().getMethodValue(), exchange.getRequest().getURI());
+            exchange.getRequest().getHeaders().entrySet().forEach(p->{
+                log.debug("{} -> {}", p.getKey(), p.getValue());
+            });
+        }
         ServerHttpRequest request = exchange.getRequest();
-        // 检查请求是否能放入
-        // String tokenMd5Key = checkRequestAccess(request);
 
         // 将token的md5加密后的值保存在token中
         ServerHttpRequest newRequest = exchange.getRequest()
@@ -104,7 +107,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         return chain.filter(newExchange);
     }
 
-
+    
     /**
      * 检查当前请求是否能通过
      * @param request

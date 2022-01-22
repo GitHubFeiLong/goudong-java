@@ -14,10 +14,10 @@ import java.util.Set;
 
 /**
  * 类描述：
- * 动态获取url权限配置
- * @Author msi
- * @Date 2021-04-03 17:58
- * @Version 1.0
+ * 根据请求方法和请求路径，获取该次请求必须拥有的角色权限。
+ * @author msi
+ * @date 2022/1/22 11:31
+ * @version 1.0
  */
 @Slf4j
 @Component

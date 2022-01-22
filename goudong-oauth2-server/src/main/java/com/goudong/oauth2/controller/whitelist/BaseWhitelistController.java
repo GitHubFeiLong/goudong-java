@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +35,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/whitelist")
 public class BaseWhitelistController {
 
+    /**
+     * 白名单服务层接口
+     */
     private final BaseWhitelistService baseWhitelistService;
 
     public BaseWhitelistController(BaseWhitelistService baseWhitelistService) {
         this.baseWhitelistService = baseWhitelistService;
     }
-
 
     /**
      * 保存白名单
@@ -80,6 +83,14 @@ public class BaseWhitelistController {
     @ApiOperation(value = "获取白名单")
     @GetMapping("/whitelist")
     public Result<List<BaseWhitelistDTO>> listWhitelist() {
+        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.findAll();
+        return Result.ofSuccess(baseWhitelistDTOS);
+    }
+
+    @ApiOperation(value = "初始化白名单到Redis中")
+    @GetMapping("/init/whitelist-2-redis")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<List<BaseWhitelistDTO>> initWhitelist2Redis() {
         List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.findAll();
         return Result.ofSuccess(baseWhitelistDTOS);
     }
