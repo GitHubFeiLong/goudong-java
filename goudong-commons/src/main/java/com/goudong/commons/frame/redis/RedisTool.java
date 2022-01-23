@@ -17,10 +17,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -79,6 +76,29 @@ public class RedisTool extends RedisTemplate {
         // 循环删除key
         for (int i = 0; i < redisKeys.size(); i++) {
             this.deleteKey(redisKeys.get(i), params[i]);
+        }
+    }
+
+    /**
+     * 删除多个key
+     * 删除指定的key，注意长度必须一致！！！
+     *
+     * @param redisKeys redisKey对象集合
+     * @param params 替换模板的参数
+     */
+    public void deleteKeys(List<? extends RedisKeyProvider> redisKeys, List<List<Object>> params) {
+        AssertUtil.notEmpty(redisKeys, "删除key时,redisKeys不能为空");
+        AssertUtil.notEmpty(params, "删除key时,params集合不能为空");
+
+        AssertUtil.isTrue(redisKeys.size() == params.size(),
+                String.format("删除redis-key时,参数长度不一致:redisKeys.size:%s,params.size():%s",
+                        redisKeys.size(),
+                        params.size())
+        );
+
+        // 循环删除key
+        for (int i = 0; i < redisKeys.size(); i++) {
+            this.deleteKey(redisKeys.get(i), params.get(i).toArray(new Object[params.get(i).size()]));
         }
     }
 

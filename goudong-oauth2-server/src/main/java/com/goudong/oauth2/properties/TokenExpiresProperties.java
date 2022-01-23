@@ -45,6 +45,13 @@ public class TokenExpiresProperties {
     //==================================================================================================================
 
     /**
+     * 是否关闭重复登录
+     * @return
+     */
+    public boolean isDisableRepeatLogin(){
+        return !enableRepeatLogin;
+    }
+    /**
      * 检查
      */
     @PostConstruct

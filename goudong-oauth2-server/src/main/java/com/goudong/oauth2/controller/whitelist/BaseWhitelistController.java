@@ -91,7 +91,7 @@ public class BaseWhitelistController {
     @GetMapping("/init/whitelist-2-redis")
     @PreAuthorize("hasRole('ADMIN')")
     public Result<List<BaseWhitelistDTO>> initWhitelist2Redis() {
-        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.findAll();
+        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.initWhitelist2Redis();
         return Result.ofSuccess(baseWhitelistDTOS);
     }
 }

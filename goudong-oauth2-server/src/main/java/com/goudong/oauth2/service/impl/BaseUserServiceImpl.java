@@ -18,6 +18,7 @@ import com.goudong.oauth2.repository.BaseUserRepository;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,14 +57,20 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     private final TokenExpiresProperties tokenExpiresProperties;
 
+    /**
+     * 请求对象
+     */
+    private final HttpServletRequest httpServletRequest;
+
     public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
                                RedisTool redisTool,
-                               BaseTokenService baseTokenService,
-                               TokenExpiresProperties tokenExpiresProperties) {
+                               @Lazy BaseTokenService baseTokenService,
+                               TokenExpiresProperties tokenExpiresProperties, HttpServletRequest httpServletRequest) {
         this.baseUserRepository = baseUserRepository;
         this.redisTool = redisTool;
         this.baseTokenService = baseTokenService;
         this.tokenExpiresProperties = tokenExpiresProperties;
+        this.httpServletRequest = httpServletRequest;
     }
 
     /**
@@ -80,15 +87,17 @@ public class BaseUserServiceImpl implements BaseUserService {
         return byLogin;
     }
 
+
     /**
      * 保存令牌和用户信息到redis中
      *
      * @param baseUserPO  用户信息
-     * @param clientSideEnum  客户端类型
      * @param accessToken 访问令牌
      */
     @Override
-    public void saveAccessToken2Redis(BaseUserPO baseUserPO, ClientSideEnum clientSideEnum, String accessToken) {
+    public void saveAccessToken2Redis(BaseUserPO baseUserPO, String accessToken) {
+        ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest);
+
         // 删除多余的属性
         BaseUserDTO baseUserDTO = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
         // 设置key
@@ -130,7 +139,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                 throw new AccountExpiredException("账户已过期");
             }
 
-            // redis中不存在了，从数据库加载用户，然后判断是否离线
+            // 用户不活跃，导致Redis key的过期，需要从数据库中加载用户，再判断是否有效（通常是手机端）
             BaseTokenDTO tokenDTO = baseTokenService.findByAccessTokenAndClientType(accessToken, clientSideLowerName);
             if (tokenDTO != null) {
                 // 判断访问令牌是否过期
@@ -142,7 +151,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                                     "请重新登录", "令牌对应的用户id未查找到用户信息"));
 
                     // 保存到redis中
-                    this.saveAccessToken2Redis(baseUserPO, clientSide, tokenDTO.getAccessToken());
+                    this.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
 
                     // 返回用户信息
                     return baseUserPO;
@@ -156,6 +165,17 @@ public class BaseUserServiceImpl implements BaseUserService {
 
         // redis中不存在，数据库不存在令牌，设置一个匿名用户
         return BaseUserPO.createAnonymousUser();
+    }
+
+    /**
+     * 根据用户id查询用户信息
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public BaseUserDTO findById(Long userId) {
+        return BeanUtil.copyProperties(baseUserRepository.findById(userId).orElse(null), BaseUserDTO.class);
     }
 
 }

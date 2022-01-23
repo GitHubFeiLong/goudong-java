@@ -78,7 +78,7 @@ commons:
 oauth2:
   # 配置令牌失效时长
   token-expires:
-    enableRepeatLogin: false
+    enableRepeatLogin: true
     # 浏览器
     browser:
       access: 1

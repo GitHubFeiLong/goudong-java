@@ -2,6 +2,7 @@ package com.goudong.oauth2.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.exception.oauth2.AccessTokenExpiredException;
 import com.goudong.commons.frame.core.Result;
@@ -13,11 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -54,6 +57,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
      * @throws ServletException
      */
     @Override
+    @Transactional
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         //
         ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest);
@@ -75,13 +79,14 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         redisTool.deleteKeys(deleteKes, objects);
 
         // 删除mysql
-        baseTokenService.deleteByAccessTokenAndClientType(accessToken, clientSideEnum.getLowerName());
+        baseTokenService.logout(accessToken, clientSideEnum.getLowerName());
 
         httpServletResponse.setStatus(200);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
 
-        String json = new ObjectMapper().writeValueAsString(Result.ofSuccess().clientMessage("退出成功"));
+        String json = new ObjectMapper().setDateFormat(new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER))
+                .writeValueAsString(Result.ofSuccess().clientMessage("退出成功"));
         httpServletResponse.getWriter().write(json);
     }
 }

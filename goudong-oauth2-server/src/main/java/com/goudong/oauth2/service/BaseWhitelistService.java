@@ -25,4 +25,10 @@ public interface BaseWhitelistService {
      * @return
      */
     List<BaseWhitelistDTO> findAll();
+
+    /**
+     * 重新初始化白名单到redis中
+     * @return
+     */
+    List<BaseWhitelistDTO> initWhitelist2Redis();
 }

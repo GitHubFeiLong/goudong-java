@@ -8,8 +8,10 @@ import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseMenuService;
+import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,9 +52,17 @@ public class AuthenticationController {
      */
     private final BaseMenuService baseMenuService;
 
-    public AuthenticationController(BaseWhitelistService baseWhitelistService, BaseMenuService baseMenuService) {
+    /**
+     * 令牌服务层接口
+     */
+    private final BaseTokenService baseTokenService;
+
+    public AuthenticationController(BaseWhitelistService baseWhitelistService,
+                                    BaseMenuService baseMenuService,
+                                    BaseTokenService baseTokenService) {
         this.baseWhitelistService = baseWhitelistService;
         this.baseMenuService = baseMenuService;
+        this.baseTokenService = baseTokenService;
     }
 
     /**
@@ -78,9 +88,20 @@ public class AuthenticationController {
      */
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
-    // @Whitelist("注销登录接口")
     public Result logout () {
         return Result.ofSuccess();
+    }
+
+    /**
+     * 刷新令牌
+     * @param refreshToken
+     * @return
+     */
+    @PostMapping("/refresh-token")
+    @ApiOperation(value = "刷新令牌")
+    public Result<BaseTokenDTO> refreshToken(String refreshToken) {
+        BaseTokenDTO baseTokenDTO = baseTokenService.refreshToken(refreshToken);
+        return Result.ofSuccess(baseTokenDTO);
     }
 
     /**

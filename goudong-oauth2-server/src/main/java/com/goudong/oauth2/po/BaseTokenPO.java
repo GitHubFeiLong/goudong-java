@@ -22,7 +22,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "base_token")
-@SQLDelete(sql = "update base_token set deleted=null where id=?")
+@SQLDelete(sql = "update base_token set deleted=true where id=?")
 @Where(clause = "deleted=false")
 public class BaseTokenPO extends BasePO {
     private static final long serialVersionUID = -5455706615076826311L;
@@ -55,8 +55,8 @@ public class BaseTokenPO extends BasePO {
     @NotNull
     private Long userId;
     /**
-     * 客户端类型 枚举的name()
-     * @see ClientSideEnum
+     * 客户端类型
+     * @see ClientSideEnum#getLowerName()
      */
     @NotNull
     private String clientType;

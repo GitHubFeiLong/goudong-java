@@ -47,8 +47,8 @@ public class BaseTokenDTO extends BasePO {
     @NotNull
     private Long userId;
     /**
-     * 客户端类型 枚举的name()
-     * @see ClientSideEnum
+     * 客户端类型
+     * @see ClientSideEnum#getLowerName()
      */
     private String clientType;
 

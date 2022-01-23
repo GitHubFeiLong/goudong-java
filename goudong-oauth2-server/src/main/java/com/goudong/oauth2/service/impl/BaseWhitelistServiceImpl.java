@@ -141,4 +141,16 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
 
         return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
     }
+
+    /**
+     * 重新初始化白名单到redis中
+     *
+     * @return
+     */
+    @Override
+    public List<BaseWhitelistDTO> initWhitelist2Redis() {
+        List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAll();
+        saveWhitelist2Redis(whitelistPOS);
+        return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
+    }
 }

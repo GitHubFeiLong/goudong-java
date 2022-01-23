@@ -36,11 +36,13 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 获取认证用户，并将其设置到 SecurityContext中
-        BaseUserPO baseUserPO = baseUserService.getAuthentication(httpServletRequest);
-        SecurityContextHolder.getContext().setAuthentication(baseUserPO);
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
-        SecurityContextHolder.clearContext();
+        try {
+            BaseUserPO baseUserPO = baseUserService.getAuthentication(httpServletRequest);
+            SecurityContextHolder.getContext().setAuthentication(baseUserPO);
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
     }
-
 
 }
