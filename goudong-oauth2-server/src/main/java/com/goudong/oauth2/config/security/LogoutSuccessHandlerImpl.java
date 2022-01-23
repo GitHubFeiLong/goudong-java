@@ -81,7 +81,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("application/json;charset=UTF-8");
 
-        String json = new ObjectMapper().writeValueAsString(Result.ofSuccess());
+        String json = new ObjectMapper().writeValueAsString(Result.ofSuccess().clientMessage("退出成功"));
         httpServletResponse.getWriter().write(json);
     }
 }

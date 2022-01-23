@@ -20,7 +20,7 @@ public class AccessTokenExpiredException extends Oauth2Exception{
     }
 
     public AccessTokenExpiredException(String clientMessage, String serverMessage) {
-        super(ClientExceptionEnum.UNAUTHORIZED, clientMessage);
+        super(ClientExceptionEnum.UNAUTHORIZED, clientMessage, serverMessage);
     }
 
 

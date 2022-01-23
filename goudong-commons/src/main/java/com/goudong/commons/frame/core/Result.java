@@ -192,4 +192,34 @@ public class Result<T> implements Serializable {
         return new Result("406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
     }
 
+
+    public Result code(String code) {
+        this.code = code;
+        return this;
+    }
+
+    public Result clientMessage(String clientMessage) {
+        this.clientMessage = clientMessage;
+        return this;
+    }
+
+    public Result serverMessage(String serverMessage) {
+        this.serverMessage = serverMessage;
+        return this;
+    }
+
+    public Result data(T data) {
+        this.data = data;
+        return this;
+    }
+
+    public Result data(Map dataMap) {
+        this.dataMap = dataMap;
+        return this;
+    }
+
+    public Result timestamp(Date timestamp) {
+        this.timestamp = timestamp;
+        return this;
+    }
 }
