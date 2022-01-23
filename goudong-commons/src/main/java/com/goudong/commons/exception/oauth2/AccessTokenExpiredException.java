@@ -15,12 +15,11 @@ public class AccessTokenExpiredException extends Oauth2Exception{
 
     //~methods
     //==================================================================================================================
-    /**
-     * 客户端误操作造成异常
-     *
-     * @param clientMessage
-     */
     public AccessTokenExpiredException(String clientMessage) {
+        super(ClientExceptionEnum.UNAUTHORIZED, clientMessage);
+    }
+
+    public AccessTokenExpiredException(String clientMessage, String serverMessage) {
         super(ClientExceptionEnum.UNAUTHORIZED, clientMessage);
     }
 

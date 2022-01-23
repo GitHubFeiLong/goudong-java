@@ -78,7 +78,7 @@ public class AuthenticationController {
      */
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
-    @Whitelist("注销登录接口")
+    // @Whitelist("注销登录接口")
     public Result logout () {
         return Result.ofSuccess();
     }

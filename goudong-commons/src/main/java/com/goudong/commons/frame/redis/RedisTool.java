@@ -66,7 +66,7 @@ public class RedisTool extends RedisTemplate {
      * @param redisKeys redisKey对象集合
      * @param params 替换模板的参数
      */
-    public void deleteKeys(List<RedisKeyProvider> redisKeys, Object[][] params) {
+    public void deleteKeys(List<? extends RedisKeyProvider> redisKeys, Object[][] params) {
         AssertUtil.notEmpty(redisKeys, "删除key时,redisKeys不能为空");
         AssertUtil.notEmpty(params, "删除key时,params数组不能为空");
 

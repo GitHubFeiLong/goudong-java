@@ -37,4 +37,12 @@ public interface BaseTokenService {
      * @return
      */
     BaseTokenDTO findByExample(Example<BaseTokenPO> example);
+
+    /**
+     * 根据访问令牌和客户端类型，删除令牌。使其失效
+     * @param accessToken 访问令牌
+     * @param clientType 客户端类型
+     * @return
+     */
+    BaseTokenDTO deleteByAccessTokenAndClientType(String accessToken, String clientType);
 }

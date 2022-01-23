@@ -78,5 +78,21 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         return BeanUtil.copyProperties(this.baseTokenRepository.findOne(example).orElseGet(()->null), BaseTokenDTO.class);
     }
 
+    /**
+     * 根据访问令牌和客户端类型，删除令牌。使其失效
+     *
+     * @param accessToken 访问令牌
+     * @param clientType  客户端类型
+     * @return
+     */
+    @Override
+    public BaseTokenDTO deleteByAccessTokenAndClientType(String accessToken, String clientType) {
+        BaseTokenPO baseTokenPO = baseTokenRepository.findByAccessTokenAndClientType(accessToken, clientType);
+        if (baseTokenPO != null) {
+            baseTokenRepository.delete(baseTokenPO);
+        }
+        return BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
+    }
+
 
 }
