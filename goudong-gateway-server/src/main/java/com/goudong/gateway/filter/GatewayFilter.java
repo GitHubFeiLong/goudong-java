@@ -3,6 +3,7 @@ package com.goudong.gateway.filter;
 import com.goudong.commons.constant.CommonConst;
 import com.goudong.commons.dto.AuthorityMenuDTO;
 import com.goudong.commons.dto.AuthorityUserDTO;
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
@@ -46,8 +47,6 @@ public class GatewayFilter implements GlobalFilter, Ordered {
     @Deprecated
     private RedisOperationsUtil redisOperationsUtil;
 
-
-
     /**
      * 用户名密码登录接口
      */
@@ -89,6 +88,9 @@ public class GatewayFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest();
+        String uri = request.getURI().getPath();
+        String method = request.getMethodValue();
         // 打印详细日志
         if (log.isDebugEnabled()) {
             log.debug("");
@@ -97,7 +99,8 @@ public class GatewayFilter implements GlobalFilter, Ordered {
                 log.debug("{} -> {}", p.getKey(), p.getValue());
             });
         }
-        ServerHttpRequest request = exchange.getRequest();
+
+        BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method).getData();
 
         // 将token的md5加密后的值保存在token中
         ServerHttpRequest newRequest = exchange.getRequest()

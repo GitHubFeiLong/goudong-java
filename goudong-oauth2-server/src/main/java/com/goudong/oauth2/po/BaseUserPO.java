@@ -2,6 +2,8 @@ package com.goudong.oauth2.po;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.common.collect.Lists;
+import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
@@ -100,6 +102,24 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
 
     //~methods
     //==================================================================================================================
+    /**
+     * 创建匿名用户
+     * @return
+     */
+    public static BaseUserPO createAnonymousUser() {
+        BaseUserPO anonymousUser = new BaseUserPO();
+        anonymousUser.setAuthenticated(true);
+        anonymousUser.setId(0L);
+        anonymousUser.setUsername("匿名用户");
+        // 创建匿名角色
+        BaseRolePO baseRolePO = new BaseRolePO();
+        baseRolePO.setId(0L);
+        baseRolePO.setRoleName(RoleConst.ROLE_ANONYMOUS);
+        baseRolePO.setRoleNameCn("匿名角色");
+        anonymousUser.setRoles(Lists.newArrayList(baseRolePO));
+        return anonymousUser;
+    }
+
     /**
      * 获取用户权限，本质上是用户的角色信息
      * @return
@@ -207,7 +227,6 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     public String getName() {
         return this.username;
     }
-
 
     @Override
     public String toString() {

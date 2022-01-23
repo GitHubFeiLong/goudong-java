@@ -1,8 +1,6 @@
 package com.goudong.oauth2.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
@@ -14,7 +12,6 @@ import com.goudong.commons.utils.BeanUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
-import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.TokenExpiresProperties;
 import com.goudong.oauth2.repository.BaseUserRepository;
@@ -146,6 +143,9 @@ public class BaseUserServiceImpl implements BaseUserService {
 
                     // 保存到redis中
                     this.saveAccessToken2Redis(baseUserPO, clientSide, tokenDTO.getAccessToken());
+
+                    // 返回用户信息
+                    return baseUserPO;
                 }
 
                 // 访问令牌过期
@@ -155,18 +155,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         // redis中不存在，数据库不存在令牌，设置一个匿名用户
-        BaseUserPO baseUserPO = new BaseUserPO();
-        baseUserPO.setAuthenticated(true);
-        baseUserPO.setId(0L);
-        baseUserPO.setUsername("匿名用户");
-        // 创建匿名角色
-        BaseRolePO baseRolePO = new BaseRolePO();
-        baseRolePO.setId(0L);
-        baseRolePO.setRoleName(RoleConst.ROLE_ANONYMOUS);
-        baseRolePO.setRoleNameCn("匿名角色");
-        baseUserPO.setRoles(Lists.newArrayList(baseRolePO));
-
-        return baseUserPO;
+        return BaseUserPO.createAnonymousUser();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.goudong.commons.openfeign.impl;
 
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
@@ -45,6 +46,28 @@ public class GoudongOauth2ServerServiceImpl implements GoudongOauth2ServerServic
      */
     @Override
     public Result<List<BaseWhitelistDTO>> initWhitelist2Redis() {
+        return null;
+    }
+
+    /**
+     * 获取当前用户
+     *
+     * @return
+     */
+    @Override
+    public Result<BaseUserDTO> currentUser() {
+        return null;
+    }
+
+    /**
+     * 鉴权
+     *
+     * @param uri
+     * @param method
+     * @return
+     */
+    @Override
+    public Result<BaseUserDTO> authorize(String uri, String method) {
         return null;
     }
 }

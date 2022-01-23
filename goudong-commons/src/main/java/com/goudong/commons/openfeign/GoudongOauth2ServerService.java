@@ -1,14 +1,13 @@
 package com.goudong.commons.openfeign;
 
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -21,6 +20,8 @@ import java.util.List;
 @FeignClient(name="goudong-oauth2-server", path = "/api/oauth2")
 @ResponseBody
 public interface GoudongOauth2ServerService {
+    //~白名单
+    //==================================================================================================================
     /**
      * 新增白名单
      * @param createDTOS
@@ -43,4 +44,21 @@ public interface GoudongOauth2ServerService {
     @GetMapping("/init/whitelist-2-redis")
     Result<List<BaseWhitelistDTO>> initWhitelist2Redis();
 
+    //~鉴权
+    //==================================================================================================================
+    /**
+     * 获取当前用户
+     * @return
+     */
+    @GetMapping("/authentication/current-user-info")
+    Result<BaseUserDTO> currentUser();
+
+    /**
+     * 鉴权
+     * @param uri 请求uri
+     * @param method 请求方法
+     * @return
+     */
+    @GetMapping("/authentication/authorize")
+    Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri, @RequestParam("method") @NotBlank String method) ;
 }

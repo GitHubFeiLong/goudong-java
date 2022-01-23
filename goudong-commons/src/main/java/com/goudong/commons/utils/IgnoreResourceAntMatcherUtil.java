@@ -33,7 +33,7 @@ public class IgnoreResourceAntMatcherUtil {
         boolean access = checkAccess(uri, method, ignoreResources);
         // 不能访问 403
         if (!access) {
-            throw ClientException.clientException(ClientExceptionEnum.NOT_AUTHORIZATION);
+            throw ClientException.clientException(ClientExceptionEnum.FORBIDDEN);
         }
     }
 

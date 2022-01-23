@@ -1,15 +1,30 @@
 package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.commons.constant.core.HttpMethodConst;
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
+import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.utils.BeanUtil;
+import com.goudong.oauth2.po.BaseUserPO;
+import com.goudong.oauth2.service.BaseMenuService;
+import com.goudong.oauth2.service.BaseWhitelistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 类描述：
@@ -24,6 +39,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/authentication")
 public class AuthenticationController {
+
+    /**
+     * 白名单服务层接口
+     */
+    private final BaseWhitelistService baseWhitelistService;
+
+    /**
+     * 菜单服务层接口
+     */
+    private final BaseMenuService baseMenuService;
+
+    public AuthenticationController(BaseWhitelistService baseWhitelistService, BaseMenuService baseMenuService) {
+        this.baseWhitelistService = baseWhitelistService;
+        this.baseMenuService = baseMenuService;
+    }
 
     /**
      * 登录接口
@@ -59,9 +89,46 @@ public class AuthenticationController {
      */
     @GetMapping("/current-user-info")
     @ApiOperation("获取登录用户信息")
-    public Result currentUser() {
-        return Result.ofSuccess(SecurityContextHolder.getContext().getAuthentication());
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<BaseUserDTO> currentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
     }
 
+    /**
+     * 鉴权
+     * @param uri 请求uri
+     * @param method 请求方法
+     * @return
+     */
+    @GetMapping("/authorize")
+    @ApiOperation("判断是否允许访问")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uri", value = "请求uri", required = true),
+            @ApiImplicitParam(name = "method", value = "请求方法", required = true)
+    })
+    public Result<BaseUserDTO> authorize(@NotBlank String uri, @NotBlank String method) {
+        if (!HttpMethodConst.ALL_HTTP_METHOD.contains(method.toUpperCase())) {
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数错误",
+                    String.format("参数method=%s不正确", method));
+        }
+        List<BaseWhitelistDTO> whitelistDTOS = baseWhitelistService.findAll();
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
 
+        /*
+            判断是否是白名单
+         */
+        long count = whitelistDTOS.stream()
+                .filter(f -> antPathMatcher.match(f.getPattern(), uri) && f.getMethods().contains(method))
+                .count();
+        if (count > 0) {
+            return Result.ofSuccess(BeanUtil.copyProperties(BaseUserPO.createAnonymousUser(), BaseUserDTO.class));
+        }
+
+        /*
+            TODO 不是白名单，就需要判断该请求需要什么角色的权限
+         */
+
+        return Result.ofSuccess(BeanUtil.copyProperties(SecurityContextHolder.getContext().getAuthentication(), BaseUserDTO.class));
+    }
 }

@@ -15,6 +15,9 @@ import java.util.stream.Stream;
  */
 public class HttpMethodConst {
 
+    /**
+     * 集合中的元素是大写的
+     */
     public static final List<String> ALL_HTTP_METHOD = Stream.of(HttpMethod.values())
             .map(HttpMethod::name)
             .collect(Collectors.toList());

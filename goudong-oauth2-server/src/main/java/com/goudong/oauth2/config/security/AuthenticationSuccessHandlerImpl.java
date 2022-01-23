@@ -96,24 +96,10 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
         // 获取请求类型
         ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest.getHeader(HttpHeaderConst.CLIENT_SIDE));
-
         final String clientSide = clientSideEnum.name().toLowerCase(Locale.ROOT);
 
         // 当关闭同时登陆时，删除redis中旧值
-        if (!tokenExpiresProperties.getEnableRepeatLogin()) {
-            BaseTokenPO baseTokenPO = new BaseTokenPO();
-            baseTokenPO.setUserId(baseUserPO.getId());
-            baseTokenPO.setClientType(clientSide);
-            BaseTokenDTO byExample = baseTokenService.findByExample(Example.of(baseTokenPO));
-            // 令牌过期
-            if (byExample.getAccessExpires().after(new Date())) {
-                // 判断是否存在key，删除key
-                boolean existKey = redisTool.existKey(RedisKeyProviderEnum.AUTHENTICATION, clientSide, byExample.getAccessToken());
-                if (existKey) {
-                    redisTool.deleteKey(RedisKeyProviderEnum.AUTHENTICATION, clientSide, byExample.getAccessToken());
-                }
-            }
-        }
+        disposeAuthenticationRedisKey(baseUserPO, clientSide);
 
         /*
             创建令牌
@@ -148,6 +134,28 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 .writeValueAsString(loginInfo);
 
         httpServletResponse.getWriter().write(json);
+    }
+
+    /**
+     * 判断是否允许同时登录多设备，当不允许时，删除redis中指定的key
+     * @param baseUserPO 用户信息
+     * @param clientSide 客户端类型
+     */
+    private void disposeAuthenticationRedisKey(BaseUserPO baseUserPO, String clientSide) {
+        if (!tokenExpiresProperties.getEnableRepeatLogin()) {
+            BaseTokenPO baseTokenPO = new BaseTokenPO();
+            baseTokenPO.setUserId(baseUserPO.getId());
+            baseTokenPO.setClientType(clientSide);
+            BaseTokenDTO byExample = baseTokenService.findByExample(Example.of(baseTokenPO));
+            // 令牌过期
+            if (byExample.getAccessExpires().after(new Date())) {
+                // 判断是否存在key，删除key
+                boolean existKey = redisTool.existKey(RedisKeyProviderEnum.AUTHENTICATION, clientSide, byExample.getAccessToken());
+                if (existKey) {
+                    redisTool.deleteKey(RedisKeyProviderEnum.AUTHENTICATION, clientSide, byExample.getAccessToken());
+                }
+            }
+        }
     }
 
     /**

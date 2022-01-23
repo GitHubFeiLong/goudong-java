@@ -57,7 +57,7 @@ public enum ClientSideEnum {
             }
         }
 
-        LogUtil.warn(log, "headerValue={}：值不正确,返回默认BROWSER", headerValue);
+        LogUtil.warn(log, "请求头没有属性{}，或者值（{}）不正确,返回默认BROWSER", HttpHeaderConst.CLIENT_SIDE, headerValue);
         return BROWSER;
     }
 

@@ -1,6 +1,5 @@
 package com.goudong.commons.enumerate.core;
 
-import com.goudong.commons.enumerate.core.ExceptionEnumInterface;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -9,6 +8,7 @@ import org.springframework.http.HttpStatus;
  *  客户端错误
  *  400~417
  * @See https://www.restapitutorial.com/httpstatuscodes.html
+ * @see HttpStatus
  * @Author msi
  * @Date 2020/10/17 16:29
  * @Version 1.0
@@ -32,7 +32,7 @@ public enum ClientExceptionEnum implements ExceptionEnumInterface {
      * 403 Forbidden
      * 服务器已经理解请求，但是拒绝执行它。与 401 响应不同的是，身份验证并不能提供任何帮助，而且这个请求也不应该被重复提交。如果这不是一个 HEAD 请求，而且服务器希望能够讲清楚为何请求不能被执行，那么就应该在实体内描述拒绝的原因。当然服务器也可以返回一个 404 响应，假如它不希望让客户端获得任何信息。
      */
-    NOT_AUTHORIZATION(403, "403", "无权访问", "403 Forbidden - 没有权限"),
+    FORBIDDEN(403, "403", "无权访问", "403 Forbidden - 没有权限"),
 
     /**
      * 404 Not Found

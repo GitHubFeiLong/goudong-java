@@ -19,7 +19,8 @@ public class RoleConst {
     public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
 
     /**
-     * 匿名
+     * 匿名角色
+     * 注意，创建角色时不能再创建该同名角色。
      */
     public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 }

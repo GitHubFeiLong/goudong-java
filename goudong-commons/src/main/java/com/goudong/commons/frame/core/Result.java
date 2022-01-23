@@ -134,7 +134,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFail(ExceptionEnumInterface enumInterface) {
-        return  new Result(enumInterface.getCode(), enumInterface.getClientMessage(), enumInterface.getServerMessage(), null);
+        return new Result(enumInterface.getCode(), enumInterface.getClientMessage(), enumInterface.getServerMessage(), null);
     }
 
     /**
@@ -142,7 +142,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFail(BasicException basicException) {
-        return  new Result(basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), null);
+        return new Result(basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), null);
     }
 
     /**
@@ -153,6 +153,16 @@ public class Result<T> implements Serializable {
      */
     public static Result ofFailByBadRequest(String clientMessage, String serverMessage) {
         return new Result("400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
+    }
+
+    /**
+     * 400 Bad Request
+     * @param clientMessage 客户端显示错误
+     * @param serverMessage 服务端错误
+     * @return
+     */
+    public static Result ofFailByForBidden(String clientMessage, String serverMessage) {
+        return new Result("403", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
     }
 
     /**
