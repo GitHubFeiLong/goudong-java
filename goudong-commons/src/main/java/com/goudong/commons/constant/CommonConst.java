@@ -45,11 +45,13 @@ public class CommonConst {
     /**
      * 普通用户角色
      */
+    @Deprecated
     public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
 
     /**
      * 网关路由微服务时，新增一个请求头，微服务用于获取当前登录用户信息
      */
+    @Deprecated
     public static final String HEADER_TOKEN_MD5_KEY = "token-md5-key";
 
 }

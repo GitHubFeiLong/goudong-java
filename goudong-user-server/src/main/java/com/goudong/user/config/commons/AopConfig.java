@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
  * @date 2021/12/11 12:04
  */
 @Configuration
+@Deprecated
 public class AopConfig {
     /**
      * 日志切面

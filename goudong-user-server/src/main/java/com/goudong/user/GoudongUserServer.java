@@ -1,6 +1,5 @@
 package com.goudong.user;
 
-import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,11 +20,6 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
-@EnableCommonsRedisConfig
-@EnableCommonsFeignConfig
-@EnableCommonsJpaConfig
 @EntityScan("com.goudong.user.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.user.repository"})
 public class GoudongUserServer {
