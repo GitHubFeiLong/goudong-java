@@ -14,7 +14,7 @@ import java.net.URLDecoder;
 
 /**
  * 类描述：
- * 请求用户拦截器
+ * 给下游服务填充发起请求的用户信息
  * @author msi
  * @version 1.0
  * @date 2022/1/23 10:50
@@ -52,7 +52,4 @@ public class UserContextFilter implements Filter {
     public void destroy() {
         Filter.super.destroy();
     }
-
-
-
 }
