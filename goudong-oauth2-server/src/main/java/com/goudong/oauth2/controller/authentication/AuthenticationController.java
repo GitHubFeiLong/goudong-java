@@ -18,7 +18,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
@@ -110,7 +109,7 @@ public class AuthenticationController {
      */
     @GetMapping("/current-user-info")
     @ApiOperation("获取登录用户信息")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public Result<BaseUserDTO> currentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));

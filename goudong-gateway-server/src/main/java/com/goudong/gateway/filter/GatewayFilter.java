@@ -57,9 +57,10 @@ public class GatewayFilter implements GlobalFilter, Ordered {
             });
         }
 
+        // 鉴权，返回用户信息
         BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method).getData();
 
-        // 将token的md5加密后的值保存在token中
+        // 将用户信息保存到请求头中，供下游服务使用
         ServerHttpRequest newRequest = request
                 .mutate()
                 .header(HttpHeaderConst.REQUEST_USER, URLEncoder.encode(JSON.toJSONString(baseUserDTO), "UTF-8"))

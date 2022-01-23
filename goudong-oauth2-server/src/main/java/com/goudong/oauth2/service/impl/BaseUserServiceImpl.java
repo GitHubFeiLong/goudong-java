@@ -5,6 +5,7 @@ import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.exception.oauth2.AccessTokenExpiredException;
+import com.goudong.commons.exception.oauth2.AccessTokenInvalidException;
 import com.goudong.commons.exception.user.AccountExpiredException;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.redis.RedisTool;
@@ -161,6 +162,8 @@ public class BaseUserServiceImpl implements BaseUserService {
                 throw new AccessTokenExpiredException("访问令牌过期");
             }
 
+            // 携带token，但是token无效。
+            throw new AccessTokenInvalidException("访问令牌无效");
         }
 
         // redis中不存在，数据库不存在令牌，设置一个匿名用户
