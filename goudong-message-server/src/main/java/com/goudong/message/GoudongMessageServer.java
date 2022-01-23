@@ -1,8 +1,5 @@
 package com.goudong.message;
 
-import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +26,7 @@ import org.springframework.util.StopWatch;
  */
 // @SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
 @SpringBootApplication
-@EnableCommonsWebMvcConfig
-@EnableCommonsRedisConfig
-@EnableCommonsFeignConfig
+
 @EnableDiscoveryClient
 @MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling

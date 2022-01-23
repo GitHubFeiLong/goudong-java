@@ -1,6 +1,5 @@
 package com.goudong.oauth2;
 
-import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,12 +29,6 @@ import org.springframework.util.StopWatch;
 @EnableAuthorizationServer
 // @EnableResourceServer
 @EnableDiscoveryClient
-@EnableCommonsJacksonConfig
-@EnableCommonsWebMvcConfig
-// @EnableCommonsGlobalExceptionHandler
-@EnableCommonsRedisConfig
-@EnableCommonsFeignConfig
-@EnableCommonsJpaConfig
 @EntityScan("com.goudong.oauth2.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.oauth2.repository"})
 public class GoudongOauth2Server {

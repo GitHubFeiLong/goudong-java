@@ -1,12 +1,18 @@
 package com.goudong.file.config;
 
+import com.goudong.commons.annotation.enable.EnableCommonsGlobalExceptionHandler;
+import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
+import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.aop.RepeatAop;
+import com.goudong.commons.filter.UserContextFilter;
 import com.goudong.commons.frame.mvc.error.ErrorAttributes;
 import com.goudong.commons.frame.mvc.error.ErrorController;
-import com.goudong.commons.utils.AuthorityUserUtil;
 import com.goudong.commons.frame.redis.RedisOperationsUtil;
+import com.goudong.commons.utils.AuthorityUserUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -20,7 +26,11 @@ import javax.servlet.http.HttpServletRequest;
  * @version 1.0
  * @date 2021/12/11 17:42
  */
-// @Configuration
+@EnableCommonsWebMvcConfig
+@EnableCommonsGlobalExceptionHandler
+@EnableCommonsJpaConfig
+@EnableCommonsJacksonConfig
+@ServletComponentScan(basePackageClasses = {UserContextFilter.class})
 public class CommonsConfig {
     private final HttpServletRequest request;
 

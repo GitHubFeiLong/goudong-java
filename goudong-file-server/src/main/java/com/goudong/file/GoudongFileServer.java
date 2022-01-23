@@ -1,8 +1,5 @@
 package com.goudong.file;
 
-import com.goudong.commons.annotation.enable.EnableCommonsGlobalExceptionHandler;
-import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,9 +22,6 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
-@EnableCommonsJpaConfig
 @EntityScan("com.goudong.file.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.file.repository"})
 public class GoudongFileServer {

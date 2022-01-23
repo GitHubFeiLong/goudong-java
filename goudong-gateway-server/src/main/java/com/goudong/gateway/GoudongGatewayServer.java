@@ -1,7 +1,5 @@
 package com.goudong.gateway;
 
-import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,8 +19,6 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableDiscoveryClient
-@EnableCommonsFeignConfig
-@EnableCommonsJacksonConfig
 public class GoudongGatewayServer {
 
     public static void main(String[] args) {
