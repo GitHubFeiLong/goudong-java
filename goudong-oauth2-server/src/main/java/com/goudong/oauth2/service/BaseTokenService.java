@@ -19,7 +19,7 @@ public interface BaseTokenService {
      * @param userId 用户id
      * @return
      */
-    BaseTokenDTO login(Long userId);
+    BaseTokenDTO loginHandler(Long userId);
 
     /**
      * 根据访问令牌,和客户端类型获取令牌信息

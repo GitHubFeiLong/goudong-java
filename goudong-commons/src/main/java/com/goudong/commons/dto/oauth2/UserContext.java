@@ -1,6 +1,6 @@
 package com.goudong.commons.dto.oauth2;
 
-import cn.hutool.core.lang.Assert;
+import org.springframework.util.Assert;
 
 /**
  * 类描述：

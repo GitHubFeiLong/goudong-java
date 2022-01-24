@@ -87,7 +87,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         BaseUserPO baseUserPO = (BaseUserPO) authentication;
 
         // 持久化token到Mysql
-        BaseTokenDTO tokenDTO = baseTokenService.login(baseUserPO.getId());
+        BaseTokenDTO tokenDTO = baseTokenService.loginHandler(baseUserPO.getId());
 
         // 将认证信息存储到redis中
         BaseUserDTO baseUser = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);

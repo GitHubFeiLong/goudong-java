@@ -9,12 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * 网关过滤器
@@ -51,14 +54,19 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         // 打印详细日志
         if (log.isDebugEnabled()) {
             log.debug("");
-            log.debug("【{}】 {}", exchange.getRequest().getMethodValue(), exchange.getRequest().getURI());
-            exchange.getRequest().getHeaders().entrySet().forEach(p->{
+            log.debug("【{}】 {}", request.getMethodValue(), uri);
+            request.getHeaders().entrySet().forEach(p->{
                 log.debug("{} -> {}", p.getKey(), p.getValue());
             });
         }
 
+        List<String> tokenList = request.getHeaders().get(HttpHeaders.AUTHORIZATION);
+        String token = null;
+        if (!CollectionUtils.isEmpty(tokenList)) {
+            token = tokenList.get(0);
+        }
         // 鉴权，返回用户信息
-        BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method).getData();
+        BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method, token).getData();
 
         // 将用户信息保存到请求头中，供下游服务使用
         ServerHttpRequest newRequest = request

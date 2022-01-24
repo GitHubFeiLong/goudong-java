@@ -89,7 +89,7 @@ public class BaseTokenServiceImpl implements BaseTokenService {
      */
     @Override
     @Transactional
-    public BaseTokenDTO login(Long userId) {
+    public BaseTokenDTO loginHandler(Long userId) {
         ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest);
 
         BaseTokenPO baseTokenPO = new BaseTokenPO();
@@ -203,7 +203,7 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         if (refreshExpires.after(new Date())) {
             // 未过期，就需要生成新的token，并将原有的token删除（使之无效）
             Long userId = byRefreshToken.getUserId();
-            BaseTokenDTO baseTokenDTO = this.login(userId);
+            BaseTokenDTO baseTokenDTO = this.loginHandler(userId);
 
             // 保存accessToken和用户信息到redis中
             BaseUserDTO baseUser = baseUserService.findById(userId);

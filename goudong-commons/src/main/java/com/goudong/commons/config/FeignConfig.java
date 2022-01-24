@@ -1,6 +1,7 @@
 package com.goudong.commons.config;
 
 import com.goudong.commons.constant.BasePackageConst;
+import com.goudong.commons.constant.core.HttpHeaderConst;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -28,7 +29,9 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableFeignClients(basePackages = {BasePackageConst.OPENFEIGN})
 public class FeignConfig {
+
     /**
+     * gateway报错
      * openfeign 需要HTTP MessageConverters
      * @param converters
      * @return
@@ -50,6 +53,10 @@ public class FeignConfig {
     }
 
 
+    /**
+     * 使用feign调用远程服务时,会先拦截请求,填充请求头信息
+     * @return
+     */
     @Bean
     public RequestInterceptor requestInterceptor(){
         return new RequestInterceptor() {
@@ -63,7 +70,10 @@ public class FeignConfig {
 
                     //2.同步请求头信息->cookie
                     String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-                    requestTemplate.header(HttpHeaders.AUTHORIZATION, token);
+                    requestTemplate
+                            .header(HttpHeaders.AUTHORIZATION, token)
+                            // 自定义内部服务用户信息传递
+                            .header(HttpHeaderConst.REQUEST_USER, request.getHeader(HttpHeaderConst.REQUEST_USER));
                 }
 
             }

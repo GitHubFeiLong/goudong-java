@@ -1,5 +1,6 @@
 package com.goudong.oauth2.config.security;
 
+import com.goudong.commons.constant.user.RoleConst;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
@@ -34,7 +35,7 @@ public class AccessDecisionManagerImpl implements AccessDecisionManager {
         for (ConfigAttribute configAttribute : collection) {
             // 当前请求需要的权限
             String needRole = configAttribute.getAttribute();
-            if ("ROLE_ANONYMOUS".equals(needRole)) {
+            if (RoleConst.ROLE_ANONYMOUS.equals(needRole)) {
                 return;
             }
             // 当前用户所具有的权限

@@ -1,14 +1,17 @@
 package com.goudong.user.controller.user;
 
 import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.commons.dto.oauth2.UserContext;
 import com.goudong.commons.dto.user.BaseUser2CreateDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.openfeign.MessageService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
+import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
@@ -21,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -47,14 +51,22 @@ public class BaseUerController {
      */
     private final BaseUserService baseUserService;
 
+    private final HttpServletRequest httpServletRequest;
+
+    private final MessageService messageService;
+
     /**
      * 构造方法注入Bean
      */
     public BaseUerController(BaseUserRepository baseUserRepository,
-                             BaseUserService baseUserService
+                             BaseUserService baseUserService,
+                             HttpServletRequest httpServletRequest,
+                             MessageService messageService
     ) {
         this.baseUserRepository = baseUserRepository;
         this.baseUserService = baseUserService;
+        this.httpServletRequest = httpServletRequest;
+        this.messageService = messageService;
     }
 
     /**
@@ -97,8 +109,10 @@ public class BaseUerController {
      */
     @GetMapping("/check-email/{email}")
     @ApiOperation(value = "检查邮箱能否使用", notes = "当返回对象的data属性为True时，表示可以使用；当邮箱不可以使用时，使用 dataMap.status 进行判断：0 邮箱不正确；1 邮箱正确")
-    @Whitelist("检查邮箱能否使用")
+    // @Whitelist("检查邮箱能否使用")
     public Result<Boolean> checkEmailInUse(@PathVariable String email) {
+        LogUtil.info(log, "用户信息:\n{}", UserContext.get());
+        messageService.sendEmailCode("169@email.com");
         AssertUtil.isEmail(email, "邮箱格式错误");
 
         BaseUserPO byEmail = baseUserRepository.findByEmail(email);

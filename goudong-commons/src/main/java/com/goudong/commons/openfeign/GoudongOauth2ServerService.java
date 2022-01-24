@@ -5,6 +5,7 @@ import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -60,5 +61,6 @@ public interface GoudongOauth2ServerService {
      * @return
      */
     @GetMapping("/authentication/authorize")
-    Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri, @RequestParam("method") @NotBlank String method) ;
+    Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri, @RequestParam("method") @NotBlank String method,
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String token) ;
 }

@@ -10,6 +10,7 @@ import com.goudong.commons.exception.user.AccountExpiredException;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
@@ -18,6 +19,7 @@ import com.goudong.oauth2.properties.TokenExpiresProperties;
 import com.goudong.oauth2.repository.BaseUserRepository;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +37,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2022/1/8 20:14
  */
+@Slf4j
 @Service
 public class BaseUserServiceImpl implements BaseUserService {
 
@@ -117,6 +120,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     public BaseUserPO getAuthentication(HttpServletRequest request) {
+        LogUtil.info(log, "uri:{},method:{}", request.getRequestURI(), request.getMethod());
         // 获取请求头中设置的accessToken
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.isNotBlank(header) && header.startsWith("Bearer ")) {
@@ -134,6 +138,7 @@ public class BaseUserServiceImpl implements BaseUserService {
 
                 // 判断用户是否过期，未过期直接返回 TODO 后期有锁定等其它状态直接追加判断
                 if (baseUserPO.isAccountNonExpired()) {
+                    LogUtil.info(log, "user:{}", baseUserPO);
                     return baseUserPO;
                 }
 
