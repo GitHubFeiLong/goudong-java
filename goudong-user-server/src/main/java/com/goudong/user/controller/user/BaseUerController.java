@@ -70,20 +70,19 @@ public class BaseUerController {
     }
 
     /**
-     * 根据手机号获取账号
+     * 检查手机号是否可以被注册
      *
      * @param phone
      * @return
      */
-    @GetMapping("/phone/{phone}")
-    @ApiOperation(value = "根据手机号获取账号")
+    @GetMapping("/check-registry/phone/{phone}")
+    @ApiOperation(value = "检查手机号", notes = "检查手机号是否可以使用，true可以使用")
     @ApiImplicitParam(name = "phone", value = "手机号")
     @Whitelist("根据手机号获取账号")
-    public Result<BaseUserDTO> getUserByPhone(@PathVariable String phone) {
-        AssertUtil.isPhone(phone, "手机号码格式不正确，获取用户失败");
+    public Result<Boolean> getUserByPhone(@PathVariable String phone) {
+        AssertUtil.isPhone(phone, "手机号码格式不正确");
         BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
-        BaseUserDTO baseUserDTO = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class, "password");
-        return Result.ofSuccess(baseUserDTO);
+        return Result.ofSuccess(baseUserPO == null);
     }
 
     /**

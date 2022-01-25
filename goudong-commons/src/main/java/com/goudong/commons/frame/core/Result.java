@@ -23,6 +23,8 @@ import java.util.Map;
 @Data
 @ApiModel(value = "Result", description = "统一结果返回结构封装类")
 public class Result<T> implements Serializable {
+
+    private static final String DEFAULT_SUCCESS_CLIENT_MESSAGE = "执行成功";
     /**
      * 成功
      */
@@ -92,7 +94,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result<Object> ofSuccess() {
-        return new Result(Result.SUCCESS);
+        return new Result(Result.SUCCESS).clientMessage(DEFAULT_SUCCESS_CLIENT_MESSAGE);
     }
 
     /**
@@ -100,7 +102,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static <T> Result<T> ofSuccess(T t) {
-        return new Result(Result.SUCCESS, null, null, t);
+        return new Result(Result.SUCCESS, DEFAULT_SUCCESS_CLIENT_MESSAGE, null, t);
     }
 
     /**

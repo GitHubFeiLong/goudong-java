@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.UserContext;
+import com.goudong.commons.utils.core.LogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.*;
@@ -19,8 +21,9 @@ import java.net.URLDecoder;
  * @version 1.0
  * @date 2022/1/23 10:50
  */
-@WebFilter(urlPatterns = "/*", filterName = "userContextFilter")
 @Order
+@Slf4j
+@WebFilter(urlPatterns = "/*", filterName = "userContextFilter")
 public class UserContextFilter implements Filter {
     //~fields
     //==================================================================================================================
@@ -40,6 +43,7 @@ public class UserContextFilter implements Filter {
             if (requestUser != null) {
                 String decodeJson = URLDecoder.decode(requestUser, "UTF-8");
                 BaseUserDTO baseUserDTO = JSONObject.parseObject(decodeJson, BaseUserDTO.class);
+                LogUtil.debug(log, "当前请求用户信息：{}", baseUserDTO);
                 UserContext.set(baseUserDTO);
             }
             filterChain.doFilter(servletRequest, servletResponse);

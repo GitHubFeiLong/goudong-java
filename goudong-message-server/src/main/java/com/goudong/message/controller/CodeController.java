@@ -5,6 +5,7 @@ import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.goudong.commons.annotation.IgnoreResource;
 import com.goudong.commons.annotation.core.Repeat;
+import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.exception.ServerException;
@@ -88,7 +89,7 @@ public class CodeController {
     @GetMapping("/email-code/{email}")
     @ApiOperation(value = "发送邮箱验证码")
     @ApiImplicitParam(name = "email", value = "邮箱", required = true)
-    @IgnoreResource("发送邮箱验证码")
+    @Whitelist("发送邮箱验证码")
     public Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email) {
         rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
         return Result.ofSuccess();
