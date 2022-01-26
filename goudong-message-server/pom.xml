@@ -130,6 +130,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--hutool-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->

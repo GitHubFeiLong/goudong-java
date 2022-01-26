@@ -189,7 +189,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     public BaseUserDTO updatePassword(BaseUserDTO baseUserDTO) {
         // 判断验证码是否正确
-        Result<Boolean> booleanResult = goudongMessageServerService.checkCode(baseUserDTO.getPhone(), baseUserDTO.getCode());
+        Result<Boolean> booleanResult = goudongMessageServerService.checkPhoneCode(baseUserDTO.getPhone(), baseUserDTO.getCode());
         if(Objects.equals(booleanResult.getData(), Boolean.FALSE)) {
             // 验证码错误，或更新失败
             throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");

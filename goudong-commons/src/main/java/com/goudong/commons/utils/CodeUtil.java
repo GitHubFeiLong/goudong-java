@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * 生成6位数字的随机验证码
+ * @deprecated 使用hutool的RandomUtil工具
  * @Author msi
  * @Date 2021-05-07 13:02
  * @Version 1.0

@@ -4,9 +4,8 @@ import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.validation.constraints.Email;
 
 /**
  * 接口描述：
@@ -23,8 +22,8 @@ public interface GoudongMessageServerService {
      * @param email 邮箱
      * @return
      */
-    @GetMapping("/code/email-code/{email}")
-    Result sendEmailCode (@PathVariable("email") @Email(message = "请输入正确邮箱格式") String email);
+    @PostMapping("/code/email-code/{email}")
+    Result sendEmailCode (@PathVariable("email") String email);
 
 
     /**
@@ -32,16 +31,24 @@ public interface GoudongMessageServerService {
      * @param phone 手机号码
      * @return
      */
-    @GetMapping("/code/phone-code/{phone}")
+    @PostMapping("/code/phone-code/{phone}")
     Result sendPhoneCode (@PathVariable("phone") String phone);
 
-
     /**
-     * 验证验证码是否正确
-     * @param number 手机号码/邮箱
+     * 验证手机验证码是否正确
+     * @param phone 手机号
      * @param code 验证码
      * @return
      */
-    @GetMapping("/code/check-code/{number}/{code}")
-    Result<Boolean> checkCode (@PathVariable String number, @PathVariable String code);
+    @GetMapping("/check-phone-code/{phone}/{code}")
+    Result<Boolean> checkPhoneCode (@PathVariable String phone, @PathVariable String code);
+
+    /**
+     * 验证邮箱验证码是否正确
+     * @param email 邮箱
+     * @param code 验证码
+     * @return
+     */
+    @GetMapping("/check-email-code/{email}/{code}")
+    Result<Boolean> checkEmailCode (@PathVariable String email, @PathVariable String code);
 }
