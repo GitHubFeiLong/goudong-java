@@ -1,10 +1,14 @@
 package com.goudong.commons.config;
 
+import com.alibaba.fastjson.JSON;
 import com.goudong.commons.constant.BasePackageConst;
 import com.goudong.commons.constant.core.HttpHeaderConst;
-import feign.Logger;
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ServerException;
+import com.goudong.commons.frame.core.Result;
+import feign.*;
+import feign.codec.ErrorDecoder;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -17,6 +21,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +82,27 @@ public class FeignConfig {
                             .header(HttpHeaderConst.REQUEST_USER, request.getHeader(HttpHeaderConst.REQUEST_USER));
                 }
 
+            }
+        };
+    }
+
+    /**
+     * 将微服务的异常信息解码，然后响应原异常。
+     * @return
+     */
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new ErrorDecoder() {
+            @Override
+            public Exception decode(String s, Response response) {
+                try {
+                    Reader reader = response.body().asReader(StandardCharsets.UTF_8);
+                    String body = Util.toString(reader);
+                    Result result = JSON.parseObject(body, Result.class);
+                    return new BasicException(response.status(), result.getCode(), result.getClientMessage(), result.getServerMessage());
+                } catch (Exception e) {
+                    return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, e.getMessage());
+                }
             }
         };
     }
