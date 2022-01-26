@@ -13,9 +13,16 @@ public class RoleConst {
      * 超级管理员角色
      */
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
+
     /**
      * 普通用户角色
      */
+    public static final String ROLE_USER = "ROLE_USER";
+
+    /**
+     * 普通用户角色
+     */
+    @Deprecated
     public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
 
     /**

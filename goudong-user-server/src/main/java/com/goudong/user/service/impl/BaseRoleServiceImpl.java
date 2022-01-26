@@ -28,9 +28,9 @@ public class BaseRoleServiceImpl implements BaseRoleService {
      * @return
      */
     @Override
-    public BaseRolePO findByRoleOrdinary() {
-        String serverMessage = String.format("预置的角色：%s不存在", RoleConst.ROLE_ORDINARY);
-        return baseRoleRepository.findByRoleName(RoleConst.ROLE_ORDINARY)
+    public BaseRolePO findByRoleUser() {
+        String serverMessage = String.format("预置的角色：%s不存在", RoleConst.ROLE_USER);
+        return baseRoleRepository.findByRoleName(RoleConst.ROLE_USER)
                 .orElseThrow(()-> new RoleException(ServerExceptionEnum.SERVER_ERROR, serverMessage));
     }
 }

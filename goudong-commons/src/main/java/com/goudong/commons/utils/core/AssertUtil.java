@@ -66,7 +66,6 @@ public class AssertUtil extends Assert{
      * @param message 错误信息
      */
     public static void isEnum (String name, Class clazz, String message) {
-        Assert.hasLength(name, "枚举成员不能是null");
         try {
             Enum anEnum = Enum.valueOf(clazz, name);
         } catch (IllegalArgumentException e) {

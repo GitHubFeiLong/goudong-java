@@ -32,7 +32,6 @@ public class BaseUser2CreateDTO implements Serializable {
     private String password;
 
     @NotBlank(message = "邮箱不能为空")
-    @Email(message = "邮箱格式不正确")
     @ApiModelProperty(value="邮箱")
     private String email;
 

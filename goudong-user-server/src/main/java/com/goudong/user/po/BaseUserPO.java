@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -69,7 +70,7 @@ public class BaseUserPO extends BasePO {
      * 有效截止时间
      */
     @Column(name = "valid_time")
-    private LocalDateTime validTime;
+    private Date validTime;
 
     /**
      * qq登录后，系统获取腾讯的open_id

@@ -16,7 +16,7 @@ import javax.validation.constraints.Email;
  */
 @FeignClient(name = "goudong-message-server", path = "/api/message")
 @ResponseBody
-public interface MessageService {
+public interface GoudongMessageServerService {
 
     /**
      * 发送邮箱验证码

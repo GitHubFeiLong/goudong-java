@@ -50,7 +50,7 @@ CREATE TABLE `base_role` (
 INSERT INTO `base_role`
 VALUES
 (1, 'ROLE_ADMIN', '超级管理员', '系统预置', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
-(2, 'ROLE_ORDINARY', '普通用户', '系统预置', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1);
+(2, 'ROLE_USER', '普通用户', '系统预置', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1);
 
 
 DROP TABLE IF EXISTS `base_user_role`;

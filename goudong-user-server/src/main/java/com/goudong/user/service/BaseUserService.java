@@ -1,5 +1,6 @@
 package com.goudong.user.service;
 
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.user.po.BaseUserPO;
 
@@ -33,26 +34,26 @@ public interface BaseUserService {
      * @return
      */
     List<BaseUserPO> getUserByLoginName(String loginName);
+
+    /**
+     * 绑定opendId
+     * @param userDTO
+     */
+    BaseUserDTO updateOpenId(BaseUserDTO userDTO);
+
+    /**
+     * 根据用户名或者电话号或者邮箱 查询用户的详细信息。包含用户信息，角色信息，权限信息
+     * @param loginName
+     * @return
+     */
+    BaseUserDTO getUserDetailByLoginName(String loginName);
     //
-    // /**
-    //  * 绑定opendId
-    //  * @param userDTO
-    //  */
-    // AuthorityUserDTO updateOpenId(AuthorityUserDTO userDTO);
-    //
-    // /**
-    //  * 根据用户名或者电话号或者邮箱 查询用户的详细信息。包含用户信息，角色信息，权限信息
-    //  * @param loginName
-    //  * @return
-    //  */
-    // AuthorityUserDTO getUserDetailByLoginName(String loginName);
-    //
-    // /**
-    //  * 更新密码
-    //  * @param authorityUserDTO
-    //  * @return
-    //  */
-    // AuthorityUserDTO updatePassword(AuthorityUserDTO authorityUserDTO);
+    /**
+     * 更新密码
+     * @param baseUserDTO
+     * @return
+     */
+    BaseUserDTO updatePassword(BaseUserDTO baseUserDTO);
     //
     // AuthorityUserDTO demo(String name, String address, int i);
 }

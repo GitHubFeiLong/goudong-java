@@ -1,17 +1,21 @@
 package com.goudong.user.controller.user;
 
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.dto.oauth2.UserContext;
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.user.BaseUser2CreateDTO;
+import com.goudong.commons.dto.user.BaseUser2UpdateOpenIdDTO;
+import com.goudong.commons.dto.user.BaseUser2UpdatePasswordDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.openfeign.MessageService;
+import com.goudong.commons.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.commons.vo.AuthorityUser2UpdateOpenIdVO;
+import com.goudong.commons.vo.AuthorityUserVO;
+import com.goudong.user.enumerate.OtherUserTypeEnum;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
@@ -29,12 +33,12 @@ import java.util.List;
 
 /**
  * 类描述：
- * 用户相关开放接口
- * @Author msi
+ * 用户相关接口
+ * @author  msi
  * @Date 2021-05-13 19:38
  * @Version 1.0
  */
-@Api(tags = "用户开放接口")
+@Api(tags = "用户相关接口")
 @Slf4j
 @Validated
 @RestController
@@ -53,7 +57,7 @@ public class BaseUerController {
 
     private final HttpServletRequest httpServletRequest;
 
-    private final MessageService messageService;
+    private final GoudongMessageServerService goudongMessageServerService;
 
     /**
      * 构造方法注入Bean
@@ -61,17 +65,17 @@ public class BaseUerController {
     public BaseUerController(BaseUserRepository baseUserRepository,
                              BaseUserService baseUserService,
                              HttpServletRequest httpServletRequest,
-                             MessageService messageService
+                             GoudongMessageServerService goudongMessageServerService
     ) {
         this.baseUserRepository = baseUserRepository;
         this.baseUserService = baseUserService;
         this.httpServletRequest = httpServletRequest;
-        this.messageService = messageService;
+        this.goudongMessageServerService = goudongMessageServerService;
     }
 
     /**
      * 检查手机号是否可以被注册
-     *
+     * 返回true可以使用
      * @param phone
      * @return
      */
@@ -86,12 +90,12 @@ public class BaseUerController {
     }
 
     /**
-     * 检查用户名是否存在，存在就返回三条可使用的账号名
-     *
+     * 检查用户名是否存在
+     * 存在就返回三条可使用的账号名，不存在返回空数组
      * @param username
      * @return
      */
-    @GetMapping("/check-username/{username}")
+    @GetMapping("/check-registry/username/{username}")
     @ApiOperation(value = "检查用户名是否存在", notes = "注册时，检查用户名是否可用。可用时，返回空集合；\n当不可用时，返回3个可用的用户名")
     @ApiImplicitParam(name = "username", value = "用户名")
     @Whitelist("检查用户名是否存在")
@@ -101,17 +105,15 @@ public class BaseUerController {
     }
 
     /**
-     * 检查邮箱是否能使用，true 表示可以使用
-     *
+     * 检查邮箱是否能使用，
+     * true 表示可以使用，false不可以使用（已经被人使用了）。
      * @param email
      * @return
      */
-    @GetMapping("/check-email/{email}")
-    @ApiOperation(value = "检查邮箱能否使用", notes = "当返回对象的data属性为True时，表示可以使用；当邮箱不可以使用时，使用 dataMap.status 进行判断：0 邮箱不正确；1 邮箱正确")
-    // @Whitelist("检查邮箱能否使用")
+    @GetMapping("/check-registry/email/{email}")
+    @ApiOperation(value = "检查邮箱能否使用", notes = "当返回对象的data属性为True时，表示可以使用")
+    @Whitelist("检查邮箱能否使用")
     public Result<Boolean> checkEmailInUse(@PathVariable String email) {
-        LogUtil.info(log, "用户信息:\n{}", UserContext.get());
-        messageService.sendEmailCode("169@email.com");
         AssertUtil.isEmail(email, "邮箱格式错误");
 
         BaseUserPO byEmail = baseUserRepository.findByEmail(email);
@@ -129,8 +131,9 @@ public class BaseUerController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "创建普通账号", notes = "注册用户")
     @Whitelist("创建普通账号")
-    public Result createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
+    public Result<BaseUserDTO> createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
         AssertUtil.isPhone(createDTO.getPhone(), "手机号格式错误");
+        AssertUtil.isEmail(createDTO.getEmail(), "邮箱格式不正确");
         AssertUtil.isEnum(createDTO.getAccountRadio(), AccountRadioEnum.class);
 
         BaseUserDTO userDTO = BeanUtil.copyProperties(createDTO, BaseUserDTO.class);
@@ -144,8 +147,8 @@ public class BaseUerController {
      * @param loginName 用户名、手机号、邮箱
      * @return
      */
-    @GetMapping("/info/{login-name}")
-    @ApiOperation(value = "根据登录用户名获取用户信息", notes = "登陆用户名包括，用户名，邮箱及密码")
+    @GetMapping("/user-basic-info/{login-name}")
+    @ApiOperation(value = "根据登录用户名获取用户信息")
     @ApiImplicitParam(name = "login-name", value = "登陆用户名")
     @Whitelist("根据账户名查询基本信息")
     public Result getUserByLoginName(@PathVariable("login-name") String loginName){
@@ -157,46 +160,44 @@ public class BaseUerController {
         return Result.ofSuccess(baseUserDTO);
     }
 
-    // /**
-    //  * 修改用户密码
-    //  * @param user2UpdatePasswordDTO
-    //  * @return
-    //  */
-    // @PatchMapping("/password")
-    // @ApiOperation(value = "修改密码")
-    // @IgnoreResource("修改密码")
-    // public Result<AuthorityUserVO> updatePassword(@RequestBody @Validated BaseUser2UpdatePasswordDTO user2UpdatePasswordDTO){
-    //     BaseUserDTO baseUserDTO = BeanUtil.copyProperties(user2UpdatePasswordDTO, BaseUserDTO.class);
-    //     AuthorityUserDTO var1 = authorityUserService.updatePassword(baseUserDTO);
-    //
-    //     return Result.ofSuccess(BeanUtil.copyProperties(var1, AuthorityUserVO.class));
-    // }
-    //
-    // /**
-    //  * 绑定openId
-    //  * @param updateOpenIdVO
-    //  * @return
-    //  */
-    // @PatchMapping("/bind-open-id")
-    // @ApiOperation(value = "绑定openId", hidden = true)
-    // public Result updateOpenId(@RequestBody @Validated AuthorityUser2UpdateOpenIdVO updateOpenIdVO){
-    //     AuthorityUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdVO, AuthorityUserDTO.class);
-    //
-    //     AuthorityUserDTO userDTO1 = authorityUserService.updateOpenId(userDTO);
-    //     AuthorityUserVO userVO = BeanUtil.copyProperties(userDTO1, AuthorityUserVO.class);
-    //     return Result.ofSuccess(userVO);
-    // }
-    //
-    // /**
-    //  * 查询用户的详细信息
-    //  * @param loginName 用户名/手机号/邮箱
-    //  * @return
-    //  */
-    // @GetMapping("/detail-info/{login-name}")
-    // @ApiOperation(value = "查询用户的详细信息")
-    // @ApiImplicitParam(name = "login-name", value = "账户名")
-    // public Result<AuthorityUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName){
-    //     AuthorityUserDTO authorityUserDTO = authorityUserService.getUserDetailByLoginName(loginName);
-    //     return Result.ofSuccess(authorityUserDTO);
-    // }
+    /**
+     * 修改用户密码
+     * @param user2UpdatePasswordDTO
+     * @return
+     */
+    @PatchMapping("/password")
+    @ApiOperation(value = "修改密码")
+    @Whitelist("修改密码")
+    public Result<BaseUserDTO> updatePassword(@RequestBody @Validated BaseUser2UpdatePasswordDTO user2UpdatePasswordDTO){
+        BaseUserDTO baseUserDTO = BeanUtil.copyProperties(user2UpdatePasswordDTO, BaseUserDTO.class);
+        return Result.ofSuccess(baseUserService.updatePassword(baseUserDTO));
+    }
+
+    /**
+     * 绑定openId
+     * @param updateOpenIdDTO
+     * @return
+     */
+    @PatchMapping("/bind-open-id")
+    @ApiOperation(value = "绑定openId", hidden = true)
+    public Result updateOpenId(@RequestBody @Validated BaseUser2UpdateOpenIdDTO updateOpenIdDTO){
+        AssertUtil.isEnum(updateOpenIdDTO.getUserType(), OtherUserTypeEnum.class, "绑定账号openId的类型无效");
+
+        BaseUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdDTO, BaseUserDTO.class);
+
+        return Result.ofSuccess(baseUserService.updateOpenId(userDTO));
+    }
+
+    /**
+     * 查询用户的详细信息
+     * @param loginName 用户名/手机号/邮箱
+     * @return
+     */
+    @GetMapping("/detail-info/{login-name}")
+    @ApiOperation(value = "查询用户的详细信息")
+    @ApiImplicitParam(name = "login-name", value = "账户名")
+    public Result<BaseUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName){
+        BaseUserDTO authorityUserDTO = baseUserService.getUserDetailByLoginName(loginName);
+        return Result.ofSuccess(authorityUserDTO);
+    }
 }

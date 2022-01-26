@@ -1,10 +1,14 @@
 package com.goudong.user.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateTime;
+import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.openfeign.GoudongMessageServerService;
+import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
@@ -14,6 +18,7 @@ import com.goudong.user.service.BaseUserService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +26,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,11 +43,19 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     private final BaseUserRepository baseUserRepository;
 
+    /**
+     * 角色服务层接口
+     */
     private final BaseRoleService baseRoleService;
 
-    public BaseUserServiceImpl(BaseUserRepository baseUserRepository, BaseRoleService baseRoleService) {
+    private final GoudongMessageServerService goudongMessageServerService;
+
+    public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
+                               BaseRoleService baseRoleService,
+                               GoudongMessageServerService goudongMessageServerService) {
         this.baseUserRepository = baseUserRepository;
         this.baseRoleService = baseRoleService;
+        this.goudongMessageServerService = goudongMessageServerService;
     }
 
     /**
@@ -114,10 +124,12 @@ public class BaseUserServiceImpl implements BaseUserService {
         if(Objects.equals(accountRadioEnum, AccountRadioEnum.BLANK)) {
             // 为空，插入
             userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
+            // 设置非空属性
+            userPO.setValidTime(new DateTime("9999-12-31 23:59:59"));
+            // 设置角色
+            BaseRolePO roleUser = baseRoleService.findByRoleUser();
+            userPO.getRoles().add(roleUser);
             baseUserRepository.save(userPO);
-
-            BaseRolePO byRoleOrdinary = baseRoleService.findByRoleOrdinary();
-            userPO.getRoles().add(byRoleOrdinary);
 
             return BeanUtil.copyProperties(userPO, BaseUserDTO.class);
         }
@@ -166,5 +178,64 @@ public class BaseUserServiceImpl implements BaseUserService {
         List<BaseUserPO> baseUserPOS = this.ListUsersByLoginName(loginName, loginName, loginName);
 
         return baseUserPOS;
+    }
+
+    /**
+     * 更新密码
+     *
+     * @param baseUserDTO
+     * @return
+     */
+    @Override
+    public BaseUserDTO updatePassword(BaseUserDTO baseUserDTO) {
+        // 判断验证码是否正确
+        Result<Boolean> booleanResult = goudongMessageServerService.checkCode(baseUserDTO.getPhone(), baseUserDTO.getCode());
+        if(Objects.equals(booleanResult.getData(), Boolean.FALSE)) {
+            // 验证码错误，或更新失败
+            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");
+        }
+        Optional<BaseUserPO> byId = baseUserRepository.findById(baseUserDTO.getId());
+        if (byId.isPresent()) {
+            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账号不存在");
+        }
+        BaseUserPO baseUserPO = byId.get();
+
+        baseUserPO.setPassword(new BCryptPasswordEncoder().encode(baseUserDTO.getPassword()));
+        return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
+    }
+
+    /**
+     * 绑定opendId
+     *
+     * @param userDTO
+     */
+    @Override
+    public BaseUserDTO updateOpenId(BaseUserDTO userDTO) {
+
+        // 判断用户名和密码是否匹配
+        String loginName = userDTO.getLoginName();
+
+        BaseUserPO byLogin = baseUserRepository.findByLogin(loginName);
+
+
+        boolean error = byLogin ==null
+                || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), byLogin.getPassword());
+        if (error) {
+            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账户名与密码不匹配，请重新输入");
+        }
+        // 修改openId
+        byLogin.setQqOpenId(userDTO.getQqOpenId());
+        return BeanUtil.copyProperties(byLogin, BaseUserDTO.class);
+    }
+
+    /**
+     * 根据用户名或者电话号或者邮箱 查询用户的详细信息。包含用户信息，角色信息，权限信息
+     *
+     * @param loginName
+     * @return
+     */
+    @Override
+    public BaseUserDTO getUserDetailByLoginName(String loginName) {
+        return BeanUtil.copyProperties(baseUserRepository.findByLogin(loginName), BaseUserDTO.class);
     }
 }

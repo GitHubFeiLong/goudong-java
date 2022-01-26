@@ -19,6 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class AuthorityUserDTO extends BasePO {
     private static final long serialVersionUID = -6147408154544596138L;
 

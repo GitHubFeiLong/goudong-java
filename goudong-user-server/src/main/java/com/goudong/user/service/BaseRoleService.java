@@ -14,5 +14,5 @@ public interface BaseRoleService {
      * 查询预置的普通角色
      * @return
      */
-    BaseRolePO findByRoleOrdinary();
+    BaseRolePO findByRoleUser();
 }

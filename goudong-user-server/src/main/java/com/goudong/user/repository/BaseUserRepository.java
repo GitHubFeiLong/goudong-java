@@ -3,6 +3,7 @@ package com.goudong.user.repository;
 import com.goudong.user.po.BaseUserPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -43,4 +44,6 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      */
     BaseUserPO findByEmail(String email);
 
+    @Query(value = "from BaseUserPO where username=?1 or email = ?1 or phone=?1")
+    BaseUserPO findByLogin(String login);
 }

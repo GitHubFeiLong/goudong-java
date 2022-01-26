@@ -1,6 +1,5 @@
-package com.goudong.commons.vo;
+package com.goudong.commons.dto.user;
 
-import com.goudong.commons.dto.user.BaseUser2UpdateOpenIdDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,16 +10,13 @@ import java.io.Serializable;
 /**
  * 类描述：
  * 绑定openId，qq或微信
- * @deprecated
- * @see BaseUser2UpdateOpenIdDTO
- * @Author msi
- * @Date 2021-05-16 17:08
- * @Version 1.0
+ * @auther msi
+ * @date 2022/1/26 14:31
+ * @version 1.0
  */
 @Data
 @ApiModel
-@Deprecated
-public class AuthorityUser2UpdateOpenIdVO implements Serializable {
+public class BaseUser2UpdateOpenIdDTO implements Serializable {
 
     private static final long serialVersionUID = 4349104239210189151L;
     /**
