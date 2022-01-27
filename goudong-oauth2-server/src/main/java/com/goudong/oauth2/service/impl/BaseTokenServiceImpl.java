@@ -179,6 +179,7 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         if (baseTokenPO != null) {
             baseTokenRepository.delete(baseTokenPO);
         }
+
         return BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
     }
 

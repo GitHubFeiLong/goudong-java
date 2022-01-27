@@ -61,11 +61,12 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         //
         ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest);
-        String accessToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.isBlank(accessToken) || !accessToken.startsWith("Bearer ")) {
+        String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.isBlank(token) || !token.startsWith("Bearer ")) {
             throw new AccessTokenExpiredException("退出登录失败", "用户处于离线状态，退出登录失败");
         }
 
+        String accessToken = token.substring(7);
         /*
             删除令牌：redis, mysql
          */

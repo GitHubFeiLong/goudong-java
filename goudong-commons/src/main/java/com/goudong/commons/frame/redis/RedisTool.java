@@ -48,9 +48,9 @@ public class RedisTool extends RedisTemplate {
         // key 不存在时，删除失败，返回false
         boolean delete = super.delete(key);
         if (delete) {
-            LogUtil.debug(log, "redis-key:{}已被删除", key);
+            LogUtil.debug(log, "redis-key:【{}】已被删除", key);
         } else {
-            LogUtil.warn(log, "redis-key:{}删除失败", key);
+            LogUtil.warn(log, "redis-key:【{}】删除失败", key);
         }
 
         return delete;
@@ -113,7 +113,7 @@ public class RedisTool extends RedisTemplate {
         // 获取完整的 key
         String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
         boolean hasKey = super.hasKey(key);
-        LogUtil.debug(log, "redis-key:{} {}", key, hasKey ? "存在" : "不存在");
+        LogUtil.debug(log, "redis-key:【{}】【{}】", key, hasKey ? "存在" : "不存在");
         return hasKey;
     }
 
@@ -142,7 +142,7 @@ public class RedisTool extends RedisTemplate {
         boolean result = super.expire(key, time, timeUnit);
 
         if (!result) {
-            LogUtil.error(log, "更新redis key过期时间错误（key：{} 时长：{} 时间单位：{}） ，该key可能不存在",
+            LogUtil.error(log, "更新redis key过期时间错误（key：【{}】 时长：{} 时间单位：{}） ，该key可能不存在",
                     key,
                     time,
                     timeUnit);
@@ -150,7 +150,7 @@ public class RedisTool extends RedisTemplate {
             return false;
         }
 
-        LogUtil.debug(log, "刷新redis-key:{}过期时间成功, ttl:{}s", key, timeUnit.toSeconds(time));
+        LogUtil.debug(log, "刷新redis-key:【{}】过期时间成功, ttl:{}s", key, timeUnit.toSeconds(time));
         return true;
     }
 
