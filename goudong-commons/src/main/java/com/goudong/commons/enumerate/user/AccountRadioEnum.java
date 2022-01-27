@@ -14,7 +14,7 @@ public enum AccountRadioEnum {
     /**
      * 没人使用的账号
      */
-    BLANK(""),
+    BLANK("BLANK"),
     /**
      * 自己的账号
      */
