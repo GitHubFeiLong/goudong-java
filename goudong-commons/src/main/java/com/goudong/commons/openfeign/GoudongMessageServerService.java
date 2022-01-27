@@ -40,7 +40,7 @@ public interface GoudongMessageServerService {
      * @param code 验证码
      * @return
      */
-    @GetMapping("/check-phone-code/{phone}/{code}")
+    @GetMapping("/code/check-phone-code/{phone}/{code}")
     Result<Boolean> checkPhoneCode (@PathVariable String phone, @PathVariable String code);
 
     /**

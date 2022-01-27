@@ -1,5 +1,7 @@
 package com.goudong.commons.frame.jpa;
 
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
+import com.goudong.commons.dto.oauth2.UserContext;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +24,14 @@ import java.util.Date;
 @Slf4j
 public class DataBaseAuditListener {
 
+    //~fields
+    //==================================================================================================================
+    public static final String CREATE_USER_ID = "createUserId";
+    public static final String UPDATE_USER_ID = "updateUserId";
+    public static final String CREATE_TIME = "createTime";
+    public static final String UPDATE_TIME = "updateTime";
+    public static final String DELETED = "deleted";
+
     //~methods
     //==================================================================================================================
 
@@ -34,15 +44,15 @@ public class DataBaseAuditListener {
         Class<?> aClass = object.getClass().getSuperclass();
         try {
             // 填充创建用户Id
-            fillCreateUserId(object, aClass, "createUserId");
+            fillCreateUserId(object, aClass, CREATE_USER_ID);
             // 填充更新用户id
-            fillUpdateUserId(object, aClass, "updateUserId");
+            fillUpdateUserId(object, aClass, UPDATE_USER_ID);
             // 填充创建时间
-            fillCreateTime(object, aClass, "createTime");
+            fillCreateTime(object, aClass, CREATE_TIME);
             // 填充更新时间
-            fillUpdateTime(object, aClass, "updateTime");
+            fillUpdateTime(object, aClass, UPDATE_TIME);
             // 填充删除状态
-            addDeleted(object, aClass, "deleted");
+            addDeleted(object, aClass, DELETED);
         } catch (Exception e) {
             LogUtil.error(log, "jpa 新增时自动填充属性时出现错误：{}", e.getMessage());
         }
@@ -53,12 +63,13 @@ public class DataBaseAuditListener {
      */
     @PreUpdate
     public void preUpdate(Object object) {
-        Class<?> aClass = object.getClass();
+        // 如果填充字段被分装在一个父类中： Class<?> aClass = object.getClass().getSuperclass();
+        Class<?> aClass = object.getClass().getSuperclass();
         try {
             // 填充更新用户Id
-            fillUpdateUserId(object, aClass, "updateUserId");
+            fillUpdateUserId(object, aClass, UPDATE_USER_ID);
             // 填充更新时间
-            fillUpdateTime(object, aClass, "updateTime");
+            fillUpdateTime(object, aClass, UPDATE_TIME);
         } catch (Exception e) {
             LogUtil.error(log, "jpa 更新时自动填充属性时出现错误：{}", e.getMessage());
         }
@@ -116,8 +127,11 @@ public class DataBaseAuditListener {
         Field updateUserId = aClass.getDeclaredField(propertyName);
         updateUserId.setAccessible(true);
         // 获取userId值
-        Object userIdValue = updateUserId.get(object);
-        if (userIdValue == null) {
+        BaseUserDTO baseUserDTO = UserContext.get();
+        if (baseUserDTO != null && baseUserDTO.getId() != null) {
+            // 在此处使用当前用户id或默认用户id
+            updateUserId.set(object, baseUserDTO.getId());
+        } else {
             // 在此处使用当前用户id或默认用户id
             Long id = 1L;
             updateUserId.set(object, id);

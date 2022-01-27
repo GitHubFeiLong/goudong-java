@@ -2,6 +2,8 @@ package com.goudong.user.po;
 
 import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
@@ -20,7 +22,8 @@ import java.util.List;
  * @date 2021/12/19 14:20
  * @version 1.0
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "base_user")
 @SQLDelete(sql = "update base_user set deleted=null where id=?")

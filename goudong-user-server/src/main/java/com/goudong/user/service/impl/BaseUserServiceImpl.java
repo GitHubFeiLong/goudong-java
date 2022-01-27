@@ -1,7 +1,6 @@
 package com.goudong.user.service.impl;
 
 import cn.hutool.core.date.DateTime;
-import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
@@ -187,21 +186,23 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return
      */
     @Override
+    @Transactional
     public BaseUserDTO updatePassword(BaseUserDTO baseUserDTO) {
-        // 判断验证码是否正确
-        Result<Boolean> booleanResult = goudongMessageServerService.checkPhoneCode(baseUserDTO.getPhone(), baseUserDTO.getCode());
-        if(Objects.equals(booleanResult.getData(), Boolean.FALSE)) {
-            // 验证码错误，或更新失败
-            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");
-        }
         Optional<BaseUserPO> byId = baseUserRepository.findById(baseUserDTO.getId());
         if (byId.isPresent()) {
-            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账号不存在");
-        }
-        BaseUserPO baseUserPO = byId.get();
+            BaseUserPO baseUserPO = byId.get();
+            // 判断验证码是否正确
+            Result<Boolean> booleanResult = goudongMessageServerService.checkPhoneCode(baseUserPO.getPhone(), baseUserDTO.getCode());
+            if(Objects.equals(booleanResult.getData(), Boolean.FALSE)) {
+                // 验证码错误，或更新失败
+                throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");
+            }
 
-        baseUserPO.setPassword(new BCryptPasswordEncoder().encode(baseUserDTO.getPassword()));
-        return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
+            baseUserPO.setPassword(new BCryptPasswordEncoder().encode(baseUserDTO.getPassword()));
+            return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
+        }
+
+        throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账号不存在");
     }
 
     /**
