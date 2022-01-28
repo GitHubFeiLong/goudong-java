@@ -36,5 +36,12 @@ public interface BaseUserService extends UserDetailsService {
      * @return
      */
     BaseUserDTO findById(Long userId);
+
+    /**
+     * 根据openId查询用户信息
+     * @param openId
+     * @return
+     */
+    BaseUserDTO findByOpenId(String openId);
 }
 

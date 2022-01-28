@@ -3,10 +3,10 @@ package com.goudong.oauth2.config.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
+import com.goudong.commons.dto.oauth2.LoginInfoDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.BeanUtil;
-import com.goudong.oauth2.core.LoginInfo;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.TokenExpiresProperties;
@@ -94,7 +94,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         baseUserService.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
 
         // 响应令牌和用户信息
-        LoginInfo loginInfo = BeanUtil.copyProperties(tokenDTO, LoginInfo.class);
+        LoginInfoDTO loginInfo = BeanUtil.copyProperties(tokenDTO, LoginInfoDTO.class);
         loginInfo.setUser(baseUser);
         String json = new ObjectMapper().setDateFormat(new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER))
                 .writeValueAsString(Result.ofSuccess(loginInfo));

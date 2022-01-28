@@ -184,6 +184,18 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
+     * 根据openId查询用户信息
+     *
+     * @param openId
+     * @return
+     */
+    @Override
+    public BaseUserDTO findByOpenId(String openId) {
+        BaseUserPO byQqOpenId = baseUserRepository.findByQqOpenId(openId);
+        return BeanUtil.copyProperties(byQqOpenId, BaseUserDTO.class);
+    }
+
+    /**
      * 更新密码
      *
      * @param baseUserDTO

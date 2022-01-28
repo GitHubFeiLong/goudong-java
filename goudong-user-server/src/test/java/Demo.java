@@ -1,5 +1,5 @@
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.user.enumerate.OtherUserTypeEnum;
+import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import lombok.Data;
 
 /**

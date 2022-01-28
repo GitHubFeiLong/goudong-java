@@ -13,7 +13,7 @@
 // import com.goudong.commons.pojo.Result;
 // import com.goudong.commons.utils.AssertUtil;
 // import com.goudong.commons.utils.BeanUtil;
-// import com.goudong.user.enumerate.OtherUserTypeEnum;
+// import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 // import com.goudong.user.mapper.AuthorityRoleMapper;
 // import com.goudong.user.mapper.AuthorityUserMapper;
 // import com.goudong.user.mapper.AuthorityUserRoleMapper;

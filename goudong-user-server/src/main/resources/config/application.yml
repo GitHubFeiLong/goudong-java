@@ -121,11 +121,3 @@ commons:
   # 白名单配置
   whitelist:
     enable: true
-
-# 自定义配置
-user:
-  page:
-    bind-page: http://localhost:9998/bindPage.html
-    transition-page: http://localhost:9998/transition.html
-    index-page: http://localhost:9998/index.html
-

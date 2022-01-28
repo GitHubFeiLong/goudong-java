@@ -1,4 +1,4 @@
-package com.goudong.user.enumerate;
+package com.goudong.commons.enumerate.user;
 
 /**
  * 枚举描述：

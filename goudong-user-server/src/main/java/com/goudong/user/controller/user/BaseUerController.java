@@ -1,7 +1,6 @@
 package com.goudong.user.controller.user;
 
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.user.BaseUser2CreateDTO;
 import com.goudong.commons.dto.user.BaseUser2UpdateOpenIdDTO;
 import com.goudong.commons.dto.user.BaseUser2UpdatePasswordDTO;
@@ -13,9 +12,7 @@ import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.vo.AuthorityUser2UpdateOpenIdVO;
-import com.goudong.commons.vo.AuthorityUserVO;
-import com.goudong.user.enumerate.OtherUserTypeEnum;
+import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
@@ -188,7 +185,7 @@ public class BaseUerController {
     @PatchMapping("/bind-open-id")
     @ApiOperation(value = "绑定openId", hidden = true)
     public Result updateOpenId(@RequestBody @Validated BaseUser2UpdateOpenIdDTO updateOpenIdDTO){
-        AssertUtil.isEnum(updateOpenIdDTO.getUserType(), OtherUserTypeEnum.class, "绑定账号openId的类型无效");
+        AssertUtil.isEnum(updateOpenIdDTO.getUserType(), OtherUserTypeEnum.class);
 
         BaseUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdDTO, BaseUserDTO.class);
 

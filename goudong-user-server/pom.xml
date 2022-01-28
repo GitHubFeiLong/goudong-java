@@ -134,12 +134,6 @@
             <artifactId>hutool-all</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--qq互联-->
-        <dependency>
-            <groupId>net.gplatform</groupId>
-            <artifactId>Sdk4J</artifactId>
-            <version>${Sdk4J.version}</version>
-        </dependency>
         <!--解决项目启动报日志错误-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

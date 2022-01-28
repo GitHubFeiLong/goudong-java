@@ -1,4 +1,4 @@
-package com.goudong.user.properties;
+package com.goudong.oauth2.properties;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
@@ -6,10 +6,11 @@ import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
-import com.goudong.user.entity.OtherUserInfoBean;
+import com.goudong.oauth2.core.OtherUserInfoBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
@@ -19,14 +20,16 @@ import java.util.Map;
 
 /**
  * 类描述：
- * 页面配置
- * @Author e-Feilong.Chen
- * @Date 2021/12/8 12:20
+ * 重定向页面配置
+ * @auther msi
+ * @date 2022/1/28 13:33
+ * @version 1.0
  */
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "user.page")
-public class UserPageProperties {
+@Component
+@ConfigurationProperties(prefix = "oauth2.redirect-page")
+public class RedirectPageProperties {
 
     /**
      * qq登陆成功需要绑定账号跳转页面
@@ -109,6 +112,8 @@ public class UserPageProperties {
                     sb.append(String.join(",", (Collection) value));
                 } else if (value.getClass().isArray()) {
                     LogUtil.error(log, "属性是数组类型，这里需要进行修改");
+                } else if (value instanceof Date) {
+                    sb.append(((Date) value).getTime());
                 } else {
                     sb.append(String.join(",", value.toString()));
                 }

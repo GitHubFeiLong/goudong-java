@@ -50,12 +50,12 @@
       <module name="goudong-commons" options="-parameters" />
       <module name="goudong-file-server" options="-parameters" />
       <module name="goudong-gateway-server" options="-parameters" />
-      <module name="goudong-java" options="-parameters" />
+      <module name="goudong-java" options="" />
       <module name="goudong-message-server" options="-parameters" />
       <module name="goudong-oauth2-server" options="-parameters" />
       <module name="goudong-resource-server" options="-parameters" />
       <module name="goudong-security-server" options="-parameters" />
-      <module name="goudong-user-server" options="-parameters -extdirs D:\workspaces\github-repository\goudong-java\goudong-user-server/lib" />
+      <module name="goudong-user-server" options="-parameters -extdirs D:\workspace\my-workspace\goudong-java\goudong-user-server/lib" />
       <module name="kkFileView" options="-parameters" />
       <module name="office-plugin" options="-parameters" />
       <module name="sentinel-dashboard" options="-parameters" />

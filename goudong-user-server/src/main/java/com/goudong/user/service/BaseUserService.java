@@ -36,6 +36,13 @@ public interface BaseUserService {
     List<BaseUserPO> getUserByLoginName(String loginName);
 
     /**
+     * 根据openId查询用户信息
+     * @param openId
+     * @return
+     */
+    BaseUserDTO findByOpenId(String openId);
+
+    /**
      * 绑定opendId
      * @param userDTO
      */
@@ -47,7 +54,7 @@ public interface BaseUserService {
      * @return
      */
     BaseUserDTO getUserDetailByLoginName(String loginName);
-    //
+
     /**
      * 更新密码
      * @param baseUserDTO

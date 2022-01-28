@@ -1,6 +1,5 @@
-package com.goudong.oauth2.core;
+package com.goudong.commons.dto.oauth2;
 
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import lombok.Data;
 
@@ -15,7 +14,7 @@ import java.util.Date;
  * @Date 2022/1/20 8:06
  */
 @Data
-public class LoginInfo {
+public class LoginInfoDTO {
     //~fields
     //==================================================================================================================
     /**

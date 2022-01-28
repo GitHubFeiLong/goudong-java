@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+import java.util.regex.Pattern;
+
 /**
  * 类描述：
  * 自定义认证处理
@@ -30,6 +33,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     private static final BCryptPasswordEncoder BCRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
+    /**
+     * BCrypt格式的字符串
+     * @see BCryptPasswordEncoder#BCRYPT_PATTERN
+     */
+    private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
     private final BaseUserService baseUserService;
 
     public AuthenticationProviderImpl(BaseUserService baseUserService) {
@@ -64,11 +72,16 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             throw new UsernameNotFoundException("用户不存在");
         }
 
-        // 使用 BCrypt 加密的方式进行匹配
-        boolean matches = BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
+        boolean passwordMatches = false;
+        if (BCRYPT_PATTERN.matcher(password).matches()) {
+            passwordMatches = Objects.equals(password, userInfo.getPassword());
+        } else {
+            // 使用 BCrypt 加密的方式进行匹配
+            passwordMatches = BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
 
+        }
         // 密码不正确，抛出异常
-        if (!matches) {
+        if (!passwordMatches) {
             throw new BadCredentialsException("用户密码错误");
         }
 

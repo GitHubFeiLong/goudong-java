@@ -152,6 +152,11 @@
             <artifactId>mapstruct-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--qq互联-->
+        <dependency>
+            <groupId>net.gplatform</groupId>
+            <artifactId>Sdk4J</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
