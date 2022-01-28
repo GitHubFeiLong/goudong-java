@@ -1,4 +1,4 @@
-package com.goudong.commons.constant;
+package com.goudong.commons.constant.core;
 
 /**
  * 各种包枚举
@@ -9,7 +9,7 @@ package com.goudong.commons.constant;
 public class BasePackageConst {
     /*=========================* OpenFeign包 *=========================*/
 
-    public static final String OPENFEIGN = "com.goudong.commons.openfeign";
+    public static final String OPENFEIGN = "com.goudong.commons.frame.openfeign";
 
     /*=========================* 模块包 *=========================*/
 

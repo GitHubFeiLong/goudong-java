@@ -1,4 +1,4 @@
-package com.goudong.commons.constant;
+package com.goudong.commons.constant.core;
 
 import com.goudong.commons.utils.core.AssertUtil;
 

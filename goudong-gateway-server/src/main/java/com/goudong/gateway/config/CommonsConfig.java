@@ -41,8 +41,8 @@ public class CommonsConfig {
      */
     // @Bean
     // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    public RepeatAop repeatAop() {
-        return new RepeatAop();
-    }
+    // public RepeatAop repeatAop() {
+    //     return new RepeatAop();
+    // }
 
 }

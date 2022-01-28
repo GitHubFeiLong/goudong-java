@@ -2,8 +2,8 @@ package com.goudong.commons.utils.core;
 
 import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.constant.BasePackageConst;
-import com.goudong.commons.constant.CommonConst;
+import com.goudong.commons.constant.core.BasePackageConst;
+import com.goudong.commons.constant.core.CommonConst;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.enumerate.core.RequestMappingEnum;
 import com.goudong.commons.exception.ServerException;

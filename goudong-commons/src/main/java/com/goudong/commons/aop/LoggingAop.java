@@ -1,6 +1,6 @@
 package com.goudong.commons.aop;
 
-import com.goudong.commons.constant.SpringProfileConst;
+import com.goudong.commons.constant.core.SpringProfileConst;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;

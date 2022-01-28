@@ -1,6 +1,5 @@
 package com.goudong.user.service;
 
-import com.goudong.commons.dto.AuthorityUserDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.user.po.BaseUserPO;
 
@@ -36,13 +35,6 @@ public interface BaseUserService {
     List<BaseUserPO> getUserByLoginName(String loginName);
 
     /**
-     * 根据openId查询用户信息
-     * @param openId
-     * @return
-     */
-    BaseUserDTO findByOpenId(String openId);
-
-    /**
      * 绑定opendId
      * @param userDTO
      */
@@ -61,6 +53,4 @@ public interface BaseUserService {
      * @return
      */
     BaseUserDTO updatePassword(BaseUserDTO baseUserDTO);
-    //
-    // AuthorityUserDTO demo(String name, String address, int i);
 }

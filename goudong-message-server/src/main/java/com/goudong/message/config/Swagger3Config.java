@@ -33,10 +33,10 @@ public class Swagger3Config {
      * @return
      */
     @Bean
-    public Docket openDocket() {
+    public Docket messageDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("open api")
-                .description("开放接口，不需要登录就能访问")
+                .title("message api")
+                .description("消息服务接口文档")
                 .version("1.0")
                 .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
                 .build();

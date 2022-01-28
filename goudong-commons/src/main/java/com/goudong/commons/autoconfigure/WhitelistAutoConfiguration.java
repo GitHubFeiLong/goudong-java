@@ -2,7 +2,7 @@ package com.goudong.commons.autoconfigure;
 
 import com.goudong.commons.config.FeignConfig;
 import com.goudong.commons.frame.whitelist.WhitelistInitialize;
-import com.goudong.commons.openfeign.GoudongOauth2ServerService;
+import com.goudong.commons.frame.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.WhitelistProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;

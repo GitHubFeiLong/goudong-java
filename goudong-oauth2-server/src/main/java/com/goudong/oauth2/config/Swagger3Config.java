@@ -56,14 +56,14 @@ public class Swagger3Config {
     }
 
     /**
-     * 登录相关
+     * 认证相关
      * @return
      */
     @Bean
-    public Docket loginDocket() {
+    public Docket authenticationDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
-                .title("登录")
-                .description("账号密码登录，token登录，退出登录")
+                .title("认证/鉴权")
+                .description("认证/鉴权相关接口")
                 .version("1.0")
                 .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
                 .build();
@@ -71,7 +71,7 @@ public class Swagger3Config {
                 .enable(true)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.login"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.oauth2.controller.authentication"))
                 //只有标记了@ApiOperation的方法才会暴露出给swagger
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())

@@ -20,12 +20,6 @@ public class RoleConst {
     public static final String ROLE_USER = "ROLE_USER";
 
     /**
-     * 普通用户角色
-     */
-    @Deprecated
-    public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
-
-    /**
      * 匿名角色
      * 注意，创建角色时不能再创建该同名角色。
      */

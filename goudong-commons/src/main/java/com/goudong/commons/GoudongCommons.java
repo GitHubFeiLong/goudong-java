@@ -1,6 +1,6 @@
 package com.goudong.commons;
 
-import com.goudong.commons.constant.BasePackageConst;
+import com.goudong.commons.constant.core.BasePackageConst;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

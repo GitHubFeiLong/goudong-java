@@ -1,17 +1,13 @@
 package com.goudong.message.config;
 
-import com.goudong.commons.enumerate.core.RedisKeyEnum;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
-import com.goudong.commons.utils.CodeUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.message.enumerate.RedisKeyProviderEnum;
 import com.goudong.message.util.SendSms;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

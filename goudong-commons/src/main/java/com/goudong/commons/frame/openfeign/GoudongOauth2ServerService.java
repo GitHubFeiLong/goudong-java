@@ -1,12 +1,10 @@
-package com.goudong.commons.openfeign;
+package com.goudong.commons.frame.openfeign;
 
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
-import com.goudong.commons.dto.oauth2.LoginInfoDTO;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 

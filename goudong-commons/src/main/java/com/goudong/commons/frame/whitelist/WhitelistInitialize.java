@@ -4,7 +4,7 @@ import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.frame.core.ResourceAntMatcher;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.openfeign.GoudongOauth2ServerService;
+import com.goudong.commons.frame.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.WhitelistProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.ResourceUtil;

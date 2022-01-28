@@ -9,7 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import com.goudong.commons.frame.redis.RedisTool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -78,42 +77,42 @@ public class RedisConfig {
      * @param connectionFactory
      * @return
      */
-    @Bean
-    @SuppressWarnings("ALL")
-    public RedisOperationsUtil redisOperationsUtil(RedisConnectionFactory connectionFactory){
-        RedisOperationsUtil template = new RedisOperationsUtil();
-        template.setConnectionFactory(connectionFactory);
-        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        ObjectMapper mapper = new ObjectMapper();
-
-        //LocalDatetime序列化
-        JavaTimeModule timeModule = new JavaTimeModule();
-        timeModule.addDeserializer(LocalDate.class,
-                new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        timeModule.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        timeModule.addSerializer(LocalDate.class,
-                new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        timeModule.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.registerModule(timeModule);
-
-
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        ///mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        serializer.setObjectMapper(mapper);
-
-        template.setValueSerializer(serializer);
-        //使用StringRedisSerializer来序列化和反序列化redis的key值
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(serializer);
-        template.afterPropertiesSet();
-        return template;
-    }
+    // @Bean
+    // @SuppressWarnings("ALL")
+    // public RedisOperationsUtil redisOperationsUtil(RedisConnectionFactory connectionFactory){
+    //     RedisOperationsUtil template = new RedisOperationsUtil();
+    //     template.setConnectionFactory(connectionFactory);
+    //     //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
+    //     Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
+    //     ObjectMapper mapper = new ObjectMapper();
+    //
+    //     //LocalDatetime序列化
+    //     JavaTimeModule timeModule = new JavaTimeModule();
+    //     timeModule.addDeserializer(LocalDate.class,
+    //             new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    //     timeModule.addDeserializer(LocalDateTime.class,
+    //             new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    //     timeModule.addSerializer(LocalDate.class,
+    //             new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    //     timeModule.addSerializer(LocalDateTime.class,
+    //             new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    //
+    //     mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    //     mapper.registerModule(timeModule);
+    //
+    //
+    //     mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+    //     ///mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+    //     serializer.setObjectMapper(mapper);
+    //
+    //     template.setValueSerializer(serializer);
+    //     //使用StringRedisSerializer来序列化和反序列化redis的key值
+    //     template.setKeySerializer(new StringRedisSerializer());
+    //     template.setHashKeySerializer(new StringRedisSerializer());
+    //     template.setHashValueSerializer(serializer);
+    //     template.afterPropertiesSet();
+    //     return template;
+    // }
 
     /**
      * 配置 RedisOperationsUtil

@@ -1,6 +1,6 @@
 package com.goudong.message;
 
-import com.goudong.commons.constant.BasePackageConst;
+import com.goudong.commons.constant.core.BasePackageConst;
 import com.goudong.commons.frame.core.LogApplicationStartup;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -16,17 +16,12 @@ import org.springframework.util.StopWatch;
 
 /**
  * 类描述：
- * , scanBasePackageClasses = {GlobalExceptionHandler.class, LogAOP.class, RedisConfig.class}
- * 注解：
- *  @EnableDiscoveryClient 开启服务注册
- *  @EnableFeignClients 开启feign
- * @Author msi
- * @Date 2021-05-04 22:36
- * @Version 1.0
+ * 消息服务
+ * @author msi
+ * @date 2022/1/28 18:27
+ * @version 1.0
  */
-// @SpringBootApplication(scanBasePackages = {BasePackageConst.MESSAGE, BasePackageConst.COMMONS})
 @SpringBootApplication
-
 @EnableDiscoveryClient
 @MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
 @EnableScheduling

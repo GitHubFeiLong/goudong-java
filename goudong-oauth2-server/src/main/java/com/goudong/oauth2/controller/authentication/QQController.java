@@ -1,10 +1,8 @@
 package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.oauth2.LoginInfoDTO;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.frame.redis.RedisTool;
-import com.goudong.commons.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
@@ -26,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +82,7 @@ public class QQController {
      */
     @ApiOperation(value = "QQ互联登录", notes = "")
     @GetMapping("/login")
-    public void qqLogin (HttpServletRequest request, HttpServletResponse response) throws QQConnectException, IOException {
+    public void login (HttpServletRequest request, HttpServletResponse response) throws QQConnectException, IOException {
         // 重定向认证界面
         response.sendRedirect(new Oauth().getAuthorizeURL(request));
     }
@@ -103,8 +100,9 @@ public class QQController {
         AccessToken accessTokenObj = (new Oauth()).getAccessTokenByRequest(request);
         String accessToken = null, openID = null;
         long tokenExpireIn = 0L;
+        // login()方法请求和回调必须是同一个服务处理，不然会进入if，导致失败
         if (StringUtils.isEmpty(accessTokenObj.getAccessToken())) {
-            log.error("没有获取到响应参数");
+            LogUtil.error(log, "没有获取到响应参数：{}", accessTokenObj.getAccessToken());
         }else{
             accessToken = accessTokenObj.getAccessToken();
             tokenExpireIn = accessTokenObj.getExpireIn();

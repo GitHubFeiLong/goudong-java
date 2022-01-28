@@ -1,13 +1,11 @@
 package com.goudong.oauth2.config.security;
 
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,12 +20,6 @@ import java.util.Set;
 @Slf4j
 @Component
 public class FilterInvocationSecurityMetadataSourceImpl implements FilterInvocationSecurityMetadataSource {
-
-    // @Resource
-    // private SelfAuthorityUserMapper selfAuthorityUserMapper;
-
-    @Resource
-    private RedisOperationsUtil redisOperationsUtil;
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {

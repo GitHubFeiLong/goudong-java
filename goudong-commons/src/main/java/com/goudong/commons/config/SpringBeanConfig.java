@@ -10,7 +10,6 @@ import org.springframework.context.ApplicationContextAware;
  * @Author e-Feilong.Chen
  * @Date 2021/8/11 15:25
  */
-// @Component
 public class SpringBeanConfig implements ApplicationContextAware {
 
     private static ApplicationContext ac = null;
@@ -37,12 +36,4 @@ public class SpringBeanConfig implements ApplicationContextAware {
         return ac.getBean(beanName);
     }
 
-    /**
-     * 根据bean的名字从spring容器中获取bean
-     * @param beanName
-     * @return
-     */
-    // public synchronized static Object getBean(String beanName, Class<?> clazz) {
-    //     return (clazz)ac.getBean(beanName);
-    // }
 }

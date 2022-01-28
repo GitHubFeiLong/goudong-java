@@ -6,7 +6,7 @@ import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.openfeign.GoudongMessageServerService;
+import com.goudong.commons.frame.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.user.po.BaseRolePO;
@@ -181,18 +181,6 @@ public class BaseUserServiceImpl implements BaseUserService {
         List<BaseUserPO> baseUserPOS = this.ListUsersByLoginName(loginName, loginName, loginName);
 
         return baseUserPOS;
-    }
-
-    /**
-     * 根据openId查询用户信息
-     *
-     * @param openId
-     * @return
-     */
-    @Override
-    public BaseUserDTO findByOpenId(String openId) {
-        BaseUserPO byQqOpenId = baseUserRepository.findByQqOpenId(openId);
-        return BeanUtil.copyProperties(byQqOpenId, BaseUserDTO.class);
     }
 
     /**

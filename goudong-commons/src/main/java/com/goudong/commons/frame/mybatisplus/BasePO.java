@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.goudong.commons.service.validated.Update;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -28,7 +27,7 @@ public class BasePO implements Serializable {
      * id
      * 防止前端接受精度丢失
      */
-    @NotNull(message = "修改时id必传",groups = {Update.class})
+    @NotNull(message = "修改时id必传")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonSerialize(using= ToStringSerializer.class)
     protected Long id;

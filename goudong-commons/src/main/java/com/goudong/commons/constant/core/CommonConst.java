@@ -1,4 +1,4 @@
-package com.goudong.commons.constant;
+package com.goudong.commons.constant.core;
 
 /**
  * 类描述：
@@ -36,22 +36,4 @@ public class CommonConst {
      * 所有字节码文件的路径 antPath模式
      */
     public static final String ALL_CLASSES_ANT_PATH = "/**/*.class";
-
-    /**
-     * 超级管理员角色
-     */
-    @Deprecated
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
-    /**
-     * 普通用户角色
-     */
-    @Deprecated
-    public static final String ROLE_ORDINARY = "ROLE_ORDINARY";
-
-    /**
-     * 网关路由微服务时，新增一个请求头，微服务用于获取当前登录用户信息
-     */
-    @Deprecated
-    public static final String HEADER_TOKEN_MD5_KEY = "token-md5-key";
-
 }

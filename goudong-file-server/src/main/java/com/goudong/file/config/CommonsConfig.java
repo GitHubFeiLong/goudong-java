@@ -5,13 +5,9 @@ import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
 import com.goudong.commons.aop.LoggingAop;
-import com.goudong.commons.aop.RepeatAop;
 import com.goudong.commons.filter.UserContextFilter;
 import com.goudong.commons.frame.mvc.error.ErrorAttributes;
 import com.goudong.commons.frame.mvc.error.ErrorController;
-import com.goudong.commons.frame.redis.RedisOperationsUtil;
-import com.goudong.commons.utils.AuthorityUserUtil;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -57,11 +53,11 @@ public class CommonsConfig {
      * 防止重复请求
      * @return
      */
-    @Bean
-    @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    public RepeatAop repeatAop() {
-        return new RepeatAop();
-    }
+    // @Bean
+    // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
+    // public RepeatAop repeatAop() {
+    //     return new RepeatAop();
+    // }
 
     /**
      * 自定义异常逻辑，返回自定义格式的json错误信息

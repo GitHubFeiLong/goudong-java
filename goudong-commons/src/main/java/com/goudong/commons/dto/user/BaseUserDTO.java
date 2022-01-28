@@ -1,10 +1,8 @@
 package com.goudong.commons.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.goudong.commons.frame.jpa.BasePO;
-import com.goudong.commons.dto.AuthorityMenuDTO;
-import com.goudong.commons.dto.AuthorityRoleDTO;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
+import com.goudong.commons.frame.jpa.BasePO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * authority_user
@@ -72,16 +69,6 @@ public class BaseUserDTO extends BasePO {
      * @see AccountRadioEnum
      */
     private String accountRadio;
-
-    /**
-     * 角色
-     */
-    private List<AuthorityRoleDTO> authorityRoleDTOS;
-
-    /**
-     * 菜单
-     */
-    private List<AuthorityMenuDTO> authorityMenuDTOS;
 
     /**
      * 用户名、电话或邮箱

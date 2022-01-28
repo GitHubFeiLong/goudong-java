@@ -4,7 +4,7 @@ import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.teaopenapi.models.Config;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.message.core.AlibabaMessage;
+import com.goudong.message.properties.AlibabaMessageProperties;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 public class SendSms {
 
     @Resource
-    private AlibabaMessage alibabaMessage;
+    private AlibabaMessageProperties alibabaMessage;
 
     /**
      * 使用AK&SK初始化账号Client

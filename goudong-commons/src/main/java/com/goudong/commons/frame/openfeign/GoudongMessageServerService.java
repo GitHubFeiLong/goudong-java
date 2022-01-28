@@ -1,4 +1,4 @@
-package com.goudong.commons.openfeign;
+package com.goudong.commons.frame.openfeign;
 
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;

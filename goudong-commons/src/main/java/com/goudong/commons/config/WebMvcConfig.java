@@ -22,21 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    // @Resource
-    // private UserInterceptor userInterceptor;
-
-    // /**
-    //  * 注册拦截器
-    //  * @param registry
-    //  */
-    // @Override
-    // public void addInterceptors(InterceptorRegistry registry) {
-    //     WebMvcConfigurer.super.addInterceptors(registry);
-    //     // api前缀的请求都进行拦截处理
-    //     // 注意： 这里拦截不到在配置文件添加前缀
-    //     registry.addInterceptor(userInterceptor).addPathPatterns("/**");
-    // }
-
     private final HttpServletRequest request;
 
     public WebMvcConfig(HttpServletRequest request) {

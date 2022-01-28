@@ -80,6 +80,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
         //这里只是做个最简单的同一的异常结果输出，实际业务可根据throwable不同的异常处理不同的逻辑
         threadLocal.set(basicException);
         ServerRequest newRequest = ServerRequest.create(exchange, this.messageReaders);
+
         return RouterFunctions.route(RequestPredicates.all(), this::renderErrorResponse).route(newRequest)
                 .switchIfEmpty(Mono.error(throwable))
                 .flatMap((handler) -> handler.handle(newRequest))

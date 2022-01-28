@@ -1,7 +1,7 @@
 package com.goudong.file.autoconfigure;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.constant.SystemEnvConst;
+import com.goudong.commons.constant.core.SystemEnvConst;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
