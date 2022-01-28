@@ -29,6 +29,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -86,7 +87,13 @@ public class BaseUerController {
     public Result<Boolean> getUserByPhone(@PathVariable String phone) {
         AssertUtil.isPhone(phone, "手机号码格式不正确");
         BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
-        return Result.ofSuccess(baseUserPO == null);
+        Result<Boolean> booleanResult = Result.ofSuccess(baseUserPO == null);
+        // 返回附加信息，用户基本信息
+        HashMap<Object, Object> dataMap = new HashMap<>();
+        dataMap.put("username", baseUserPO.getUsername());
+        dataMap.put("validTime", baseUserPO.getValidTime());
+        booleanResult.setDataMap(dataMap);
+        return booleanResult;
     }
 
     /**

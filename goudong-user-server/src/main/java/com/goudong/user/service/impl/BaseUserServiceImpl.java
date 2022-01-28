@@ -99,46 +99,50 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     /**
      * 新增用户
-     *
+     * 根据{@link AccountRadioEnum}值，判断是否是直接新增一个用户信息，还是先将已有的用户信息删除，再新增用户信息
      * @param baseUserDTO
      * @return
      */
     @Override
     @Transactional
     public BaseUserDTO createUser(BaseUserDTO baseUserDTO) {
-        // 查询填写的基本信息是否已存在
-        List<BaseUserPO> baseUserPOS = ListUsersByLoginName(baseUserDTO.getUsername(), baseUserDTO.getPassword(), baseUserDTO.getEmail());
-
-        if (CollectionUtils.isNotEmpty(baseUserPOS)) {
-            // 有多条，表示提交的数据有问题
-            // 1. 使用postman 类似工具，提交未经校验的内容
-            // 2. 注册时间过长，账号被别人注册了
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在");
-        }
-        String accountRadio = baseUserDTO.getAccountRadio();
+        AccountRadioEnum accountRadioEnum = AccountRadioEnum.valueOf(baseUserDTO.getAccountRadio());
         BaseUserPO userPO = BeanUtil.copyProperties(baseUserDTO, BaseUserPO.class);
-
-        AccountRadioEnum accountRadioEnum = AccountRadioEnum.valueOf(accountRadio);
-
-        if(Objects.equals(accountRadioEnum, AccountRadioEnum.BLANK)) {
-            // 为空，插入
-            userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-            // 设置非空属性
-            userPO.setValidTime(new DateTime("9999-12-31 23:59:59"));
-            // 设置角色
-            BaseRolePO roleUser = baseRoleService.findByRoleUser();
-            userPO.getRoles().add(roleUser);
-            baseUserRepository.save(userPO);
-
-            return BeanUtil.copyProperties(userPO, BaseUserDTO.class);
+        switch (accountRadioEnum) {
+            case BLANK:
+                // 查询填写的基本信息是否已存在
+                List<BaseUserPO> baseUserPOS = ListUsersByLoginName(baseUserDTO.getUsername(), baseUserDTO.getPhone(), baseUserDTO.getEmail());
+                if (CollectionUtils.isNotEmpty(baseUserPOS)) {
+                    throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在");
+                }
+                return createBaseUser(userPO);
+            case MY_SELF:
+            case NOT_MY_SELF:
+                BaseUserPO byPhone = baseUserRepository.findByPhone(baseUserDTO.getPhone());
+                if (byPhone != null) {
+                    // 先删除，再新增
+                    baseUserRepository.delete(byPhone);
+                    baseUserRepository.flush();
+                }
+                return createBaseUser(userPO);
+            default:
+                return null;
         }
+    }
 
-        // 数据库有相关用户有一条数据
-        userPO.setId(baseUserPOS.get(0).getId());
-
-        // 加密
+    /**
+     * 新增一个用户信息
+     * @param userPO
+     * @return
+     */
+    private BaseUserDTO createBaseUser(BaseUserPO userPO) {
+        // 为空，插入
         userPO.setPassword(BCrypt.hashpw(userPO.getPassword(), BCrypt.gensalt()));
-
+        // 设置非空属性
+        userPO.setValidTime(new DateTime("9999-12-31 23:59:59"));
+        // 设置角色
+        BaseRolePO roleUser = baseRoleService.findByRoleUser();
+        userPO.getRoles().add(roleUser);
         baseUserRepository.save(userPO);
 
         return BeanUtil.copyProperties(userPO, BaseUserDTO.class);
