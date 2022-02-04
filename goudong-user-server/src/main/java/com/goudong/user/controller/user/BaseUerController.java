@@ -86,10 +86,14 @@ public class BaseUerController {
         BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
         Result<Boolean> booleanResult = Result.ofSuccess(baseUserPO == null);
         // 返回附加信息，用户基本信息
-        HashMap<Object, Object> dataMap = new HashMap<>();
-        dataMap.put("username", baseUserPO.getUsername());
-        dataMap.put("validTime", baseUserPO.getValidTime());
-        booleanResult.setDataMap(dataMap);
+        if (baseUserPO != null) {
+            HashMap<Object, Object> dataMap = new HashMap<>();
+            dataMap.put("username", baseUserPO.getUsername());
+            dataMap.put("validTime", baseUserPO.getValidTime());
+            dataMap.put("email", baseUserPO.getEmail());
+            booleanResult.setDataMap(dataMap);
+        }
+
         return booleanResult;
     }
 
