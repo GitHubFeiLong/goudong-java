@@ -3,6 +3,7 @@ package com.goudong.commons.utils;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.google.common.collect.Lists;
 import com.goudong.commons.po.core.BasePO;
+import com.goudong.commons.utils.core.BeanUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;

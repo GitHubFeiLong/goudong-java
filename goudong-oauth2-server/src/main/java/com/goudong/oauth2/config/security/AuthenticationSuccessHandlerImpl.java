@@ -5,11 +5,12 @@ import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.LoginInfoDTO;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.frame.redis.RedisTool;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
 import com.goudong.oauth2.po.BaseUserPO;
-import com.goudong.oauth2.properties.TokenExpiresProperties;
+import com.goudong.oauth2.service.BaseAuthenticationLogService;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,28 +43,21 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     private final BaseTokenService baseTokenService;
 
     /**
-     * 令牌过期配置
-     */
-    private final TokenExpiresProperties tokenExpiresProperties;
-
-    /**
      * 用户服务
      */
     private final BaseUserService baseUserService;
 
     /**
-     * redis tool
+     * 认证日志服务层接口
      */
-    private final RedisTool redisTool;
+    private final BaseAuthenticationLogService baseAuthenticationLogService;
 
     public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
-                                            TokenExpiresProperties tokenExpiresProperties,
                                             BaseUserService baseUserService,
-                                            RedisTool redisTool) {
+                                            BaseAuthenticationLogService baseAuthenticationLogService) {
         this.baseTokenService = baseTokenService;
-        this.tokenExpiresProperties = tokenExpiresProperties;
         this.baseUserService = baseUserService;
-        this.redisTool = redisTool;
+        this.baseAuthenticationLogService = baseAuthenticationLogService;
     }
 
     /**
@@ -92,6 +86,14 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         // 将认证信息存储到redis中
         BaseUserDTO baseUser = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
         baseUserService.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
+
+        // 保存认证日志
+        BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
+                (String)httpServletRequest.getAttribute("principal"),
+                true,
+                AuthenticationLogTypeEnum.SYSTEM.name().toLowerCase(),
+                "认证成功");
+        baseAuthenticationLogService.create(baseAuthenticationLogDTO);
 
         // 响应令牌和用户信息
         LoginInfoDTO loginInfo = BeanUtil.copyProperties(tokenDTO, LoginInfoDTO.class);

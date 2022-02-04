@@ -7,7 +7,7 @@ import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseMenuService;

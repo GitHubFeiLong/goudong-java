@@ -1,4 +1,4 @@
-package com.goudong.commons.utils;
+package com.goudong.commons.utils.core;
 
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.fasterxml.jackson.databind.ObjectMapper;

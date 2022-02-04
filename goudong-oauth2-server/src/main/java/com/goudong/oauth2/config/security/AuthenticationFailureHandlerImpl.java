@@ -5,6 +5,9 @@ import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
+import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
+import com.goudong.oauth2.service.BaseAuthenticationLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +32,15 @@ import java.io.IOException;
 @Component
 public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
 
+    /**
+     * 认证日志服务层接口
+     */
+    private final BaseAuthenticationLogService baseAuthenticationLogService;
+
+    public AuthenticationFailureHandlerImpl(BaseAuthenticationLogService baseAuthenticationLogService) {
+        this.baseAuthenticationLogService = baseAuthenticationLogService;
+    }
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
         ClientExceptionEnum exceptionEnum = ClientExceptionEnum.UNAUTHORIZED;
@@ -46,6 +58,14 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
         } else {
             result.setClientMessage(e.getMessage());
         }
+
+        // 保存认证日志
+        BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
+                (String)httpServletRequest.getAttribute("principal"),
+                false,
+                AuthenticationLogTypeEnum.SYSTEM.name().toLowerCase(),
+                result.getClientMessage());
+        baseAuthenticationLogService.create(baseAuthenticationLogDTO);
 
         httpServletResponse.setStatus(exceptionEnum.getStatus());
         httpServletResponse.setCharacterEncoding("UTF-8");

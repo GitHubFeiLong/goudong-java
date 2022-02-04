@@ -1,12 +1,7 @@
-package com.goudong.oauth2.po;
+package com.goudong.oauth2.dto;
 
-import com.goudong.commons.frame.jpa.BasePO;
+import com.goudong.commons.po.core.BasePO;
 import lombok.Data;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * 类描述：
@@ -16,11 +11,7 @@ import javax.persistence.Table;
  * @date 2022/2/4 11:49
  */
 @Data
-@Entity
-@Table(name = "base_authentication_log")
-@SQLDelete(sql = "update base_authentication_log set deleted=true where id=?")
-@Where(clause = "deleted=false")
-public class BaseAuthenticationLogPO extends BasePO {
+public class BaseAuthenticationLogDTO extends BasePO {
 
     //~fields
     //==================================================================================================================
@@ -51,4 +42,14 @@ public class BaseAuthenticationLogPO extends BasePO {
     //~methods
     //==================================================================================================================
 
+
+    public BaseAuthenticationLogDTO() {
+    }
+
+    public BaseAuthenticationLogDTO(String principal, Boolean successful, String type, String description) {
+        this.principal = principal;
+        this.successful = successful;
+        this.type = type;
+        this.description = description;
+    }
 }

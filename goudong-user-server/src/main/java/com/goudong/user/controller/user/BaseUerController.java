@@ -10,7 +10,7 @@ import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.frame.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.user.po.BaseUserPO;

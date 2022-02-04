@@ -66,7 +66,7 @@ public class AssertUtil extends Assert{
      */
     public static void isEnum (String name, Class clazz, String message) {
         try {
-            Enum anEnum = Enum.valueOf(clazz, name);
+            Enum anEnum = Enum.valueOf(clazz, name.toUpperCase());
         } catch (IllegalArgumentException e) {
 
             // 不为空，使用自定义异常

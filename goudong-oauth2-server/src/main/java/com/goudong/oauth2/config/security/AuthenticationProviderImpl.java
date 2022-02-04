@@ -2,8 +2,11 @@ package com.goudong.oauth2.config.security;
 
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
+import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
 import com.goudong.oauth2.po.BaseUserPO;
+import com.goudong.oauth2.service.BaseAuthenticationLogService;
 import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -38,10 +43,21 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      * @see BCryptPasswordEncoder#BCRYPT_PATTERN
      */
     private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
+
+    /**
+     * 用户服务接口
+     */
     private final BaseUserService baseUserService;
 
-    public AuthenticationProviderImpl(BaseUserService baseUserService) {
+    /**
+     * 认证日志服务层接口
+     */
+    private final BaseAuthenticationLogService baseAuthenticationLogService;
+
+    public AuthenticationProviderImpl(BaseUserService baseUserService,
+                                      BaseAuthenticationLogService baseAuthenticationLogService) {
         this.baseUserService = baseUserService;
+        this.baseAuthenticationLogService = baseAuthenticationLogService;
     }
 
     /**
@@ -64,6 +80,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码");
         }
+
+        // 将用户账号设置到request中，再登录成功和失败处理器中记录认证日志
+        ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().setAttribute("principal", username);
+
         // 根据用户名查询用户是否存在
         UserDetails userInfo = baseUserService.loadUserByUsername(username);
 
@@ -93,6 +113,8 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         // 验证通过，返回用户信息
         BaseUserPO baseUserPO = BeanUtil.copyProperties(userInfo, BaseUserPO.class);
         baseUserPO.setPassword(null);
+
+
         return baseUserPO;
     }
 

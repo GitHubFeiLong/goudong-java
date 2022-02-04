@@ -4,12 +4,15 @@ import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.pojo.Transition;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.core.OtherUserInfoBean;
+import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.RedirectPageProperties;
+import com.goudong.oauth2.service.BaseAuthenticationLogService;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
 import com.qq.connect.QQConnectException;
@@ -63,14 +66,21 @@ public class QQController {
      */
     private final BaseTokenService baseTokenService;
 
+    /**
+     * 认证日志服务层接口
+     */
+    private final BaseAuthenticationLogService baseAuthenticationLogService;
+
     public QQController(BaseUserService baseUserService,
                         RedisTool redisTool,
                         RedirectPageProperties redirectPageProperties,
-                        BaseTokenService baseTokenService) {
+                        BaseTokenService baseTokenService,
+                        BaseAuthenticationLogService baseAuthenticationLogService) {
         this.baseUserService = baseUserService;
         this.redisTool = redisTool;
         this.redirectPageProperties = redirectPageProperties;
         this.baseTokenService = baseTokenService;
+        this.baseAuthenticationLogService = baseAuthenticationLogService;
     }
 
     /**
@@ -148,6 +158,14 @@ public class QQController {
                 // 重定向首页，并带上token参数
                 response.sendRedirect(redirectPageProperties.getTransitionPageUrl(transition));
             }
+
+            // 保存认证日志
+            BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
+                    openID,
+                    true,
+                    AuthenticationLogTypeEnum.QQ.name().toLowerCase(),
+                    "认证成功");
+            baseAuthenticationLogService.create(baseAuthenticationLogDTO);
         }
 
     }

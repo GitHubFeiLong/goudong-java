@@ -8,7 +8,7 @@ import com.goudong.commons.exception.oauth2.RefreshTokenExpiredException;
 import com.goudong.commons.exception.oauth2.RefreshTokenInvalidException;
 import com.goudong.commons.frame.redis.RedisKeyProvider;
 import com.goudong.commons.frame.redis.RedisTool;
-import com.goudong.commons.utils.BeanUtil;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
