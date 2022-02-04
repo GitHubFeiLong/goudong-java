@@ -84,12 +84,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--json 不要过于依赖-->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba</groupId>-->
-<!--            <artifactId>fastjson</artifactId>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
         <!--jwt-->
         <dependency>
             <groupId>com.auth0</groupId>
