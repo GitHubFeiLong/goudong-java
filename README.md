@@ -73,7 +73,7 @@ pause
 ```
 > 注意：
 > 如果有信息是以下字符的，需要转义（使用^符号，如&应该写成^&）
-> + @命令行回显屏蔽符 
+> + @命令行回显屏蔽符
 > + %批处理变量引导符
 > + \>重定向符
 > + \>> 重定向符
@@ -88,38 +88,87 @@ pause
 > + ; 分号
 > + () 括号
 > + ! 感叹号
+> 
+#### Linux
+在 /etc/profile.d下创建一个新的goudong-java-variable.sh 文件，然后将下面的内容复制进去，保存退出。最后执行 source /etc/profile.d/goudong-java-variable.sh 即可
+```shell
+# set goudong-java environment variable
+echo centos平台设置goudong环境变量
+# mysql
+export MYSQL_USERNAME=MySQL用户名
+export MYSQL_PASSWORD=MySQL密码
+
+#Redis
+export REDIS_PASSWORD=redis密码
+
+# RabbitMQ
+export RABBITMQ_USERNAME=rabbitmq用户名
+export RABBITMQ_PASSWORD=rabbitmq密码
+
+# 邮箱
+export EMAIL_USERNAME=邮箱
+export EMAIL_PASSWORD=右相对应的密码
+
+# 阿里云短信
+export ALI_MESSAGE_ACCESS_KEY_ID=阿里云短信访问key id
+export ALI_MESSAGE_ACCESS_KEY_SECRET=阿里云短信访问key 密钥
+export ALI_MESSAGE_SIGN_NAME=短信签名
+export ALI_MESSAGE_TEMPLATE_CODE=短信签名模板code
+
+echo "设置goudong环境变量完成"
+```
+> 有特殊字符的时候使用单引号将所有值包起来
 
 
-## 系统处理请求流程
+[comment]: <> (## 系统处理请求流程)
 
-流程图位置：（goudong-java\drawio\处理用户请求流程.drawio）
+[comment]: <> (流程图位置：（goudong-java\drawio\处理用户请求流程.drawio）)
 
-整个微服务的处理用户请求的流程如下图，共分为7个大步骤，其中在第2步网关中进行了大量的校验。
+[comment]: <> (整个微服务的处理用户请求的流程如下图，共分为7个大步骤，其中在第2步网关中进行了大量的校验。)
 
-![处理用户请求流程-1](README.assets/%E5%A4%84%E7%90%86%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B-1.png)
+[comment]: <> (![处理用户请求流程-1]&#40;README.assets/%E5%A4%84%E7%90%86%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B-1.png&#41;)
 
-鉴权步骤：
+[comment]: <> (鉴权步骤：)
 
-1. 用户发起请求到网关
-2. 网关根据请求uri判断是否需要放行（登录等不需要token都能访问的资源）。如果需要鉴权（除了前面的资源），那么就会进行token校验及鉴权：
-   1. 校验
-      1. 请求头中是否包含正确的请求头（Authorization）？
-      2. 请求头Authorization的值是否是正确的格式？
-      3. token颁发库中查询是否包含这个token？
-      4. token没问题，账户有无失效（到期）？
-   2. 鉴权
-      1. 查询该资源需要拥有的角色，然后判断用户是否拥有这个角色？
-   3. 异常
-      1. 当校验token出现错误时，返回401状态码，前端重定向登录页。
-      2. 当用户没有权限时，返回403状态码，提示用户没有权限。
-   4. 校验和鉴权都正常，直接路由到指定的服务，处理请求。
-3. 微服务处理请求，响应数据到网关，网关再反回给用户。
+[comment]: <> (1. 用户发起请求到网关)
 
+[comment]: <> (2. 网关根据请求uri判断是否需要放行（登录等不需要token都能访问的资源）。如果需要鉴权（除了前面的资源），那么就会进行token校验及鉴权：)
 
+[comment]: <> (   1. 校验)
 
-> 数据库是否有token签发记录 解释：系统每次创建token时都要先将其保存到mysql中然后再返给用户，当用户出现：修改密码、账户被冻结、账户被删除等操作后，将之前颁发的token从mysql中删除，达到一定程度的安全性。
+[comment]: <> (      1. 请求头中是否包含正确的请求头（Authorization）？)
 
+[comment]: <> (      2. 请求头Authorization的值是否是正确的格式？)
 
+[comment]: <> (      3. token颁发库中查询是否包含这个token？)
+
+[comment]: <> (      4. token没问题，账户有无失效（到期）？)
+
+[comment]: <> (   2. 鉴权)
+
+[comment]: <> (      1. 查询该资源需要拥有的角色，然后判断用户是否拥有这个角色？)
+
+[comment]: <> (   3. 异常)
+
+[comment]: <> (      1. 当校验token出现错误时，返回401状态码，前端重定向登录页。)
+
+[comment]: <> (      2. 当用户没有权限时，返回403状态码，提示用户没有权限。)
+
+[comment]: <> (   4. 校验和鉴权都正常，直接路由到指定的服务，处理请求。)
+
+[comment]: <> (3. 微服务处理请求，响应数据到网关，网关再反回给用户。)
+
+[comment]: <> (> 数据库是否有token签发记录 解释：系统每次创建token时都要先将其保存到mysql中然后再返给用户，当用户出现：修改密码、账户被冻结、账户被删除等操作后，将之前颁发的token从mysql中删除，达到一定程度的安全性。)
+
+## 流程图
+详情看每个服务自己下面的README
+## 获取当前登录用户
+前提需要启动网关服务(goudong-gateway-server)和认证服务(goudong-oauth2-server)。当用户登录后，获取的是登录用户信息，当用户未登录时，获取的是一个匿名用户信息。
+```java
+UserContext.get()
+```
+##鉴权
+本项目，在网关层进行调用认证服务进行接口鉴权。
 
 ## 约定大于配置（重要）
 ### 数据库表设计
