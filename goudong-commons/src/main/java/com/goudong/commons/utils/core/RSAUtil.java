@@ -3,7 +3,10 @@ package com.goudong.commons.utils.core;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,6 +47,16 @@ public class RSAUtil {
      */
     private static final String ALGORITHM = "RSA";
 
+    /**
+     * 走断点,发现加密时buffer最大是245
+     * @see com.sun.crypto.provider.RSACipher#buffer
+     */
+    public static final int MAX_ENCRYPT_BLOCK = 245;
+    /**
+     * 走断点,发现buffer最大是256
+     * @see com.sun.crypto.provider.RSACipher#buffer
+     */
+    public static final int MAX_DECRYPT_BLOCK = 256;
     /**
      * 私钥文件保存文件位置
      */
@@ -156,10 +169,9 @@ public class RSAUtil {
         // 初始化密码器（公钥加密模型）
         cipher.init(Cipher.ENCRYPT_MODE, getInstance().publicKey);
 
-        // 加密数据, 返回加密后的密文
-        return cipher.doFinal(plainData);
+        return subsectionEncrypt(plainData, cipher);
     }
-
+    
     /**
      * 私钥加密数据
      * @param plainData 被加密的字节数组
@@ -174,7 +186,40 @@ public class RSAUtil {
         cipher.init(Cipher.ENCRYPT_MODE, getInstance().privateKey);
 
         // 加密数据, 返回加密后的密文
-        return cipher.doFinal(plainData);
+        return subsectionEncrypt(plainData, cipher);
+    }
+
+    /**
+     * 分段加密
+     * @param plainData 需要加密的数据
+     * @param cipher 密码器
+     * @return 加密后的数据
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws IOException
+     */
+    private static byte[] subsectionEncrypt(byte[] plainData, Cipher cipher) throws IllegalBlockSizeException, BadPaddingException, IOException {
+        int inputLen = plainData.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段加密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > MAX_ENCRYPT_BLOCK) {
+                cache = cipher.doFinal(plainData, offSet, MAX_ENCRYPT_BLOCK);
+            } else {
+                cache = cipher.doFinal(plainData, offSet, inputLen - offSet);
+            }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * MAX_ENCRYPT_BLOCK;
+        }
+        // 加密数据, 返回加密后的密文
+        byte[] encryptedData = out.toByteArray();
+        out.close();
+        
+        return encryptedData;
     }
 
     /**
@@ -191,7 +236,7 @@ public class RSAUtil {
         cipher.init(Cipher.DECRYPT_MODE, getInstance().publicKey);
 
         // 解密数据, 返回解密后的明文
-        return cipher.doFinal(cipherData);
+        return subsectionDecrypt(cipherData, cipher);
     }
 
     /**
@@ -208,7 +253,38 @@ public class RSAUtil {
         cipher.init(Cipher.DECRYPT_MODE, getInstance().privateKey);
 
         // 解密数据, 返回解密后的明文
-        return cipher.doFinal(cipherData);
+        return subsectionDecrypt(cipherData, cipher);
+    }
+
+    /**
+     * 分段解密
+     * @param cipherData 需要解密的数据
+     * @param cipher 密码器
+     * @return 返回解密后的数据
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws IOException
+     */
+    private static byte[] subsectionDecrypt(byte[] cipherData, Cipher cipher) throws IllegalBlockSizeException, BadPaddingException, IOException {
+        int inputLen = cipherData.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段解密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > MAX_DECRYPT_BLOCK) {
+                cache = cipher.doFinal(cipherData, offSet, MAX_DECRYPT_BLOCK);
+            } else {
+                cache = cipher.doFinal(cipherData, offSet, inputLen - offSet);
+            }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * MAX_DECRYPT_BLOCK;
+        }
+        byte[] decryptedData = out.toByteArray();
+        out.close();
+        return decryptedData;
     }
 
     /**
