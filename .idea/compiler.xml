@@ -11,6 +11,7 @@
         <module name="goudong-gateway-server" />
         <module name="goudong-file-server" />
         <module name="goudong-commodity-server" />
+        <module name="goudong-maven-plugin" />
         <module name="goudong-message-server" />
         <module name="goudong-commons" />
         <module name="goudong-user-server" />
@@ -51,6 +52,7 @@
       <module name="goudong-file-server" options="-parameters" />
       <module name="goudong-gateway-server" options="-parameters" />
       <module name="goudong-java" options="" />
+      <module name="goudong-maven-plugin" options="" />
       <module name="goudong-message-server" options="-parameters" />
       <module name="goudong-oauth2-server" options="-parameters" />
       <module name="goudong-resource-server" options="-parameters" />

@@ -1,18 +1,24 @@
 package com.goudong.commons.utils.core;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import cn.hutool.core.util.StrUtil;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.crypto.Cipher;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 /**
  * 类描述：
- * RSA 工具类（生成/保存密钥对、加密、解密）
+ * RSA加密、解密
  * @author msi
  * @date 2022/2/4 18:07
  * @version 1.0
@@ -20,125 +26,199 @@ import java.security.spec.X509EncodedKeySpec;
 public class RSAUtil {
 
     /**
+     * 单例
+     */
+    private static RSAUtil rsaUtil;
+
+    /**
+     * 公钥
+     */
+    private PublicKey publicKey;
+    /**
+     * 私钥
+     */
+    private PrivateKey privateKey;
+
+    /**
      * 算法名称
      */
     private static final String ALGORITHM = "RSA";
 
     /**
-     * 密钥长度
-     */
-    private static final int KEY_SIZE = 2048;
-
-    /**
      * 私钥文件保存文件位置
      */
-    public static final String PRIVATE_KEY_PATH = System.getProperty("user.dir") + File.separator + "id_rsa";
+    private static final String PRIVATE_KEY_PATH = new StringBuilder()
+            .append(".ssh")
+            .append(File.separator)
+            .append("id_rsa")
+            .toString();
     /**
      * 公钥文件保存文件位置
      */
-    public static final String PUBLIC_KEY_PATH = System.getProperty("user.dir") + File.separator + "id_rsa.pub";
+    private static final String PUBLIC_KEY_PATH = new StringBuilder()
+            .append(".ssh")
+            .append(File.separator)
+            .append("id_rsa.pub")
+            .toString();
 
     /**
-     * 随机生成密钥对（包含公钥和私钥）
-     */
-    public static KeyPair generateKeyPair() throws Exception {
-        // 获取指定算法的密钥对生成器
-        KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM);
-
-        // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
-        gen.initialize(KEY_SIZE);
-
-        // 随机生成一对密钥（包含公钥和私钥）
-        return gen.generateKeyPair();
-    }
-
-    /**
-     * 保存密钥到项目根目录
-     * @param keyPair
-     * @throws IOException
-     */
-    public static void saveKeyForEncodedBase64(KeyPair keyPair) throws IOException {
-        saveKeyForEncodedBase64(keyPair.getPrivate(), new File(PRIVATE_KEY_PATH));
-        saveKeyForEncodedBase64(keyPair.getPublic(), new File(PUBLIC_KEY_PATH));
-    }
-
-    /**
-     * 将 公钥/私钥 编码后以 Base64 的格式保存到指定文件
-     * @param key 公钥/私钥
-     * @param keyFile 保存公钥的文件
-     * @throws IOException
-     */
-    public static void saveKeyForEncodedBase64(Key key, File keyFile) throws IOException {
-        // 获取密钥编码后的格式
-        byte[] encBytes = key.getEncoded();
-
-        // 转换为 Base64 文本
-        String encBase64 = new BASE64Encoder().encode(encBytes);
-
-        // 保存到文件
-        IOUtil.writeFile(encBase64, keyFile);
-    }
-
-    /**
-     * 根据公钥的 Base64 文本创建公钥对象
-     * @param pubKeyBase64 公钥base64字符串
+     * 使用加锁双检单例-懒汉式，获取RSAUtil对象
      * @return
-     * @throws Exception
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
      */
-    public static PublicKey getPublicKey(String pubKeyBase64) throws Exception {
-        // 把 公钥的Base64文本 转换为已编码的 公钥bytes
-        byte[] encPubKey = new BASE64Decoder().decodeBuffer(pubKeyBase64);
-
-        // 创建 已编码的公钥规格
-        X509EncodedKeySpec encPubKeySpec = new X509EncodedKeySpec(encPubKey);
-
-        // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
-        return KeyFactory.getInstance(ALGORITHM).generatePublic(encPubKeySpec);
+    public static RSAUtil getInstance() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        if (rsaUtil == null) {
+            synchronized (RSAUtil.class) {
+                if (rsaUtil == null) {
+                    PublicKey publicKey = getPublicKey();
+                    PrivateKey privateKey = getPrivateKey();
+                    rsaUtil = new RSAUtil(publicKey, privateKey);
+                }
+            }
+        }
+        return rsaUtil;
     }
 
     /**
-     * 根据私钥的 Base64 文本创建私钥对象
-     * @param priKeyBase64 私钥base64字符串
-     * @return
-     * @throws Exception
+     * 获取类路径.ssh下的id_rsa.pub文件内容，并转换成公钥对象
+     * @return 公钥对象
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
      */
-    public static PrivateKey getPrivateKey(String priKeyBase64) throws Exception {
-        // 把 私钥的Base64文本 转换为已编码的 私钥bytes
-        byte[] encPriKey = new BASE64Decoder().decodeBuffer(priKeyBase64);
+    private static PublicKey getPublicKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        ClassPathResource publicClassPathResource = new ClassPathResource(PUBLIC_KEY_PATH);
+        // 公钥文件是否存在
+        if (publicClassPathResource.exists()) {
+            File publicKeyFile = publicClassPathResource.getFile();
+            // 公钥文件存储时使用Base64编码后保存d的
+            String publicKeyBase64 = IOUtil.readFile(publicKeyFile);
 
-        // 创建 已编码的私钥规格
-        PKCS8EncodedKeySpec encPriKeySpec = new PKCS8EncodedKeySpec(encPriKey);
+            // 把 公钥的Base64文本进行解码
+            byte[] encPubKey = Base64.getDecoder().decode(publicKeyBase64);
 
-        // 获取指定算法的密钥工厂, 根据 已编码的私钥规格, 生成私钥对象
-        return KeyFactory.getInstance(ALGORITHM).generatePrivate(encPriKeySpec);
+            // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
+            return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(encPubKey));
+        }
+
+        String errorMessage = StrUtil.format("保存公钥的资源文件不存在:{}", PUBLIC_KEY_PATH);
+        throw new FileNotFoundException(errorMessage);
     }
 
+    /**
+     * 获取类路径.ssh下的id_rsa.pub文件内容，并转换成公钥对象
+     * @return 公钥对象
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    private static PrivateKey getPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        ClassPathResource privateClassPathResource = new ClassPathResource(PRIVATE_KEY_PATH);
+        // 私钥文件是否存在
+        if (privateClassPathResource.exists()) {
+            File privateKeyFile = privateClassPathResource.getFile();
+            // 公钥文件存储时使用Base64编码后保存d的
+            String privateKeyBase64 = IOUtil.readFile(privateKeyFile);
+
+            // 把 公钥的Base64文本进行解码
+            byte[] encPriKey = Base64.getDecoder().decode(privateKeyBase64);
+
+            // 获取指定算法的密钥工厂, 根据 已编码的私钥规格, 生成私钥对象
+            return KeyFactory.getInstance(ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(encPriKey));
+        }
+
+        String errorMessage = StrUtil.format("保存私钥的资源文件不存在:{}", PRIVATE_KEY_PATH);
+        throw new FileNotFoundException(errorMessage);
+    }
+
+    /**
+     * 获取公钥的Base64格式字符串
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public static String getPubKeyBase64() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        return Base64.getEncoder().encodeToString(getInstance().publicKey.getEncoded());
+    }
     /**
      * 公钥加密数据
+     * @param plainData 被加密的字节数组
+     * @return
+     * @throws Exception
      */
-    public static byte[] encrypt(byte[] plainData, PublicKey pubKey) throws Exception {
+    public static byte[] pubKeyEncrypt(byte[] plainData) throws Exception {
         // 获取指定算法的密码器
         Cipher cipher = Cipher.getInstance(ALGORITHM);
 
         // 初始化密码器（公钥加密模型）
-        cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+        cipher.init(Cipher.ENCRYPT_MODE, getInstance().publicKey);
 
         // 加密数据, 返回加密后的密文
         return cipher.doFinal(plainData);
     }
 
     /**
-     * 私钥解密数据
+     * 私钥加密数据
+     * @param plainData 被加密的字节数组
+     * @return
+     * @throws Exception
      */
-    public static byte[] decrypt(byte[] cipherData, PrivateKey priKey) throws Exception {
+    public static byte[] priKeyEncrypt(byte[] plainData) throws Exception {
+        // 获取指定算法的密码器
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+
+        // 初始化密码器（私钥加密模型）
+        cipher.init(Cipher.ENCRYPT_MODE, getInstance().privateKey);
+
+        // 加密数据, 返回加密后的密文
+        return cipher.doFinal(plainData);
+    }
+
+    /**
+     * 公钥解密数据
+     * @param cipherData 需要解密的字节数组
+     * @return
+     * @throws Exception
+     */
+    public static byte[] pubKeyDecrypt(byte[] cipherData) throws Exception {
+        // 获取指定算法的密码器
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+
+        // 初始化密码器（公钥解密模型）
+        cipher.init(Cipher.DECRYPT_MODE, getInstance().publicKey);
+
+        // 解密数据, 返回解密后的明文
+        return cipher.doFinal(cipherData);
+    }
+
+    /**
+     * 私钥解密数据
+     * @param cipherData 需要解密的字节数组
+     * @return
+     * @throws Exception
+     */
+    public static byte[] priKeyDecrypt(byte[] cipherData) throws Exception {
         // 获取指定算法的密码器
         Cipher cipher = Cipher.getInstance(ALGORITHM);
 
         // 初始化密码器（私钥解密模型）
-        cipher.init(Cipher.DECRYPT_MODE, priKey);
+        cipher.init(Cipher.DECRYPT_MODE, getInstance().privateKey);
 
         // 解密数据, 返回解密后的明文
         return cipher.doFinal(cipherData);
+    }
+
+    /**
+     * 私有构造方法，使用单例的懒汉，进行双锁创建对象
+     * @param publicKey
+     * @param privateKey
+     */
+    private RSAUtil(PublicKey publicKey, PrivateKey privateKey) {
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
     }
 
 }

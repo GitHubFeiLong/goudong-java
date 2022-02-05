@@ -182,4 +182,24 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!--引入自定义的插件，创建公钥私钥文件-->
+            <plugin>
+                <groupId>com.goudong</groupId>
+                <artifactId>goudong-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <!--有关maven生命周期：https://blog.csdn.net/just4you/article/details/74225386-->
+                    <execution>
+                        <!--default生命周期中的第5阶段generate-resources-->
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>rsa</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
