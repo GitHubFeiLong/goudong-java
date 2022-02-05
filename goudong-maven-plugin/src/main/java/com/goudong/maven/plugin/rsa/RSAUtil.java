@@ -27,7 +27,7 @@ public class RSAUtil {
     /**
      * 密钥长度
      */
-    private static final int KEY_SIZE = 2048;
+    private static final int KEY_SIZE = 1024;
 
     /**
      * 私钥文件保存文件位置

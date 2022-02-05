@@ -48,15 +48,15 @@ public class RSAUtil {
     private static final String ALGORITHM = "RSA";
 
     /**
-     * 走断点,发现加密时buffer最大是245
+     * 值根据生成密钥的大小有关(1024:127;2048:245)
      * @see com.sun.crypto.provider.RSACipher#buffer
      */
-    public static final int MAX_ENCRYPT_BLOCK = 245;
+    public static final int MAX_ENCRYPT_BLOCK = 127;
     /**
-     * 走断点,发现buffer最大是256
+     * 值根据生成密钥的大小有关(1024:128;2048:256)
      * @see com.sun.crypto.provider.RSACipher#buffer
      */
-    public static final int MAX_DECRYPT_BLOCK = 256;
+    public static final int MAX_DECRYPT_BLOCK = 128;
     /**
      * 私钥文件保存文件位置
      */
