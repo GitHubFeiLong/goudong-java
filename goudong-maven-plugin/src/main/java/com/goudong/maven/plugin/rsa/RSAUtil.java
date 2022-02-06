@@ -3,10 +3,14 @@ package com.goudong.maven.plugin.rsa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 /**
@@ -91,7 +95,7 @@ public class RSAUtil {
         KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM);
 
         // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
-        gen.initialize(KEY_SIZE);
+        gen.initialize(KEY_SIZE, new SecureRandom());
         // 随机生成一对密钥（包含公钥和私钥）
         KeyPair keyPair = gen.generateKeyPair();
         log.debug("生成密钥成功");

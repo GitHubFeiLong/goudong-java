@@ -48,6 +48,12 @@ public class RSAUtil {
     private static final String ALGORITHM = "RSA";
 
     /**
+     * 算法名称/加密模式/数据填充方式
+     * 默认：RSA/ECB/PKCS1Padding
+     */
+    private static final String ALGORITHMS = "RSA/ECB/PKCS1Padding";
+
+    /**
      * 值根据生成密钥的大小有关(1024:127;2048:245)
      * @see com.sun.crypto.provider.RSACipher#buffer
      */
