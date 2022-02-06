@@ -41,7 +41,7 @@ class RSAUtilTest {
     @Test
     void priKeyDecrypt () throws Exception {
         // 前端加密并编码后的字符串
-        String data = "IFKRG1jT18vwfeJ7b3xms/ex0rJ10aS5ZXlhCYtQ3LoHj4Pud86tlVo6E90PaA8fctJdGEhTvNRiHlz1Y78lyreNyfKt5R+Px0xNuHVK43LRfZGF1gVQ446M/1hhL/Z3TM4w/p+M5iYXNKepfG9E+y/f22DWnslMJ1Gw2itfuSQ=";
+        String data = "IBHp54Wo5zkolk5kX1XEKW0A3bMC1rFRiKCsI1jyAbC7BLwRQGyfFT0YdO6H6WVqxT+/AR3iYtASMkpr1slJGbKTbsc/AR8vp1LIk2vmNEBJ66oZB0Ucrs/lM5mUnOhU4tAI4DgviMW0uXJH/zrucJfG+3WybCEwAj0Vi6706fQ=";
         // 前端加密后的字符串需要使用decode解码。
         byte[] decode = Base64.decode(data);
         byte[] bytes = RSAUtil.priKeyDecrypt(decode);
