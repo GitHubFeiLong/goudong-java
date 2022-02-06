@@ -54,10 +54,10 @@ public class RSAUtil {
     private static final String ALGORITHMS = "RSA/ECB/PKCS1Padding";
 
     /**
-     * 值根据生成密钥的大小有关(1024:127;2048:245)
+     * 值根据生成密钥的大小有关(1024:117;2048:245)
      * @see com.sun.crypto.provider.RSACipher#buffer
      */
-    public static final int MAX_ENCRYPT_BLOCK = 127;
+    public static final int MAX_ENCRYPT_BLOCK = 117;
     /**
      * 值根据生成密钥的大小有关(1024:128;2048:256)
      * @see com.sun.crypto.provider.RSACipher#buffer
