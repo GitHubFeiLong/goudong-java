@@ -47,7 +47,7 @@ public class RSAUtil {
             .append(File.separator)
             .append(".ssh")
             .append(File.separator)
-            .append("id_rsa")
+            .append("server_rsa")
             .toString();
     /**
      * 公钥文件保存文件位置
@@ -63,7 +63,7 @@ public class RSAUtil {
             .append(File.separator)
             .append(".ssh")
             .append(File.separator)
-            .append("id_rsa.pub")
+            .append("server_rsa.pub")
             .toString();
 
     /**
