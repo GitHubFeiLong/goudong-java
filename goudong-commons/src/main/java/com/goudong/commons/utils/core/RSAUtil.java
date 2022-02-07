@@ -1,7 +1,6 @@
 package com.goudong.commons.utils.core;
 
 import cn.hutool.core.util.StrUtil;
-import org.bouncycastle.jcajce.spec.OpenSSHPublicKeySpec;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.crypto.BadPaddingException;
@@ -188,7 +187,7 @@ public class RSAUtil {
             byte[] encPubKey = Base64.getDecoder().decode(publicKeyBase64);
 
             // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
-            return KeyFactory.getInstance(ALGORITHM).generatePublic(new OpenSSHPublicKeySpec(encPubKey));
+            return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(encPubKey));
         }
 
         String errorMessage = StrUtil.format("前端保存公钥的资源文件不存在:{}", UI_PUBLIC_KEY_PATH);
@@ -349,7 +348,7 @@ public class RSAUtil {
         cipher.init(Cipher.ENCRYPT_MODE, getInstance().uiPublicKey);
 
         // 解密数据, 返回解密后的明文
-        return subsectionDecrypt(cipherData, cipher);
+        return subsectionEncrypt(cipherData, cipher);
     }
 
     /**
@@ -358,7 +357,7 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    public static byte[] uiPriKeyDecrypt(byte[] cipherData) throws Exception {
+    public static byte[] uiPubKeyDecrypt(byte[] cipherData) throws Exception {
         // 获取指定算法的密码器
         Cipher cipher = Cipher.getInstance(ALGORITHM);
 
