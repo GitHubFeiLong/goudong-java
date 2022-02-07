@@ -25,9 +25,17 @@ class RSAUtilTest {
     void pubKeyEncrypt() throws Exception {
         // byte[] encrypt = RSAUtil.pubKeyEncrypt("你是傻逼吗草密码是123456".getBytes());
         byte[] encrypt = RSAUtil.serverPubKeyEncrypt("你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请".getBytes());
-        System.out.println("公钥加密后 = " + Base64.getEncoder().encode(encrypt));
+        System.out.println("公钥加密后 = " + new String(Base64.getEncoder().encode(encrypt)));
         byte[] decrypt = RSAUtil.serverPriKeyDecrypt(encrypt);
         System.out.println("私钥解密后 = " + new String(decrypt));
+    }
+
+    @Test
+    void serverPriKeyEncrypt() throws Exception {
+        String data = "你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请你是傻逼吗草密码是12345asdas请";
+        String s = Base64.getEncoder().encodeToString(data.getBytes());
+        byte[] bytes = RSAUtil.serverPriKeyEncrypt(s.getBytes());
+        System.out.println(Base64.getEncoder().encodeToString(bytes));
     }
 
     @Test
@@ -39,16 +47,16 @@ class RSAUtilTest {
 
         // System.out.println("===========");
         // 前端私钥加密
-        String data = "S8ZMDLOBwSyhxRkKYxgfKGZGRt0riEes85qCGORh0vaNNDUiBFd2lSc9j+udJlxsd9gH7k/pPGdmGFZRufpFIVOSsi8X1CIz3GN8+4djUds9Y0LsXz6fjyzP0l2TPzpdHAwNjPuaDEslEmFCSbZqBvWk1b8xfqHB0dqJh9OlosQLEzi5CFsPt30dafhPWNoOKgIbeISDaqI3fw3GzvTXmZSpOSAWNwV05LtZY+zT1uZ6Gzu/4TokApuFK8EU4jNbr8T8FbbsWxKRoGwueA1paH/kUsSG7/6LmbE/LWLQJptRgsYGKdOsCSHkvodMjJ49MtXbx//NpmyoWCiyKMjtJDiW/u1N6U1KasrgU+Zk6kOpwhqy13BeBTMQNefZA+cPGQicCNW5UDsPrl4Vbr6XPjhhdbJ3+SxWexgt+BO1MZAntOLGNfa8npwP7BZ1vvuURND9jN5M/PPniN8IXYseb4P7DKtIQC6SqaN1sDnuy42IQptWKqgx3lzDCdEx0nMSkziq5olnnMy0QS92kDw9E5ZkcEEjWCNDei8XJug4zwllW9ixGtHKC2Nfdg7DJRnunfwgXk46JU97dpp9H8e/1mqSHUnGn5uk4ryPba+hI+5P4m1rdk8eS2OuyBHUGTOF0kY+ujGu1nmQK7xXu5klRjFcw5mK5yjS+jIjb+EgE1E=";
+        String data = "aaIF8oBQKp+KEjDiyw+ZhSp0onO59y58IqWRv8y4hL34J0McyBrMCQKpf8yIabxucVPrpT8kFOeT3It5CeEsz17f1aYQDRxvwRnqoT2Byea6E9asIe204bV4wk2I8L1Kg61qQKEsvLFHRTednrbCWvFJpq+m9fWslUx2lm2eYLSjJASCEhEuri8RpTtt2oFDlqi/neDwMSVVerLtNtXnaDj95jJd2QdDHndWCV/bLx6iDPGrBn6y267mib9UmK2LdMAme2zgobLUWNG2FMlvWsyN9v+Fz+UPVXG3VvtrpGEUbJAvOYxC+BwnsQMLuKY+ydWBw7ZsZK0gjl7MoOixdxw6bgjK1/zN1sziyIsHkT3IM0cE1PYXL8c83+5bqqlxNyzZ/EWblMK+lqN0/pqEQQvUBDB9fjNDGLc8NAaIhwK6s3dTMLO2OviPJBWIQ1AdaR0sdXVfWSehs0sBIR3KU1qWTbwWPf9MrO+8IxzZwZ9IYG3aj6/WKKPc7xWHUQIfCHJCkCaWJvOwAM/Naxz+EF8TQCsPKKRrLWTLda7pqWR3x7Uv88hb3JWrY/el11AF77t9+s+v1hlCwFjY5JiQPPoBmVmF/nfC3es4XgmOVCKnteux8MpHdAKiLTxUOAVYCzsw2cZ4BdVDsd/dn/qFVyPg8MJVijNjUcWKR4VNNag=";
         byte[] bytes = Base64.getDecoder().decode(data);
         byte[] bytes1 = RSAUtil.serverPubKeyDecrypt(bytes);
-        System.out.println("公钥解密后 = " + new String(bytes1,"utf-8"));
+        System.out.println("公钥解密后 = " + new String(Base64.getDecoder().decode(new String(bytes1))));
     }
 
     @Test
     void serverPriKeyDecrypt () throws Exception {
         // 前端加密并编码后的字符串
-        String data = "BKmOZH/7+ARF/Ite8Dyms+aeH0f77mCk9T2POMi+AoLmR7cuw2DQrw8otqWPZ3bgaWhLAv3sL4JNpiiIbeIvw1hi+D4dmtYYbD0PkeUoNRy34fco2jh8SETAJOJkPb3ncWPECu056qQZ71L2czuKFN+aE9Q8FbHvfL92Q5QdKISPV0rK7XOw52ZZs5WiNdv212WWB+yuCBq+sBaWp1PNFwedL69GSTZbbXagR7EEj4rpA37Vtj0fudPlcl+w78CnlrdYP9XvSYum7Pte/4GmdW/n591ssVjCYO8vReXMBNIBbI0ntZUpacOfx2B7rLi1CbXvJ9bVXrdtV66OrGtnqnWZUirHybnww5yqMIYG5i0mk7XKLnUDOQyj1WIiJkPHVYr1YHwucJUaFd01veALy5F8rR/XJrQ8dEpkyJ1GyiX0jxSXpDgz0KyjvxfpbPM2wD6VgLrLWvNSG+5/EePCvliodoIQwslRhWhd2qMhRvCl7QxiVVkGv+oGjwOgkar/O9aMRXDxdxQaAdSftKPDViFDE6/yR4DEv7+NuxIhG5SQEFePwH9vg5gMrBUQpvvh29Sdy2yKEKxkO0AgBfx34ThnfbFNHIkKOvXur0fOeSAGfivSbJ1ff4OB3v0VS6aezajlaqMjyBYiAaKI8Lurf1gFhDz8gouQVmFXLEKaI7A=";
+        String data = "OuPwxLb9itsC/YltpaNIWH4/HD67j42hTy+o06Lb5BN5Q+LlqJP57idB6BHTxiRzMzuGQxh844agV805BsSV4JDqLQ1w9dAC6JHLm4GSKnaY1/+yvUjOh3BuFiCqvSlPtlJ/R5JGf4oI/kp6SZzUhPZnrD25Rt22oUUqPtC0IqGI4pKnI+ZY6mj6Hnz8wpMUdSMF4R+hiUDWIIFN2D6dhzXvR+JmQeYZFzbVGP/Pxx37n8iqJ6wvikgxLZA9c6ghVd57Bw0G938+hMWDWg5V0AXwz3bnMjcFn+7nKxcfnkJgOathqEj9Y8Gjx4RLycwa+adZRan5tmjOMUAGRXz4mwe3iGkRP+b6l/E5MtvpuO/r48wVR36inxTLR2WG0yy+yD0uXeDStkVlSo9E815yuaBCU/e3cYFP+ZhEfiAtESwf3IzNXNveMJb+R5aKFzPVrMrIA9tAmoulZW+J3E7VZp+v0pWozB1iH27TjyrWOVy9uev2wQG/78WhiKpZZRxYJmvTBw9XpHVx9o8PvE1WmnAGtsfcgbCSziWm8xDwcasfAqSSMFheCG6ni3mU38V84ASK22dDN6odPmGyjnmGbXZmh6yZ0QC8xL5gHCTHnKhS49V49c0BW86V1F6z/oPB/LxH2ZiQCM4Hffo8iOpwXl9umcf3lTXqj2QofB9epjw=";
         // 前端加密后的字符串需要使用decode解码。
         byte[] decode = Base64.getDecoder().decode(data);
         byte[] bytes = RSAUtil.serverPriKeyDecrypt(decode);
