@@ -2,11 +2,8 @@ package com.goudong.commons.security.rsa;
 
 import lombok.SneakyThrows;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.*;
 import java.util.Base64;
 
@@ -73,11 +70,11 @@ public class RSAUtil {
      * 公钥加密
      *
      * @param publicKey 公钥
-     * @param data      加密的字节数组
-     * @return 加密后Base64编码后的字符串
+     * @param encryptStr 需要加密的字符串
+     * @return 双层Base64编码字符串
      */
     @SneakyThrows
-    public static String publicKeyEncrypt(RSA.KeySizeEnum keySizeEnum, PublicKey publicKey, byte[] data) {
+    public static String publicKeyEncrypt(RSA.KeySizeEnum keySizeEnum, PublicKey publicKey, String encryptStr) {
         // 获取指定算法的密码器
         Cipher cipher = Cipher.getInstance(RSA.ALGORITHM);
 
@@ -85,19 +82,18 @@ public class RSAUtil {
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
         // 分段加密
-        return RSAUtil.sectionEncrypt(data, cipher, keySizeEnum.getMaxEncryptBlock());
+        return RSAUtil.sectionEncrypt(encryptStr, cipher, keySizeEnum.getMaxEncryptBlock());
     }
 
     /**
      * 私钥解密
      *
      * @param privateKey   私钥
-     * @param base64Encode 已经加密好的Base64字符串
-     * @return 解码后的字符数组
+     * @param base64Encode Base64编码后的密文
+     * @return 加密前的字符串
      */
     @SneakyThrows
-    public static byte[] privateKeyDecrypt(RSA.KeySizeEnum keySizeEnum, PrivateKey privateKey, String base64Encode) {
-        byte[] data = Base64.getDecoder().decode(base64Encode);
+    public static String privateKeyDecrypt(RSA.KeySizeEnum keySizeEnum, PrivateKey privateKey, String base64Encode) {
         // 获取指定算法的密码器
         Cipher cipher = Cipher.getInstance(RSA.ALGORITHM);
 
@@ -105,7 +101,7 @@ public class RSAUtil {
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
         // 分段解密
-        return sectionDecrypt(data, cipher, keySizeEnum.getMaxDecryptBlock());
+        return sectionDecrypt(base64Encode, cipher, keySizeEnum.getMaxDecryptBlock());
     }
 
     /**
@@ -139,14 +135,14 @@ public class RSAUtil {
 
     /**
      * 分段加密
-     * @param data 需要加密的数据
+     * @param encryptStr 需要加密的字符串
      * @param cipher 密码器
      * @return 加密后的数据
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws IOException
      */
-    public static String sectionEncrypt(byte[] data, Cipher cipher, int maxEncryptBlock) throws IllegalBlockSizeException, BadPaddingException, IOException {
+    @SneakyThrows
+    public static String sectionEncrypt(String encryptStr, Cipher cipher, int maxEncryptBlock) {
+        // 直接加密base64的字符串
+        byte[] data = encryptStr.getBytes();
         int inputLen = data.length;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
@@ -167,20 +163,19 @@ public class RSAUtil {
         byte[] encryptedData = out.toByteArray();
         out.close();
 
-        // Base64编码
+        // 加密后将其Base64编码，防止中文乱码
         return Base64.getEncoder().encodeToString(encryptedData);
     }
 
     /**
      * 分段解密
-     * @param data 需要解密的数据
+     * @param base64Encode Base64编码后的密文
      * @param cipher 密码器
      * @return 返回解密后的数据
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws IOException
      */
-    public static byte[] sectionDecrypt(byte[] data, Cipher cipher, int maxDecryptBlock) throws IllegalBlockSizeException, BadPaddingException, IOException {
+    @SneakyThrows
+    public static String sectionDecrypt(String base64Encode, Cipher cipher, int maxDecryptBlock) {
+        byte[] data = Base64.getDecoder().decode(base64Encode);
         int inputLen = data.length;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
@@ -199,7 +194,9 @@ public class RSAUtil {
         }
         byte[] decryptedData = out.toByteArray();
         out.close();
-        return decryptedData;
+
+        // 加密的字符串是使用Base64编码,所以这里解密后还需要解码才是真实数据
+        return new String(decryptedData);
     }
 
 }

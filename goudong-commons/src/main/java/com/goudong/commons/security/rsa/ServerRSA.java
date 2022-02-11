@@ -30,13 +30,13 @@ import java.util.Base64;
  * @date 2022/2/9 20:42
  */
 @Data
-public class ServerRSAKey implements RSA{
+public class ServerRSA implements RSA{
     //~fields
     //==================================================================================================================
     /**
      * 单例
      */
-    private static ServerRSAKey serverRSAKey;
+    private static ServerRSA serverRSAKey;
 
     /**
      * 公钥文件保存文件位置
@@ -76,7 +76,7 @@ public class ServerRSAKey implements RSA{
     //~methods
     //==================================================================================================================
 
-    private ServerRSAKey(PublicKey publicKey, PrivateKey privateKey, String publicKeyBase64, String privateKeyBase64, int keySize) {
+    private ServerRSA(PublicKey publicKey, PrivateKey privateKey, String publicKeyBase64, String privateKeyBase64, int keySize) {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.publicKeyBase64 = publicKeyBase64;
@@ -92,7 +92,7 @@ public class ServerRSAKey implements RSA{
      * @throws InvalidKeySpecException
      */
     @SneakyThrows
-    public static ServerRSAKey getInstance() {
+    public static ServerRSA getInstance() {
         if (serverRSAKey == null) {
             synchronized (RSAKey.class) {
                 if (serverRSAKey == null) {
@@ -104,9 +104,9 @@ public class ServerRSAKey implements RSA{
                     // 通过反射获取生成RSA的key长度
                     Field n = RSAPublicKeyImpl.class.getDeclaredField("n");
                     n.setAccessible(true);
-                    BigInteger bigInteger = (BigInteger)n.get(ServerRSAKey.getInstance().getPublicKey());
+                    BigInteger bigInteger = (BigInteger)n.get(publicKey);
 
-                    serverRSAKey = new ServerRSAKey(publicKey, privateKey, publicKeyBase64, privateKeyBase64, bigInteger.bitLength());
+                    serverRSAKey = new ServerRSA(publicKey, privateKey, publicKeyBase64, privateKeyBase64, bigInteger.bitLength());
                 }
             }
         }
@@ -170,13 +170,13 @@ public class ServerRSAKey implements RSA{
     /**
      * 公钥加密
      *
-     * @param data      加密的字节数组
+     * @param base64Encode      加密的字节数组
      * @return 加密后Base64编码后的字符串
      */
     @Override
-    public String publicKeyEncrypt(byte[] data) {
+    public String publicKeyEncrypt(String base64Encode) {
         RSA.KeySizeEnum byKeySize = RSA.KeySizeEnum.getByKeySize(keySize);
-        return RSAUtil.publicKeyEncrypt(byKeySize, publicKey, data);
+        return RSAUtil.publicKeyEncrypt(byKeySize, publicKey, base64Encode);
     }
 
     /**
@@ -186,7 +186,7 @@ public class ServerRSAKey implements RSA{
      * @return 解码后的字符数组
      */
     @Override
-    public byte[] privateKeyDecrypt(String base64Encode) {
+    public String privateKeyDecrypt(String base64Encode) {
         RSA.KeySizeEnum byKeySize = RSA.KeySizeEnum.getByKeySize(keySize);
         return RSAUtil.privateKeyDecrypt(byKeySize, privateKey, base64Encode);
 

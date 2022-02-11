@@ -3,7 +3,6 @@ package com.goudong.commons.security.rsa;
 import com.goudong.commons.exception.security.rsa.RSANotSupportKeySizeException;
 import lombok.Getter;
 
-import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -26,24 +25,18 @@ public interface RSA {
     //~methods
     //==================================================================================================================
     /**
-     * 随机生成密钥对
-     * @return 一对随机的公钥，私钥
-     */
-    default KeyPair generateKeyPair(){return null;};
-
-    /**
      * 公钥加密
-     * @param data 加密的字节数组
+     * @param base64Encode base64编码字符串，防止乱码
      * @return 加密后Base64编码后的字符串
      */
-    String publicKeyEncrypt(byte[] data);
+    String publicKeyEncrypt(String base64Encode);
 
     /**
      * 私钥解密
      * @param base64Encode 已经加密好的Base64字符串
-     * @return 解码后的字符数组
+     * @return 解码后字符串
      */
-    byte[] privateKeyDecrypt(String base64Encode);
+    String privateKeyDecrypt(String base64Encode);
 
     /**
      * 生成签名
@@ -68,8 +61,9 @@ public interface RSA {
         return RSAUtil.verify(srcData, publicKey, sign);
     }
 
-
-
+    /**
+     * Key长度枚举
+     */
     @Getter
     enum KeySizeEnum{
         RSA1024(1024, 117, 128),
