@@ -1,18 +1,20 @@
 package com.goudong.commons.security.rsa;
 
 import cn.hutool.core.util.StrUtil;
+import com.goudong.commons.exception.security.rsa.RSAException;
 import com.goudong.commons.utils.core.IOUtil;
-import lombok.Getter;
+import lombok.SneakyThrows;
 import org.springframework.core.io.ClassPathResource;
+import sun.security.rsa.RSAPublicKeyImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.RSAKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -24,7 +26,7 @@ import java.util.Base64;
  * @version 1.0
  * @date 2022/2/9 20:42
  */
-public class UiRSAKey extends AbstractRSAKey {
+public class UiRSAKey implements RSA {
 
     //~fields
     //==================================================================================================================
@@ -38,14 +40,27 @@ public class UiRSAKey extends AbstractRSAKey {
      */
     private static final String PUBLIC_KEY_PATH = new StringBuilder().append(".ssh").append(File.separator).append("ui").append(File.separator).append("rsa.pub").toString();
 
+    /**
+     * 公钥
+     */
+    private PublicKey publicKey;
+
+    /**
+     * 公钥Base64字符串
+     */
+    private String publicKeyBase64;
+
+    /**
+     * 生成密钥的key长度(1024 or 2048)
+     */
+    private int keySize;
+
     //~methods
     //==================================================================================================================
-
-    private UiRSAKey(PublicKey publicKey, PrivateKey privateKey, String publicKeyBase64, String privateKeyBase64) {
+    private UiRSAKey(PublicKey publicKey, String publicKeyBase64, int keySize) {
         this.publicKey = publicKey;
-        this.privateKey = privateKey;
         this.publicKeyBase64 = publicKeyBase64;
-        this.privateKeyBase64 = privateKeyBase64;
+        this.keySize = keySize;
     }
 
     /**
@@ -55,13 +70,20 @@ public class UiRSAKey extends AbstractRSAKey {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    public static UiRSAKey getInstance() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    @SneakyThrows
+    public static UiRSAKey getInstance() {
         if (uiRSAKey == null) {
-            synchronized (RSAKey.class) {
+            synchronized (UiRSAKey.class) {
                 if (uiRSAKey == null) {
                     PublicKey publicKey = getPublicKeyByFile();
                     String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKey.getEncoded());
-                    uiRSAKey = new UiRSAKey(publicKey, null, publicKeyBase64, null);
+
+                    // 通过反射获取生成RSA的key长度
+                    Field n = RSAPublicKeyImpl.class.getDeclaredField("n");
+                    n.setAccessible(true);
+                    BigInteger bigInteger = (BigInteger)n.get(ServerRSAKey.getInstance().getPublicKey());
+
+                    uiRSAKey = new UiRSAKey(publicKey, publicKeyBase64, bigInteger.bitLength());
                 }
             }
         }
@@ -94,23 +116,27 @@ public class UiRSAKey extends AbstractRSAKey {
         throw new FileNotFoundException(errorMessage);
     }
 
+
+    /**
+     * 公钥加密
+     *
+     * @param data      加密的字节数组
+     * @return 加密后Base64编码后的字符串
+     */
     @Override
-    PublicKey getPublicKey() {
-        return this.publicKey;
+    public String publicKeyEncrypt(byte[] data) {
+        RSA.KeySizeEnum byKeySize = RSA.KeySizeEnum.getByKeySize(keySize);
+        return RSAUtil.publicKeyEncrypt(byKeySize, publicKey, data);
     }
 
+    /**
+     * 私钥解密
+     *
+     * @param base64Encode 已经加密好的Base64字符串
+     * @return 解码后的字符数组
+     */
     @Override
-    PrivateKey getPrivateKey() {
-        return this.privateKey;
-    }
-
-    @Override
-    String getPublicKeyBase64() {
-        return this.publicKeyBase64;
-    }
-
-    @Override
-    String getPrivateKeyBase64() {
-        return this.privateKeyBase64;
+    public byte[] privateKeyDecrypt(String base64Encode) {
+        throw new RSAException("未配置ui的私钥，使用私钥进行解码错误");
     }
 }
