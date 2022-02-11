@@ -120,4 +120,4 @@ knife4j:
 commons:
   # 白名单配置
   whitelist:
-    enable: true
+    enable: false
