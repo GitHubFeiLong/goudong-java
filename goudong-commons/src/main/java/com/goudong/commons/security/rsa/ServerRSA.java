@@ -1,6 +1,7 @@
 package com.goudong.commons.security.rsa;
 
 import cn.hutool.core.util.StrUtil;
+import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
 import com.goudong.commons.utils.core.IOUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -175,7 +176,7 @@ public class ServerRSA implements RSA{
      */
     @Override
     public String publicKeyEncrypt(String base64Encode) {
-        RSA.KeySizeEnum byKeySize = RSA.KeySizeEnum.getByKeySize(keySize);
+        RSAKeySizeEnum byKeySize = RSAKeySizeEnum.getByKeySize(keySize);
         return RSAUtil.publicKeyEncrypt(byKeySize, publicKey, base64Encode);
     }
 
@@ -187,7 +188,7 @@ public class ServerRSA implements RSA{
      */
     @Override
     public String privateKeyDecrypt(String base64Encode) {
-        RSA.KeySizeEnum byKeySize = RSA.KeySizeEnum.getByKeySize(keySize);
+        RSAKeySizeEnum byKeySize = RSAKeySizeEnum.getByKeySize(keySize);
         return RSAUtil.privateKeyDecrypt(byKeySize, privateKey, base64Encode);
 
     }

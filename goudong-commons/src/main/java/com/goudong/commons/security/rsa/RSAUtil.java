@@ -1,5 +1,7 @@
 package com.goudong.commons.security.rsa;
 
+import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import javax.crypto.Cipher;
@@ -44,6 +46,10 @@ public class RSAUtil {
     //~fields
     //==================================================================================================================
     /**
+     * 算法名称
+     */
+    public static final String ALGORITHM = "RSA";
+    /**
      * 签名名称
      */
     public static final String SIGNATURE_ALGORITHM = "MD5withRSA";
@@ -56,9 +62,9 @@ public class RSAUtil {
      * @return
      */
     @SneakyThrows
-    public static KeyPair generateKeypair(RSA.KeySizeEnum keySizeEnum) {
+    public static KeyPair generateKeypair(RSAKeySizeEnum keySizeEnum) {
         // 获取指定算法的密钥对生成器
-        KeyPairGenerator gen = KeyPairGenerator.getInstance(RSA.ALGORITHM);
+        KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM);
         // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
         gen.initialize(keySizeEnum.getKeySize(), new SecureRandom());
         // 随机生成一对密钥（包含公钥和私钥）
@@ -74,9 +80,9 @@ public class RSAUtil {
      * @return 双层Base64编码字符串
      */
     @SneakyThrows
-    public static String publicKeyEncrypt(RSA.KeySizeEnum keySizeEnum, PublicKey publicKey, String encryptStr) {
+    public static String publicKeyEncrypt(RSAKeySizeEnum keySizeEnum, PublicKey publicKey, String encryptStr) {
         // 获取指定算法的密码器
-        Cipher cipher = Cipher.getInstance(RSA.ALGORITHM);
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
 
         // 初始化密码器（公钥加密模型）
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
@@ -93,9 +99,9 @@ public class RSAUtil {
      * @return 加密前的字符串
      */
     @SneakyThrows
-    public static String privateKeyDecrypt(RSA.KeySizeEnum keySizeEnum, PrivateKey privateKey, String base64Encode) {
+    public static String privateKeyDecrypt(RSAKeySizeEnum keySizeEnum, PrivateKey privateKey, String base64Encode) {
         // 获取指定算法的密码器
-        Cipher cipher = Cipher.getInstance(RSA.ALGORITHM);
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
 
         // 初始化密码器（公钥加密模型）
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -199,4 +205,12 @@ public class RSAUtil {
         return new String(decryptedData);
     }
 
+
+    /**
+     * Key长度枚举
+     */
+    @Getter
+    static enum KeySizeEnum{
+
+    }
 }

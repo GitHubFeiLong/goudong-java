@@ -1,5 +1,6 @@
 package com.goudong.commons.security.rsa;
 
+import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
 import org.junit.jupiter.api.Test;
 
 import java.security.KeyPair;
@@ -11,7 +12,7 @@ class RSAUtilTest {
 
     @Test
     void generateKeypair() {
-        KeyPair keyPair = RSAUtil.generateKeypair(RSA.KeySizeEnum.RSA2048);
+        KeyPair keyPair = RSAUtil.generateKeypair(RSAKeySizeEnum.RSA2048);
         PrivateKey aPrivate = keyPair.getPrivate();
         PublicKey aPublic = keyPair.getPublic();
         System.out.println("aPublic = " + Base64.getEncoder().encodeToString(aPublic.getEncoded()));
