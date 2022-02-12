@@ -1,58 +1,104 @@
 package com.goudong.commons.security.rsa;
 
+import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
+import lombok.Getter;
+
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
 /**
  * 接口描述：
- * RSA接口
+ * RSA
  * @author msi
  * @version 1.0
  * @date 2022/2/10 21:55
  */
-public interface RSA {
+@Getter
+public class RSA {
 
     //~fields
     //==================================================================================================================
+    /**
+     * 默认1024
+     */
+    private RSAKeySizeEnum keySizeEnum = RSAKeySizeEnum.RSA1024;
 
+    /**
+     * 公钥
+     */
+    private PublicKey publicKey;
+
+    /**
+     * 私钥
+     */
+    private PrivateKey privateKey;
+
+    /**
+     * 公钥Base64字符串
+     */
+    private String publicKeyBase64;
+
+    /**
+     * 私钥Base64字符串
+     */
+    private String privateKeyBase64;
 
     //~methods
     //==================================================================================================================
-    /**
-     * 公钥加密
-     * @param base64Encode base64编码字符串，防止乱码
-     * @return 加密后Base64编码后的字符串
-     */
-    String publicKeyEncrypt(String base64Encode);
 
-    /**
-     * 私钥解密
-     * @param base64Encode 已经加密好的Base64字符串
-     * @return 解码后字符串
-     */
-    String privateKeyDecrypt(String base64Encode);
-
-    /**
-     * 生成签名
-     * @param data
-     * @param privateKey
-     * @return
-     * @throws Exception
-     */
-    default String sign(String data, PrivateKey privateKey) throws Exception {
-        return RSAUtil.sign(data, privateKey);
+    private RSA() {
     }
 
     /**
-     * 验证数据签名
-     * @param srcData
-     * @param publicKey
-     * @param sign
+     * 创建一个RSA对象
      * @return
-     * @throws Exception
      */
-    default boolean verify(String srcData, PublicKey publicKey, String sign) throws Exception {
-        return RSAUtil.verify(srcData, publicKey, sign);
+    public static RSA build() {
+        return new RSA();
     }
 
+    private RSA keySize(RSAKeySizeEnum keySizeEnum) {
+        this.keySizeEnum = keySizeEnum;
+        return this;
+    }
+
+    private RSA publicKey(PublicKey publicKey){
+        this.publicKey = publicKey;
+        this.publicKeyBase64 = RSAUtil.key2Base64(publicKey);
+        return this;
+    }
+
+    private RSA publicKeyBase64(String publicKeyBase64){
+        this.publicKeyBase64 = publicKeyBase64;
+        this.publicKey = (PublicKey) RSAUtil.base642Key(publicKeyBase64, true);
+        return this;
+    }
+
+    private RSA privateKey(PrivateKey privateKey) {
+        this.privateKey = privateKey;
+        this.privateKeyBase64 = RSAUtil.key2Base64(privateKey);
+        return this;
+    }
+
+    private RSA privateKeyBase64(String privateKeyBase64) {
+        this.privateKeyBase64 = privateKeyBase64;
+        this.privateKey = (PrivateKey) RSAUtil.base642Key(privateKeyBase64, false);;
+        return this;
+    }
+
+    private RSA generateKeypair() {
+        KeyPair keyPair = RSAUtil.generateKeypair(this.keySizeEnum);
+        this.publicKey = keyPair.getPublic();
+        this.privateKey = keyPair.getPrivate();
+        this.publicKeyBase64 = RSAUtil.key2Base64(publicKey);
+        this.privateKeyBase64 = RSAUtil.key2Base64(privateKey);
+        return this;
+    }
+
+    private RSA generateKeypair(RSAKeySizeEnum keySizeEnum) {
+        keySize(keySizeEnum);
+        generateKeypair();
+        return this;
+    }
 }

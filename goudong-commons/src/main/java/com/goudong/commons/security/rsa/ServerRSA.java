@@ -13,14 +13,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 /**
@@ -31,7 +28,7 @@ import java.util.Base64;
  * @date 2022/2/9 20:42
  */
 @Data
-public class ServerRSA implements RSA{
+public class ServerRSA {
     //~fields
     //==================================================================================================================
     /**
@@ -130,11 +127,7 @@ public class ServerRSA implements RSA{
             // 公钥文件存储时使用Base64编码后保存d的
             String publicKeyBase64 = IOUtil.readFile(publicKeyFile);
 
-            // 把 公钥的Base64文本进行解码
-            byte[] encPubKey = Base64.getDecoder().decode(publicKeyBase64);
-
-            // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
-            return KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(encPubKey));
+            return (PublicKey) RSAUtil.base642Key(publicKeyBase64, true);
         }
 
         String errorMessage = StrUtil.format("保存公钥的资源文件不存在:{}", PUBLIC_KEY_PATH);
@@ -157,11 +150,7 @@ public class ServerRSA implements RSA{
             // 公钥文件存储时使用Base64编码后保存d的
             String privateKeyBase64 = IOUtil.readFile(privateKeyFile);
 
-            // 把 公钥的Base64文本进行解码
-            byte[] encPriKey = Base64.getDecoder().decode(privateKeyBase64);
-
-            // 获取指定算法的密钥工厂, 根据 已编码的私钥规格, 生成私钥对象
-            return KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(encPriKey));
+            return (PrivateKey) RSAUtil.base642Key(privateKeyBase64, false);
         }
 
         String errorMessage = StrUtil.format("保存私钥的资源文件不存在:{}", PRIVATE_KEY_PATH);
@@ -174,7 +163,6 @@ public class ServerRSA implements RSA{
      * @param base64Encode      加密的字节数组
      * @return 加密后Base64编码后的字符串
      */
-    @Override
     public String publicKeyEncrypt(String base64Encode) {
         RSAKeySizeEnum byKeySize = RSAKeySizeEnum.getByKeySize(keySize);
         return RSAUtil.publicKeyEncrypt(byKeySize, publicKey, base64Encode);
@@ -186,10 +174,30 @@ public class ServerRSA implements RSA{
      * @param base64Encode 已经加密好的Base64字符串
      * @return 解码后的字符数组
      */
-    @Override
     public String privateKeyDecrypt(String base64Encode) {
         RSAKeySizeEnum byKeySize = RSAKeySizeEnum.getByKeySize(keySize);
         return RSAUtil.privateKeyDecrypt(byKeySize, privateKey, base64Encode);
 
+    }
+
+    /**
+     * 生成签名
+     *
+     * @param data 数据
+     * @return 根据data生成签名
+     */
+    public String sign(String data) {
+        return RSAUtil.sign(data, privateKey);
+    }
+
+    /**
+     * 验证数据签名
+     *
+     * @param srcData 数据
+     * @param sign 签名
+     * @return 是否匹配
+     */
+    public boolean verify(String srcData, String sign) {
+        return RSAUtil.verify(srcData, publicKey, sign);
     }
 }

@@ -1,12 +1,13 @@
 package com.goudong.commons.security.rsa;
 
 import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
-import lombok.Getter;
 import lombok.SneakyThrows;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 /**
@@ -117,7 +118,8 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    public static String sign(String data, PrivateKey privateKey) throws Exception {
+    @SneakyThrows
+    public static String sign(String data, PrivateKey privateKey) {
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
         signature.initSign(privateKey);
         signature.update(data.getBytes());
@@ -132,7 +134,8 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    public static boolean verify(String srcData, PublicKey publicKey, String sign) throws Exception {
+    @SneakyThrows
+    public static boolean verify(String srcData, PublicKey publicKey, String sign){
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
         signature.initVerify(publicKey);
         signature.update(srcData.getBytes());
@@ -205,12 +208,34 @@ public class RSAUtil {
         return new String(decryptedData);
     }
 
+    /**
+     * 获取key使用Base64编码后的字符串
+     * @param key
+     * @return
+     */
+    public static String key2Base64(Key key){
+        return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
 
     /**
-     * Key长度枚举
+     * 获取key使用Base64编码后的字符串
+     * @param base64 base64编码的key
+     * @param isPublicKey 是否是解析成公钥
+     * @return isPublicKey=true时返回公钥，否则返回私钥
      */
-    @Getter
-    static enum KeySizeEnum{
+    @SneakyThrows
+    public static Key base642Key(String base64, boolean isPublicKey){
+        // Base64文本进行解码
+        byte[] decode = Base64.getDecoder().decode(base64);
 
+        // 公钥
+        if (isPublicKey) {
+            // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
+            return KeyFactory.getInstance(RSAUtil.ALGORITHM).generatePublic(new X509EncodedKeySpec(decode));
+        }
+
+        // 获取指定算法的密钥工厂, 根据 已编码的私钥规格, 生成私钥对象
+        return KeyFactory.getInstance(RSAUtil.ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decode));
     }
+
 }
