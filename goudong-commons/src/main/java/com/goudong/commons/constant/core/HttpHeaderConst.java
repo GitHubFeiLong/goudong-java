@@ -23,6 +23,11 @@ public class HttpHeaderConst {
      */
     public static final String REQUEST_USER = "Request-User";
 
+    /**
+     * 前端使用AES加密请求参数的密钥信息
+     */
+    public static final String AES_KEY = "Aes-Key";
+
     //~methods
     //==================================================================================================================
 

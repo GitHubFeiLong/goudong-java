@@ -74,11 +74,13 @@ public class GatewayFilter implements GlobalFilter, Ordered {
                 .header(HttpHeaderConst.REQUEST_USER, URLEncoder.encode(JSON.toJSONString(baseUserDTO), "UTF-8"))
                 .build();
         ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
+
         return chain.filter(newExchange);
     }
 
     @Override
     public int getOrder() {
-        return 0;
+        return 2;
     }
+
 }

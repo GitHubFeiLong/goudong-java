@@ -1,5 +1,7 @@
 package com.goudong.commons.annotation.validator;
 
+import com.goudong.commons.validator.EnumIgnoreCaseConstraintValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
@@ -15,6 +17,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(value = EnumIgnoreCaseValidator.List.class)
+@Constraint(validatedBy = EnumIgnoreCaseConstraintValidator.class)
 @Documented
 public @interface EnumIgnoreCaseValidator {
     String message() default "";

@@ -4,7 +4,7 @@ import com.goudong.commons.enumerate.core.AESKeySizeEnum;
 import com.goudong.commons.exception.security.aes.AESException;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 类描述：
@@ -26,11 +26,6 @@ public class AES {
      * 密钥
      */
     private SecretKey secretKey;
-
-    /**
-     * 密钥base64字符串
-     */
-    private String secretKeyBase64;
 
     //~methods
     //==================================================================================================================
@@ -72,12 +67,11 @@ public class AES {
 
     /**
      * 设置密钥
-     * @param keyBase64 密钥的Base64编码格式字符串
+     * @param key 密钥字符串
      * @return
      */
-    public AES secretKeyBase64(String keyBase64) {
-        this.secretKeyBase64 = keyBase64;
-        this.secretKey = AESUtil.getSecretKeyByBase64(keyBase64);
+    public AES secretKey(String key) {
+        this.secretKey = new SecretKeySpec(key.getBytes(), AESUtil.ALGORITHM);
         return this;
     }
 
@@ -121,9 +115,5 @@ public class AES {
 
     public SecretKey getSecretKey() {
         return secretKey;
-    }
-
-    public String getSecretKeyBase64() {
-        return secretKeyBase64 != null ? secretKeyBase64 : (secretKey != null ? Base64.getEncoder().encodeToString(secretKey.getEncoded()) : null);
     }
 }
