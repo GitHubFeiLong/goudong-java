@@ -54,6 +54,12 @@ public class RSAUtil {
      * 签名名称
      */
     public static final String SIGNATURE_ALGORITHM = "MD5withRSA";
+
+    /**
+     * 算法名称/加密模式/数据填充方式
+     * 默认：RSA/ECB/PKCS1Padding
+     */
+    private static final String ALGORITHMS = "RSA/ECB/PKCS1Padding";
     //~methods
     //==================================================================================================================
 
