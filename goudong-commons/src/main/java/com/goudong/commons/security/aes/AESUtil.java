@@ -47,23 +47,13 @@ public class AESUtil {
     }
 
     /**
-     * 生成随机的AES密钥
-     * @param keySizeEnum
+     * 根据密钥字符串获取密钥对象
+     * @param key
      * @return
      */
-    @SneakyThrows
-    public static String generateKeypairBase64(AESKeySizeEnum keySizeEnum) {
-        return Base64.getEncoder().encodeToString(generateKeypair(keySizeEnum).getEncoded());
-    }
-
-    /**
-     * 根据密钥Base64编码字符串获取密钥对象
-     * @param keyBase64
-     * @return
-     */
-    public static SecretKey getSecretKeyByBase64(String keyBase64) {
+    public static SecretKey getSecretKey(String key) {
         //5.根据字节数组生成AES密钥
-        return new SecretKeySpec(Base64.getDecoder().decode(keyBase64), ALGORITHM);
+        return new SecretKeySpec(key.getBytes(), ALGORITHM);
     }
 
     /**
@@ -85,13 +75,13 @@ public class AESUtil {
 
     /**
      * 使用key进行加密
-     * @param keyBase64 密钥的Base64编码
+     * @param key 密钥字符串
      * @param data 待加密的字符串
      * @return 加密后的密文再进行Base64编码后的字符串
      */
     @SneakyThrows
-    public static String encrypt(String keyBase64, String data) {
-        SecretKey secretKey = getSecretKeyByBase64(keyBase64);
+    public static String encrypt(String key, String data) {
+        SecretKey secretKey = getSecretKey(key);
         // 密码器
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         // 初始化密码器，第一个参数为加密(Encrypt_mode)或者解密解密(Decrypt_mode)操作，第二个参数为使用的KEY
