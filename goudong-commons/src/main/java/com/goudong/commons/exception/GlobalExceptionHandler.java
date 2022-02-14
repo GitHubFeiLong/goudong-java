@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<BasicException> dataIntegrityViolationExceptionDispose(DataIntegrityViolationException exception) {
-        BasicException basicException = null;
+        BasicException basicException = BasicException.generateByServer(exception);
         String message = exception.getRootCause().getMessage();
 
         if (exception.getCause() instanceof DataException) {
@@ -179,7 +179,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = TransactionSystemException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<BasicException> transactionSystemExceptionDispose(TransactionSystemException exception) throws NoSuchFieldException {
-        BasicException basicException = null;
+        BasicException basicException = BasicException.generateByServer(exception);
 
         // 数据库的一些校验异常(比如字段长度等)
         if (exception.getCause().getCause() instanceof ConstraintViolationException) {
