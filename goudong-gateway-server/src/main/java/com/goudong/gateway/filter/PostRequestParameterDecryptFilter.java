@@ -84,7 +84,7 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
             BodyInserter bodyInserter = BodyInserters.fromPublisher(modifiedBody, String.class);
 
             /*
-                创建新的请求,删除Aes-Key
+                创建新的请求
              */
             HttpHeaders headers = new HttpHeaders();
             headers.putAll(exchange.getRequest().getHeaders());
