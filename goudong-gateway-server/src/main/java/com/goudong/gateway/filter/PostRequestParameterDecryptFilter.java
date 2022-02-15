@@ -4,25 +4,25 @@ import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.security.aes.AES;
 import com.goudong.commons.security.rsa.ServerRSA;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.gateway.hanlder.RequestDecodeHandler;
+import com.goudong.gateway.hanlder.ResponseDecodeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.NettyWriteResponseFilter;
 import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
 import org.springframework.cloud.gateway.support.BodyInserterContext;
 import org.springframework.cloud.gateway.support.DefaultServerRequest;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -36,6 +36,21 @@ import reactor.core.publisher.Mono;
 @Component
 public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered {
 
+    /**
+     * 优先级要高于其它过滤器
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return NettyWriteResponseFilter.WRITE_RESPONSE_FILTER_ORDER - 1;
+    }
+
+    /**
+     * 拦截器
+     * @param exchange
+     * @param chain
+     * @return
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -63,10 +78,7 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
             LogUtil.info(log,"本次请求使用了AES解密,AES密钥为{}", aesKey);
 
             // 删除Aes-Key
-            ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
-            requestBuilder.headers(k -> k.remove(HttpHeaderConst.AES_KEY));
-            ServerHttpRequest request = requestBuilder.build();
-            exchange.mutate().request(request).build();
+            removeRequestHeaders(exchange);
 
             // 获取请求的媒体类型(application/json等)
             MediaType mediaType = exchange.getRequest().getHeaders().getContentType();
@@ -92,27 +104,12 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
             CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, headers);
             return bodyInserter.insert(outputMessage, new BodyInserterContext())
                     .then(Mono.defer(() -> {
-                        ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(
-                                exchange.getRequest()) {
-                            @Override
-                            public HttpHeaders getHeaders() {
-                                long contentLength = headers.getContentLength();
-                                HttpHeaders httpHeaders = new HttpHeaders();
-                                httpHeaders.putAll(super.getHeaders());
-                                if (contentLength > 0) {
-                                    httpHeaders.setContentLength(contentLength);
-                                } else {
-                                    httpHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
-                                }
-                                return httpHeaders;
-                            }
+                        // 创建自定义请求解码器
+                        RequestDecodeHandler requestDecodeHandler = new RequestDecodeHandler(exchange.getRequest(), outputMessage);
+                        // 创建自定义响应解码器
+                        ResponseDecodeHandler responseDecodeHandler = new ResponseDecodeHandler(exchange.getResponse(), aesKey);
 
-                            @Override
-                            public Flux<DataBuffer> getBody() {
-                                return outputMessage.getBody();
-                            }
-                        };
-                        return chain.filter(exchange.mutate().request(decorator).build());
+                        return chain.filter(exchange.mutate().request(requestDecodeHandler).response(responseDecodeHandler).build());
                     }));
         }
 
@@ -120,11 +117,15 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
     }
 
     /**
-     * 优先级要高于其它过滤器
-     * @return
+     * 删除请求头信息
+     * @param exchange
      */
-    @Override
-    public int getOrder() {
-        return 1;
+    private void removeRequestHeaders(ServerWebExchange exchange) {
+        ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
+        requestBuilder.headers(k -> k.remove(HttpHeaderConst.AES_KEY));
+        ServerHttpRequest request = requestBuilder.build();
+        exchange.mutate().request(request).build();
     }
+
+
 }
