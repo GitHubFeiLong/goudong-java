@@ -77,8 +77,8 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
             String aesKey = ServerRSA.getInstance().privateKeyDecrypt(aesKeyEncrypt);
             LogUtil.info(log,"本次请求使用了AES解密,AES密钥为{}", aesKey);
 
-            // 删除Aes-Key
-            removeRequestHeaders(exchange);
+            // 修改请求头
+            modifyRequestHeaders(exchange, aesKey);
 
             // 获取请求的媒体类型(application/json等)
             MediaType mediaType = exchange.getRequest().getHeaders().getContentType();
@@ -88,8 +88,11 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
                     .flatMap(body -> {
                         if (MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
                             // 对原先的body进行修改操作
-                            String newBody = AES.build().secretKey(aesKey).decrypt(body);
-                            return Mono.just(newBody);
+                            // 前端加密后带双引号的字符串
+                            return Mono.just(AES.build()
+                                    .secretKey(aesKey)
+                                    .decrypt(body.substring(1, body.length()-1))
+                            );
                         }
                         return Mono.empty();
                     });
@@ -117,12 +120,15 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
     }
 
     /**
-     * 删除请求头信息
+     * 修改请求头信息
      * @param exchange
+     * @param aesKey 明文的AES密钥
      */
-    private void removeRequestHeaders(ServerWebExchange exchange) {
+    private void modifyRequestHeaders(ServerWebExchange exchange, String aesKey) {
         ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
-        requestBuilder.headers(k -> k.remove(HttpHeaderConst.AES_KEY));
+        // 删除请求头
+        // requestBuilder.headers(k -> k.remove(HttpHeaderConst.AES_KEY));
+        requestBuilder.header(HttpHeaderConst.AES_KEY, aesKey);
         ServerHttpRequest request = requestBuilder.build();
         exchange.mutate().request(request).build();
     }
