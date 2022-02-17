@@ -27,14 +27,14 @@ import reactor.core.publisher.Mono;
 
 /**
  * 类描述：
- * post请求的参数解密,处理完成后，将请求头中的密钥(Aes-Key)删除掉
+ * 请求/响应进行解密/加密操作
  * @author msi
  * @date 2022/2/13 20:06
  * @version 1.0
  */
 @Slf4j
 @Component
-public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered {
+public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
 
     /**
      * 优先级要高于其它过滤器
@@ -89,9 +89,10 @@ public class PostRequestParameterDecryptFilter implements GlobalFilter, Ordered 
                         if (MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
                             // 对原先的body进行修改操作
                             // 前端加密后带双引号的字符串
+                            body = body.startsWith("\"\"") ? body.substring(1, body.length()-1) : body;
                             return Mono.just(AES.build()
                                     .secretKey(aesKey)
-                                    .decrypt(body.substring(1, body.length()-1))
+                                    .decrypt(body)
                             );
                         }
                         return Mono.empty();

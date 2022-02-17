@@ -12,9 +12,29 @@ Spring Cloud Gateway是一个全新的项目,其基于spring5.0 以及springboot
 具体流程图如下：
 
 ![网关自动解密加密](./README.assets/网关自动解密加密.svg)
+
 流程讲解：
-1. （详情看前端的README）客户端发起一个**POST**的请求，请求头`content-type`值是**application/json**并且还携带一个自定义的请求头`Aes-Key`，值是一个AES随机密钥被后端RSA公钥加密过后的密文）。
-2. 进入Gateway的`PostRequestParameterDecrypt`，判断请求是否满足解密的条件：是否是post请求?是否是application/json的媒体类型?是否存在AES密钥?
-    1. 当满足所有条件时，需要额外处理请求和响应。
+1. 客户端发起请求，请求方式是**POST**，请求头中的`Content-Type`值是**application/json**,
+请求体是一个字符串（随机生成的一个AES密钥，使用密钥进行AES加密后的json字符串），
+并且还携带一个自定义的请求头:`Aes-Key`， 其值是随机AES密钥使用RSA公钥加密过后的字符串。（详情看前端的README）
+
+   例如：
+   ```shell
+      $ curl -X POST \
+        -H "Content-Type:application/json" \
+        -H "Aes-Key:XXXX"  --data "" http://127.0.0.1:10000/api/user/demo/secrypt
+   ```
+2. 请求开始进入Gateway，根据路由进入到创建的过滤器，当请求扭转到`ReqResBodyCryptoFilter`过滤器，该过滤器判断请求是否满足解密的条件： 
+   ```txt
+   条件一：是否是post请求?
+   条件二：请求参数的媒体类型是否是application/json的媒体类型?
+   条件三：是否存在AES密钥?
+   ```
+    1. 当请求同时满足上述所有条件时，需要进行请求体解密，响应体加密。
     2. 反之，不对请求体和响应体进行任何额外的处理。
-3. 当请求满足上一步列举的所有条件后，需要
+3. `ReqResBodyCryptoFilter`首先会将请求头`Aes-Key`的值进行RSA私钥解密。
+然后读取本次请求的body，然后使用AES密钥进行解密。然后创建一个新的请求，其它都不变只是将请求体改为解密后的内容以及
+请求头修改。这样其它服务都正常处理逻辑即可，不需要考虑解密的问题。
+4. 当网关开始处理响应时，如果本次情趣是走了上一步骤的话，那么就自动的将其响应体进行加密，加密的方式还是采用AES算法加密，
+其密钥就是上一步骤解密的密钥。
+5. 客户端收到Gateway网关响应后，根据之前AES的密钥进行解密。
