@@ -7,7 +7,23 @@ Spring Cloud Gateway是一个全新的项目,其基于spring5.0 以及springboot
 2. 将请求体解密，响应体加密
 
 ### 统一鉴权
-在网关中实现了对所有服务访问的鉴权。
+在网关中实现了对所有服务访问的鉴权,并将用户信息绑定到请求头中供其它服务获取请求用户信息。
+![网关统一鉴权，子服务获取用户](./README.assets/网关统一鉴权，子服务获取用户.svg)
+上面两个流程图实现了网关统一鉴权的功能，下面将途中的重点进行简讲解。
+1. 当请求到达网关拦截器`AuthenticationFilter`时，会获取请求携带的令牌。
+2. 将上步骤令牌、请求的`uri`和`method`作为feign的鉴权接口参数，调用认证服务的鉴权接口。
+
+   2.1. 认证服务接收到鉴权请求后，会解析令牌获取用户信息。
+   
+   2.2. 判断参数`uri`和`method`是否是白名单资源，如果是白名单资源，就响应成功，并返回用户信息。
+   
+   2.3. 如果不是白名单资源，需要进行角色权限校验。如果校验成功，就响应成功，并返回用户信息。如果校验失败，直接返回403/401
+3. 当第`2`步骤是响应成功时，`AuthenticationFilter`将返回的用户信息放在请求头中，供后续流程使用。
+
+> 子服务获取登录用户：
+> 1. 启动类加上:`@ServletComponentScan(basePackageClasses = {UserContextFilter.class})`
+> 2. 获取登录用户信息：UserContextFilter.get();
+
 ### 将请求体解密，响应体加密
 具体流程图如下：
 
@@ -22,7 +38,7 @@ Spring Cloud Gateway是一个全新的项目,其基于spring5.0 以及springboot
    ```shell
       $ curl -X POST \
         -H "Content-Type:application/json" \
-        -H "Aes-Key:XXXX"  --data "" http://127.0.0.1:10000/api/user/demo/secrypt
+        -H "Aes-Key:XXXX"  --data "参数密文" http://127.0.0.1:10000/api/user/demo/secrypt
    ```
 2. 请求开始进入Gateway，根据路由进入到创建的过滤器，当请求扭转到`ReqResBodyCryptoFilter`过滤器，该过滤器判断请求是否满足解密的条件： 
    ```txt

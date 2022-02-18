@@ -58,12 +58,14 @@ public interface GoudongOauth2ServerService {
     Result<BaseUserDTO> currentUser();
 
     /**
-     * 鉴权
-     * @param uri 请求uri
-     * @param method 请求方法
+     * 鉴权 将令牌放在请求头中。
+     * @param uri 请求地址
+     * @param method 请求方式
+     * @param token 令牌
      * @return
      */
     @GetMapping("/authentication/authorize")
-    Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri, @RequestParam("method") @NotBlank String method,
-                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String token) ;
+    Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri
+            , @RequestParam("method") @NotBlank String method
+            , @RequestHeader(HttpHeaders.AUTHORIZATION) String token) ;
 }

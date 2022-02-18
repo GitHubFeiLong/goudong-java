@@ -132,6 +132,7 @@ public class AuthenticationController {
             throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数错误",
                     String.format("参数method=%s不正确", method));
         }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<BaseWhitelistDTO> whitelistDTOS = baseWhitelistService.findAll();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -142,13 +143,13 @@ public class AuthenticationController {
                 .filter(f -> antPathMatcher.match(f.getPattern(), uri) && f.getMethods().contains(method))
                 .count();
         if (count > 0) {
-            return Result.ofSuccess(BeanUtil.copyProperties(BaseUserPO.createAnonymousUser(), BaseUserDTO.class));
+            return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
         }
 
         /*
             TODO 不是白名单，就需要判断该请求需要什么角色的权限
          */
 
-        return Result.ofSuccess(BeanUtil.copyProperties(SecurityContextHolder.getContext().getAuthentication(), BaseUserDTO.class));
+        return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
     }
 }

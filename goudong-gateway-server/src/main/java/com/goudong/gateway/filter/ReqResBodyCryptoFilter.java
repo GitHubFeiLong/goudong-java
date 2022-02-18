@@ -89,7 +89,7 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
                         if (MediaType.APPLICATION_JSON.isCompatibleWith(mediaType)) {
                             // 对原先的body进行修改操作
                             // 前端加密后带双引号的字符串
-                            body = body.startsWith("\"\"") ? body.substring(1, body.length()-1) : body;
+                            body = body.startsWith("\"") ? body.substring(1, body.length()-1) : body;
                             return Mono.just(AES.build()
                                     .secretKey(aesKey)
                                     .decrypt(body)

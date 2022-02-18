@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.frame.openfeign.GoudongOauth2ServerService;
+import com.goudong.commons.utils.core.LogUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -20,35 +21,50 @@ import java.net.URLEncoder;
 import java.util.List;
 
 /**
- * 网关过滤器
- * @Author msi
- * @Date 2021-04-08 14:06
- * @Version 1.0
+ * 类描述：
+ * 网关统一鉴权拦截器
+ * @Author e-Feilong.Chen
+ * @Date 2022/2/18 11:19
  */
 @Slf4j
-// @Component
-@Deprecated
-public class GatewayFilter implements GlobalFilter, Ordered {
-
+@Component
+public class AuthenticationFilter implements GlobalFilter, Ordered {
+    //~fields
+    //==================================================================================================================
     /**
      * oauth2服务
      */
     private final GoudongOauth2ServerService goudongOauth2ServerService;
 
-    public GatewayFilter(GoudongOauth2ServerService goudongOauth2ServerService) {
+    //~construct methods
+    //==================================================================================================================
+    public AuthenticationFilter(GoudongOauth2ServerService goudongOauth2ServerService) {
         this.goudongOauth2ServerService = goudongOauth2ServerService;
     }
 
+    //~methods
+    //==================================================================================================================
+
     /**
-     * 网管请求入口
-     * @param exchange
+     * 优先级，优先级应该比其它所有过滤器都要高
+     * @return
+     */
+    @Override
+    public int getOrder() {
+        return -100;
+    }
+
+    /**
+     *
+     * @param exchange ServerWebExchange是一个HTTP请求-响应交互的契约。提供对HTTP请求和响应的访问，
+     *                 并公开额外的 服务器 端处理相关属性和特性，如请求属性。
      * @param chain
      * @return
      */
     @SneakyThrows
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
+        LogUtil.debug(log, "进入网关鉴权拦截器");
         ServerHttpRequest request = exchange.getRequest();
         String uri = request.getURI().getPath();
         String method = request.getMethodValue();
@@ -74,14 +90,13 @@ public class GatewayFilter implements GlobalFilter, Ordered {
                 .mutate()
                 .header(HttpHeaderConst.REQUEST_USER, URLEncoder.encode(JSON.toJSONString(baseUserDTO), "UTF-8"))
                 .build();
+
+        // 创建新的交换机
         ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
 
         return chain.filter(newExchange);
     }
 
-    @Override
-    public int getOrder() {
-        return 2;
-    }
+
 
 }
