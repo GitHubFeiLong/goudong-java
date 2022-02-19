@@ -156,11 +156,17 @@ public class BaseUserServiceImpl implements BaseUserService {
                             .orElseThrow(() -> new UserException(ClientExceptionEnum.UNAUTHORIZED,
                                     "请重新登录", "令牌对应的用户id未查找到用户信息"));
 
-                    // 保存到redis中
-                    this.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
+                    // 账户是否未过期
+                    if (baseUserPO.isAccountNonExpired()) {
+                        // 保存到redis中
+                        this.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
 
-                    // 返回用户信息
-                    return baseUserPO;
+                        // 返回用户信息
+                        return baseUserPO;
+                    }
+
+                    // 账户已过期
+                    throw new AccountExpiredException();
                 }
 
                 // 访问令牌过期
