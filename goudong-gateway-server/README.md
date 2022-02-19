@@ -27,7 +27,7 @@ Spring Cloud Gateway是一个全新的项目,其基于spring5.0 以及springboot
 ### 将请求体解密，响应体加密
 具体流程图如下：
 
-![网关自动解密加密](./README.assets/网关自动解密加密.svg)
+![网关加密解密流程.svg](./README.assets/网关加密解密流程.svg)
 
 流程讲解：
 1. 客户端发起请求，请求方式是**POST**，请求头中的`Content-Type`值是**application/json**,
