@@ -120,4 +120,13 @@ knife4j:
 commons:
   # 白名单配置
   whitelist:
+    # 是否开启白名单（生产环境建议不开启）
     enable: false
+    # 自定义其他框架静态资源。
+    whitelists:
+      - pattern: /api/*.html
+        method: GET
+      - pattern: /api/*.js
+        method: GET
+      - pattern: /api/whitelist/**
+        method: GET,POST,DELETE,PUT

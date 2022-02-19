@@ -1,5 +1,6 @@
 package com.goudong.oauth2.properties;
 
+import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.oauth2.core.TokenExpires;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 类描述：
  * 令牌失效时常配置
+ * @see ClientSideEnum 客户端类型
  * @author msi
  * @version 1.0
  * @date 2022/1/19 19:57
@@ -25,7 +27,7 @@ public class TokenExpiresProperties {
     //~fields
     //==================================================================================================================
     /**
-     * 是否开启重复登录(单个账号允许多设备同时在线)
+     * 是否允许同时登陆(单个账号允许多设备同时在线)
      */
     private Boolean enableRepeatLogin = false;
 

@@ -120,63 +120,39 @@ echo "设置goudong环境变量完成"
 > 有特殊字符的时候使用单引号将所有值包起来
 
 
-[comment]: <> (## 系统处理请求流程)
-
-[comment]: <> (流程图位置：（goudong-java\drawio\处理用户请求流程.drawio）)
-
-[comment]: <> (整个微服务的处理用户请求的流程如下图，共分为7个大步骤，其中在第2步网关中进行了大量的校验。)
-
-[comment]: <> (![处理用户请求流程-1]&#40;README.assets/%E5%A4%84%E7%90%86%E7%94%A8%E6%88%B7%E8%AF%B7%E6%B1%82%E6%B5%81%E7%A8%8B-1.png&#41;)
-
-[comment]: <> (鉴权步骤：)
-
-[comment]: <> (1. 用户发起请求到网关)
-
-[comment]: <> (2. 网关根据请求uri判断是否需要放行（登录等不需要token都能访问的资源）。如果需要鉴权（除了前面的资源），那么就会进行token校验及鉴权：)
-
-[comment]: <> (   1. 校验)
-
-[comment]: <> (      1. 请求头中是否包含正确的请求头（Authorization）？)
-
-[comment]: <> (      2. 请求头Authorization的值是否是正确的格式？)
-
-[comment]: <> (      3. token颁发库中查询是否包含这个token？)
-
-[comment]: <> (      4. token没问题，账户有无失效（到期）？)
-
-[comment]: <> (   2. 鉴权)
-
-[comment]: <> (      1. 查询该资源需要拥有的角色，然后判断用户是否拥有这个角色？)
-
-[comment]: <> (   3. 异常)
-
-[comment]: <> (      1. 当校验token出现错误时，返回401状态码，前端重定向登录页。)
-
-[comment]: <> (      2. 当用户没有权限时，返回403状态码，提示用户没有权限。)
-
-[comment]: <> (   4. 校验和鉴权都正常，直接路由到指定的服务，处理请求。)
-
-[comment]: <> (3. 微服务处理请求，响应数据到网关，网关再反回给用户。)
-
-[comment]: <> (> 数据库是否有token签发记录 解释：系统每次创建token时都要先将其保存到mysql中然后再返给用户，当用户出现：修改密码、账户被冻结、账户被删除等操作后，将之前颁发的token从mysql中删除，达到一定程度的安全性。)
-
 ## 安全
 ### RSA
 使用非对称加密算法RSA,在前端使用RSA公钥进行加密数据，后端通过RSA私钥进行解密。
 例如：
 1. 对安全较高的支付信息，密码等。
-2. 大多场景：前端请求接口时，随机生成一个AES密钥明文，使用AES算法将请求参数加密，并使用RSA公钥将AES密钥明文加密成密文后放在请求头中，最后一切准备好了发起Http请求，后端使用RSA私钥解密AES密钥密文，获得AES密钥明文，然后再根据AES密钥明文进行解密参数。
+2. 大多场景：前端请求接口时，随机生成一个AES密钥明文，使用AES算法将请求参数加密，
+并使用RSA公钥将AES密钥明文加密成密文后放在请求头中， 最后一切准备好了发起Http请求，
+后端使用RSA私钥解密AES密钥密文，获得AES密钥明文，然后再根据AES密钥明文进行解密参数。
 ### AES
 对称加密算法，速度较RSA更快。
-在本项目中主要是进行解密前端的加密参数。
+实际应用：
+1. 前端生成随机AES密钥，使用AES密钥加密请求体传输数据（使用RSA将AES密钥加密添加请求头）。
+2. 后端网关根据随机AES密钥进行解密/加密。
+3. 前端使用AES密钥，将后端的加密的数据进行解密。
 
 ## 流程图
-详情看每个服务自己下面的README
+每个模块都根据自身业务，将一些有趣的业务进行流程图绘制，这些流程图一般都保存在项目根目录的**README.assets**目录下 。
+
+
 ## 获取当前登录用户
-前提需要启动网关服务(goudong-gateway-server)和认证服务(goudong-oauth2-server)。当用户登录后，获取的是登录用户信息，当用户未登录时，获取的是一个匿名用户信息。
+前提条件：
+1. 启动网关服务(goudong-gateway-server)
+2. 启动认证服务(goudong-oauth2-server)
+3. 服务启动类加上注解`@ServletComponentScan(basePackageClasses = {UserContextFilter.class})`。
+
+获取当前用户：
 ```java
+// 获取发起请求的用户信息，获取不到返回一个匿名用户
 UserContext.get()
 ```
+## 认证
+使用认证服务进统一认证。
+
 ##鉴权
 本项目，在网关层进行调用认证服务进行接口鉴权。
 
@@ -214,7 +190,7 @@ CREATE TABLE `table_name` (
 
 #### 约定1：各层的对象类型定义
 前端给控制器传递的DTO和控制器给服务层传递的DTO需要根据情况使用两个不同的DTO（方便扩展）
-![请求对象类型转换](README.assets/请求对象类型转换.png)
+![对象类型转换流程.svg](README.assets/对象类型转换流程.svg)
 
 解释：
 
@@ -289,21 +265,36 @@ CREATE TABLE `table_name` (
 
 ### 白名单
 
-在Restful接口上使用注解@Whitelist，标明这个Restful接口是一个白名单。
-
-在配置文件中配置属性值`commons.whitelist.enable=true`，项目启动成功后，会扫描项目中定义的所有白名单，并将其持久化到MySQL数据库中（使用OpenFeign调用用户服务中保存白名单接口，校验数据后保存到MySQL），并更新Redis中的白名单内容。
-
+1. 在配置文件中开启白名单，配置`commons.whitelist.enable=true`即可。
+2. 在Restful接口上使用注解@Whitelist，标明这个Restful接口是一个白名单。
+```java
+@GetMapping("/check-registry/phone/{phone}")
+@ApiOperation(value = "检查手机号", notes = "检查手机号是否可以使用，true可以使用")
+@ApiImplicitParam(name = "phone", value = "手机号")
+@Whitelist("根据手机号获取账号")
+public Result<Boolean> getUserByPhone(@PathVariable String phone) {//.......}
+```
 ```yml
+# commons配置
 commons:
+  # 白名单配置
   whitelist:
-    enable: true # 是否开启白名单
+    # 是否开启白名单（生产环境建议不开启）
+    enable: false
+    # 自定义其他框架静态资源。
+    whitelists:
+      - pattern: /api/*.html
+        method: GET
+      - pattern: /api/*.js
+        method: GET
+      - pattern: /api/whitelist/**
+        method: GET,POST,DELETE,PUT
 ```
 
-> 还可以配置一些自定义的白名单，只需要配置属性`commons.whitelist.whitelists` 该属性是一个集合，详情请看`com.goudong.commons.frame.whitelist.BaseWhitelistDTO`
->
-> 在网关中判断用户请求的uri是否满足白名单，当满足时直接放行
 
+具体流程如下：
 
+![添加白名单流程.svg](./README.assets/添加白名单流程.svg)
 
 ### 接口请求日志
 
