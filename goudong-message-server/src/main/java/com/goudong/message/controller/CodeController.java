@@ -1,6 +1,7 @@
 package com.goudong.message.controller;
 
 import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.AssertUtil;

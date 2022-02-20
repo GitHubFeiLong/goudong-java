@@ -3,7 +3,7 @@ package com.goudong.commons.filter;
 import com.alibaba.fastjson.JSONObject;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.oauth2.UserContext;
+import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;

@@ -1,11 +1,9 @@
 package com.goudong.commons.frame.openfeign;
 
+import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 接口描述：
@@ -49,6 +47,6 @@ public interface GoudongMessageServerService {
      * @param code 验证码
      * @return
      */
-    @GetMapping("/check-email-code/{email}/{code}")
+    @GetMapping("/code/check-email-code/{email}/{code}")
     Result<Boolean> checkEmailCode (@PathVariable String email, @PathVariable String code);
 }

@@ -1,7 +1,7 @@
 package com.goudong.commons.frame.jpa;
 
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.oauth2.UserContext;
+import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,5 +1,6 @@
-package com.goudong.commons.dto.oauth2;
+package com.goudong.commons.core.context;
 
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import org.springframework.util.Assert;
 
 /**
