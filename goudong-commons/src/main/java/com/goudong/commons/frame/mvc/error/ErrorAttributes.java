@@ -7,7 +7,9 @@ import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.frame.core.Result;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -21,6 +23,7 @@ import java.util.Map;
  * @Date 2021-05-25 9:53
  * @Version 1.0
  */
+@Component
 public class ErrorAttributes extends DefaultErrorAttributes {
 
     private final HttpServletRequest request;

@@ -11,6 +11,7 @@ import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
+import com.goudong.commons.exception.file.FileUploadException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.core.FileType;
@@ -45,6 +46,7 @@ import java.util.Optional;
 /**
  * 类描述：
  * 文件的基本操作：上传
+ * 请求头 Range ： https://www.cnblogs.com/1995hxt/p/5692050.html
  * @author msi
  * @date 2021/12/4 20:49
  * @version 1.0
@@ -75,7 +77,7 @@ public class UploadController {
             String applicationName = environment.getProperty("spring.application.name");
             String clientMessage = String.format("文件服务 %s 未开启上传文件", applicationName);
             String serverMessage = String.format("请设置属性 file.upload.enabled=true 即可解决问题");
-            throw ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, clientMessage, serverMessage);
+            throw new FileUploadException(ServerExceptionEnum.SERVICE_UNAVAILABLE, clientMessage, serverMessage);
         }
 
         // 类型及大小判断
@@ -109,11 +111,11 @@ public class UploadController {
                             originalFilename, pair.getLeft(), pair.getRight(),
                             fileType.getLength(), fileType.getFileLengthUnit());
 
-                    throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, message);
+                    throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
                 }
             } else {
                 // 没有后缀的文件，暂不允许上传
-                throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "没有后缀的文件，暂不允许上传");
+                throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, "没有后缀的文件，暂不允许上传");
             }
 
         }
@@ -132,7 +134,7 @@ public class UploadController {
         String originalFilename = file.getOriginalFilename();
         Filename filename = FileUtils.getFilename(originalFilename);
         String customerFilename = requestUploadDTO.getOriginalFilename();
-        if (StringUtils.isNotBlank(customerFilename)) {
+        if (StringUtils.isNotBlank(customerFilename) && !Objects.equals(customerFilename, "null")) {
             filename.setFilename(customerFilename);
         }
 
@@ -182,6 +184,7 @@ public class UploadController {
         }
 
     }
+
 
     // @RequestMapping(value = "deleteFile", method = RequestMethod.GET)
     // public String deleteFile(String fileName) throws JsonProcessingException {

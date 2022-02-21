@@ -10,7 +10,7 @@ server:
     context-path: /api/file
 spring:
   profiles:
-    active: dev #默认使用开发环境
+#    active: dev #默认使用开发环境
   main:
     allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
   mvc:
@@ -27,10 +27,12 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848 # nacos服务集群
+
   servlet:
     multipart:
-      max-request-size: 10MB
-      max-file-size: 10MB
+      # 设置值为-1，不限制大小
+      max-request-size: -1
+      max-file-size: -1
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
@@ -75,8 +77,15 @@ knife4j:
     password: knife4j  # 密码
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
+
+# 自定义配置
+commons:
+  whitelist:
+    enable: false
 file:
   upload:
     enable-full-path-model: true
     root-dir: 'd:'
-# 自定义配置
+    jpg:
+      length: 100
+

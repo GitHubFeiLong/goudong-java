@@ -26,18 +26,18 @@ public class FileType {
     private FileTypeEnum type;
 
     /**
-     * 文件大小
+     * 文件大小,默认10
      */
     @Min(value = 0)
     private Long length = 10L;
 
     /**
-     * 文件大小单位
+     * 文件大小单位,默认MB
      */
     private FileLengthUnit fileLengthUnit = FileLengthUnit.MB;
 
     /**
-     * 是否禁用该类文件上传，默认都是允许上传
+     * 是否启用该类文件上传，默认true
      */
     private Boolean enabled = true;
 

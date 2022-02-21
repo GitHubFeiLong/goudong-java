@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartException;
 
 /**
  * 类描述：
@@ -49,8 +51,18 @@ public class BasicException extends RuntimeException{
     public static BasicException generateByServer(Throwable throwable) {
         // 默认500异常
         BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR);
-        String message = throwable.getMessage();
 
+        // 空指针
+        if (throwable instanceof NullPointerException) {
+            return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "空指针异常", "null");
+        }
+
+        // 上传文件错误
+        if (throwable instanceof MultipartException) {
+            return ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "上传文件失败", throwable.getMessage());
+        }
+
+        String message = throwable.getMessage();
         // openFeign调用远程服务，服务还未注册到nacos中
         if (message.startsWith("com.netflix.client.ClientException")) {
             return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
@@ -59,6 +71,7 @@ public class BasicException extends RuntimeException{
         // if (message.startsWith()) {
         //
         // }
+
 
         return basicException;
     }

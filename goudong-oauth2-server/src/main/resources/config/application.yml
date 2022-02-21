@@ -72,7 +72,7 @@ knife4j:
 # 配置commons
 commons:
   whitelist:
-    enable: true
+    enable: false
 
 # 配置oauth2
 oauth2:

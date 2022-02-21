@@ -1,6 +1,8 @@
 package com.goudong.commons.config;
 
 import com.goudong.commons.exception.GlobalExceptionHandler;
+import com.goudong.commons.frame.mvc.error.ErrorAttributes;
+import com.goudong.commons.frame.mvc.error.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,5 +23,15 @@ public class GlobalExceptionConfig {
     public GlobalExceptionHandler globalExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
         return new GlobalExceptionHandler(request, response);
     }
+
+    // @Bean
+    // public ErrorAttributes errorController(HttpServletRequest httpServletRequest) {
+    //     return new ErrorAttributes(httpServletRequest);
+    // }
+    //
+    // @Bean
+    // public ErrorController errorController(ErrorAttributes errorAttributes) {
+    //     return new ErrorController(errorAttributes);
+    // }
 
 }

@@ -10,6 +10,7 @@ import com.goudong.commons.frame.mvc.error.ErrorAttributes;
 import com.goudong.commons.frame.mvc.error.ErrorController;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version 1.0
  * @date 2021/12/11 17:42
  */
+@Configuration
 @EnableCommonsWebMvcConfig
 @EnableCommonsGlobalExceptionHandler
 @EnableCommonsJpaConfig
@@ -59,17 +61,4 @@ public class CommonsConfig {
     //     return new RepeatAop();
     // }
 
-    /**
-     * 自定义异常逻辑，返回自定义格式的json错误信息
-     * @return
-     */
-    @Bean
-    public ErrorAttributes errorAttributes () {
-        return new ErrorAttributes(request);
-    }
-
-    @Bean
-    public ErrorController ErrorController(ErrorAttributes errorAttributes){
-        return new ErrorController(errorAttributes);
-    }
 }
