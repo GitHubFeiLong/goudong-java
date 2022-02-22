@@ -60,7 +60,7 @@
             <artifactId>spring-cloud-starter-oauth2</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--jwt-->
+        <!--jwt deprecated-->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
