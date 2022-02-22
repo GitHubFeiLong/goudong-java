@@ -1,8 +1,12 @@
 package com.goudong.file.controller.download;
 
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +22,11 @@ import java.io.RandomAccessFile;
  * @version 1.0
  * @date 2022/2/21 21:13
  */
+@Api(tags = "文件下载")
+@Slf4j
+@Validated
+@RestController
+@RequestMapping("/download-group")
 public class DownloadController {
 
     //~fields
@@ -25,17 +34,26 @@ public class DownloadController {
 
     //~methods
     //==================================================================================================================
+
+    /**
+     * 下载文件
+     * range请求头使用https://www.cnblogs.com/1995hxt/p/5692050.html
+     * Range: bytes=10- ：第10个字节及最后个字节的数据;Range: bytes=40-100 ：第40个字节到第100个字节之间的数据.
+     * @param request
+     * @param response
+     * @param range (详细描述：https://www.cnblogs.com/1995hxt/p/5692050.html)
+     */
     @RequestMapping("/")
     void home(HttpServletRequest request, HttpServletResponse response, @RequestHeader(required = false) String range) {
-        //文件位置
-        File music = new File("D:\\FFOutput\\1.pdf");
+        // 被下载的文件
+        File music = new File("D:\\aaa\\1.png");
 
         //开始下载位置
         long startByte = 0;
-        //结束下载位置
+        //结束下载位置（数组下标从0开始）
         long endByte = music.length() - 1;
 
-        //有range的话
+        // range值格式正确
         if (range != null && range.contains("bytes=") && range.contains("-")) {
             //坑爹地方一：http状态码要为206
             response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
