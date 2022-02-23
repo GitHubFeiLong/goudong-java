@@ -1,9 +1,11 @@
 package com.goudong.file.controller.download;
 
+import com.goudong.commons.annotation.core.Whitelist;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,8 +45,9 @@ public class DownloadController {
      * @param response
      * @param range (详细描述：https://www.cnblogs.com/1995hxt/p/5692050.html)
      */
-    @RequestMapping("/")
-    void home(HttpServletRequest request, HttpServletResponse response, @RequestHeader(required = false) String range) {
+    @GetMapping("/download")
+    @Whitelist
+    void download(HttpServletRequest request, HttpServletResponse response, @RequestHeader(required = false) String range) {
         // 被下载的文件
         File music = new File("D:\\aaa\\1.png");
 

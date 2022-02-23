@@ -81,7 +81,7 @@ knife4j:
 # 自定义配置
 commons:
   whitelist:
-    enable: false
+    enable: true
 file:
   upload:
     enable-full-path-model: true

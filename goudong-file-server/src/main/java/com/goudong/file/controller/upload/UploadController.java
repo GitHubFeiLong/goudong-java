@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
+import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
@@ -125,6 +126,7 @@ public class UploadController {
     @ApiOperation("上传单文件")
     @PostMapping("/upload")
     @Transactional
+    @Whitelist
     public Result<FileDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws JsonProcessingException {
         MultipartFile file = requestUploadDTO.getFile();
 

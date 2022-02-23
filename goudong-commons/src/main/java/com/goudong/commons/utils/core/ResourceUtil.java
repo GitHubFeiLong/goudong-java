@@ -43,6 +43,7 @@ public class ResourceUtil {
             BasePackageConst.USER_CONTROLLER,
             BasePackageConst.OAUTH2_CONTROLLER,
             BasePackageConst.MESSAGE_CONTROLLER,
+            BasePackageConst.FILE_CONTROLLER,
     };
 
     /**

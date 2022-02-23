@@ -27,6 +27,7 @@ public class BasePackageConst {
     public static final String USER_CONTROLLER = "com.goudong.user.controller";
     public static final String OAUTH2_CONTROLLER = "com.goudong.oauth2.controller";
     public static final String MESSAGE_CONTROLLER = "com.goudong.message.controller";
+    public static final String FILE_CONTROLLER = "com.goudong.file.controller";
     public static final String COMMODITY_CONTROLLER = "com.goudong.commodity.controller";
 
     /*=========================* DAO包 *=========================*/

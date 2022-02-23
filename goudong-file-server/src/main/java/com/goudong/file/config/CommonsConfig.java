@@ -1,9 +1,6 @@
 package com.goudong.file.config;
 
-import com.goudong.commons.annotation.enable.EnableCommonsGlobalExceptionHandler;
-import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
+import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.filter.UserContextFilter;
 import com.goudong.commons.frame.mvc.error.ErrorAttributes;
@@ -28,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @EnableCommonsGlobalExceptionHandler
 @EnableCommonsJpaConfig
 @EnableCommonsJacksonConfig
+@EnableCommonsFeignConfig
 @ServletComponentScan(basePackageClasses = {UserContextFilter.class})
 public class CommonsConfig {
     private final HttpServletRequest request;
