@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.FileDTO;
+import com.goudong.commons.dto.file.FileShardUploadDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
@@ -30,10 +31,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -198,74 +196,74 @@ public class UploadController {
 
     /**
      * 分段上传
-     * @param requestUploadDTO
+     * @param shardUploadDTO 分片参数对象
      * @param range 请求头中的range
      * @return
      * @throws JsonProcessingException
      */
-    @ApiOperation("分段上传文件")
+    @ApiOperation("分片上传文件")
     @PostMapping("/upload-demo")
     @Transactional
     @Whitelist
-    public Result<FileDTO> uploadDemo(@NotNull RequestUploadDTO requestUploadDTO
-            , @RequestHeader(required = false) String range) throws JsonProcessingException {
-        MultipartFile file = requestUploadDTO.getFile();
+    public Result<Object> uploadByShard(FileShardUploadDTO shardUploadDTO, @RequestHeader(required = false) String range) throws JsonProcessingException {
+        // MultipartFile file = requestUploadDTO.getFile();
+        //
+        // // 检查
+        // check(Lists.newArrayList(file));
+        //
+        // String originalFilename = file.getOriginalFilename();
+        // Filename filename = FileUtils.getFilename(originalFilename);
+        // String customerFilename = requestUploadDTO.getOriginalFilename();
+        // if (StringUtils.isNotBlank(customerFilename) && !Objects.equals(customerFilename, "null")) {
+        //     filename.setFilename(customerFilename);
+        // }
+        //
+        // // 文件保存的 目录
+        // String dir = fileUpload.getRootDir() + File.separator + LocalDateTime.now().toLocalDate().toString();
+        // File dirFile = new File(dir);
+        // // 不存在文件夹，再创建文件夹
+        // if (!dirFile.exists() && !dirFile.mkdirs()) {
+        //     LogUtil.warn(log, "创建文件夹失败");
+        //     throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
+        // }
+        //
+        // FilePO filePO = new FilePO();
+        // // 当前文件名，使用规则生成
+        // filePO.setCurrentFilename(IdUtil.simpleUUID());
+        // // 原文件名
+        // filePO.setOriginalFilename(filename.getFilename());
+        // // 文件类型
+        // filePO.setFileType(filename.getFileTypeEnum().lowerName());
+        // // 文件大小
+        // filePO.setSize(file.getSize());
+        //
+        // // 设置合适的大小和单位
+        // ImmutablePair<Long, FileLengthUnit> fileSizePair = FileUtils.adaptiveSize(file.getSize());
+        // // 文件长度
+        // filePO.setFileLength(fileSizePair.getLeft());
+        // // 长度单位
+        // filePO.setFileLengthUnit(fileSizePair.getRight().name().toLowerCase());
+        //
+        // // 判断文件是否存在
+        // String newFullFilename = dir + File.separator + filePO.getCurrentFilename()+ "." + filePO.getFileType();
+        // File newFile = new File(newFullFilename);
+        // if (newFile.exists()) {
+        //     throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
+        // }
+        // // 创建文件
+        // try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {
+        //     StreamUtils.copy(in, out);
+        //     filePO.setFileLink("");
+        //     filePO.setFilePath(newFullFilename);
+        //
+        //     fileRepository.save(filePO);
+        //     return Result.ofSuccess("创建成功", BeanUtil.copyProperties(filePO, FileDTO.class));
+        // } catch (IOException e) {
+        //     LogUtil.error(log, "文件上传失败:{}", e);
+        //     throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败");
+        // }
 
-        // 检查
-        check(Lists.newArrayList(file));
-
-        String originalFilename = file.getOriginalFilename();
-        Filename filename = FileUtils.getFilename(originalFilename);
-        String customerFilename = requestUploadDTO.getOriginalFilename();
-        if (StringUtils.isNotBlank(customerFilename) && !Objects.equals(customerFilename, "null")) {
-            filename.setFilename(customerFilename);
-        }
-
-        // 文件保存的 目录
-        String dir = fileUpload.getRootDir() + File.separator + LocalDateTime.now().toLocalDate().toString();
-        File dirFile = new File(dir);
-        // 不存在文件夹，再创建文件夹
-        if (!dirFile.exists() && !dirFile.mkdirs()) {
-            LogUtil.warn(log, "创建文件夹失败");
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
-        }
-
-        FilePO filePO = new FilePO();
-        // 当前文件名，使用规则生成
-        filePO.setCurrentFilename(IdUtil.simpleUUID());
-        // 原文件名
-        filePO.setOriginalFilename(filename.getFilename());
-        // 文件类型
-        filePO.setFileType(filename.getFileTypeEnum().lowerName());
-        // 文件大小
-        filePO.setSize(file.getSize());
-
-        // 设置合适的大小和单位
-        ImmutablePair<Long, FileLengthUnit> fileSizePair = FileUtils.adaptiveSize(file.getSize());
-        // 文件长度
-        filePO.setFileLength(fileSizePair.getLeft());
-        // 长度单位
-        filePO.setFileLengthUnit(fileSizePair.getRight().name().toLowerCase());
-
-        // 判断文件是否存在
-        String newFullFilename = dir + File.separator + filePO.getCurrentFilename()+ "." + filePO.getFileType();
-        File newFile = new File(newFullFilename);
-        if (newFile.exists()) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
-        }
-        // 创建文件
-        try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {
-            StreamUtils.copy(in, out);
-            filePO.setFileLink("");
-            filePO.setFilePath(newFullFilename);
-
-            fileRepository.save(filePO);
-            return Result.ofSuccess("创建成功", BeanUtil.copyProperties(filePO, FileDTO.class));
-        } catch (IOException e) {
-            LogUtil.error(log, "文件上传失败:{}", e);
-            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败");
-        }
-
+        return Result.ofSuccess(shardUploadDTO);
     }
 
     // @RequestMapping(value = "deleteFile", method = RequestMethod.GET)

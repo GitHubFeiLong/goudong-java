@@ -71,9 +71,14 @@ public class WhitelistInitialize implements ApplicationRunner {
 
         if (CollectionUtils.isNotEmpty(baseWhitelist2CreateDTOS)) {
             // 使用feign，保存到指定库中
-            Result<List<BaseWhitelistDTO>> result = goudongOauth2ServerService.addWhitelist(baseWhitelist2CreateDTOS);
-            LogUtil.info(log, "结束处理白名单:\n{}", result.getData());
-            return;
+            try {
+                Result<List<BaseWhitelistDTO>> result = goudongOauth2ServerService.addWhitelist(baseWhitelist2CreateDTOS);
+                LogUtil.info(log, "结束处理白名单:\n{}", result.getData());
+                return;
+            } catch (RuntimeException e) {
+                LogUtil.error(log, "认证服务接口调用失败：{}", e.getMessage());
+            }
+
         }
 
         LogUtil.info(log, "没有白名单需要保存");
