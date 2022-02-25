@@ -8,6 +8,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,6 +40,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
+     * Configure cross origin requests processing.
+     *
+     * @param registry
+     * @since 4.2
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE");
+    }
+
+    /**
      * 不根据url后缀匹配返回指定的数据类型
      * @param configurer
      */
@@ -51,7 +65,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * 跨域
      * @return
      */
-    @Bean
+    // @Bean
     public CorsFilter corsFilter() {
         //1.添加CORS配置信息
         CorsConfiguration config = new CorsConfiguration();

@@ -5,6 +5,9 @@ import com.goudong.commons.enumerate.file.FileTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.Column;
 
 /**
  * 类描述：
@@ -65,4 +68,10 @@ public class FileDTO {
      */
     @ApiModelProperty(value = "文件磁盘地址")
     private String filePath;
+
+    /**
+     * 文件md5值
+     */
+    @ApiModelProperty(value = "文件md5值")
+    private String fileMd5;
 }

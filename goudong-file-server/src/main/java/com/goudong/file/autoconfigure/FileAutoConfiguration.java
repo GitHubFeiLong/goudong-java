@@ -66,8 +66,11 @@ public class FileAutoConfiguration {
          */
         List<FileType> fileTypeList = new ArrayList<>();
         Arrays.stream(upload.getClass().getDeclaredFields())
+                // 筛选FileType 类型属性
                 .filter(f -> Objects.equals(f.getType().getName(), FileType.class.getName()))
+                // 只要字段名
                 .map(Field::getName)
+                // 根据对象和其字段名获取值，并加入到集合
                 .forEach(f->{
                     fileTypeList.add(BeanUtil.getProperty(upload, f));
                 });

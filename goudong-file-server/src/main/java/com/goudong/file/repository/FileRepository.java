@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 接口描述：
  *
@@ -14,4 +16,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface FileRepository extends JpaRepository<FilePO, Long>, JpaSpecificationExecutor<FilePO> {
+    /**
+     * 根据md5查询第一条
+     * @param fileMd5
+     * @return
+     */
+    FilePO findFirstByFileMd5(String fileMd5);
 }

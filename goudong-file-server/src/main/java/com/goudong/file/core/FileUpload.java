@@ -105,7 +105,7 @@ public class FileUpload {
     private FileType md = new FileType(FileTypeEnum.MD);
 
     /**
-     * 文件类型
+     * 文件类型, 程序将用户配置和默认配置统一设置到属性中，方便后期使用。
      */
     private List<FileType> fileTypes = new ArrayList<>();
 }

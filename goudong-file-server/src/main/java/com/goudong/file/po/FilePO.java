@@ -83,4 +83,10 @@ public class FilePO extends BasePO {
     @Column(name = "file_path", nullable = false)
     private String filePath;
 
+    /**
+     * 文件md5值
+     */
+    @Length(max = 32)
+    @Column(name = "file_md5", nullable = false)
+    private String fileMd5;
 }
