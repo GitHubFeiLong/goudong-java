@@ -9,4 +9,5 @@ package com.goudong.file.constant;
  */
 public class FileConst {
     // public static final String
+    public static final String TEMP_DIR = "temp";
 }

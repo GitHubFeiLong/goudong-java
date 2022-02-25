@@ -1,9 +1,14 @@
 package com.goudong.file.util;
 
 import cn.hutool.core.util.IdUtil;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
+import com.goudong.commons.exception.file.FileAlreadyExistsException;
+import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.Filename;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.validation.constraints.NotBlank;
@@ -19,6 +24,7 @@ import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
  * @version 1.0
  * @date 2021/12/9 20:15
  */
+@Slf4j
 public class FileUtils {
     private FileUtils(){
 
@@ -94,6 +100,44 @@ public class FileUtils {
         return LocalDateTime.now().toLocalDate().toString();
     }
 
+    /**
+     * 获取 临时目录/md5 这个文件对象
+     * @param rootDir 根目录
+     * @param fileMd5 文件的md5
+     * @return
+     */
+    public static File getTempAndMd5File(@NotBlank String rootDir, String fileMd5){
+        // 拼接文件存储的临时文件夹
+        String fileTempDir = rootDir + File.separator + FileConst.TEMP_DIR + File.separator + fileMd5;
+        // 文件夹不存在
+        File file = new File(fileTempDir);
+
+        // 存在
+        if (file.exists()) {
+            // 是普通文件
+            if (file.isFile()) {
+                // 将其改一个后缀
+                File newFile = new File(file.getParent() + File.separator + file.getName() + ".bak");
+                if (file.renameTo(newFile)) {
+                    LogUtil.info(log, "文件名重命名成功，原文件名：{}，新文件名：{}", file.getName(), newFile.getName());
+                }
+                // 创建文件夹
+                file = new File(fileTempDir);
+                if (file.mkdirs()) {
+                    LogUtil.info(log, "创建临时文件夹：{}成功", fileTempDir);
+                }
+            }
+
+            // 是文件夹
+            return file;
+        }
+        // 不存在
+        if (file.mkdirs()) {
+            LogUtil.info(log, "创建临时文件夹：{}成功", fileTempDir);
+        }
+
+        return file;
+    }
     public static void main(String[] args) {
         String s = IdUtil.simpleUUID();
         System.out.println("s = " + s);

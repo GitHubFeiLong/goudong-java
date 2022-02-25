@@ -18,6 +18,7 @@ import com.goudong.commons.exception.file.FileUploadException;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
@@ -256,10 +257,31 @@ public class UploadServiceImpl implements UploadService {
                 FilePO newFilePO = BeanUtil.copyProperties(firstByFileMd5, FilePO.class, "id");
 
                 fileRepository.save(newFilePO);
+                return;
             }
+
             // 第一次上传
+            //
+            File temp = FileUtils.getTempAndMd5File(fileUpload.getRootDir(), shardUploadDTO.getFileMd5());
 
+            // 创建临时文件
+            File shardFile = new File(temp.getPath() + File.separator + shardUploadDTO.getShardIndex());
+            try (
+                    FileOutputStream fileOutputStream = new FileOutputStream(shardFile, true);
+                FileInputStream fileInputStream = new FileInputStream(shardFile);
+            ) {
+                // 读上传的文件
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = fileInputStream.read(buffer)) != -1) {
+                    fileOutputStream.write(buffer);
+                }
 
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             statusRedisDTOS = new ArrayList<>();
             FileShardUploadStatusRedisDTO build = FileShardUploadStatusRedisDTO.builder().build();
