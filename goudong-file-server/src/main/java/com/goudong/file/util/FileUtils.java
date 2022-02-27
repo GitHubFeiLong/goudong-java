@@ -1,10 +1,8 @@
 package com.goudong.file.util;
 
 import cn.hutool.core.util.IdUtil;
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
-import com.goudong.commons.exception.file.FileAlreadyExistsException;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.Filename;
@@ -12,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
 
@@ -87,17 +87,27 @@ public class FileUtils {
         }
     }
 
-    public static File getFileDir(String rootDir) {
-        String dateDir = LocalDateTime.now().toLocalDate().toString();
-        return new File(rootDir + File.separator + dateDir);
-    }
-
     /**
      * 获取文件存储的父目录名
      * @return yyyy-mm-dd
      */
-    private static String getDateDir() {
+    public static String getDateDir() {
         return LocalDateTime.now().toLocalDate().toString();
+    }
+
+    /**
+     * 根据目录层级创建File对象
+     * @param names
+     * @return
+     */
+    public static File getFile(@NotEmpty List<String> names) {
+        StringBuilder sb = new StringBuilder();
+        names.stream().forEach(name->{
+            sb.append(name).append(File.separator);
+        });
+
+        // 去掉最后一个分隔符
+        return new File(sb.substring(0, sb.length() - 1));
     }
 
     /**

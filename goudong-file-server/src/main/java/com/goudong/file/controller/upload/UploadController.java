@@ -1,49 +1,23 @@
 package com.goudong.file.controller.upload;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.FileShardUploadDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
-import com.goudong.commons.enumerate.file.FileLengthUnit;
-import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.exception.file.FileUploadException;
 import com.goudong.commons.frame.core.Result;
-import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.file.core.FileType;
-import com.goudong.file.core.FileUpload;
-import com.goudong.file.core.Filename;
-import com.goudong.file.po.FilePO;
-import com.goudong.file.repository.FileRepository;
 import com.goudong.file.service.UploadService;
-import com.goudong.file.util.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.springframework.core.env.Environment;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StreamUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.io.*;
-import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 类描述：
@@ -74,7 +48,6 @@ public class UploadController {
     /**
      * 分段上传
      * @param requestUploadDTO
-     * @param range 请求头中的range
      * @return
      * @throws JsonProcessingException
      */

@@ -35,6 +35,17 @@ public class RedisTool extends RedisTemplate {
     //==================================================================================================================
 
     /**
+     * 获取redis的key
+     * @param redisKey
+     * @param param
+     * @return
+     */
+    public String getKey(RedisKeyProvider redisKey, Object... param) {
+        // 获取完整的 key
+        return GenerateRedisKeyUtil.generateByClever(redisKey, param);
+    }
+
+    /**
      * 删除单个key
      *
      * @param redisKey redisKey对象
@@ -43,7 +54,7 @@ public class RedisTool extends RedisTemplate {
      */
     public boolean deleteKey(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
         // String key = StringUtil.format(redisKey.getKey(), param);
         // key 不存在时，删除失败，返回false
         boolean delete = super.delete(key);
@@ -111,7 +122,7 @@ public class RedisTool extends RedisTemplate {
      */
     public boolean existKey(@Valid RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
         boolean hasKey = super.hasKey(key);
         LogUtil.debug(log, "redis-key:【{}】【{}】", key, hasKey ? "存在" : "不存在");
         return hasKey;
@@ -137,7 +148,7 @@ public class RedisTool extends RedisTemplate {
      */
     public boolean expireByCustom(RedisKeyProvider redisKey, long time, @NotNull TimeUnit timeUnit, Object... param) {
 
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
 
         boolean result = super.expire(key, time, timeUnit);
 
@@ -166,7 +177,7 @@ public class RedisTool extends RedisTemplate {
      */
     public long getExpire(RedisKeyProvider redisKey, Object... param) {
         //此方法返回单位为秒过期时长
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
         long ttl = super.opsForValue().getOperations().getExpire(key);
         if (ttl >= 0) {
             LogUtil.debug(log,"redis-key:{} ttl:{}", key, ttl);
@@ -213,7 +224,7 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     private boolean setString(RedisKeyProvider redisKey, Object value, Object... param) {
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
 
         // 非基本类型需要额外处理成json字符串
         if (!PrimitiveTypeUtil.isBasicType(value)) {
@@ -238,7 +249,7 @@ public class RedisTool extends RedisTemplate {
      */
     private boolean setHash(RedisKeyProvider redisKey, Object value, Object... param){
         // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
         // 需要将为空的过滤掉
         Map<String, Object> stringObjectMap = BeanUtil.beanToMap(value, false, true);
         if (stringObjectMap == null) {
@@ -275,7 +286,7 @@ public class RedisTool extends RedisTemplate {
         // Values must not be 'null' or empty.当value为空集合时添加会报错,所以这里判断下
         if (CollectionUtils.isNotEmpty(list)) {
             // 获取完整的 key
-            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+            String key = getKey(redisKey, param);
             // 删除key
             if (super.hasKey(key)) {
                 super.delete(key);
@@ -300,6 +311,7 @@ public class RedisTool extends RedisTemplate {
         return false;
     }
 
+
     /**
      * 设置List类型数据到redis中, set为null，空集合都能正常设置.
      * @see DataType#SET
@@ -318,7 +330,7 @@ public class RedisTool extends RedisTemplate {
         }
 
         // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
         super.opsForSet().add(key, set);
         if (redisKey.getTime() > 0) {
             super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
@@ -348,7 +360,7 @@ public class RedisTool extends RedisTemplate {
     public Object get(@Valid RedisKeyProvider redisKey, Object... param){
         DataType dataType = redisKey.getRedisType();
         Class javaType = redisKey.getJavaType();
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
         switch (dataType) {
             case STRING:
                 return getString(redisKey, param);
@@ -372,7 +384,7 @@ public class RedisTool extends RedisTemplate {
      */
     public String getString(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
 
         return (String) super.opsForValue().get(key);
     }
@@ -389,7 +401,7 @@ public class RedisTool extends RedisTemplate {
     public <T> T getHash(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         if (Objects.equals(clazz, redisKey.getJavaType())) {
             // 获取完整的 key
-            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+            String key = getKey(redisKey, param);
             // 将Map转为Bean
             Map map = super.opsForHash().entries(key);
             if (map == null || map.isEmpty()) {
@@ -411,7 +423,7 @@ public class RedisTool extends RedisTemplate {
     public <T> List<T> getList(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         if (Objects.equals(clazz, redisKey.getJavaType())) {
             // 获取完整的 key
-            String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+            String key = getKey(redisKey, param);
             // 获取list（此时元素是LinkedHashMap）
             List range = super.opsForList().range(key, 0, -1);
 
@@ -430,8 +442,18 @@ public class RedisTool extends RedisTemplate {
      */
     public <T> Set<T> getSet(RedisKeyProvider redisKey,  Class<T> clazz, Object... param) {
         // 获取完整的 key
-        String key = GenerateRedisKeyUtil.generateByClever(redisKey, param);
+        String key = getKey(redisKey, param);
+        // TODO set还不是清楚怎么使用
+        Set set = new HashSet();
+        super.opsForSet().members(key).forEach(v->{
+            if (v instanceof LinkedHashMap) {
+                set.add(BeanUtil.toBean(v, clazz));
+            } else {
+                set.add(v);
+            }
+        });
 
+        // return set;
         return super.opsForSet().members(key);
     }
 

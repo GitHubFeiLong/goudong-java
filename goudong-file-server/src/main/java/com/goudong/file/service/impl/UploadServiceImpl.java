@@ -1,7 +1,6 @@
 package com.goudong.file.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.IdUtil;
 import com.google.common.collect.Lists;
 import com.goudong.commons.dto.file.FileDTO;
@@ -15,10 +14,8 @@ import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.exception.file.FileUploadException;
-import com.goudong.commons.frame.core.Result;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
@@ -32,14 +29,21 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * 类描述：
@@ -69,10 +73,26 @@ public class UploadServiceImpl implements UploadService {
      */
     private final RedisTool redisTool;
 
-    public UploadServiceImpl(FileUpload fileUpload, FileRepository fileRepository, RedisTool redisTool) {
+    /**
+     * 请求
+     */
+    private final HttpServletRequest request;
+
+    /**
+     * 响应
+     */
+    private final HttpServletResponse response;
+
+    public UploadServiceImpl(FileUpload fileUpload,
+                             FileRepository fileRepository,
+                             RedisTool redisTool,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
         this.fileUpload = fileUpload;
         this.fileRepository = fileRepository;
         this.redisTool = redisTool;
+        this.request = request;
+        this.response = response;
     }
 
     /**
@@ -223,12 +243,16 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void shardUpload(FileShardUploadDTO shardUploadDTO) {
-        // 1. 检查文件类型和大小是否符合标准
-        MultipartFile shardData = shardUploadDTO.getShardData();
 
+        if (mergeShardUploadTemp(shardUploadDTO)) {
+            LogUtil.info(log, "合并成功");
+            return;
+        }
+
+        RedisKeyProviderEnum fileShardUploadProcessing = RedisKeyProviderEnum.FILE_SHARD_UPLOAD_PROCESSING;
         // 获取上传队列
         List<FileShardUploadStatusRedisDTO> statusRedisDTOS = redisTool.getList(
-                RedisKeyProviderEnum.FILE_SHARD_UPLOAD_PROCESSING,
+                fileShardUploadProcessing,
                 FileShardUploadStatusRedisDTO.class,
                 shardUploadDTO.getFileMd5()
         );
@@ -238,60 +262,165 @@ public class UploadServiceImpl implements UploadService {
             Optional<FileShardUploadStatusRedisDTO> redisDTO = statusRedisDTOS.stream()
                     .filter(f -> Objects.equals(f.getShardIndex(), shardUploadDTO.getShardIndex()))
                     .findFirst();
+
+            String key = redisTool.getKey(fileShardUploadProcessing, shardUploadDTO.getFileMd5());
             // 存在值就取出来
             if (redisDTO.isPresent()) {
-                FileShardUploadStatusRedisDTO fileShardUploadStatusRedisDTO = redisDTO.get();
+                FileShardUploadStatusRedisDTO uploadStatusRedisDTO = redisDTO.get();
                 // 该分片已经上传成功
-                if (fileShardUploadStatusRedisDTO.isSucceed()) {
+                if (uploadStatusRedisDTO.getSucceed()) {
                     // TODO 成功了，告诉前端
                     return;
                 }
-            }
-            // 分片还未开始上传 or 分片上传失败 => 开始上传逻辑
+                // 之前上传失败，本次分片重试上传
+                // 上传
+                int index = statusRedisDTOS.indexOf(uploadStatusRedisDTO);
 
-        } else {
-            // 首先，查询数据库是否有值
-            FilePO firstByFileMd5 = fileRepository.findFirstByFileMd5(shardUploadDTO.getFileMd5());
-            if (firstByFileMd5 != null) {
-                // 已经上传成功
-                FilePO newFilePO = BeanUtil.copyProperties(firstByFileMd5, FilePO.class, "id");
-
-                fileRepository.save(newFilePO);
+                // 修改key指定索引的值，有则覆盖，没有则新增。
+                redisTool.opsForList().set(key, index, saveShard2Temp(shardUploadDTO));
+                // 刷新失效时长
+                redisTool.refresh(fileShardUploadProcessing, shardUploadDTO.getFileMd5());
                 return;
             }
+            // 分片还未开始上传
+            // 上传,设置到redis中,刷新过期时长
+            redisTool.opsForList().leftPush(key, saveShard2Temp(shardUploadDTO));
+            redisTool.refresh(fileShardUploadProcessing, shardUploadDTO.getFileMd5());
+            // 返回成功
+            return;
+        }
 
-            // 第一次上传
-            //
-            File temp = FileUtils.getTempAndMd5File(fileUpload.getRootDir(), shardUploadDTO.getFileMd5());
+        // 首先，查询数据库是否有值
+        FilePO firstByFileMd5 = fileRepository.findFirstByFileMd5(shardUploadDTO.getFileMd5());
+        if (firstByFileMd5 != null) {
+            // 已经上传成功
+            FilePO newFilePO = BeanUtil.copyProperties(firstByFileMd5, FilePO.class, "id");
 
-            // 创建临时文件
-            File shardFile = new File(temp.getPath() + File.separator + shardUploadDTO.getShardIndex());
-            try (
-                    FileOutputStream fileOutputStream = new FileOutputStream(shardFile, true);
-                FileInputStream fileInputStream = new FileInputStream(shardFile);
-            ) {
-                // 读上传的文件
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = fileInputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer);
+            fileRepository.save(newFilePO);
+            LogUtil.info(log, "秒传文件成功");
+            return;
+        }
+
+        /*
+            数据库不存在文件，开始分片上传
+         */
+        statusRedisDTOS.add(saveShard2Temp(shardUploadDTO));
+
+        // 设置到redis中
+        redisTool.set(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_PROCESSING, statusRedisDTOS, shardUploadDTO.getFileMd5());
+    }
+
+    /**
+     * 将分片保存到临时文件
+     */
+    private FileShardUploadStatusRedisDTO saveShard2Temp(FileShardUploadDTO shardUploadDTO) {
+        // 创建临时文件夹
+        File temp = FileUtils.getTempAndMd5File(fileUpload.getRootDir(), shardUploadDTO.getFileMd5());
+        // 创建临时文件
+        File shardFile = new File(temp.getPath() + File.separator + shardUploadDTO.getShardIndex());
+
+        FileShardUploadStatusRedisDTO build = FileShardUploadStatusRedisDTO.builder()
+                .filePath(shardFile.getAbsolutePath())
+                .shardIndex(shardUploadDTO.getShardIndex())
+                .succeed(true)
+                .build();
+        try {
+            shardUploadDTO.getShardData().transferTo(shardFile);
+        } catch (IOException e) {
+            build.setSucceed(false);
+            e.printStackTrace();
+        }
+
+        return build;
+    }
+
+    /**
+     * 合并分片上传的临时文件
+     * @param shardUploadDTO 上传对象
+     * @return true：合并完成。false：还不能合并
+     */
+    public boolean mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO){
+        // 获取上传队列
+        List<FileShardUploadStatusRedisDTO> statusRedisDTOS = redisTool.getList(
+                RedisKeyProviderEnum.FILE_SHARD_UPLOAD_PROCESSING,
+                FileShardUploadStatusRedisDTO.class,
+                shardUploadDTO.getFileMd5()
+        );
+        // 文件分片上传未完成，直接return。
+        boolean boo = statusRedisDTOS.size() != shardUploadDTO.getShardTotal()
+                && statusRedisDTOS.stream()
+                .filter(FileShardUploadStatusRedisDTO::getSucceed)
+                .count() != shardUploadDTO.getShardTotal();
+        if (boo) {
+            return false;
+        }
+
+        // 创建文件名
+        String uuid = IdUtil.simpleUUID();
+        String filename = uuid+"."+shardUploadDTO.getFileType();
+        // 合并文件
+        File file = FileUtils.getFile(Lists.newArrayList(fileUpload.getRootDir(), FileUtils.getDateDir(), filename));
+
+        if (!file.exists()) {
+            try {
+                File parentFile = file.getParentFile();
+                if (!file.getParentFile().exists()) {
+                    parentFile.mkdirs();
                 }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        FileChannel fosChannel = null;
+        try {
+            fosChannel = new FileOutputStream(file, true).getChannel();
+            // 将其写入
+            String filePath = statusRedisDTOS.get(0).getFilePath();
+            // 获取临时目录
+            File parentFile = new File(filePath).getParentFile();
+            File[] tempFiles = parentFile.listFiles();
+            FileChannel finalFosChannel = fosChannel;
+            Stream.of(tempFiles)
+                    // 文件名就是分片的索引名，直接升序排序
+                    .sorted((f1, f2)-> Long.valueOf(f1.getName()).compareTo(Long.valueOf(f2.getName())))
+                    .forEach(p->{
+                        // 先读文件
+                        try {
+                            // 使用nio
+                            FileChannel fisChannel = new FileInputStream(p).getChannel();
+                            ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
 
-            statusRedisDTOS = new ArrayList<>();
-            FileShardUploadStatusRedisDTO build = FileShardUploadStatusRedisDTO.builder().build();
-            statusRedisDTOS.add(build);
+                            while(fisChannel.read(byteBuffer) != -1){
+                                byteBuffer.flip();
+                                finalFosChannel.write(byteBuffer);
+                                byteBuffer.clear();
+                            }
+
+                            fisChannel.close();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fosChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
+        // 删除redis中的数据
+        // redisTool.deleteKey(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_PROCESSING, shardUploadDTO.getFileMd5());
 
-
-
+        return true;
     }
-
-
 }

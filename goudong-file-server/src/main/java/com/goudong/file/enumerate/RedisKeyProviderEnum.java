@@ -23,7 +23,7 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      * key有值表名正在执行。
      * @param fileMd5 文件的md5值
      */
-    FILE_SHARD_UPLOAD_PROCESSING("goudong-file-server:upload:${fileMd5}", DataType.STRING, FileShardUploadStatusRedisDTO.class, 30, TimeUnit.MINUTES),
+    FILE_SHARD_UPLOAD_PROCESSING("goudong-file-server:upload:${fileMd5}", DataType.LIST, FileShardUploadStatusRedisDTO.class, 30, TimeUnit.MINUTES),
 
     ;
     //~fields

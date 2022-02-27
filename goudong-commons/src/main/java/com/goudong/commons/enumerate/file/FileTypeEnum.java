@@ -1,6 +1,7 @@
 package com.goudong.commons.enumerate.file;
 
-import jodd.util.StringUtil;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public enum FileTypeEnum {
      * @return
      */
     public static FileTypeEnum convert(String fileType) {
-        if (StringUtil.isBlank(fileType)) {
+        if (StringUtils.isBlank(fileType)) {
             throw new IllegalArgumentException("参数不能为空，转枚举时失败");
         }
         return FileTypeEnum.valueOf(fileType.toUpperCase());
