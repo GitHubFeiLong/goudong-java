@@ -2,6 +2,7 @@ package com.goudong.file.service;
 
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.FileShardUploadDTO;
+import com.goudong.commons.dto.file.FileShardUploadResultDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
 import com.goudong.file.po.FilePO;
 import org.springframework.data.repository.CrudRepository;
@@ -41,5 +42,5 @@ public interface UploadService {
      * 分块上传
      * @param shardUploadDTO
      */
-    void shardUpload(FileShardUploadDTO shardUploadDTO);
+    FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO);
 }

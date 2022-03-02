@@ -5,9 +5,11 @@ import com.goudong.commons.enumerate.file.FileTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.*;
+import java.util.Date;
 
 /**
  * 类描述：
@@ -78,6 +80,14 @@ public class FileShardUploadDTO {
     @ApiModelProperty(value = "当前分片的数据")
     @NotNull(message = "分片数据不能为空")
     private MultipartFile shardData;
+
+    /**
+     * 源文件最后修改时间
+     */
+    @ApiModelProperty(value="源文件最后修改时间")
+    @NotNull(message = "源文件最后修改时间不能为空")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date lastModifiedTime;
 
     //~methods
     //==================================================================================================================

@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.FileShardUploadDTO;
+import com.goudong.commons.dto.file.FileShardUploadResultDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
 import com.goudong.commons.frame.core.Result;
 import com.goudong.file.service.UploadService;
@@ -72,10 +73,9 @@ public class UploadController {
     @PostMapping("/shard-upload")
     @Transactional
     @Whitelist
-    public Result<Object> shardUpload(@Validated FileShardUploadDTO shardUploadDTO) throws JsonProcessingException {
+    public Result<FileShardUploadResultDTO> shardUpload(@Validated FileShardUploadDTO shardUploadDTO) throws JsonProcessingException {
         uploadService.checkShardUpload(shardUploadDTO);
-        uploadService.shardUpload(shardUploadDTO);
-        return Result.ofSuccess();
+        return Result.ofSuccess(uploadService.shardUpload(shardUploadDTO));
     }
 
     // @RequestMapping(value = "deleteFile", method = RequestMethod.GET)

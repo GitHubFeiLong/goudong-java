@@ -34,7 +34,7 @@ public class FileShardUploadStatusRedisDTO implements Serializable {
     private Boolean succeed = false;
 
     /**
-     * 文件路径
+     * 临时文件路径
      */
     private String filePath;
 

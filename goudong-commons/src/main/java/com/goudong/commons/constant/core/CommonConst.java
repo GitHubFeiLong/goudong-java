@@ -36,4 +36,9 @@ public class CommonConst {
      * 所有字节码文件的路径 antPath模式
      */
     public static final String ALL_CLASSES_ANT_PATH = "/**/*.class";
+
+    /**
+     * PO的基本字段
+     */
+    public static final String[] BASE_PO_FIELDS = new String[]{"id", "deleted", "createTime", "createUserId", "updateUserId", "updateTime"};
 }
