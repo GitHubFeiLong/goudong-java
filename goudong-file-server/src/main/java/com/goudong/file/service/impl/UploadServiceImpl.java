@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -248,8 +249,9 @@ public class UploadServiceImpl implements UploadService {
      *
      * @param shardUploadDTO
      */
+    @Transactional
     @Override
-    public synchronized FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) {
+    public FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) {
         // 查询分片上传任务
         List<FileShardTaskPO> taskPOS = fileShardTaskRepository.findAllByFileMd5(shardUploadDTO.getFileMd5());
         // 任务为空
@@ -272,7 +274,7 @@ public class UploadServiceImpl implements UploadService {
             Date lastModifiedTime = taskPOS.get(0).getLastModifiedTime();
 
             // 时间不相等
-            if (!Objects.equals(lastModifiedTime, shardUploadDTO.getLastModifiedTime())) {
+            if (!Objects.equals(lastModifiedTime.getTime(), shardUploadDTO.getLastModifiedTime().getTime())) {
                 // 清除之前创建的任务，删除之前保存的临时文件，从新创建任务
                 taskPOS.stream().forEach(task->task.setDeleted(true));
                 String tempPath = taskPOS.get(0).getTempPath();
@@ -322,7 +324,7 @@ public class UploadServiceImpl implements UploadService {
 
         return FileShardUploadResultDTO.createShardSuccessful((int)Math.floor(successfulCount / taskTotal),
                 ArrayUtils.toPrimitive(successfulShardIndexList.toArray(new Long[successfulShardIndexList.size()])),
-                ArrayUtils.toPrimitive(unsuccessfulShardIndexList.toArray(new Long[successfulShardIndexList.size()]))
+                ArrayUtils.toPrimitive(unsuccessfulShardIndexList.toArray(new Long[unsuccessfulShardIndexList.size()]))
                 );
 
     }
