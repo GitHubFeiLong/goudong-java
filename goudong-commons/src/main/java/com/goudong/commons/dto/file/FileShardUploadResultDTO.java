@@ -1,19 +1,13 @@
 package com.goudong.commons.dto.file;
 
-import com.goudong.commons.annotation.validator.EnumValidator;
-import com.goudong.commons.enumerate.file.FileTypeEnum;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 类描述：
@@ -49,12 +43,12 @@ public class FileShardUploadResultDTO {
     /**
      * 分片上传成功的索引数组
      */
-    private long[] successfulShardIndexArray;
+    private List<Long> successfulShardIndexArray;
 
     /**
      * 分片上传失败的索引数组
      */
-    private long[] unsuccessfulShardIndexArray;
+    private List<Long> unsuccessfulShardIndexArray;
     //~methods
     //==================================================================================================================
 
@@ -67,8 +61,8 @@ public class FileShardUploadResultDTO {
                 .entiretySuccessful(true)
                 .shardSuccessful(true)
                 .percentage(100)
-                .successfulShardIndexArray(new long[]{})
-                .unsuccessfulShardIndexArray(new long[]{})
+                .successfulShardIndexArray(new ArrayList<>())
+                .unsuccessfulShardIndexArray(new ArrayList<>())
                 .build();
     }
 
@@ -80,14 +74,14 @@ public class FileShardUploadResultDTO {
      * @return
      */
     public static FileShardUploadResultDTO createShardSuccessful(int percentage,
-                                                                 long[] successfulShardIndexArray,
-                                                                 long[] unsuccessfulShardIndexArray) {
+                                                                 List<Long> successfulShardIndexArray,
+                                                                 List<Long> unsuccessfulShardIndexArray) {
         return FileShardUploadResultDTO.builder()
                 .entiretySuccessful(false)
                 .shardSuccessful(true)
                 .percentage(percentage)
-                .successfulShardIndexArray(new long[]{})
-                .unsuccessfulShardIndexArray(new long[]{})
+                .successfulShardIndexArray(successfulShardIndexArray)
+                .unsuccessfulShardIndexArray(unsuccessfulShardIndexArray)
                 .build();
     }
 }

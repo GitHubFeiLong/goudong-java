@@ -30,7 +30,6 @@ import com.goudong.file.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Value;
@@ -255,7 +254,7 @@ public class UploadServiceImpl implements UploadService {
             return BeanUtil.copyProperties(filePO, FileDTO.class);
         } catch (IOException e) {
             LogUtil.error(log, "文件上传失败:{}", e);
-            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败");
+            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败", e.getMessage());
         }
     }
 
@@ -307,7 +306,10 @@ public class UploadServiceImpl implements UploadService {
         // 本次分片之前已经上传成功过了
         if (fileShardTaskPO.getSuccessful()) {
             LogUtil.debug(log, "本次分片({})之前已经上传成功过了", shardUploadDTO.getShardIndex());
-            return FileShardUploadResultDTO.createShardSuccessful(0, new long[]{}, new long[]{});
+            List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
+            List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
+            int percentage = (int) (successfulList.size() * 1.0 / taskPOS.size() * 100);
+            return FileShardUploadResultDTO.createShardSuccessful(percentage, successfulList, unsuccessfulList);
         }
 
         // 上传本次分片
@@ -328,20 +330,11 @@ public class UploadServiceImpl implements UploadService {
         }
 
         // 本次上传成功
-        List<Long> successfulShardIndexList = taskPOS.stream()
-                .filter(FileShardTaskPO::getSuccessful)
-                .map(FileShardTaskPO::getShardIndex)
-                .collect(Collectors.toList());
+        List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
+        List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
+        int percentage = (int) (successfulList.size() * 1.0 / taskPOS.size() * 100);
 
-        List<Long> unsuccessfulShardIndexList = taskPOS.stream()
-                .filter(f->!f.getSuccessful())
-                .map(FileShardTaskPO::getShardIndex)
-                .collect(Collectors.toList());
-
-        return FileShardUploadResultDTO.createShardSuccessful((int)Math.floor(successfulCount / taskTotal),
-                ArrayUtils.toPrimitive(successfulShardIndexList.toArray(new Long[successfulShardIndexList.size()])),
-                ArrayUtils.toPrimitive(unsuccessfulShardIndexList.toArray(new Long[unsuccessfulShardIndexList.size()]))
-        );
+        return FileShardUploadResultDTO.createShardSuccessful(percentage, successfulList, unsuccessfulList);
     }
 
     /**
@@ -465,6 +458,10 @@ public class UploadServiceImpl implements UploadService {
             // 将任务进行删除
             fileShardTaskRepository.deleteAll(taskPOS);
             LogUtil.info(log,"删除分片上传文件任务成功");
+            // 删除临时文件
+            String tempPath = taskPOS.get(0).getTempPath();
+            // hutool递归删除
+            FileUtil.del(new File(tempPath).getParentFile());
         } catch (IOException e) {
             LogUtil.error(log , "合并文件失败：{}", e.getMessage());
             throw e;
