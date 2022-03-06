@@ -266,7 +266,6 @@ public class UploadServiceImpl implements UploadService {
     @Transactional
     @Override
     public FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) throws IOException {
-        // 针对md5 进行加锁
         // 查询分片上传任务
         List<FileShardTaskPO> taskPOS = fileShardTaskRepository.findAllByFileMd5(shardUploadDTO.getFileMd5());
         // 任务为空
@@ -322,6 +321,7 @@ public class UploadServiceImpl implements UploadService {
         long successfulCount = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).count();
         int taskTotal = taskPOS.size();
         if (successfulCount == taskTotal) {
+            fileShardTaskRepository.flush();
             LogUtil.info(log, "开始合并分片");
             // 合并文件
             mergeShardUploadTemp(shardUploadDTO, taskPOS);
@@ -381,7 +381,7 @@ public class UploadServiceImpl implements UploadService {
             LogUtil.debug(log, "上传分片({})成功", shardUploadDTO.getShardIndex());
         } catch (IOException e) {
             fileShardTaskPO.setSuccessful(false);
-            LogUtil.error(log, "上传分片失败：{}", e.getMessage());
+            LogUtil.error(log, "上传分片({})失败：{}", shardUploadDTO.getShardIndex(), e.getMessage());
             e.printStackTrace();
         }
     }
