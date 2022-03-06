@@ -1,18 +1,19 @@
 package com.goudong.file.util;
 
-import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.io.FileUtil;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.Filename;
+import com.goudong.file.po.FilePO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
@@ -63,36 +64,27 @@ public class FileUtils {
     /**
      * 根据文件名进行构造对象
      *
-     * @param originalFilename 文件名
+     * @param customerFilename 客户端自定义文件名
+     * @param originalFilename 上传文件的文件名
      * @return
      */
-    public static Filename getFilename(@NotBlank String originalFilename) {
+    public static Filename getFilename(String customerFilename, @NotBlank String originalFilename) {
 
-        int index = originalFilename.lastIndexOf(".");
-        String filename;
-        String suffix;
-        FileTypeEnum fileTypeEnum;
-        switch (index) {
-            case -1:
-                return new Filename(originalFilename, null, null);
-            case 0:
-                suffix = originalFilename.substring(1);
-                fileTypeEnum = FileTypeEnum.valueOf(suffix.toUpperCase());
-                return new Filename(null, suffix, fileTypeEnum);
-            default:
-                filename = originalFilename.substring(0, index);
-                suffix = originalFilename.substring(index + 1);
-                fileTypeEnum = FileTypeEnum.valueOf(suffix.toUpperCase());
-                return new Filename(filename, suffix, fileTypeEnum);
+        String suffix = FileUtil.getSuffix(originalFilename);
+        FileTypeEnum fileTypeEnum = null;
+        if (StringUtils.isNotBlank(suffix)) {
+            try {
+                fileTypeEnum = FileTypeEnum.convert(suffix);
+            } catch (Exception e) {
+                LogUtil.warn(log, "获取文件的类型出现错误：{}", e.getMessage());
+            }
         }
-    }
 
-    /**
-     * 获取文件存储的父目录名
-     * @return yyyy-mm-dd
-     */
-    public static String getDateDir() {
-        return LocalDateTime.now().toLocalDate().toString();
+        if (StringUtils.isNotBlank(customerFilename)) {
+            return new Filename(customerFilename + "." + suffix, suffix, fileTypeEnum);
+        }
+
+        return new Filename(originalFilename, suffix, fileTypeEnum);
     }
 
     /**
@@ -141,15 +133,20 @@ public class FileUtils {
             // 是文件夹
             return file;
         }
-        // 不存在
+        // 不存在，创建文件
         if (file.mkdirs()) {
             LogUtil.info(log, "创建临时文件夹：{}成功", fileTempDir);
         }
 
         return file;
     }
-    public static void main(String[] args) {
-        String s = IdUtil.simpleUUID();
-        System.out.println("s = " + s);
+
+    /**
+     * 创建file_po的link属性值
+     * @param filePO
+     * @return
+     */
+    public static String createFileLink(FilePO filePO) {
+        return "link";
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 
 /**
  * 类描述：
@@ -56,7 +57,7 @@ public class UploadController {
     @PostMapping("/upload")
     @Transactional
     @Whitelist
-    public Result<FileDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws JsonProcessingException {
+    public Result<FileDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws IOException {
         // 检查
         uploadService.checkSimpleUpload(Lists.newArrayList(requestUploadDTO.getFile()));
         // 上传
@@ -73,7 +74,7 @@ public class UploadController {
     @PostMapping("/shard-upload")
     @Transactional
     @Whitelist
-    public Result<FileShardUploadResultDTO> shardUpload(@Validated FileShardUploadDTO shardUploadDTO) throws JsonProcessingException {
+    public Result<FileShardUploadResultDTO> shardUpload(@Validated FileShardUploadDTO shardUploadDTO) throws IOException {
         uploadService.checkShardUpload(shardUploadDTO);
         return Result.ofSuccess(uploadService.shardUpload(shardUploadDTO));
     }

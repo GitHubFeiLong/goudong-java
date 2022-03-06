@@ -3,16 +3,18 @@ package com.goudong.file.po;
 import com.goudong.commons.frame.jpa.BasePO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * file_shard_task
@@ -21,6 +23,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Data
 @Table(name="file_shard_task")
+@SQLDelete(sql = "update file_shard_task set deleted=true where id=?")
+@Where(clause = "deleted=false")
 @ApiModel(value="generate.FileShardTask分片上传文件的任务表")
 @AllArgsConstructor
 @NoArgsConstructor

@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import com.google.common.collect.Lists;
+import com.goudong.commons.constant.core.CommonConst;
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.dto.file.FileShardUploadDTO;
 import com.goudong.commons.dto.file.FileShardUploadResultDTO;
@@ -27,6 +28,7 @@ import com.goudong.file.repository.FileShardTaskRepository;
 import com.goudong.file.service.UploadService;
 import com.goudong.file.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -190,14 +192,25 @@ public class UploadServiceImpl implements UploadService {
      * @return fileDto 上传成功的文件信息
      */
     @Override
-    public FileDTO simpleUpload(RequestUploadDTO requestUploadDTO) {
+    public FileDTO simpleUpload(RequestUploadDTO requestUploadDTO) throws IOException {
         MultipartFile file = requestUploadDTO.getFile();
+        // 获取文件的md5值
+        String md5Hex = DigestUtils.md5Hex(file.getInputStream());
+        // 查询是否已有上传
+        FilePO firstByFileMd5 = fileRepository.findFirstByFileMd5(md5Hex);
         String originalFilename = file.getOriginalFilename();
-        Filename filename = FileUtils.getFilename(originalFilename);
         String customerFilename = requestUploadDTO.getOriginalFilename();
-        if (StringUtils.isNotBlank(customerFilename) && !Objects.equals(customerFilename, "null")) {
-            filename.setFilename(customerFilename);
+        if (firstByFileMd5 != null) {
+            LogUtil.info(log, "上传文件的md5值：{}，与数据库中id={}的md5相同，触发秒传。", md5Hex, firstByFileMd5.getId());
+            FilePO filePO = BeanUtil.copyProperties(firstByFileMd5, FilePO.class, CommonConst.BASE_PO_FIELDS);
+            originalFilename = StringUtils.isNotBlank(customerFilename) ? customerFilename : originalFilename;
+            filePO.setOriginalFilename(originalFilename);
+
+            fileRepository.save(filePO);
+            return BeanUtil.copyProperties(filePO, FileDTO.class);
         }
+
+        Filename filename = FileUtils.getFilename(customerFilename, originalFilename);
 
         // 文件保存的 目录
         String dir = fileUpload.getRootDir() + File.separator + LocalDateTime.now().toLocalDate().toString();
@@ -210,11 +223,11 @@ public class UploadServiceImpl implements UploadService {
 
         FilePO filePO = new FilePO();
         // 当前文件名，使用规则生成
-        filePO.setCurrentFilename(IdUtil.simpleUUID());
+        filePO.setCurrentFilename(IdUtil.simpleUUID() + "." + filename.getFileTypeEnum().lowerName());
         // 原文件名
         filePO.setOriginalFilename(filename.getFilename());
         // 文件类型
-        filePO.setFileType(filename.getFileTypeEnum().lowerName());
+        filePO.setFileType(filename.getFileTypeEnum().name());
         // 文件大小
         filePO.setSize(file.getSize());
 
@@ -223,10 +236,10 @@ public class UploadServiceImpl implements UploadService {
         // 文件长度
         filePO.setFileLength(fileSizePair.getLeft());
         // 长度单位
-        filePO.setFileLengthUnit(fileSizePair.getRight().name().toLowerCase());
+        filePO.setFileLengthUnit(fileSizePair.getRight().name());
 
         // 判断文件是否存在
-        String newFullFilename = dir + File.separator + filePO.getCurrentFilename()+ "." + filePO.getFileType();
+        String newFullFilename = dir + File.separator + filePO.getCurrentFilename();
         File newFile = new File(newFullFilename);
         if (newFile.exists()) {
             throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
@@ -234,10 +247,11 @@ public class UploadServiceImpl implements UploadService {
         // 创建文件
         try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {
             StreamUtils.copy(in, out);
-            filePO.setFileLink("");
+            filePO.setFileLink(FileUtils.createFileLink(filePO));
             filePO.setFilePath(newFullFilename);
-
+            filePO.setFileMd5(DigestUtils.md5Hex(new FileInputStream(newFullFilename)));
             fileRepository.save(filePO);
+            LogUtil.info(log, "文件上传成功");
             return BeanUtil.copyProperties(filePO, FileDTO.class);
         } catch (IOException e) {
             LogUtil.error(log, "文件上传失败:{}", e);
@@ -252,7 +266,7 @@ public class UploadServiceImpl implements UploadService {
      */
     @Transactional
     @Override
-    public FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) {
+    public FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) throws IOException {
         // 针对md5 进行加锁
         // 查询分片上传任务
         List<FileShardTaskPO> taskPOS = fileShardTaskRepository.findAllByFileMd5(shardUploadDTO.getFileMd5());
@@ -358,7 +372,6 @@ public class UploadServiceImpl implements UploadService {
         return taskPOS;
     }
 
-
     /**
      * 将分片保存到临时文件
      */
@@ -385,12 +398,12 @@ public class UploadServiceImpl implements UploadService {
      * @param taskPOS 上传任务对象集合
      * @return true：合并完成。false：还不能合并
      */
-    public boolean mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS){
+    private boolean mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
         // 创建文件名
         String uuid = IdUtil.simpleUUID();
-        String filename = uuid+"."+shardUploadDTO.getFileType();
+        String filename = uuid + "." + shardUploadDTO.getFileType().toLowerCase();
         // 合并文件
-        File file = FileUtils.getFile(Lists.newArrayList(fileUpload.getRootDir(), FileUtils.getDateDir(), filename));
+        File file = FileUtils.getFile(Lists.newArrayList(fileUpload.getRootDir(), LocalDateTime.now().toLocalDate().toString(), filename));
 
         if (!file.exists()) {
             try {
@@ -434,17 +447,29 @@ public class UploadServiceImpl implements UploadService {
                         }
                     });
 
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            // 保存文件
+            ImmutablePair<Long, FileLengthUnit> longFileLengthUnitImmutablePair = FileUtils.adaptiveSize(file.length());
+            FilePO filePO = new FilePO()
+                    .setSize(file.length())
+                    .setFileLength(longFileLengthUnitImmutablePair.getLeft())
+                    .setFileLengthUnit(longFileLengthUnitImmutablePair.getRight().name())
+                    .setCurrentFilename(file.getName())
+                    .setOriginalFilename(shardUploadDTO.getFileName())
+                    .setFilePath(file.getPath())
+                    .setFileType(shardUploadDTO.getFileType())
+                    .setFileMd5(shardUploadDTO.getFileMd5())
+                    ;
+            filePO.setFileLink(FileUtils.createFileLink(filePO));
+            fileRepository.save(filePO);
+            LogUtil.info(log, "文件合并并保存成功");
+            // 将任务进行删除
+            fileShardTaskRepository.deleteAll(taskPOS);
+            LogUtil.info(log,"删除分片上传文件任务成功");
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.error(log , "合并文件失败：{}", e.getMessage());
+            throw e;
         } finally {
-            try {
-                fosChannel.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            fosChannel.close();
         }
 
         return true;

@@ -8,6 +8,7 @@ import com.goudong.file.po.FilePO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,11 +37,11 @@ public interface UploadService {
      * @param requestUploadDTO
      * @return fileDto 上传后的对象
      */
-    FileDTO simpleUpload(RequestUploadDTO requestUploadDTO);
+    FileDTO simpleUpload(RequestUploadDTO requestUploadDTO) throws IOException;
 
     /**
      * 分块上传
      * @param shardUploadDTO
      */
-    FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO);
+    FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) throws IOException;
 }
