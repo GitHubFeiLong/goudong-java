@@ -104,13 +104,20 @@ public class DataBaseAuditListener {
     protected void fillCreateUserId(Object object, Class<?> aClass, String propertyName) throws NoSuchFieldException, IllegalAccessException, IntrospectionException, InvocationTargetException, NoSuchMethodException {
         Field createUserId = aClass.getDeclaredField(propertyName);
         createUserId.setAccessible(true);
-        // 获取userId值
+
+        // 没有特意设置用户id，就需要设置用户id
         Object userIdValue = createUserId.get(object);
         if (userIdValue == null) {
-            // 注意：反射时，不会自动装箱和拆箱
-            // 在此处使用当前用户id或默认用户id
-            Long id = 1L;
-            createUserId.set(object, id);
+            // 获取userId值
+            BaseUserDTO baseUserDTO = UserContext.get();
+            if (baseUserDTO != null && baseUserDTO.getId() != null) {
+                createUserId.set(object, baseUserDTO.getId());
+            } else {
+                // 注意：反射时，不会自动装箱和拆箱
+                // 在此处使用当前用户id或默认用户id
+                Long id = 0L;
+                createUserId.set(object, id);
+            }
         }
     }
 
@@ -126,16 +133,21 @@ public class DataBaseAuditListener {
     protected void fillUpdateUserId(Object object, Class<?> aClass, String propertyName) throws NoSuchFieldException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         Field updateUserId = aClass.getDeclaredField(propertyName);
         updateUserId.setAccessible(true);
-        // 获取userId值
-        BaseUserDTO baseUserDTO = UserContext.get();
-        if (baseUserDTO != null && baseUserDTO.getId() != null) {
-            // 在此处使用当前用户id或默认用户id
-            updateUserId.set(object, baseUserDTO.getId());
-        } else {
-            // 在此处使用当前用户id或默认用户id
-            Long id = 1L;
-            updateUserId.set(object, id);
+
+        Object userIdValue = updateUserId.get(object);
+        if (userIdValue == null) {
+            // 获取userId值
+            BaseUserDTO baseUserDTO = UserContext.get();
+            if (baseUserDTO != null && baseUserDTO.getId() != null) {
+                // 在此处使用当前用户id或默认用户id
+                updateUserId.set(object, baseUserDTO.getId());
+            } else {
+                // 在此处使用当前用户id或默认用户id
+                Long id = 0L;
+                updateUserId.set(object, id);
+            }
         }
+
     }
 
     /**

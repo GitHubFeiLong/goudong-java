@@ -48,6 +48,11 @@ public class FileType {
         this.type = type;
     }
 
+    public FileType(FileTypeEnum type, Long length) {
+        this.type = type;
+        this.length = length;
+    }
+
     public FileType(FileTypeEnum type, Long length, FileLengthUnit fileLengthUnit) {
         this.type = type;
         this.length = length;

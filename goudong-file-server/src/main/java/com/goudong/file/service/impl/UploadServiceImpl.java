@@ -176,7 +176,7 @@ public class UploadServiceImpl implements UploadService {
 
         FileType fileType = first.get();
         // 获取字节大小
-        long bites = FileLengthUnit.BIT.convert(fileType.getLength(), fileType.getFileLengthUnit());
+        long bites = FileLengthUnit.BYTE.convert(fileType.getLength(), fileType.getFileLengthUnit());
         if (bites < shardUploadDTO.getFileSize()) {
             throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST,
                     "文件大小不符合配置",
@@ -266,8 +266,8 @@ public class UploadServiceImpl implements UploadService {
     @Transactional
     @Override
     public FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) throws IOException {
-        // 查询分片上传任务
-        List<FileShardTaskPO> taskPOS = fileShardTaskRepository.findAllByFileMd5(shardUploadDTO.getFileMd5());
+        // 获取分片任务
+        List<FileShardTaskPO> taskPOS = getFileShardTaskPOS(shardUploadDTO);
         // 任务为空
         if (CollectionUtils.isEmpty(taskPOS)) {
             // 查询文件是否符合秒传
@@ -338,6 +338,17 @@ public class UploadServiceImpl implements UploadService {
     }
 
     /**
+     * 获取文件分片上传的任务集合
+     * @param shardUploadDTO
+     * @return
+     */
+    private List<FileShardTaskPO> getFileShardTaskPOS(FileShardUploadDTO shardUploadDTO) {
+        // 查询分片上传任务
+        List<FileShardTaskPO> taskPOS = fileShardTaskRepository.findAllByFileMd5(shardUploadDTO.getFileMd5());
+        return taskPOS;
+    }
+
+    /**
      * 初始化创建分片任务列表
      * @param shardUploadDTO
      * @return taskPOS 分片任务集合
@@ -391,7 +402,7 @@ public class UploadServiceImpl implements UploadService {
      * @param taskPOS 上传任务对象集合
      * @return true：合并完成。false：还不能合并
      */
-    private boolean mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
+    private void mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
         // 创建文件名
         String uuid = IdUtil.simpleUUID();
         String filename = uuid + "." + shardUploadDTO.getFileType().toLowerCase();
@@ -468,7 +479,5 @@ public class UploadServiceImpl implements UploadService {
         } finally {
             fosChannel.close();
         }
-
-        return true;
     }
 }

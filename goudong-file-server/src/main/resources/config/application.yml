@@ -85,7 +85,10 @@ commons:
 file:
   upload:
     enable-full-path-model: true
-    root-dir: 'd:'
+    root-dir: 'd:/goudong-file-server'
     jpg:
       length: 100
+    mp4:
+      length: 1
+      file-length-unit: tb
 
