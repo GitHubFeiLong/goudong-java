@@ -18,6 +18,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Deprecated
 public class FileShardUploadStatusRedisDTO implements Serializable {
     private static final long serialVersionUID = 4838852995122391874L;
     //~fields

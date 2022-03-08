@@ -1,7 +1,7 @@
 package com.goudong.file.enumerate;
 
-import com.goudong.commons.dto.file.FileShardUploadStatusRedisDTO;
 import com.goudong.commons.frame.redis.RedisKeyProvider;
+import com.goudong.file.po.FileShardTaskPO;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -18,13 +18,10 @@ import java.util.concurrent.TimeUnit;
 public enum RedisKeyProviderEnum implements RedisKeyProvider {
 
     /**
-     * 文件分片上传，任务处理中
-     * TODO 在失效时将其添加到数据库中。
-     * key有值表名正在执行。
+     * 文件分片上传任务
      * @param fileMd5 文件的md5值
      */
-    @Deprecated
-    FILE_SHARD_UPLOAD_PROCESSING("goudong-file-server:upload:${fileMd5}", DataType.LIST, FileShardUploadStatusRedisDTO.class, 30, TimeUnit.MINUTES),
+    FILE_SHARD_UPLOAD_TASK("goudong-file-server:shard-upload:task:${fileMd5}", DataType.LIST, FileShardTaskPO.class, 30, TimeUnit.MINUTES),
 
     ;
     //~fields

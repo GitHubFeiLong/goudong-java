@@ -68,14 +68,14 @@ public class FileShardUploadResultDTO {
 
     /**
      * 指定分片上传完成
-     * @param percentage 百分比
      * @param successfulShardIndexArray 上传成功索引
      * @param unsuccessfulShardIndexArray 上传失败索引
      * @return
      */
-    public static FileShardUploadResultDTO createShardSuccessful(int percentage,
-                                                                 List<Long> successfulShardIndexArray,
+    public static FileShardUploadResultDTO createShardSuccessful(List<Long> successfulShardIndexArray,
                                                                  List<Long> unsuccessfulShardIndexArray) {
+
+        int percentage = (int) (successfulShardIndexArray.size() * 1.0 / unsuccessfulShardIndexArray.size() * 100);
         return FileShardUploadResultDTO.builder()
                 .entiretySuccessful(false)
                 .shardSuccessful(true)
@@ -84,4 +84,5 @@ public class FileShardUploadResultDTO {
                 .unsuccessfulShardIndexArray(unsuccessfulShardIndexArray)
                 .build();
     }
+
 }

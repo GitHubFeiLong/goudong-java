@@ -25,6 +25,7 @@ import com.goudong.file.po.FilePO;
 import com.goudong.file.po.FileShardTaskPO;
 import com.goudong.file.repository.FileRepository;
 import com.goudong.file.repository.FileShardTaskRepository;
+import com.goudong.file.service.FileShardTaskService;
 import com.goudong.file.service.UploadService;
 import com.goudong.file.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -91,18 +92,25 @@ public class UploadServiceImpl implements UploadService {
      */
     private final FileShardTaskRepository fileShardTaskRepository;
 
+    /**
+     * 文件分片服务层接口
+     */
+    private final FileShardTaskService fileShardTaskService;
+
     public UploadServiceImpl(FileUpload fileUpload,
                              FileRepository fileRepository,
                              RedisTool redisTool,
                              HttpServletRequest request,
                              HttpServletResponse response,
-                             FileShardTaskRepository fileShardTaskRepository) {
+                             FileShardTaskRepository fileShardTaskRepository,
+                             FileShardTaskService fileShardTaskService) {
         this.fileUpload = fileUpload;
         this.fileRepository = fileRepository;
         this.redisTool = redisTool;
         this.request = request;
         this.response = response;
         this.fileShardTaskRepository = fileShardTaskRepository;
+        this.fileShardTaskService = fileShardTaskService;
     }
 
     /**
@@ -267,7 +275,7 @@ public class UploadServiceImpl implements UploadService {
     @Override
     public FileShardUploadResultDTO shardUpload(FileShardUploadDTO shardUploadDTO) throws IOException {
         // 获取分片任务
-        List<FileShardTaskPO> taskPOS = getFileShardTaskPOS(shardUploadDTO);
+        List<FileShardTaskPO> taskPOS = fileShardTaskService.listByFileMd5(shardUploadDTO.getFileMd5());
         // 任务为空
         if (CollectionUtils.isEmpty(taskPOS)) {
             // 查询文件是否符合秒传
@@ -280,7 +288,7 @@ public class UploadServiceImpl implements UploadService {
             }
 
             // 文件不存在，创建任务
-            taskPOS = initFileShardTasks(shardUploadDTO);
+            taskPOS = fileShardTaskService.initFileShardTasks(shardUploadDTO);
 
         } else {
             // 不是第一次，需要判断最后修改时间是否相同
@@ -295,7 +303,7 @@ public class UploadServiceImpl implements UploadService {
                 // hutool递归删除
                 FileUtil.del(new File(tempPath).getParentFile());
                 // 创建新的任务
-                taskPOS = initFileShardTasks(shardUploadDTO);
+                taskPOS = fileShardTaskService.initFileShardTasks(shardUploadDTO);
             }
         }
 
@@ -307,15 +315,11 @@ public class UploadServiceImpl implements UploadService {
             LogUtil.debug(log, "本次分片({})之前已经上传成功过了", shardUploadDTO.getShardIndex());
             List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
             List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
-            int percentage = (int) (successfulList.size() * 1.0 / taskPOS.size() * 100);
-            return FileShardUploadResultDTO.createShardSuccessful(percentage, successfulList, unsuccessfulList);
+            return FileShardUploadResultDTO.createShardSuccessful(successfulList, unsuccessfulList);
         }
 
         // 上传本次分片
-        saveShard2Temp(shardUploadDTO, fileShardTaskPO);
-
-        // 保存任务的状态等信息
-        fileShardTaskRepository.save(fileShardTaskPO);
+        saveShard2Temp(shardUploadDTO, fileShardTaskPO, taskPOS);
 
         // 判断是否需要合并文件了
         long successfulCount = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).count();
@@ -326,60 +330,21 @@ public class UploadServiceImpl implements UploadService {
             // 合并文件
             mergeShardUploadTemp(shardUploadDTO, taskPOS);
             LogUtil.info(log, "合并成功");
+
             return FileShardUploadResultDTO.createEntiretySuccessful();
         }
 
         // 本次上传成功
         List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
         List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
-        int percentage = (int) (successfulList.size() * 1.0 / taskPOS.size() * 100);
 
-        return FileShardUploadResultDTO.createShardSuccessful(percentage, successfulList, unsuccessfulList);
-    }
-
-    /**
-     * 获取文件分片上传的任务集合
-     * @param shardUploadDTO
-     * @return
-     */
-    private List<FileShardTaskPO> getFileShardTaskPOS(FileShardUploadDTO shardUploadDTO) {
-        // 查询分片上传任务
-        List<FileShardTaskPO> taskPOS = fileShardTaskRepository.findAllByFileMd5(shardUploadDTO.getFileMd5());
-        return taskPOS;
-    }
-
-    /**
-     * 初始化创建分片任务列表
-     * @param shardUploadDTO
-     * @return taskPOS 分片任务集合
-     */
-    private List<FileShardTaskPO> initFileShardTasks(FileShardUploadDTO shardUploadDTO) {
-        LogUtil.debug(log, "初始化分片任务，开始创建分片任务列表");
-        List<FileShardTaskPO> taskPOS = new ArrayList<>();
-        // 第一次上传
-        for (long i = 0, total = shardUploadDTO.getShardTotal(); i < total; i++) {
-            taskPOS.add(
-                    FileShardTaskPO.builder()
-                            .fileMd5(shardUploadDTO.getFileMd5())
-                            .blockSize(shardUploadDTO.getBlockSize())
-                            .successful(false)
-                            .tempPath("")
-                            .shardIndex(i)
-                            .lastModifiedTime(shardUploadDTO.getLastModifiedTime())
-                            .build()
-            );
-        }
-        // 保存到数据库
-        fileShardTaskRepository.saveAll(taskPOS);
-
-        LogUtil.debug(log, "初始化分片任务已完成");
-        return taskPOS;
+        return FileShardUploadResultDTO.createShardSuccessful(successfulList, unsuccessfulList);
     }
 
     /**
      * 将分片保存到临时文件
      */
-    private void saveShard2Temp(FileShardUploadDTO shardUploadDTO, FileShardTaskPO fileShardTaskPO) {
+    private void saveShard2Temp(FileShardUploadDTO shardUploadDTO, FileShardTaskPO fileShardTaskPO, List<FileShardTaskPO> taskPOS) throws IOException {
         // 创建临时文件夹
         File temp = FileUtils.getTempAndMd5File(fileUpload.getRootDir(), shardUploadDTO.getFileMd5());
         // 创建临时文件
@@ -393,7 +358,11 @@ public class UploadServiceImpl implements UploadService {
         } catch (IOException e) {
             fileShardTaskPO.setSuccessful(false);
             LogUtil.error(log, "上传分片({})失败：{}", shardUploadDTO.getShardIndex(), e.getMessage());
-            e.printStackTrace();
+            // 原封不动跑出去
+            throw e;
+        } finally {
+            // 保存任务的状态等信息
+            fileShardTaskService.save(fileShardTaskPO, taskPOS);
         }
     }
 
