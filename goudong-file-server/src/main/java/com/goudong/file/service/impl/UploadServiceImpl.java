@@ -435,13 +435,7 @@ public class UploadServiceImpl implements UploadService {
             filePO.setFileLink(FileUtils.createFileLink(filePO));
             fileRepository.save(filePO);
             LogUtil.info(log, "文件合并并保存成功");
-            // 将任务进行删除
-            fileShardTaskRepository.deleteAll(taskPOS);
-            LogUtil.info(log,"删除分片上传文件任务成功");
-            // 删除临时文件
-            String tempPath = taskPOS.get(0).getTempPath();
-            // hutool递归删除
-            FileUtil.del(new File(tempPath).getParentFile());
+            fileShardTaskService.deleteAll(taskPOS);
         } catch (IOException e) {
             LogUtil.error(log , "合并文件失败：{}", e.getMessage());
             throw e;

@@ -35,4 +35,10 @@ public interface FileShardTaskService {
      * @return
      */
     FileShardTaskPO save(FileShardTaskPO fileShardTaskPO, List<FileShardTaskPO> taskPOS);
+
+    /**
+     * 批量删除分片任务
+     * @param fileShardTaskPOS
+     */
+    void deleteAll(List<FileShardTaskPO> fileShardTaskPOS);
 }

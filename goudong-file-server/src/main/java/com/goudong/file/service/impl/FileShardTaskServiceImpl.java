@@ -1,5 +1,6 @@
 package com.goudong.file.service.impl;
 
+import cn.hutool.core.io.FileUtil;
 import com.goudong.commons.dto.file.FileShardUploadDTO;
 import com.goudong.commons.frame.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
@@ -13,8 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * 类描述：
@@ -27,6 +31,7 @@ import java.util.List;
 public class FileShardTaskServiceImpl implements FileShardTaskService {
     //~fields
     //==================================================================================================================
+
     /**
      * 文件分片任务持久层接口
      */
@@ -120,12 +125,34 @@ public class FileShardTaskServiceImpl implements FileShardTaskService {
     @Override
     public FileShardTaskPO save(FileShardTaskPO fileShardTaskPO, List<FileShardTaskPO> taskPOS) {
         // 保存到redis中
+        String key = redisTool.getKey(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_TASK, fileShardTaskPO.getFileMd5());
         int index = taskPOS.indexOf(fileShardTaskPO);
-        redisTool.opsForList()
-                .set(redisTool.getKey(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_TASK, fileShardTaskPO.getFileMd5())
-                , index, fileShardTaskPO);
-        // FileShardTaskPO save = fileShardTaskRepository.save(fileShardTaskPO);
+        redisTool.opsForList().set(key, index, fileShardTaskPO);
+
+        // 数据库跟着改
+        this.fileShardTaskRepository.save(fileShardTaskPO);
+
         return fileShardTaskPO;
+    }
+
+    /**
+     * 批量删除分片任务
+     *
+     * @param fileShardTaskPOS
+     */
+    @Override
+    public void deleteAll(List<FileShardTaskPO> fileShardTaskPOS) {
+        LogUtil.debug(log, "开始删除分片任务及其临时文件");
+        // 将任务进行删除
+        fileShardTaskRepository.deleteAll(fileShardTaskPOS);
+        // 删除redis中的数据
+        redisTool.deleteKey(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_TASK, fileShardTaskPOS.get(0).getFileMd5());
+        LogUtil.debug(log,"删除分片上传文件任务成功");
+        // 删除临时文件
+        String tempPath = fileShardTaskPOS.get(0).getTempPath();
+        // hutool递归删除
+        FileUtil.del(new File(tempPath).getParentFile());
+        LogUtil.debug(log,"删除临时文件成功");
     }
 
 }

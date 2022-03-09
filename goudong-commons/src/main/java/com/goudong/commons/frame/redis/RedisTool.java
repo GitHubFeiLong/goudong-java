@@ -292,7 +292,7 @@ public class RedisTool extends RedisTemplate {
                 super.delete(key);
             }
             // 添加
-            super.opsForList().leftPushAll(key, list);
+            super.opsForList().rightPushAll(key, list);
             // 设置过期时间
             if (redisKey.getTime() > 0) {
                 super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
