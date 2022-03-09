@@ -74,11 +74,10 @@ public class FileShardUploadResultDTO {
      */
     public static FileShardUploadResultDTO createShardSuccessful(List<Long> successfulShardIndexArray,
                                                                  List<Long> unsuccessfulShardIndexArray) {
-
         int ss = successfulShardIndexArray.size();
         int uss = unsuccessfulShardIndexArray.size();
-
-        int percentage = ss / (ss + uss) * 100;
+        // 使用double避免商值为0
+        int percentage = (int)((ss * 1.0 / (ss + uss)) * 100);
         return FileShardUploadResultDTO.builder()
                 .entiretySuccessful(false)
                 .shardSuccessful(true)
