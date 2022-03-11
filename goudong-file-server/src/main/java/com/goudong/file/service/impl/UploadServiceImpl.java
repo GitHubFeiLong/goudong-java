@@ -113,6 +113,59 @@ public class UploadServiceImpl implements UploadService {
         this.fileShardTaskService = fileShardTaskService;
     }
 
+
+    /**
+     * 预检查文件类型合大小是否符合
+     *
+     * @param fileType 文件类型
+     * @param fileSize 文件大小
+     */
+    @Override
+    public void preCheck(String fileType, Long fileSize) {
+        // 检查是否激活文件上传功能
+        if (!fileUpload.getEnabled()) {
+            disablePrintLog();
+            return;
+        }
+
+        // 用户配置的文件上传信息
+        List<FileType> fileTypes = fileUpload.getFileTypes();
+
+        // 存在后缀，就比较后缀是否通过
+        Optional<FileType> first = fileTypes.stream().
+                filter(f -> Objects.equals(fileType, f.getType().name()))
+                .filter(f-> f.getEnabled())
+                .findFirst();
+
+        if (!first.isPresent()) {
+            throw new ClientException(ClientExceptionEnum.BAD_REQUEST, String.format("文件服务，暂不支持上传%s类型文件", fileType));
+        }
+
+        // 计算用户配置该类型文件允许上传的字节大小
+        FileType fileTypeInstance = first.get();
+        long bytes = fileTypeInstance.getFileLengthUnit().toBytes(fileTypeInstance.getLength());
+        if (bytes < fileSize) {
+            ImmutablePair<Long, FileLengthUnit> var1 = FileUtils.adaptiveSize(fileSize);
+            String message = String.format("文件(类型:%s,size:%s%s)超过配置(%s%s)",
+                    fileType,
+                    var1.getLeft(),
+                    var1.getRight(),
+                    fileTypeInstance.getLength(),
+                    fileTypeInstance.getFileLengthUnit());
+
+            throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
+        }
+    }
+
+    /**
+     * 文件上传的限制禁用时，进行日志输出
+     */
+    private void disablePrintLog() {
+        String clientMessage = String.format("文件服务 %s 未开启上传文件", this.applicationName);
+        String serverMessage = String.format("请设置属性 file.upload.enabled=true 即可解决问题");
+        LogUtil.warn(log, "{}---{}", clientMessage, serverMessage);
+    }
+
     /**
      * 检查文件是否允许上传
      * @param files
@@ -121,10 +174,7 @@ public class UploadServiceImpl implements UploadService {
     public void checkSimpleUpload(List<MultipartFile> files) {
         // 检查是否激活文件上传功能
         if (!fileUpload.getEnabled()) {
-            String clientMessage = String.format("文件服务 %s 未开启上传文件", this.applicationName);
-            String serverMessage = String.format("请设置属性 file.upload.enabled=true 即可解决问题");
-            // throw new FileUploadException(ServerExceptionEnum.SERVICE_UNAVAILABLE, clientMessage, serverMessage);
-            LogUtil.warn(log, "{}---{}", clientMessage, serverMessage);
+            disablePrintLog();
             return;
         }
 
@@ -174,6 +224,11 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void checkShardUpload(FileShardUploadDTO shardUploadDTO) {
+        // 检查是否激活文件上传功能
+        if (!fileUpload.getEnabled()) {
+            disablePrintLog();
+            return;
+        }
         FileTypeEnum fileTypeEnum = FileTypeEnum.convert(shardUploadDTO.getFileType());
 
         Optional<FileType> first = fileUpload.getFileTypes().stream().filter(file -> Objects.equals(file.getType(), fileTypeEnum)).findFirst();

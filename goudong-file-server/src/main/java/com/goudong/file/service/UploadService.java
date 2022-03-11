@@ -21,6 +21,13 @@ import java.util.List;
 public interface UploadService {
 
     /**
+     * 预检查文件类型合大小是否符合
+     * @param fileType 文件类型
+     * @param fileSize 文件大小
+     */
+    void preCheck(String fileType, Long fileSize);
+
+    /**
      * 检查文件是否符合配置的文件上传属性
      * @param files
      */
