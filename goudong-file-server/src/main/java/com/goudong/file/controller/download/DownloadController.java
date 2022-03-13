@@ -1,6 +1,7 @@
 package com.goudong.file.controller.download;
 
 import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.file.repository.FileRepository;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
@@ -33,9 +34,14 @@ public class DownloadController {
 
     //~fields
     //==================================================================================================================
-
+    private final FileRepository fileRepository;
     //~methods
     //==================================================================================================================
+
+
+    public DownloadController(FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
+    }
 
     /**
      * 下载文件
@@ -49,7 +55,7 @@ public class DownloadController {
     @Whitelist
     void download(HttpServletRequest request, HttpServletResponse response, @RequestHeader(required = false) String range) {
         // 被下载的文件
-        File music = new File("D:\\aaa\\1.png");
+        File music = new File("D:\\aaa\\1.html");
 
         //开始下载位置
         long startByte = 0;
@@ -103,10 +109,12 @@ public class DownloadController {
         //坑爹地方二：看代码
         response.setHeader("Accept-Ranges", "bytes");
         response.setContentType(contentType);
-        response.setHeader("Content-Type", contentType);
+        // response.setHeader("Content-Type", contentType);
+        // response.setContentType("application/x-msdownload");
         //这里文件名换你想要的，inline表示浏览器可以直接使用（比如播放音乐，我方便测试用的）
         //参考资料：http://hw1287789687.iteye.com/blog/2188500
-        response.setHeader("Content-Disposition", "inline;filename=test.mp3");
+        // response.setHeader("Content-Disposition", "inline;filename=test.mp3");
+        response.setHeader("Content-Disposition", "attachment;filename=1.png");
         response.setHeader("Content-Length", String.valueOf(contentLength));
         //坑爹地方三：Content-Range，格式为
         // [要下载的开始位置]-[结束位置]/[文件总大小]

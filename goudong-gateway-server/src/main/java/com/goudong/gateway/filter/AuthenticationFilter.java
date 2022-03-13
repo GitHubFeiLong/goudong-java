@@ -3,7 +3,7 @@ package com.goudong.gateway.filter;
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.frame.openfeign.GoudongOauth2ServerService;
+import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

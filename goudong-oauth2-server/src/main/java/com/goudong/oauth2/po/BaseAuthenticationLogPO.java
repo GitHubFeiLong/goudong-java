@@ -1,6 +1,6 @@
 package com.goudong.oauth2.po;
 
-import com.goudong.commons.frame.jpa.BasePO;
+import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;

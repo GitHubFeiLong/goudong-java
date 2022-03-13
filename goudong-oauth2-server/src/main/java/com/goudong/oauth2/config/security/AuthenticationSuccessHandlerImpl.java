@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.LoginInfoDTO;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.dto.BaseTokenDTO;

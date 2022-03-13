@@ -2,7 +2,7 @@ package com.goudong.commons.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
-import com.goudong.commons.frame.jpa.BasePO;
+import com.goudong.commons.framework.jpa.BasePO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

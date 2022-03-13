@@ -1,6 +1,6 @@
 package com.goudong.file.po;
 
-import com.goudong.commons.frame.jpa.BasePO;
+import com.goudong.commons.framework.jpa.BasePO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

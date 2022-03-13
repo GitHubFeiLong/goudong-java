@@ -1,7 +1,7 @@
 package com.goudong.message;
 
 import com.goudong.commons.constant.core.BasePackageConst;
-import com.goudong.commons.frame.core.LogApplicationStartup;
+import com.goudong.commons.framework.core.LogApplicationStartup;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;

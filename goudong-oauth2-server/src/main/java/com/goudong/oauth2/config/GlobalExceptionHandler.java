@@ -2,7 +2,7 @@ package com.goudong.oauth2.config;
 
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.user.AccountExpiredException;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.oauth2.config.security.AccessDeniedHandlerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

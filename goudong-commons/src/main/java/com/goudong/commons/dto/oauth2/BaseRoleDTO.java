@@ -1,6 +1,5 @@
 package com.goudong.commons.dto.oauth2;
 
-import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
 
 /**

@@ -1,6 +1,6 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.frame.mvc.error.ErrorAttributes;
+import com.goudong.commons.framework.mvc.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

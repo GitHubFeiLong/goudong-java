@@ -4,7 +4,7 @@ package com.goudong.commons.exception;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.DatabaseKeyEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.StringUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;

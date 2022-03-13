@@ -1,7 +1,7 @@
 package com.goudong.commons.http.restTemplate.example;
 
 import com.goudong.commons.http.restTemplate.config.BeanConfig;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import org.springframework.web.client.RestTemplate;
 
 /**

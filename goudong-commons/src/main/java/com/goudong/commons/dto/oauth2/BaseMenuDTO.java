@@ -1,12 +1,6 @@
 package com.goudong.commons.dto.oauth2;
 
-import com.goudong.commons.frame.jpa.BasePO;
 import lombok.Data;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * 类描述：

@@ -12,7 +12,7 @@ import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.Getter;
 import lombok.Setter;

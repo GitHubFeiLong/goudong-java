@@ -7,7 +7,7 @@ import com.goudong.commons.constant.core.CommonConst;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.enumerate.core.RequestMappingEnum;
 import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.frame.core.ResourceAntMatcher;
+import com.goudong.commons.framework.core.ResourceAntMatcher;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

@@ -5,7 +5,7 @@ import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.user.WhitelistException;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import io.swagger.annotations.Api;

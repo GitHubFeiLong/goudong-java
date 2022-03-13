@@ -3,8 +3,6 @@ package com.goudong.file.config;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.filter.UserContextFilter;
-import com.goudong.commons.frame.mvc.error.ErrorAttributes;
-import com.goudong.commons.frame.mvc.error.ErrorController;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

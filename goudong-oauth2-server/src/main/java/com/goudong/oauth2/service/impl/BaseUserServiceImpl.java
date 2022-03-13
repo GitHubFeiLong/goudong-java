@@ -8,7 +8,7 @@ import com.goudong.commons.exception.oauth2.AccessTokenExpiredException;
 import com.goudong.commons.exception.oauth2.AccessTokenInvalidException;
 import com.goudong.commons.exception.user.AccountExpiredException;
 import com.goudong.commons.exception.user.UserException;
-import com.goudong.commons.frame.redis.RedisTool;
+import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.core.TokenExpires;

@@ -2,7 +2,7 @@ package com.goudong.file.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import com.goudong.commons.dto.file.FileShardUploadDTO;
-import com.goudong.commons.frame.redis.RedisTool;
+import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.enumerate.RedisKeyProviderEnum;
 import com.goudong.file.po.FileShardTaskPO;
@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * 类描述：
@@ -141,10 +139,11 @@ public class FileShardTaskServiceImpl implements FileShardTaskService {
      * @param fileShardTaskPOS
      */
     @Override
+    @Transactional
     public void deleteAll(List<FileShardTaskPO> fileShardTaskPOS) {
         LogUtil.debug(log, "开始删除分片任务及其临时文件");
-        // 将任务进行删除
-        fileShardTaskRepository.deleteAll(fileShardTaskPOS);
+        // 将任务进行删除(物理删除)
+        fileShardTaskRepository.deleteInBatch(fileShardTaskPOS);
         // 删除redis中的数据
         redisTool.deleteKey(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_TASK, fileShardTaskPOS.get(0).getFileMd5());
         LogUtil.debug(log,"删除分片上传文件任务成功");

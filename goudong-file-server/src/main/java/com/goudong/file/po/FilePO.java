@@ -2,7 +2,7 @@ package com.goudong.file.po;
 
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
-import com.goudong.commons.frame.jpa.BasePO;
+import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.SQLDelete;
@@ -74,7 +74,7 @@ public class FilePO extends BasePO {
      */
     @Length(max = 255)
     @Column(name = "file_link", nullable = false)
-    private String fileLink;
+    private String fileLink = "default";
 
     /**
      * 文件磁盘地址

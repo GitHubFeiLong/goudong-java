@@ -1,7 +1,7 @@
 package com.goudong.user.controller.user;
 
 import com.goudong.commons.dto.user.BaseUserDTO;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

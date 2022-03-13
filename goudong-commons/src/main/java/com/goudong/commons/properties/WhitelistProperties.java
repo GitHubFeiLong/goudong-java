@@ -2,7 +2,7 @@ package com.goudong.commons.properties;
 
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
-import com.goudong.commons.frame.whitelist.BaseWhitelistDTO;
+import com.goudong.commons.framework.whitelist.BaseWhitelistDTO;
 import com.goudong.commons.utils.core.ResourceUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.Data;

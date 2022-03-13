@@ -2,7 +2,7 @@ package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
-import com.goudong.commons.frame.redis.RedisTool;
+import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;

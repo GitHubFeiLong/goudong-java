@@ -5,9 +5,8 @@ import com.goudong.commons.enumerate.file.FileTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Column;
+import java.io.Serializable;
 
 /**
  * 类描述：
@@ -18,7 +17,8 @@ import javax.persistence.Column;
  */
 @Data
 @ApiModel
-public class FileDTO {
+public class FileDTO implements Serializable {
+    private static final long serialVersionUID = -6287157466292179638L;
     /**
      * 原始文件名
      */

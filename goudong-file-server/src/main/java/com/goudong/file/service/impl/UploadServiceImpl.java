@@ -16,7 +16,7 @@ import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.exception.file.FileUploadException;
-import com.goudong.commons.frame.redis.RedisTool;
+import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
@@ -155,6 +155,8 @@ public class UploadServiceImpl implements UploadService {
 
             throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
         }
+
+        // 这里可以直接初始化任务了？？？
     }
 
     /**
@@ -309,10 +311,10 @@ public class UploadServiceImpl implements UploadService {
         // 创建文件
         try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {
             StreamUtils.copy(in, out);
-            filePO.setFileLink(FileUtils.createFileLink(filePO));
             filePO.setFilePath(newFullFilename);
             filePO.setFileMd5(DigestUtils.md5Hex(new FileInputStream(newFullFilename)));
             fileRepository.save(filePO);
+            filePO.setFileLink(FileUtils.createFileLink(filePO));
             LogUtil.info(log, "文件上传成功");
             return BeanUtil.copyProperties(filePO, FileDTO.class);
         } catch (IOException e) {
@@ -370,24 +372,16 @@ public class UploadServiceImpl implements UploadService {
             LogUtil.debug(log, "本次分片({})之前已经上传成功过了", shardUploadDTO.getShardIndex());
             List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
             List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
+
+            if (checkMerge(shardUploadDTO, taskPOS)) return FileShardUploadResultDTO.createEntiretySuccessful();
+
             return FileShardUploadResultDTO.createShardSuccessful(successfulList, unsuccessfulList);
         }
 
         // 上传本次分片
         saveShard2Temp(shardUploadDTO, fileShardTaskPO, taskPOS);
 
-        // 判断是否需要合并文件了
-        long successfulCount = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).count();
-        int taskTotal = taskPOS.size();
-        if (successfulCount == taskTotal) {
-            fileShardTaskRepository.flush();
-            LogUtil.info(log, "开始合并分片");
-            // 合并文件
-            mergeShardUploadTemp(shardUploadDTO, taskPOS);
-            LogUtil.info(log, "合并成功");
-
-            return FileShardUploadResultDTO.createEntiretySuccessful();
-        }
+        if (checkMerge(shardUploadDTO, taskPOS)) return FileShardUploadResultDTO.createEntiretySuccessful();
 
         // 本次上传成功
         List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
@@ -419,6 +413,29 @@ public class UploadServiceImpl implements UploadService {
             // 保存任务的状态等信息
             fileShardTaskService.save(fileShardTaskPO, taskPOS);
         }
+    }
+
+    /**
+     * 检查是否能进行合并，能合并时就进行合并
+     * @param shardUploadDTO
+     * @param taskPOS
+     * @return true:合并成功；false：合并失败
+     * @throws IOException
+     */
+    private boolean checkMerge(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
+        // 判断是否需要合并文件了
+        long successfulCount = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).count();
+        int taskTotal = taskPOS.size();
+        if (successfulCount == taskTotal) {
+            fileShardTaskRepository.flush();
+            LogUtil.info(log, "开始合并分片");
+            // 合并文件
+            mergeShardUploadTemp(shardUploadDTO, taskPOS);
+            LogUtil.info(log, "合并成功");
+
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -486,9 +503,10 @@ public class UploadServiceImpl implements UploadService {
                     .setFilePath(file.getPath())
                     .setFileType(shardUploadDTO.getFileType())
                     .setFileMd5(shardUploadDTO.getFileMd5())
+                    .setFileLink("link")
                     ;
-            filePO.setFileLink(FileUtils.createFileLink(filePO));
             fileRepository.save(filePO);
+            filePO.setFileLink(FileUtils.createFileLink(filePO));
             LogUtil.info(log, "文件合并并保存成功");
             fileShardTaskService.deleteAll(taskPOS);
         } catch (IOException e) {

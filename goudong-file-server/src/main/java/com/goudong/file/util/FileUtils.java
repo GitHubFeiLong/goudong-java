@@ -14,6 +14,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
@@ -146,7 +150,9 @@ public class FileUtils {
      * @param filePO
      * @return
      */
-    public static String createFileLink(FilePO filePO) {
-        return "link";
+    public static String createFileLink(FilePO filePO) throws UnsupportedEncodingException {
+        Long id = filePO.getId();
+        String encode = URLEncoder.encode(Base64.getEncoder().encodeToString(id.toString().getBytes(StandardCharsets.UTF_8)), "UTF-8");
+        return "http://localhost:api/file/file-link/info/"+encode;
     }
 }

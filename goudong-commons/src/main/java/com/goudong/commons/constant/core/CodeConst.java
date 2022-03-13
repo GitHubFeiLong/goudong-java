@@ -1,6 +1,6 @@
 package com.goudong.commons.constant.core;
 
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 
 /**
  * 类描述：

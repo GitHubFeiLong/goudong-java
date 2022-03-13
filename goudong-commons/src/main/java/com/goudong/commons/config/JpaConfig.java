@@ -1,7 +1,7 @@
 package com.goudong.commons.config;
 
-import com.goudong.commons.frame.jpa.DataBaseAuditListener;
-import com.goudong.commons.frame.jpa.MyAuditorAware;
+import com.goudong.commons.framework.jpa.DataBaseAuditListener;
+import com.goudong.commons.framework.jpa.MyAuditorAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

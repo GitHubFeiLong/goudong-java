@@ -1,7 +1,6 @@
 package com.goudong.user.po;
 
-import com.goudong.commons.frame.jpa.BasePO;
-import lombok.Data;
+import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -10,7 +9,6 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

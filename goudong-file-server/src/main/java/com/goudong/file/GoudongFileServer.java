@@ -1,6 +1,6 @@
 package com.goudong.file;
 
-import com.goudong.commons.frame.core.LogApplicationStartup;
+import com.goudong.commons.framework.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

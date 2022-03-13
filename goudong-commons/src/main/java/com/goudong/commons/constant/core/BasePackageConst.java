@@ -9,7 +9,7 @@ package com.goudong.commons.constant.core;
 public class BasePackageConst {
     /*=========================* OpenFeign包 *=========================*/
 
-    public static final String OPENFEIGN = "com.goudong.commons.frame.openfeign";
+    public static final String OPENFEIGN = "com.goudong.commons.framework.openfeign";
 
     /*=========================* 模块包 *=========================*/
 

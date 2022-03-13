@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartException;
 
 /**
@@ -62,7 +61,16 @@ public class BasicException extends RuntimeException{
             return ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "上传文件失败", throwable.getMessage());
         }
 
+
+
+        if (throwable instanceof IndexOutOfBoundsException ) {
+            return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, "");
+        }
         String message = throwable.getMessage();
+        if (message == null) {
+            return basicException;
+        }
+
         // openFeign调用远程服务，服务还未注册到nacos中
         if (message.startsWith("com.netflix.client.ClientException")) {
             return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);

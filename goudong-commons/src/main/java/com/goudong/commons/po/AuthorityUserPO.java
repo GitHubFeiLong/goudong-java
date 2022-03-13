@@ -1,7 +1,7 @@
 package com.goudong.commons.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.goudong.commons.frame.mybatisplus.BasePO;
+import com.goudong.commons.framework.mybatisplus.BasePO;
 import lombok.Data;
 
 import java.time.LocalDateTime;

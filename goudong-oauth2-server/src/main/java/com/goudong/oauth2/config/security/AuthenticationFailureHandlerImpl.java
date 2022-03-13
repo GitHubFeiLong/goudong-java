@@ -3,7 +3,7 @@ package com.goudong.oauth2.config.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.BasicException;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;

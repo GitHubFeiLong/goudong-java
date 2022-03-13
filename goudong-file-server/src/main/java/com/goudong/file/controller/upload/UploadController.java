@@ -1,6 +1,5 @@
 package com.goudong.file.controller.upload;
 
-import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
@@ -9,9 +8,8 @@ import com.goudong.commons.dto.file.FileShardUploadDTO;
 import com.goudong.commons.dto.file.FileShardUploadResultDTO;
 import com.goudong.commons.dto.file.RequestUploadDTO;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
-import com.goudong.commons.frame.core.Result;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.service.UploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

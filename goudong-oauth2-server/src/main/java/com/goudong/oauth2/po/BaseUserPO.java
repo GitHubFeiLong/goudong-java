@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.goudong.commons.constant.user.RoleConst;
-import com.goudong.commons.frame.jpa.BasePO;
+import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
