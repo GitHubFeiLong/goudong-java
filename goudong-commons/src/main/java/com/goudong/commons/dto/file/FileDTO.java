@@ -74,4 +74,7 @@ public class FileDTO implements Serializable {
      */
     @ApiModelProperty(value = "文件md5值")
     private String fileMd5;
+
+    @ApiModelProperty(value = "对应的Content-Type的媒体类型")
+    private String mimeType;
 }
