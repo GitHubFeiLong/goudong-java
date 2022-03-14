@@ -1,6 +1,9 @@
 package com.goudong.file.controller.download;
 
 import com.goudong.commons.annotation.core.Whitelist;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
+import com.goudong.file.po.FilePO;
 import com.goudong.file.repository.FileRepository;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -35,32 +38,50 @@ public class DownloadController {
     //~fields
     //==================================================================================================================
     private final FileRepository fileRepository;
+
+    /**
+     * 请求对象
+     */
+    private final HttpServletRequest request;
+
+    /**
+     * 响应对象
+     */
+    private final HttpServletResponse response;
+
     //~methods
     //==================================================================================================================
 
 
-    public DownloadController(FileRepository fileRepository) {
+    public DownloadController(FileRepository fileRepository, HttpServletRequest request, HttpServletResponse response) {
         this.fileRepository = fileRepository;
+        this.request = request;
+        this.response = response;
     }
 
     /**
      * 下载文件
      * range请求头使用https://www.cnblogs.com/1995hxt/p/5692050.html
      * Range: bytes=10- ：第10个字节及最后个字节的数据;Range: bytes=40-100 ：第40个字节到第100个字节之间的数据.
-     * @param request
-     * @param response
      * @param range (详细描述：https://www.cnblogs.com/1995hxt/p/5692050.html)
+     * @param fileId 文件上传时生成的访问地址
      */
     @GetMapping("/download")
     @Whitelist
-    void download(HttpServletRequest request, HttpServletResponse response, @RequestHeader(required = false) String range) {
+    void download(@RequestHeader(required = false) String range, Long fileId) {
         // 被下载的文件
-        File music = new File("D:\\aaa\\1.html");
+        FilePO filePO = fileRepository.findById(fileId)
+                .orElseThrow(() -> new ClientException(ClientExceptionEnum.NOT_FOUND, "文件不存在", "文件fileId查询不到数据"));
+
+        File file = new File(filePO.getFilePath());
+        if (!file.exists()) {
+            throw new ClientException(ClientExceptionEnum.NOT_FOUND, "文件不存在", "文件服务器上未发现该文件");
+        }
 
         //开始下载位置
         long startByte = 0;
         //结束下载位置（数组下标从0开始）
-        long endByte = music.length() - 1;
+        long endByte = file.length() - 1;
 
         // range值格式正确
         if (range != null && range.contains("bytes=") && range.contains("-")) {
@@ -89,7 +110,7 @@ public class DownloadController {
 
             } catch (NumberFormatException e) {
                 startByte = 0;
-                endByte = music.length() - 1;
+                endByte = file.length() - 1;
             }
         } else {
             //没有ranges即全部一次性传输，需要用200状态码，这一行应该可以省掉，因为默认返回是200状态码
@@ -99,7 +120,7 @@ public class DownloadController {
         //要下载的长度（endByte为总长度-1，这时候要加回去）
         long contentLength = endByte - startByte + 1;
         //文件名
-        String fileName = music.getName();
+        String fileName = filePO.getOriginalFilename();
         //文件类型
         String contentType = request.getServletContext().getMimeType(fileName);
 
@@ -118,15 +139,15 @@ public class DownloadController {
         response.setHeader("Content-Length", String.valueOf(contentLength));
         //坑爹地方三：Content-Range，格式为
         // [要下载的开始位置]-[结束位置]/[文件总大小]
-        response.setHeader("Content-Range", "bytes " + startByte + "-" + endByte + "/" + music.length());
+        response.setHeader("Content-Range", "bytes " + startByte + "-" + endByte + "/" + file.length());
 
 
-        BufferedOutputStream outputStream = null;
+        BufferedOutputStream outputStream;
         RandomAccessFile randomAccessFile = null;
         //已传送数据大小
         long transmitted = 0;
         try {
-            randomAccessFile = new RandomAccessFile(music, "r");
+            randomAccessFile = new RandomAccessFile(file, "r");
             outputStream = new BufferedOutputStream(response.getOutputStream());
             byte[] buff = new byte[4096];
             int len = 0;

@@ -4,21 +4,26 @@ import cn.hutool.core.io.FileUtil;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.commons.utils.core.SpringBeanTool;
 import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.Filename;
 import com.goudong.file.po.FilePO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.core.env.Environment;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
 
@@ -31,6 +36,7 @@ import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
  */
 @Slf4j
 public class FileUtils {
+
     private FileUtils(){
 
     }
@@ -152,7 +158,29 @@ public class FileUtils {
      */
     public static String createFileLink(FilePO filePO) throws UnsupportedEncodingException {
         Long id = filePO.getId();
-        String encode = URLEncoder.encode(Base64.getEncoder().encodeToString(id.toString().getBytes(StandardCharsets.UTF_8)), "UTF-8");
-        return "http://localhost:api/file/file-link/info/"+encode;
+        // String encode = URLEncoder.encode(Base64.getEncoder().encodeToString(id.toString().getBytes(StandardCharsets.UTF_8)), "UTF-8");
+        Environment env = SpringBeanTool.getBean(Environment.class);
+        String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");
+        String serverPort = env.getProperty("server.port");
+        String contextPath = Optional
+                .ofNullable(env.getProperty("server.servlet.context-path"))
+                .filter(StringUtils::isNotBlank)
+                .orElse("/");
+        String hostAddress = "localhost";
+        try {
+            hostAddress = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            log.warn("The host name could not be determined, using `localhost` as fallback");
+        }
+
+        // 拼接
+        return new StringBuilder(protocol)
+                .append("://")
+                .append(hostAddress)
+                .append(":")
+                .append(serverPort)
+                .append(contextPath)
+                .append("/file-link/")
+                .append(id).toString();
     }
 }

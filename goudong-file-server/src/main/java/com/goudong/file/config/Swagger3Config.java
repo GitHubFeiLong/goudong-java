@@ -25,6 +25,50 @@ import java.util.LinkedHashSet;
 public class Swagger3Config {
 
     @Bean
+    public Docket download() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("下载文件")
+                .description("分块下载")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.file.controller.download"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("download")
+                ;
+
+    }
+
+    @Bean
+    public Docket link() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("文件信息")
+                .description("上传后的文件预览，文件详细信息")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.file.controller.link"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("link")
+                ;
+
+    }
+
+    @Bean
     public Docket upload() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
                 .title("上传文件")
@@ -41,7 +85,7 @@ public class Swagger3Config {
                 .build()
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                .groupName("上传文件接口")
+                .groupName("upload")
                 ;
 
     }

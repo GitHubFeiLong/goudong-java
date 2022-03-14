@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @EnableCommonsJacksonConfig
 @EnableCommonsFeignConfig
 @EnableCommonsRedisConfig
+@EnableCommonsSpringBeanToolConfig
 @ServletComponentScan(basePackageClasses = {UserContextFilter.class})
 public class CommonsConfig {
     private final HttpServletRequest request;
