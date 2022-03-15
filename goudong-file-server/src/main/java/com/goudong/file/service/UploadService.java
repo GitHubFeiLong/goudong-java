@@ -1,11 +1,6 @@
 package com.goudong.file.service;
 
-import com.goudong.commons.dto.file.FileDTO;
-import com.goudong.commons.dto.file.FileShardUploadDTO;
-import com.goudong.commons.dto.file.FileShardUploadResultDTO;
-import com.goudong.commons.dto.file.RequestUploadDTO;
-import com.goudong.file.po.FilePO;
-import org.springframework.data.repository.CrudRepository;
+import com.goudong.commons.dto.file.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,10 +17,9 @@ public interface UploadService {
 
     /**
      * 预检查文件类型合大小是否符合
-     * @param fileType 文件类型
-     * @param fileSize 文件大小
+     * @param parameterDTO
      */
-    void preCheck(String fileType, Long fileSize);
+    ShardPrefixCheckReturnDTO shardPrefixCheck(ShardPrefixCheckParameterDTO parameterDTO);
 
     /**
      * 检查文件是否符合配置的文件上传属性

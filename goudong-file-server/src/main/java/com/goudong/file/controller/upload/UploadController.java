@@ -3,21 +3,16 @@ package com.goudong.file.controller.upload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.dto.file.FileDTO;
-import com.goudong.commons.dto.file.FileShardUploadDTO;
-import com.goudong.commons.dto.file.FileShardUploadResultDTO;
-import com.goudong.commons.dto.file.RequestUploadDTO;
-import com.goudong.commons.enumerate.file.FileTypeEnum;
+import com.goudong.commons.dto.file.*;
 import com.goudong.commons.framework.core.Result;
-import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.file.service.UploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,17 +43,16 @@ public class UploadController {
         this.uploadService = uploadService;
     }
 
-    @ApiOperation("上传文件大小预检")
-    @GetMapping("/pre-check")
+    /**
+     * 上传前进行一次预检，初始化任务、返回文件上传进度（断点续传）等
+     * @param parameterDTO 参数对象
+     * @return
+     */
+    @ApiOperation("分片上传前的预检")
+    @PostMapping("/shard-prefix-check")
     @Whitelist
-    public Result preCheck(String fileType, Long fileSize) {
-        // 参数校验
-        AssertUtil.isEnum(fileType, FileTypeEnum.class, "文件类型错误");
-        AssertUtil.notNull(fileSize, "文件大小不能为空");
-
-        uploadService.preCheck(fileType, fileSize);
-
-        return Result.ofSuccess();
+    public Result<ShardPrefixCheckReturnDTO> shardPrefixCheck(@RequestBody @Validated ShardPrefixCheckParameterDTO parameterDTO) {
+        return Result.ofSuccess(uploadService.shardPrefixCheck(parameterDTO));
     }
 
     /**

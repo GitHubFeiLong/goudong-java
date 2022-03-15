@@ -1,11 +1,16 @@
 package com.goudong.file.util;
 
 import cn.hutool.core.io.FileUtil;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
+import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.exception.file.FileUploadException;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.SpringBeanTool;
 import com.goudong.file.constant.FileConst;
+import com.goudong.file.core.FileType;
+import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
 import com.goudong.file.po.FilePO;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +23,9 @@ import javax.validation.constraints.NotEmpty;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.goudong.commons.enumerate.file.FileLengthUnit.*;
@@ -183,4 +186,51 @@ public class FileUtils {
                 .append("/file-link/")
                 .append(id).toString();
     }
+
+    /**
+     * 检查上传文件大小和类型是否满足配置条件
+     * @param fileUpload
+     * @param fileType
+     * @param fileSize
+     */
+    public static void checkSatisfyUploadConfigurationConditions(FileUpload fileUpload, String fileType, Long fileSize) {
+        // 检查是否激活文件上传功能
+        if (!fileUpload.getEnabled()) {
+            // TODO 修改成活得
+            String applicationName = "文件服务";
+            String clientMessage = String.format("文件服务 %s 未开启上传文件", applicationName);
+            String serverMessage = String.format("请设置属性 file.upload.enabled=true 即可解决问题");
+            LogUtil.warn(log, "{}---{}", clientMessage, serverMessage);
+            return;
+        }
+
+        // 用户配置的文件上传信息
+        List<FileType> fileTypes = fileUpload.getFileTypes();
+
+        // 存在后缀，就比较后缀是否通过
+        Optional<FileType> first = fileTypes.stream().
+                filter(f -> Objects.equals(fileType, f.getType().name()))
+                .filter(f -> f.getEnabled())
+                .findFirst();
+
+        if (!first.isPresent()) {
+            throw new ClientException(ClientExceptionEnum.BAD_REQUEST, String.format("文件服务，暂不支持上传%s类型文件", fileType));
+        }
+
+        // 计算用户配置该类型文件允许上传的字节大小
+        FileType fileTypeInstance = first.get();
+        long bytes = fileTypeInstance.getFileLengthUnit().toBytes(fileTypeInstance.getLength());
+        if (bytes < fileSize) {
+            ImmutablePair<Long, FileLengthUnit> var1 = FileUtils.adaptiveSize(fileSize);
+            String message = String.format("文件(类型:%s,size:%s%s)超过配置(%s%s)",
+                    fileType,
+                    var1.getLeft(),
+                    var1.getRight(),
+                    fileTypeInstance.getLength(),
+                    fileTypeInstance.getFileLengthUnit());
+
+            throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
+        }
+    }
+
 }

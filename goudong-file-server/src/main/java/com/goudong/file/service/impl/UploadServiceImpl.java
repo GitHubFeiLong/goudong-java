@@ -5,20 +5,15 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import com.google.common.collect.Lists;
 import com.goudong.commons.constant.core.CommonConst;
-import com.goudong.commons.dto.file.FileDTO;
-import com.goudong.commons.dto.file.FileShardUploadDTO;
-import com.goudong.commons.dto.file.FileShardUploadResultDTO;
-import com.goudong.commons.dto.file.RequestUploadDTO;
+import com.goudong.commons.dto.file.*;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
-import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.exception.file.FileUploadException;
 import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
 import com.goudong.file.po.FilePO;
@@ -45,7 +40,10 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -116,56 +114,70 @@ public class UploadServiceImpl implements UploadService {
 
     /**
      * 预检查文件类型合大小是否符合
-     *
-     * @param fileType 文件类型
-     * @param fileSize 文件大小
+     * @param parameterDTO
      */
     @Override
-    public void preCheck(String fileType, Long fileSize) {
-        // 检查是否激活文件上传功能
-        if (!fileUpload.getEnabled()) {
-            disablePrintLog();
-            return;
+    public ShardPrefixCheckReturnDTO shardPrefixCheck(ShardPrefixCheckParameterDTO parameterDTO) {
+        // 检查上传
+        FileUtils.checkSatisfyUploadConfigurationConditions(fileUpload, parameterDTO.getFileType(), parameterDTO.getFileSize());
+
+        // 判断文件是否存在
+        FilePO firstByFileMd5 = fileRepository.findFirstByFileMd5(parameterDTO.getFileMd5());
+        if (firstByFileMd5 != null) {
+            return ShardPrefixCheckReturnDTO.builder().entiretySuccessful(true).percentage(100).build();
         }
 
-        // 用户配置的文件上传信息
-        List<FileType> fileTypes = fileUpload.getFileTypes();
+        // 获取分片任务
+        List<FileShardTaskPO> taskPOS = fileShardTaskService.listByFileMd5(parameterDTO.getFileMd5());
 
-        // 存在后缀，就比较后缀是否通过
-        Optional<FileType> first = fileTypes.stream().
-                filter(f -> Objects.equals(fileType, f.getType().name()))
-                .filter(f-> f.getEnabled())
-                .findFirst();
+        if (CollectionUtils.isEmpty(taskPOS)) {
+            // 文件不存在，创建任务
+            // 创建新的任务
+            FileShardUploadDTO shardUploadDTO = BeanUtil.copyProperties(parameterDTO, FileShardUploadDTO.class);
+            taskPOS = fileShardTaskService.initFileShardTasks(shardUploadDTO);
+        } else {
+            // 不是第一次
+            // 需要判断最后修改时间是否相同
+            Date lastModifiedTime = taskPOS.get(0).getLastModifiedTime();
+            boolean lastModifiedTimeUnequal = !Objects.equals(lastModifiedTime.getTime(), parameterDTO.getLastModifiedTime().getTime());
+            if (lastModifiedTimeUnequal) {
+                LogUtil.warn(log, "文件的最后修改时间不相同，需要重新初始化任务列表");
+            }
+            // 需要判断文件的分块是否相同
+            boolean blockSizeUnequal = !Objects.equals(parameterDTO.getBlockSize(), taskPOS.get(0).getBlockSize());
+            if (blockSizeUnequal) {
+                LogUtil.warn(log, "文件分片上传的块大小有修改，需要重新初始化任务列表");
+            }
 
-        if (!first.isPresent()) {
-            throw new ClientException(ClientExceptionEnum.BAD_REQUEST, String.format("文件服务，暂不支持上传%s类型文件", fileType));
+            // 时间不相等
+            if (lastModifiedTimeUnequal || blockSizeUnequal) {
+
+                // 清除之前创建的任务，删除之前保存的临时文件，从新创建任务
+                // 将任务进行删除(物理删除)
+                fileShardTaskRepository.deleteInBatch(taskPOS);
+                String tempPath = taskPOS.get(0).getTempPath();
+                // hutool递归删除
+                FileUtil.del(new File(tempPath).getParentFile());
+                // 创建新的任务
+                FileShardUploadDTO shardUploadDTO = BeanUtil.copyProperties(parameterDTO, FileShardUploadDTO.class);
+                taskPOS = fileShardTaskService.initFileShardTasks(shardUploadDTO);
+            }
         }
 
-        // 计算用户配置该类型文件允许上传的字节大小
-        FileType fileTypeInstance = first.get();
-        long bytes = fileTypeInstance.getFileLengthUnit().toBytes(fileTypeInstance.getLength());
-        if (bytes < fileSize) {
-            ImmutablePair<Long, FileLengthUnit> var1 = FileUtils.adaptiveSize(fileSize);
-            String message = String.format("文件(类型:%s,size:%s%s)超过配置(%s%s)",
-                    fileType,
-                    var1.getLeft(),
-                    var1.getRight(),
-                    fileTypeInstance.getLength(),
-                    fileTypeInstance.getFileLengthUnit());
+        List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
+        List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
 
-            throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
-        }
-
-        // 这里可以直接初始化任务了？？？
-    }
-
-    /**
-     * 文件上传的限制禁用时，进行日志输出
-     */
-    private void disablePrintLog() {
-        String clientMessage = String.format("文件服务 %s 未开启上传文件", this.applicationName);
-        String serverMessage = String.format("请设置属性 file.upload.enabled=true 即可解决问题");
-        LogUtil.warn(log, "{}---{}", clientMessage, serverMessage);
+        int ss = successfulList.size();
+        int uss = unsuccessfulList.size();
+        // 使用double避免商值为0
+        int percentage = (int)((ss * 1.0 / (ss + uss)) * 100);
+        return ShardPrefixCheckReturnDTO.builder()
+                .entiretySuccessful(false)
+                .successfulShardIndexArray(successfulList)
+                .unsuccessfulShardIndexArray(unsuccessfulList)
+                .percentage(percentage)
+                .blockSize(taskPOS.get(0).getBlockSize())
+                .build();
     }
 
     /**
@@ -174,45 +186,18 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void checkSimpleUpload(List<MultipartFile> files) {
-        // 检查是否激活文件上传功能
-        if (!fileUpload.getEnabled()) {
-            disablePrintLog();
-            return;
-        }
-
         // 类型及大小判断
         Iterator<MultipartFile> iterator = files.iterator();
         while (iterator.hasNext()) {
             MultipartFile file = iterator.next();
-
-            // 用户配置的文件上传信息
-            List<FileType> fileTypes = fileUpload.getFileTypes();
-
             // 比较类型及大小是否符合配置
             String originalFilename = file.getOriginalFilename();
             int pos = originalFilename.lastIndexOf(".");
             if (pos != -1) {
                 // 存在后缀，就比较后缀是否通过
                 String suffix = originalFilename.substring(pos + 1);
-                Optional<FileType> first = fileTypes.stream().
-                        filter(f -> Objects.equals(suffix.toUpperCase(), f.getType().name()))
-                        .filter(f-> f.getEnabled())
-                        .findFirst();
-
-                FileType fileType = first.
-                        orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.BAD_REQUEST,
-                                String.format("文件服务，暂不支持上传%s类型文件", suffix)));
-
-                // 计算用户配置该类型文件允许上传的字节大小
-                long bytes = fileType.getFileLengthUnit().toBytes(fileType.getLength());
-                if (bytes < file.getSize()) {
-                    ImmutablePair<Long, FileLengthUnit> pair = FileUtils.adaptiveSize(file.getSize());
-                    String message = String.format("%s文件(%s%s)超过配置(%s%s)",
-                            originalFilename, pair.getLeft(), pair.getRight(),
-                            fileType.getLength(), fileType.getFileLengthUnit());
-
-                    throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
-                }
+                // 检查类型
+                FileUtils.checkSatisfyUploadConfigurationConditions(fileUpload, suffix, file.getSize());
             } else {
                 // 没有后缀的文件，暂不允许上传
                 throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, "没有后缀的文件，暂不允许上传");
@@ -226,28 +211,8 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void checkShardUpload(FileShardUploadDTO shardUploadDTO) {
-        // 检查是否激活文件上传功能
-        if (!fileUpload.getEnabled()) {
-            disablePrintLog();
-            return;
-        }
-        FileTypeEnum fileTypeEnum = FileTypeEnum.convert(shardUploadDTO.getFileType());
-
-        Optional<FileType> first = fileUpload.getFileTypes().stream().filter(file -> Objects.equals(file.getType(), fileTypeEnum)).findFirst();
-        // 不存在指定类型的配置
-        if (!first.isPresent()) {
-            throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, "不支持上传当前文件类型");
-        }
-
-        FileType fileType = first.get();
-        // 获取字节大小
-        long bites = FileLengthUnit.BYTE.convert(fileType.getLength(), fileType.getFileLengthUnit());
-        if (bites < shardUploadDTO.getFileSize()) {
-            throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST,
-                    "文件大小不符合配置",
-                    String.format("该类型文件允许上传的最大文件大小为：%s字节", bites)
-            );
-        }
+        // 检查类型
+        FileUtils.checkSatisfyUploadConfigurationConditions(fileUpload, shardUploadDTO.getFileType(), shardUploadDTO.getFileSize());
     }
 
     /**
