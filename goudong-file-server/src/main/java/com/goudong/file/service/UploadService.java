@@ -16,7 +16,11 @@ import java.util.List;
 public interface UploadService {
 
     /**
-     * 预检查文件类型合大小是否符合
+     * 预检查文件类型合大小是否符合,并返回上传状态
+     * 当文件上传完成过（存在md5相同的已完成上传记录），直接返回上传成功（秒传）
+     * 当文件上传一部分，此时比较文件块大小，最后修改时间等有没有变化，如果没变化，就返回上传的二百分比以及成功片和失败片索引的数组
+     * 如果变化了，就删除原分片任务，重新初始化分片任务。
+     * 当文件未上传，初始化分片任务。
      * @param parameterDTO
      */
     ShardPrefixCheckReturnDTO shardPrefixCheck(ShardPrefixCheckParameterDTO parameterDTO);
