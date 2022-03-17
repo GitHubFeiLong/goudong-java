@@ -92,4 +92,7 @@ file:
     mp4:
       length: 1
       file-length-unit: tb
+    avi:
+      length: 1
+      file-length-unit: gb
 
