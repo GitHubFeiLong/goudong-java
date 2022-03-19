@@ -49,6 +49,11 @@ public class FileShardUploadResultDTO {
      * 分片上传失败的索引数组
      */
     private List<Long> unsuccessfulShardIndexArray;
+
+    /**
+     * 文件信息
+     */
+    private FileDTO fileDTO;
     //~methods
     //==================================================================================================================
 
@@ -56,13 +61,14 @@ public class FileShardUploadResultDTO {
      * 文件完整上传完成
      * @return
      */
-    public static FileShardUploadResultDTO createEntiretySuccessful() {
+    public static FileShardUploadResultDTO createEntiretySuccessful(FileDTO fileDTO) {
         return FileShardUploadResultDTO.builder()
                 .entiretySuccessful(true)
                 .shardSuccessful(true)
                 .percentage(100)
                 .successfulShardIndexArray(new ArrayList<>())
                 .unsuccessfulShardIndexArray(new ArrayList<>())
+                .fileDTO(fileDTO)
                 .build();
     }
 

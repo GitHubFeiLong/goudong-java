@@ -28,7 +28,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
@@ -57,9 +56,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 public class UploadServiceImpl implements UploadService {
-
-    @Value("${spring.application.name}")
-    private String applicationName;
     /**
      * 自定义的文件上传的配置属性
      */
@@ -310,21 +306,32 @@ public class UploadServiceImpl implements UploadService {
             if (firstByFileMd5 != null) {
                 LogUtil.info(log, "对比文件md5相同，执行秒传逻辑成功。file表id={}", firstByFileMd5.getId());
                 // 秒传
-                return FileShardUploadResultDTO.createEntiretySuccessful();
+                FileDTO fileDTO = BeanUtil.copyProperties(firstByFileMd5, FileDTO.class);
+                return FileShardUploadResultDTO.createEntiretySuccessful(fileDTO);
             }
 
             // 文件不存在，创建任务
             taskPOS = fileShardTaskService.initFileShardTasks(shardUploadDTO);
 
         } else {
-            // 不是第一次，需要判断最后修改时间是否相同
+            // 不是第一次
+            // 需要判断最后修改时间是否相同
             Date lastModifiedTime = taskPOS.get(0).getLastModifiedTime();
-
-            // 时间不相等
-            if (!Objects.equals(lastModifiedTime.getTime(), shardUploadDTO.getLastModifiedTime().getTime())) {
+            boolean lastModifiedTimeUnequal = !Objects.equals(lastModifiedTime.getTime(), shardUploadDTO.getLastModifiedTime().getTime());
+            if (lastModifiedTimeUnequal) {
                 LogUtil.warn(log, "文件的最后修改时间不相同，需要重新初始化任务列表");
+            }
+            // 需要判断文件的分块是否相同
+            boolean blockSizeUnequal = !Objects.equals(shardUploadDTO.getBlockSize(), taskPOS.get(0).getBlockSize());
+            if (blockSizeUnequal) {
+                LogUtil.warn(log, "文件分片上传的块大小有修改，需要重新初始化任务列表");
+            }
+
+            // 时间不相等，块也不相同
+            if (lastModifiedTimeUnequal || blockSizeUnequal) {
                 // 清除之前创建的任务，删除之前保存的临时文件，从新创建任务
-                taskPOS.stream().forEach(task->task.setDeleted(true));
+                // 将任务进行删除(物理删除)
+                fileShardTaskRepository.deleteInBatch(taskPOS);
                 String tempPath = taskPOS.get(0).getTempPath();
                 // hutool递归删除
                 FileUtil.del(new File(tempPath).getParentFile());
@@ -341,8 +348,12 @@ public class UploadServiceImpl implements UploadService {
             LogUtil.debug(log, "本次分片({})之前已经上传成功过了", shardUploadDTO.getShardIndex());
             List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
             List<Long> unsuccessfulList = taskPOS.stream().filter(f->!f.getSuccessful()).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
-
-            if (checkMerge(shardUploadDTO, taskPOS)) return FileShardUploadResultDTO.createEntiretySuccessful();
+            ImmutablePair<Boolean, FilePO> immutablePair = checkMerge(shardUploadDTO, taskPOS);
+            if (immutablePair.getLeft()){
+                return FileShardUploadResultDTO.createEntiretySuccessful(
+                        BeanUtil.copyProperties(immutablePair.getRight(), FileDTO.class)
+                );
+            }
 
             return FileShardUploadResultDTO.createShardSuccessful(successfulList, unsuccessfulList);
         }
@@ -350,7 +361,12 @@ public class UploadServiceImpl implements UploadService {
         // 上传本次分片
         saveShard2Temp(shardUploadDTO, fileShardTaskPO, taskPOS);
 
-        if (checkMerge(shardUploadDTO, taskPOS)) return FileShardUploadResultDTO.createEntiretySuccessful();
+        ImmutablePair<Boolean, FilePO> immutablePair = checkMerge(shardUploadDTO, taskPOS);
+        if (immutablePair.getLeft()){
+            return FileShardUploadResultDTO.createEntiretySuccessful(
+                    BeanUtil.copyProperties(immutablePair.getRight(), FileDTO.class)
+            );
+        }
 
         // 本次上传成功
         List<Long> successfulList = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).map(FileShardTaskPO::getShardIndex).collect(Collectors.toList());
@@ -388,10 +404,10 @@ public class UploadServiceImpl implements UploadService {
      * 检查是否能进行合并，能合并时就进行合并
      * @param shardUploadDTO
      * @param taskPOS
-     * @return true:合并成功；false：合并失败
+     * @return immutablePair left(true:合并成功；false：合并失败),right 文件对象
      * @throws IOException
      */
-    private boolean checkMerge(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
+    private ImmutablePair<Boolean, FilePO> checkMerge(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
         // 判断是否需要合并文件了
         long successfulCount = taskPOS.stream().filter(FileShardTaskPO::getSuccessful).count();
         int taskTotal = taskPOS.size();
@@ -399,12 +415,13 @@ public class UploadServiceImpl implements UploadService {
             fileShardTaskRepository.flush();
             LogUtil.info(log, "开始合并分片");
             // 合并文件
-            mergeShardUploadTemp(shardUploadDTO, taskPOS);
+            FilePO filePO = mergeShardUploadTemp(shardUploadDTO, taskPOS);
             LogUtil.info(log, "合并成功");
 
-            return true;
+            return ImmutablePair.of(true, filePO);
         }
-        return false;
+
+        return ImmutablePair.of(false, null);
     }
 
     /**
@@ -412,7 +429,7 @@ public class UploadServiceImpl implements UploadService {
      * @param taskPOS 上传任务对象集合
      * @return true：合并完成。false：还不能合并
      */
-    private void mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
+    private FilePO mergeShardUploadTemp(FileShardUploadDTO shardUploadDTO, List<FileShardTaskPO> taskPOS) throws IOException {
         // 创建文件名
         String uuid = IdUtil.simpleUUID();
         String filename = uuid + "." + shardUploadDTO.getFileType().toLowerCase();
@@ -478,11 +495,14 @@ public class UploadServiceImpl implements UploadService {
             filePO.setFileLink(FileUtils.createFileLink(filePO));
             LogUtil.info(log, "文件合并并保存成功");
             fileShardTaskService.deleteAll(taskPOS);
+
+            return filePO;
         } catch (IOException e) {
             LogUtil.error(log , "合并文件失败：{}", e.getMessage());
             throw e;
         } finally {
             fosChannel.close();
         }
+
     }
 }

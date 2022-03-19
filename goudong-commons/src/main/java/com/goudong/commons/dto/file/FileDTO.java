@@ -20,6 +20,10 @@ import java.io.Serializable;
 public class FileDTO implements Serializable {
     private static final long serialVersionUID = -6287157466292179638L;
     /**
+     * 文件id
+     */
+    private Long id;
+    /**
      * 原始文件名
      */
     @ApiModelProperty(value = "上传时的文件名")
