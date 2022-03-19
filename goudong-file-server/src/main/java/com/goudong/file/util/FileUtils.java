@@ -201,7 +201,7 @@ public class FileUtils {
             String clientMessage = String.format("文件服务 %s 未开启上传文件", applicationName);
             String serverMessage = String.format("请设置属性 file.upload.enabled=true 即可解决问题");
             LogUtil.warn(log, "{}---{}", clientMessage, serverMessage);
-            return;
+            throw new FileUploadException(ClientExceptionEnum.NOT_FOUND, "服务禁止上传，请稍后再试", "文件服务关闭了上传功能");
         }
 
         // 用户配置的文件上传信息
