@@ -135,6 +135,11 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <!-- websocket -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->
