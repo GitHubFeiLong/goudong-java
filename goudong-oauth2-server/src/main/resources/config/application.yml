@@ -15,6 +15,13 @@ spring:
 #    active: dev
   main:
     allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id:
+            client-secret:
   cloud:
     nacos:
       discovery:

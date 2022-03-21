@@ -1,4 +1,4 @@
-// package com.goudong.oauth2.config;
+// package com.goudong.oauth2.config.oauth2;
 //
 // import org.springframework.context.annotation.Configuration;
 // import org.springframework.security.config.annotation.web.builders.HttpSecurity;

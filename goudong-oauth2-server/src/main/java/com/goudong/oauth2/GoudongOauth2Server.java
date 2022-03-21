@@ -26,8 +26,6 @@ import org.springframework.util.StopWatch;
  * @Version 1.0
  */
 @SpringBootApplication
-@EnableAuthorizationServer
-// @EnableResourceServer
 @EnableDiscoveryClient
 @EntityScan("com.goudong.oauth2.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.oauth2.repository"})
