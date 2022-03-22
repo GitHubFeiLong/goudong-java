@@ -127,17 +127,18 @@ public class LinkController {
         }
         String originalFilename = filePO.getOriginalFilename();
         String mimeType = request.getServletContext().getMimeType(file.getName());
-        response.setContentType(mimeType);
+        response.setContentType(mimeType + ";charset=utf-8");
         /*
             attachment ： 以附件的形式进行下载
             inline:文本和图片会进行预览，其他会进行下载
          */
         String contentDisposition = new StringBuilder("inline;filename=")
-                // 使用ISO8859-1的编码浏览器才能正确事识别
+                // 使用ISO8859-1的编码浏览器才能正确识别文件名
                 .append(new String(originalFilename.getBytes(), "ISO8859-1"))
                 .toString();
         response.setHeader("Content-Disposition", contentDisposition);
         response.setContentLengthLong(file.length());
+        response.setCharacterEncoding("UTF-8");
 
         byte[] bytes = FileUtil.readBytes(file);
         response.getOutputStream().write(bytes);

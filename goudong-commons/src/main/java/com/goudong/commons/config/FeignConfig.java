@@ -103,6 +103,9 @@ public class FeignConfig {
                     Reader reader = response.body().asReader(StandardCharsets.UTF_8);
                     String body = Util.toString(reader);
                     Result result = JSON.parseObject(body, Result.class);
+                    if (result.getCode() == null) {
+                        return new BasicException(response.status(), String.valueOf(response.status()), ServerExceptionEnum.SERVER_ERROR.getClientMessage(), body);
+                    }
                     return new BasicException(response.status(), result.getCode(), result.getClientMessage(), result.getServerMessage());
                 } catch (Exception e) {
                     return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, e.getMessage());
