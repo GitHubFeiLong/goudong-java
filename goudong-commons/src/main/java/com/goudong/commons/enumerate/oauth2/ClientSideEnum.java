@@ -39,7 +39,7 @@ public enum ClientSideEnum {
      * @return 返回发起请求的类型
      */
     public static ClientSideEnum getClientSide(HttpServletRequest httpServletRequest) {
-        return ClientSideEnum.getClientSide(httpServletRequest.getHeader(HttpHeaderConst.CLIENT_SIDE));
+        return ClientSideEnum.getClientSide(httpServletRequest.getHeader(HttpHeaderConst.X_CLIENT_SIDE));
     }
 
     /**
@@ -57,7 +57,7 @@ public enum ClientSideEnum {
             }
         }
 
-        LogUtil.warn(log, "请求头没有属性{}，或者值（{}）不正确,返回默认BROWSER", HttpHeaderConst.CLIENT_SIDE, headerValue);
+        LogUtil.warn(log, "请求头没有属性{}，或者值（{}）不正确,返回默认BROWSER", HttpHeaderConst.X_CLIENT_SIDE, headerValue);
         return BROWSER;
     }
 

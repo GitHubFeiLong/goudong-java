@@ -38,7 +38,7 @@ public class UserContextFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String requestUser = ((HttpServletRequest) servletRequest).getHeader(HttpHeaderConst.REQUEST_USER);
+        String requestUser = ((HttpServletRequest) servletRequest).getHeader(HttpHeaderConst.X_REQUEST_USER);
         try {
             if (requestUser != null) {
                 String decodeJson = URLDecoder.decode(requestUser, "UTF-8");

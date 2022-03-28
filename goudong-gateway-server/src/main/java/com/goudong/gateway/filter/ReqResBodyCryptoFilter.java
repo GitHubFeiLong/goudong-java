@@ -70,8 +70,8 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
      * @return
      */
     private Mono<Void> operationExchange(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // 查看请求头是否自定义的请求头(Aes-Key)
-        String aesKeyEncrypt = exchange.getRequest().getHeaders().getFirst(HttpHeaderConst.AES_KEY);
+        // 查看请求头是否自定义的请求头(X-Aes-Key)
+        String aesKeyEncrypt = exchange.getRequest().getHeaders().getFirst(HttpHeaderConst.X_AES_KEY);
         if(aesKeyEncrypt != null){
             // 使用RSA私钥解密密文的AES密钥
             String aesKey = ServerRSA.getInstance().privateKeyDecrypt(aesKeyEncrypt);
@@ -129,7 +129,7 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
         ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
         // 删除请求头
         // requestBuilder.headers(k -> k.remove(HttpHeaderConst.AES_KEY));
-        requestBuilder.header(HttpHeaderConst.AES_KEY, aesKey);
+        requestBuilder.header(HttpHeaderConst.X_AES_KEY, aesKey);
         ServerHttpRequest request = requestBuilder.build();
         exchange.mutate().request(request).build();
     }

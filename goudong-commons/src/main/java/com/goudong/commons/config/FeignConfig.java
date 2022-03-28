@@ -74,14 +74,14 @@ public class FeignConfig {
                     //老请求
                     HttpServletRequest request = requestAttributes.getRequest();
 
-                    //2.同步请求头信息->Authorization,Aes-Key
+                    //2.同步请求头信息->Authorization,X-Aes-Key
                     String token = request.getHeader(HttpHeaders.AUTHORIZATION);
                     requestTemplate
                             .header(HttpHeaders.AUTHORIZATION, token)
                             // 自定义内部服务用户信息传递
-                            .header(HttpHeaderConst.REQUEST_USER, request.getHeader(HttpHeaderConst.REQUEST_USER))
-                            // 自定义Aes-Key密钥
-                            .header(HttpHeaderConst.AES_KEY, request.getHeader(HttpHeaderConst.AES_KEY))
+                            .header(HttpHeaderConst.X_REQUEST_USER, request.getHeader(HttpHeaderConst.X_REQUEST_USER))
+                            // 自定义X-Aes-Key密钥
+                            .header(HttpHeaderConst.X_AES_KEY, request.getHeader(HttpHeaderConst.X_AES_KEY))
                     ;
 
                 }

@@ -71,7 +71,7 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         // 将用户信息保存到请求头中，供下游服务使用
         ServerHttpRequest newRequest = request
                 .mutate()
-                .header(HttpHeaderConst.REQUEST_USER, URLEncoder.encode(JSON.toJSONString(baseUserDTO), "UTF-8"))
+                .header(HttpHeaderConst.X_REQUEST_USER, URLEncoder.encode(JSON.toJSONString(baseUserDTO), "UTF-8"))
                 .build();
         ServerWebExchange newExchange = exchange.mutate().request(newRequest).build();
 
