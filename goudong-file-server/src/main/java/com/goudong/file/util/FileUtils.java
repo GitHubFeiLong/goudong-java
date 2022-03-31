@@ -209,8 +209,7 @@ public class FileUtils {
 
         // 存在后缀，就比较后缀是否通过
         Optional<FileType> first = fileTypes.stream().
-                filter(f -> Objects.equals(fileType, f.getType().name()))
-                .filter(f -> f.getEnabled())
+                filter(f -> f.getType().name().equalsIgnoreCase(fileType))
                 .findFirst();
 
         if (!first.isPresent()) {
