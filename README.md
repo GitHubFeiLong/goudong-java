@@ -27,7 +27,9 @@
 | MongoDB | 4.4|
 | Erlang | 11|
 | RabbitMQ | 3.8.9|
-| Nacos | 1.4.0|
+| Nacos | 2.0.3 |
+| sentinel | 1.8.1 |
+| Seata | 1.3.0 |
 | sentinel-dashboard | 1.8.2|
 
 > 记录版本，防止使用其它版本有冲突。
