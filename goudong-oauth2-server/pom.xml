@@ -157,6 +157,10 @@
             <groupId>net.gplatform</groupId>
             <artifactId>Sdk4J</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

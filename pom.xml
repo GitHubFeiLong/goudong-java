@@ -45,8 +45,8 @@
         <goudong-gateway-server.version>1.0-SNAPSHOT</goudong-gateway-server.version>
         <!--框架-->
         <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
-        <spring-cloud-dependencies.version>Hoxton.SR10</spring-cloud-dependencies.version>
-        <spring-cloud-alibaba-dependencies.version>2.1.0.RELEASE</spring-cloud-alibaba-dependencies.version>
+        <spring-cloud-dependencies.version>Hoxton.SR12</spring-cloud-dependencies.version>
+        <spring-cloud-alibaba-dependencies.version>2.2.7.RELEASE</spring-cloud-alibaba-dependencies.version>
         <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
         <mybatis-spring-boot-starter.version>2.1.4</mybatis-spring-boot-starter.version>
         <mybatis-plus-boot-starter.version>3.4.0</mybatis-plus-boot-starter.version>

@@ -19,6 +19,9 @@
 ### 依赖的软件/组件及其版本
 | 软件/组件       | 版本  |
 | ----- | -----  |
+| spring-cloud | Hoxton.SR12|
+| spring-cloud-alibaba | 2.2.7.RELEASE |
+| spring-boot | 2.3.8.RELEASE |
 | MySQL | 8.0.16|
 | Redis | 3.0.504(后期会升高)|
 | MongoDB | 4.4|
