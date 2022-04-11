@@ -28,7 +28,7 @@
 | Erlang | 11|
 | RabbitMQ | 3.8.9|
 | Nacos | 2.0.3 |
-| sentinel | 1.8.1 |
+| Sentinel | 1.8.1 |
 | Seata | 1.3.0 |
 | sentinel-dashboard | 1.8.2|
 
