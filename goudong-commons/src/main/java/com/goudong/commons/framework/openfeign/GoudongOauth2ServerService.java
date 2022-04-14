@@ -68,4 +68,9 @@ public interface GoudongOauth2ServerService {
     Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri
             , @RequestParam("method") @NotBlank String method
             , @RequestHeader(HttpHeaders.AUTHORIZATION) String token) ;
+
+    //~ 测试seata
+    //==================================================================================================================
+    @DeleteMapping("/seata/del")
+    Result delStorage();
 }

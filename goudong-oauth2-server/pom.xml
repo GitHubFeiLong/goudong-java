@@ -48,6 +48,11 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--spring cloud Alibaba seata-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        </dependency>
         <!--openfeign-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
