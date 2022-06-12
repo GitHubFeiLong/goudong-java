@@ -1,5 +1,6 @@
 package com.goudong.commons.utils.core;
 
+import com.goudong.commons.function.core.SFunction;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,7 +12,6 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.function.Function;
 
 /**
  * 类描述：
@@ -171,46 +171,19 @@ public class ColumnUtil {
      */
     public static void main(String[] args) {
         //实体类原字段名称返回
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getByte1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getByte2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getShort1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getShort2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getChar1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getChar2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getInt1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getInt2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getLong1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getLong2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getFloat1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getFloat2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getDouble1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getDouble2));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::isBoolean1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getBoolean2));
-        // System.out.println(11);
-        // System.out.println("实体类原字段名称返回");
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getLoginName));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getNickName));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName));
-        // System.out.println();
-        // System.out.println("实体类字段名称增加分隔符");
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_"));
-        // System.out.println();
-        // System.out.println("实体类字段名称增加分隔符 + 大小写");
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_", 0));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_", 1));
-        // System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_", 2));
+        System.out.println("实体类原字段名称返回");
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getLoginName));
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getNickName));
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName));
+        System.out.println();
+        System.out.println("实体类字段名称增加分隔符");
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_"));
+        System.out.println();
+        System.out.println("实体类字段名称增加分隔符 + 大小写");
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_", 0));
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_", 1));
+        System.out.println("字段名：" + ColumnUtil.getFieldName(TestUserDemo::getCompanySimpleName, "_", 2));
     }
-
-    /**
-     * 类描述：
-     * Function获取序列化能力
-     * @author msi
-     * @date 2022/6/7 15:20
-     * @version 1.0
-     */
-    @FunctionalInterface
-    private interface SFunction<T, R> extends Function<T, R>, Serializable {}
 
     /**
      * 类描述：

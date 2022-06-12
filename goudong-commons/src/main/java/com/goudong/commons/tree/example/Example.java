@@ -1,9 +1,9 @@
 package com.goudong.commons.tree.example;
 
 import com.google.common.collect.Lists;
-import com.goudong.commons.tree.GeneralNode;
-import com.goudong.commons.tree.GeneralStructureHandler;
-import com.goudong.commons.tree.TreeStructureHandler;
+import com.goudong.commons.tree.v1.GeneralNode;
+import com.goudong.commons.tree.v1.GeneralStructureHandler;
+import com.goudong.commons.tree.v1.TreeStructureHandler;
 
 import java.util.ArrayList;
 import java.util.List;

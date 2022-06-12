@@ -1,4 +1,4 @@
-package com.goudong.commons.tree;
+package com.goudong.commons.tree.v1;
 
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;

@@ -1,8 +1,7 @@
 package com.goudong.commons.tree.example;
 
-import com.goudong.commons.tree.stream.TreeInterface;
+import com.goudong.commons.tree.v2.TreeInterface;
 import lombok.Data;
-import lombok.SneakyThrows;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
  * @date 2021/10/1 15:59
  */
 @Data
-public class Menu implements TreeInterface<Menu> {
+public class Menu implements TreeInterface {
     /**
      * 主键id
      */
@@ -40,9 +39,4 @@ public class Menu implements TreeInterface<Menu> {
     public void setChildren(List children) {
         this.children = children;
     }
-
-    // @Override
-    // public void setChildren(List children) {
-    //     this.setChildren(children);
-    // }
 }
