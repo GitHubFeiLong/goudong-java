@@ -1,5 +1,6 @@
 package com.goudong.user;
 
+import com.goudong.commons.annotation.enable.EnableCommonsXxlJobConfig;
 import com.goudong.commons.framework.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,6 +23,7 @@ import org.springframework.util.StopWatch;
 @EnableDiscoveryClient
 @EntityScan("com.goudong.user.po")
 @EnableJpaRepositories(basePackages = {"com.goudong.user.repository"})
+@EnableCommonsXxlJobConfig
 public class GoudongUserServer {
 
     public static void main(String[] args) {

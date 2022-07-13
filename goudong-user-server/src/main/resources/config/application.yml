@@ -41,7 +41,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    password: "${MYSQL_PASSWORD}"
+#    password: "l(=8gp_04h*&"
     druid:
       # 下面为连接池的补充设置，应用到上面所有数据源中
       # 初始化大小，最小，最大
@@ -133,7 +134,6 @@ seata:
       server-addr: 127.0.0.1:8848
       group: SEATA_GROUP
 
-
 # commons配置
 commons:
   # 白名单配置
@@ -148,3 +148,15 @@ commons:
         method: GET
       - pattern: /api/whitelist/**
         method: GET,POST,DELETE,PUT
+
+xxl:
+  job:
+    admin:
+      ### 调度中心部署根地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
+      addresses: http://192.168.74.128:8080/xxl-job-admin
+    ### 执行器通讯TOKEN [选填]：非空时启用；
+    executor:
+      ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+      appname: ${spring.application.name}
+      port: 8080
+    enable: true

@@ -17,20 +17,20 @@
 
 ## 软件及配置项
 ### 依赖的软件/组件及其版本
-| 软件/组件       | 版本  |
-| ----- | -----  |
-| spring-cloud | Hoxton.SR12|
-| spring-cloud-alibaba | 2.2.7.RELEASE |
-| spring-boot | 2.3.8.RELEASE |
-| MySQL | 8.0.16|
-| Redis | 3.0.504(后期会升高)|
-| MongoDB | 4.4|
-| Erlang | 11|
-| RabbitMQ | 3.8.9|
-| Nacos | 2.0.3 |
-| Sentinel | 1.8.1 |
-| Seata | 1.3.0 |
-| sentinel-dashboard | 1.8.2|
+| 软件/组件       | 版本             |
+| ----- |----------------|
+| spring-cloud | Hoxton.SR12    |
+| spring-cloud-alibaba | 2.2.7.RELEASE  |
+| spring-boot | 2.3.8.RELEASE  |
+| MySQL | 8.0.16         |
+| Redis | 3.0.504(后期会升高) |
+| MongoDB | 4.4            |
+| Erlang | 23             |
+| RabbitMQ | 3.8.9          |
+| Nacos | 2.0.3          |
+| Sentinel | 1.8.1          |
+| Seata | 1.3.0          |
+| sentinel-dashboard | 1.8.2          |
 
 > 记录版本，防止使用其它版本有冲突。
 

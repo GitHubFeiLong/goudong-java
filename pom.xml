@@ -75,6 +75,7 @@
         <screw-core.version>1.0.5</screw-core.version>
         <maven-plugin-api.version>3.8.1</maven-plugin-api.version>
         <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
+        <xxl-job-core.version>2.3.0</xxl-job-core.version>
     </properties>
 
     <dependencies>
@@ -279,6 +280,13 @@
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
                 <version>${maven-plugin-annotations.version}</version>
+            </dependency>
+
+            <!--xxl-job-->
+            <dependency>
+                <groupId>com.xuxueli</groupId>
+                <artifactId>xxl-job-core</artifactId>
+                <version>${xxl-job-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
