@@ -75,7 +75,7 @@
         <screw-core.version>1.0.5</screw-core.version>
         <maven-plugin-api.version>3.8.1</maven-plugin-api.version>
         <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
-        <xxl-job-core.version>2.3.0</xxl-job-core.version>
+        <xxl-job-core.version>2.3.1</xxl-job-core.version>
     </properties>
 
     <dependencies>

@@ -34,7 +34,16 @@ public class XxlJobAutoConfiguration {
         LogUtil.debug(log, "初始化xxl-job");
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(xxlJobProperties.getAdmin().getAddresses());
-        xxlJobSpringExecutor.setAppname(xxlJobProperties.getExecutor().getAppname());
+        xxlJobSpringExecutor.setAppname(xxlJobProperties.getExecutor().getAppName());
+        xxlJobSpringExecutor.setIp(xxlJobProperties.getExecutor().getIp());
+        xxlJobSpringExecutor.setPort(xxlJobProperties.getExecutor().getPort());
+        /*
+            因为多网卡的原因，需要将地址手动在xxl-job-admin中注册，这样才能成功
+            http://192.168.31.136:9999/
+         */
+        xxlJobSpringExecutor.setAddress(xxlJobProperties.getExecutor().getAddress());
+        xxlJobSpringExecutor.setLogPath(xxlJobProperties.getExecutor().getLogPath());
+        xxlJobSpringExecutor.setLogRetentionDays(xxlJobProperties.getExecutor().getLogRetentionDays());
         return xxlJobSpringExecutor;
     }
 }
