@@ -37,6 +37,7 @@
         <module>goudong-file-server</module>
         <module>goudong-oauth2-client-serve</module>
         <module>goudong-oauth2-service-serve</module>
+        <module>goudong-modules</module>
     </modules>
 
     <properties>

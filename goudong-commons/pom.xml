@@ -184,6 +184,7 @@
         <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
