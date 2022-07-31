@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 这里可以使用 链接池 dbcp-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/activiti?serverTimezone=Asia/Shanghai" />
+        <property name="username" value="root" />
+        <property name="password" value="l(=8gp_04h*&amp;" />
+        <property name="maxActive" value="3" />
+        <property name="maxIdle" value="1" />
+    </bean>
+
+    <!-- 默认id对应的值 为processEngineConfiguration -->
+    <!-- processEngine Activiti的流程引擎,processEngineConfiguration 用来创建 ProcessEngine，在创建 ProcessEngine 时会执行数据库的操作。 -->
+    <bean id="processEngineConfiguration"
+          class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+
+        <!--直接引用上上面配置的连接池-->
+        <!-- 引用数据源 上面已经设置好了-->
+        <property name="dataSource" ref="dataSource" />
+       <!--
+        <property name="jdbcDriver" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/activiti?serverTimezone=Asia/Shanghai"/>
+        <property name="jdbcUsername" value="root"/>
+        <property name="jdbcPassword" value="l(=8gp_04h*&amp;"/>-->
+
+        <!-- activiti数据库表处理策略 true:如果数据库中已经存在相应的表，那么直接使用，如果不存在，那么会创建-->
+        <property name="databaseSchemaUpdate" value="true"/>
+    </bean>
+</beans>
