@@ -1,13 +1,8 @@
 package com.goudong.message.config;
 
-import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsWebMvcConfig;
+import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.aop.RepeatAop;
-import com.goudong.commons.filter.UserContextFilter;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -24,7 +19,7 @@ import org.springframework.core.env.Environment;
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJacksonConfig
-@ServletComponentScan(basePackageClasses = {UserContextFilter.class})
+@EnableCommonsUserContextFilter
 public class CommonsConfig {
 
     //~fields

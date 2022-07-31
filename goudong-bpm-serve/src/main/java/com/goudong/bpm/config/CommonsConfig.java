@@ -1,11 +1,15 @@
-package com.goudong.user.config;
+package com.goudong.bpm.config;
 
+import com.goudong.bpm.filter.BpmAuthenticationFilter;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.aop.RepeatAop;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+
+import javax.servlet.Filter;
 
 /**
  * 类描述：
@@ -47,6 +51,25 @@ public class CommonsConfig {
     // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
     public RepeatAop repeatAop() {
         return new RepeatAop();
+    }
+
+    //@Bean
+    //public FilterRegistrationBean userContextFilter(){
+    //    FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+    //    filterFilterRegistrationBean.setFilter(new UserContextFilter());
+    //    // 执行的顺序(值越低，优先级越高)
+    //    filterFilterRegistrationBean.setOrder(0);
+    //    filterFilterRegistrationBean.addUrlPatterns("/*");
+    //    return filterFilterRegistrationBean;
+    //}
+
+    @Bean
+    public FilterRegistrationBean bpmAuthenticationFilter(){
+        FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        filterFilterRegistrationBean.setFilter(new BpmAuthenticationFilter());
+        filterFilterRegistrationBean.setOrder(2);//执行的顺序
+        filterFilterRegistrationBean.addUrlPatterns("/*");
+        return filterFilterRegistrationBean;
     }
 
 }

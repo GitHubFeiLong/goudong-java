@@ -1,0 +1,35 @@
+package com.goudong.bpm.controller;
+
+import com.goudong.commons.utils.core.LogUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 类描述：
+ *
+ * @author cfl
+ * @version 1.0
+ * @date 2022/7/31 23:38
+ */
+@Slf4j
+@Api(tags = "测试")
+@RestController
+@RequestMapping("/demo")
+public class DemoController {
+    //~fields
+    //==================================================================================================================
+
+    //~methods
+    //==================================================================================================================
+    @ApiOperation(value = "测试")
+    @GetMapping("/demo")
+    public String demo() {
+        LogUtil.info(log, "进入控制器");
+        return "hello world" + SecurityContextHolder.getContext().getAuthentication();
+    }
+}

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * 类描述：
- * Feigin配置
+ * Feign配置
  * @Author msi
  * @Date 2021-08-21 9:12
  * @Version 1.0
