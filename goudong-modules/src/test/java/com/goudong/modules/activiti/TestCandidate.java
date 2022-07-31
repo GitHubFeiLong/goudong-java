@@ -74,7 +74,89 @@ public class TestCandidate {
             System.out.println("===========");
         }
 
+    }
 
+    /**
+     * 拾取任务
+     */
+    @Test
+    public void claimTask() {
+        // 获取流程引擎
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        // 获取taskService
+        TaskService taskService = processEngine.getTaskService();
+        // 当前任务的id
+        String taskId = "65002";
+        // 任务候选人
+        String candidateUser = "wangwu";
+        // 拾取任务
+        Task task = taskService.createTaskQuery()
+                .taskId(taskId)
+                .taskCandidateUser(candidateUser)
+                .singleResult();
+
+        if (task != null) {
+            // 拾取任务
+            taskService.claim(taskId, candidateUser);
+            System.out.println("taskId:" + taskId + "-用户id：" + candidateUser + "拾取任务成功");
+        }
+    }
+
+    /**
+     * 任务归还
+     */
+    @Test
+    public void testAssigneeToGroupTask() {
+        // 获取流程引擎
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        // 获取taskService
+        TaskService taskService = processEngine.getTaskService();
+        // 当前任务的id
+        String taskId = "65002";
+        // 任务负责人
+        String assignee = "wangwu";
+        // 根据任务id和负责人来查询任务
+        Task task = taskService.createTaskQuery()
+                .taskId(taskId)
+                .taskAssignee(assignee)
+                .singleResult();
+
+        if (task != null) {
+            // 归还任务,就是把任务负责人设置为空
+            //taskService.setAssignee(taskId, null);
+            // unclaim方法效果与上面一致
+            taskService.unclaim(taskId);
+            System.out.println("taskId:" + taskId + "归还任务成功");
+        }
+    }
+
+    /**
+     * 任务交接
+     */
+    @Test
+    public void testAssigneeToCandidateUser() {
+        // 获取流程引擎
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        // 获取taskService
+        TaskService taskService = processEngine.getTaskService();
+        // 当前任务的id
+        String taskId = "65002";
+        // 任务负责人
+        String assignee = "wangwu";
+        // 任务候选人
+        String candidateUser = "lisi";
+
+        // 根据任务id和负责人来查询任务
+        Task task = taskService.createTaskQuery()
+                .taskId(taskId)
+                .taskAssignee(assignee)
+                .singleResult();
+
+        if (task != null) {
+            // 交接任务,就是把任务负责人设置为空
+            taskService.setAssignee(taskId, candidateUser);
+            System.out.println("taskId:" + taskId + "交接任务成功");
+        }
     }
 
     /**

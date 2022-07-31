@@ -7,3 +7,5 @@
 2. activiti.cfg.xml activiti配置文件
 3. idea插件 `Activiti BPMN visualizer`
 
+> https://youtu.be/8-_XmOlEyXM (Activiti BPMN visualizer 插件教程)
+

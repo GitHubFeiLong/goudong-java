@@ -34,6 +34,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--使用 springboot 整合activiti-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring-boot-starter</artifactId>
+            <version>${activiti-engine.version}</version>
+        </dependency>
+
         <!--commons-->
         <dependency>
             <groupId>com.goudong</groupId>
@@ -138,4 +150,12 @@
             <artifactId>commons-io</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
