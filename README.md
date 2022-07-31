@@ -12,6 +12,7 @@
 5. 认证服务：goudong-oauth2-server(端口号：10003)
 6. 用户服务：goudong-user-server(端口号：10001)
 7. 文件服务：goudong-file-server(端口号：10004)
+8. bpm服务：goudong-bpm-server(端口号：10005)
 
 
 

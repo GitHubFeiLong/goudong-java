@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql:///activiti?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT&createDatabaseIfNotExist=true
+    url: jdbc:mysql:///activiti?nullCatalogMeansCurrent=true&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT&createDatabaseIfNotExist=true
     username: root
     password: "l(=8gp_04h*&"
     driver-class-name: com.mysql.cj.jdbc.Driver
