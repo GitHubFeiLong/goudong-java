@@ -96,7 +96,4 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
         return chain.filter(newExchange);
     }
-
-
-
 }

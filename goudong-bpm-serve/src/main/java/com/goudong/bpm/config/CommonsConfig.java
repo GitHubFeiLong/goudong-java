@@ -4,6 +4,7 @@ import com.goudong.bpm.filter.BpmAuthenticationFilter;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.aop.RepeatAop;
+import com.goudong.commons.filter.UserContextFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,8 @@ import javax.servlet.Filter;
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig
 @EnableCommonsJacksonConfig
-@EnableCommonsUserContextFilter
+//@EnableCommonsUserContextFilter
+//@ServletComponentScan(basePackageClasses = {UserContextFilter.class})
 public class CommonsConfig {
 
     //~fields
@@ -53,11 +55,20 @@ public class CommonsConfig {
         return new RepeatAop();
     }
 
+    @Bean("userContextFilter")
+    public FilterRegistrationBean userContextFilter(){
+        FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        filterFilterRegistrationBean.setFilter(new UserContextFilter());
+        filterFilterRegistrationBean.setOrder(0);//执行的顺序，值越低，优先级越高
+        filterFilterRegistrationBean.addUrlPatterns("/*");
+        return filterFilterRegistrationBean;
+    }
+
     /**
      * 请求进入bpm时，将用户信息填入 SecurityContextHolder,并设置 activiti的 AuthenticatedUserId
      * @return
      */
-    @Bean
+    @Bean("bpmAuthenticationFilter")
     public FilterRegistrationBean bpmAuthenticationFilter(){
         FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
         filterFilterRegistrationBean.setFilter(new BpmAuthenticationFilter());
