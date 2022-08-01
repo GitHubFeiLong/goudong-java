@@ -7,6 +7,7 @@ import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
@@ -30,6 +31,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "base_user")
 @SQLDelete(sql = "update base_user set deleted=true where id=?")
@@ -109,6 +111,7 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     public static BaseUserPO createAnonymousUser() {
         BaseUserPO anonymousUser = new BaseUserPO();
         anonymousUser.setAuthenticated(true);
+        // 这里id不能修改，其他地方已经定义了0是匿名用户
         anonymousUser.setId(0L);
         anonymousUser.setUsername("匿名用户");
         // 创建匿名角色
@@ -228,17 +231,4 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
         return this.username;
     }
 
-    @Override
-    public String toString() {
-        return "BaseUserPO{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", remark='" + remark + '\'' +
-                ", validTime=" + validTime +
-                ", qqOpenId='" + qqOpenId + '\'' +
-                '}';
-    }
 }

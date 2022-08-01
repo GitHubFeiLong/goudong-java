@@ -35,6 +35,16 @@ public class WhitelistProperties implements InitializingBean {
     private Boolean enable = false;
 
     /**
+     * 延迟指定时长后调用服务保存白名单（值须大于等于0，小于等于3600，单位是秒）
+     */
+    private Integer sleep = 5;
+
+    /**
+     * 调用服务保存白名单失败后的重试次数（值须大于等于0，小于10）
+     */
+    private Integer failureRetryNum = 2;
+
+    /**
      * 自定义白名单配置
      */
     @NestedConfigurationProperty
@@ -52,19 +62,38 @@ public class WhitelistProperties implements InitializingBean {
             参数校验
          */
         List<BaseWhitelistDTO> whitelists = this.getWhitelists();
-        if (this.getEnable() && CollectionUtils.isNotEmpty(whitelists)) {
-
-            Iterator<BaseWhitelistDTO> iterator = whitelists.iterator();
-            int idx = 0;
-            while (iterator.hasNext()) {
-                BaseWhitelistDTO whitelistDTO = iterator.next();
-                // 校验模式
-                this.checkPattern(idx, whitelistDTO);
-                // 校验方法
-                checkMethods(idx, whitelistDTO);
-                // 下标自增
-                idx++;
+        if (this.getEnable()) {
+            // 延迟时长校验，不能随便配置一些不合理的时长
+            if (this.sleep < 0 || this.sleep > 3600) {
+                String description = String.format("commons.whitelist.sleep=%s", this.sleep);
+                throw new ApplicationBootFailedException("自定义白名单模式配置错误",
+                        "请配置正确的白名单,白名单的sleep配置有误:\n" + description,
+                        String.format("commons.whitelist.sleep=%s配置正确的sleep", this.sleep));
             }
+
+            // 延迟时长校验，不能随便配置一些不合理的时长
+            if (this.failureRetryNum < 0 || this.failureRetryNum > 10) {
+                String description = String.format("commons.whitelist.failureRetryNum=%s", this.failureRetryNum);
+                throw new ApplicationBootFailedException("自定义白名单模式配置错误",
+                        "请配置正确的白名单,白名单的failureRetryNum配置有误:\n" + description,
+                        String.format("commons.whitelist.failureRetryNum=%s配置正确的failureRetryNum", this.failureRetryNum));
+            }
+
+            // 白名单资源参数校验
+            if (CollectionUtils.isNotEmpty(whitelists)) {
+                Iterator<BaseWhitelistDTO> iterator = whitelists.iterator();
+                int idx = 0;
+                while (iterator.hasNext()) {
+                    BaseWhitelistDTO whitelistDTO = iterator.next();
+                    // 校验模式
+                    this.checkPattern(idx, whitelistDTO);
+                    // 校验方法
+                    checkMethods(idx, whitelistDTO);
+                    // 下标自增
+                    idx++;
+                }
+            }
+
         }
     }
 

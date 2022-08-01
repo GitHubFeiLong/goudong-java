@@ -97,7 +97,10 @@ seata:
 # 配置commons
 commons:
   whitelist:
-    enable: false
+    enable: true
+    sleep: 15
+    failure-retry-num: 5
+
 
 # 配置oauth2
 oauth2:

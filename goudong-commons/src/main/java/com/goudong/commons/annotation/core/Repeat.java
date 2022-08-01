@@ -1,9 +1,6 @@
 package com.goudong.commons.annotation.core;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -17,6 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 2020/6/11 17:36
  * @Version 1.0
  */
+@Documented
 @Target({ElementType.METHOD}) // 可以放在方法上
 @Retention(RetentionPolicy.RUNTIME) //该注解不仅被保存到class文件中，jvm加载class文件之后，仍然存在；
 public @interface Repeat {

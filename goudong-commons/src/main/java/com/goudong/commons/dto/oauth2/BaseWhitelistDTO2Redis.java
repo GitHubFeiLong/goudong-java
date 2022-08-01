@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * 类描述：
- *
+ * 将白名单放入redis的对象
  * @author msi
  * @version 1.0
  * @date 2022/1/15 18:08
@@ -29,6 +29,11 @@ public class BaseWhitelistDTO2Redis implements Serializable {
      * 备注
      */
     private String remark;
+
+    /**
+     * 是否只能内部服务调用
+     */
+    private Boolean isInner = false;
 
     //~methods
     //==================================================================================================================

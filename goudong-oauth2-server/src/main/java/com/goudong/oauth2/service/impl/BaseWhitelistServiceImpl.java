@@ -79,10 +79,13 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
         baseWhitelistPOS.stream().forEach(p1->{
             copyToList.stream().forEach(p2->{
                 // 相等，那么就更新
+                // TODO 这里颗粒度比较大，一个pattern 对应了多个请求方式。
                 if (Objects.equals(p1.getPattern(), p2.getPattern())) {
                     p1.setMethods(p2.getMethods());
                     p1.setRemark(p2.getRemark());
                     p1.setIsSystem(p2.getIsSystem());
+                    p1.setIsInner(p2.getIsInner());
+                    p1.setIsDisable(p2.getIsDisable());
                 }
             });
         });
@@ -97,7 +100,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
         }
 
         // 查询
-        List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAll();
+        List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAllByIsDisable(false);
 
         // 更新redis中白名单列表
         saveWhitelist2Redis(whitelistPOS);

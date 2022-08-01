@@ -1,6 +1,7 @@
 package com.goudong.commons.utils.core;
 
 import com.google.common.collect.Lists;
+import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.BasePackageConst;
 import com.goudong.commons.constant.core.CommonConst;
@@ -9,6 +10,7 @@ import com.goudong.commons.enumerate.core.RequestMappingEnum;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.framework.core.ResourceAntMatcher;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -150,11 +152,27 @@ public class ResourceUtil {
 
                             switch (scanTypeEnum) {
                                 case WHITELIST: // 当是获取白名单资源时
-                                    Whitelist whitelist = method.getAnnotation(Whitelist.class);
+                                    //Whitelist whitelist = method.getAnnotation(Whitelist.class);
+                                    Whitelist whitelist = AnnotationUtils.findAnnotation(method, Whitelist.class);
+
                                     if (whitelist != null) {
+                                        // 备注
                                         remark = whitelist.value();
+                                        // 关闭该接口
+                                        boolean disable = whitelist.disable();
+
+                                        // 默认不是只能内部服务调用
+                                        boolean isInner = false;
+                                        // 判断是否是Inner注解，若是，代表接口是内部服务调用白名单（功能：内部调用不鉴权，外部服务调用鉴权）
+                                        Inner inner = AnnotationUtils.findAnnotation(method, Inner.class);
+                                        if (inner != null) {
+                                            remark = inner.value();
+                                            isInner = true;
+                                            disable = inner.disable();
+                                        }
+
                                         resourceAntMatchers.addAll(
-                                                ResourceUtil.annotation2ResourceAntMatcher(httpMethodAnnotation, prefixArr, remark)
+                                                ResourceUtil.annotation2ResourceAntMatcher(httpMethodAnnotation, prefixArr, remark, isInner, disable)
                                         );
                                     }
 
@@ -233,9 +251,11 @@ public class ResourceUtil {
      * @param annotation 注解（值可能是 @Requestmapping、@Getmapping、@PostMapping、@DeleteMapping、@PutMapping等）
      * @param prefixArr 控制器类上的注解，请求前缀
      * @param remark 备注
+     * @param isInner 是否只能内部服务调用
+     * @param disable 是否关闭该白名单
      * @return
      */
-    private static List<ResourceAntMatcher> annotation2ResourceAntMatcher (Annotation annotation, String[] prefixArr, String remark) {
+    private static List<ResourceAntMatcher> annotation2ResourceAntMatcher (Annotation annotation, String[] prefixArr, String remark, boolean isInner, boolean disable) {
         if (annotation instanceof RequestMapping) {
             RequestMapping requestMapping = (RequestMapping) annotation;
             // 请求方式
@@ -248,7 +268,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(remark, methods, path);
+            return addResourceAntMatcher(remark, methods, path, isInner, disable);
         }
 
         if (annotation instanceof GetMapping) {
@@ -260,7 +280,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(remark, methods, path);
+            return addResourceAntMatcher(remark, methods, path, isInner, disable);
         }
 
         if (annotation instanceof PostMapping) {
@@ -272,7 +292,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(remark, methods, path);
+            return addResourceAntMatcher(remark, methods, path, isInner, disable);
         }
 
         if (annotation instanceof PutMapping) {
@@ -284,7 +304,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(remark, methods, path);
+            return addResourceAntMatcher(remark, methods, path, isInner, disable);
         }
 
         if (annotation instanceof DeleteMapping) {
@@ -296,7 +316,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(remark, methods, path);
+            return addResourceAntMatcher(remark, methods, path, isInner, disable);
         }
 
         if (annotation instanceof PatchMapping) {
@@ -308,7 +328,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(remark, methods, path);
+            return addResourceAntMatcher(remark, methods, path, isInner, disable);
         }
 
         String errorMessage = StringUtil.format("注解{}不是有效的http接口注解",annotation);
@@ -320,13 +340,15 @@ public class ResourceUtil {
      * @param remark 接口备注
      * @param methods 接口请求方式数组
      * @param path 接口请求路径数组
+     * @param isInner 是否只能内部服务调用
+     * @param disable 是否关闭该白名单
      * @return
      */
-    private static List<ResourceAntMatcher> addResourceAntMatcher(String remark, RequestMethod[] methods, String[] path) {
+    private static List<ResourceAntMatcher> addResourceAntMatcher(String remark, RequestMethod[] methods, String[] path, boolean isInner, boolean disable) {
         List<ResourceAntMatcher> var0 = new ArrayList<>();
         List<String> httpMethods = Stream.of(methods).map(RequestMethod::name).collect(Collectors.toList());
         for (int i = 0; i < path.length; i++) {
-            var0.add(new ResourceAntMatcher(path[i], httpMethods, remark));
+            var0.add(new ResourceAntMatcher(path[i], httpMethods, remark, isInner, disable));
         }
         return var0;
     }

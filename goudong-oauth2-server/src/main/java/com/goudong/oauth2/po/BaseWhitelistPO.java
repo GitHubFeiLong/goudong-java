@@ -37,5 +37,15 @@ public class BaseWhitelistPO extends BasePO {
     /**
      * 是否是系统设置的
      */
-    private Boolean isSystem;
+    private Boolean isSystem = false;
+
+    /**
+     * 是否只能内部服务调用
+     */
+    private Boolean isInner = false;
+
+    /**
+     * 是否关闭该白名单
+     */
+    private Boolean isDisable = false;
 }

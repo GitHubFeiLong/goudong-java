@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.authentication;
 
+import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
@@ -9,8 +10,10 @@ import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseMenuService;
 import com.goudong.oauth2.service.BaseTokenService;
+import com.goudong.oauth2.service.BaseUserService;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -55,12 +58,19 @@ public class AuthenticationController {
      */
     private final BaseTokenService baseTokenService;
 
+    /**
+     * 用户服务
+     */
+    private final BaseUserService baseUserService;
+
     public AuthenticationController(BaseWhitelistService baseWhitelistService,
                                     BaseMenuService baseMenuService,
-                                    BaseTokenService baseTokenService) {
+                                    BaseTokenService baseTokenService,
+                                    BaseUserService baseUserService) {
         this.baseWhitelistService = baseWhitelistService;
         this.baseMenuService = baseMenuService;
         this.baseTokenService = baseTokenService;
+        this.baseUserService = baseUserService;
     }
 
     /**
@@ -150,5 +160,25 @@ public class AuthenticationController {
          */
 
         return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+    }
+
+    /**
+     * 通过用户名获取用户基本信息：用户角色权限，其余敏感信息不予返回
+     * @param username 用户名
+     * @return
+     */
+    @Inner(value = "loadUserByUsername", disable = true)
+    @GetMapping("/loadUserByUsername")
+    @ApiOperation("根据用户名获取用户基本信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户名", required = true),
+    })
+    public Result<BaseUserDTO> loadUserByUsername(@NotBlank String username) {
+        BaseUserPO userDetails = (BaseUserPO)baseUserService.loadUserByUsername(username);
+        // 只保留基本信息
+        BaseUserPO incomplete = new BaseUserPO();
+        incomplete.setUsername(userDetails.getUsername());
+        incomplete.setRoles(userDetails.getRoles());
+        return Result.ofSuccess(BeanUtil.copyProperties(incomplete, BaseUserDTO.class));
     }
 }

@@ -31,7 +31,10 @@ public interface BaseWhitelistMapper {
         baseWhitelistPO.setMethods(methods);
         baseWhitelistPO.setRemark(createDTO.getRemark());
         baseWhitelistPO.setIsSystem(createDTO.getIsSystem());
+        baseWhitelistPO.setIsInner(createDTO.getIsInner());
+        baseWhitelistPO.setIsDisable(createDTO.getIsDisable());
         baseWhitelistPO.setDeleted(false);
+
         return baseWhitelistPO;
     };
 

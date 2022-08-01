@@ -70,4 +70,6 @@ public class BaseUserDTO {
      * 菜单
      */
     private List<BaseMenuDTO> menus;
+
+
 }

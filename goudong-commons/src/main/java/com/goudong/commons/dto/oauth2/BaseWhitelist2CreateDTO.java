@@ -32,12 +32,24 @@ public class BaseWhitelist2CreateDTO {
     /**
      * 是否是系统设置的
      */
-    private Boolean isSystem;
+    private Boolean isSystem = false;
 
-    public BaseWhitelist2CreateDTO(String pattern, List<String> methods, String remark, Boolean isSystem) {
+    /**
+     * 是否只能内部服务调用
+     */
+    private Boolean isInner = false;
+
+    /**
+     * 是否关闭该白名单
+     */
+    private Boolean isDisable = false;
+
+    public BaseWhitelist2CreateDTO(String pattern, List<String> methods, String remark, Boolean isSystem, Boolean isInner, Boolean isDisable) {
         this.pattern = pattern;
         this.methods = methods;
         this.remark = remark;
         this.isSystem = isSystem;
+        this.isInner = isInner;
+        this.isDisable = isDisable;
     }
 }

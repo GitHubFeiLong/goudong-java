@@ -26,3 +26,5 @@ spring:
   datasource:
     url: jdbc:mysql:///activiti?nullCatalogMeansCurrent=true&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT&createDatabaseIfNotExist=true
 ```
+#### Process definition with the given id:xxx belongs to a different application version
+activiti使用新版本7.1.0.M6 出现的问题，将版本降低到7.0.0.Beta5即可

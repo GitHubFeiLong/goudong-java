@@ -78,8 +78,7 @@
         <maven-plugin-api.version>3.8.1</maven-plugin-api.version>
         <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
         <xxl-job-core.version>2.3.1</xxl-job-core.version>
-<!--        <activiti-spring-boot-starter.version>7.0.0.Beta4</activiti-spring-boot-starter.version>-->
-        <activiti-spring-boot-starter.version>7.1.0.M6</activiti-spring-boot-starter.version>
+        <activiti-spring-boot-starter.version>7.0.0.Beta5</activiti-spring-boot-starter.version>
     </properties>
 
     <dependencies>

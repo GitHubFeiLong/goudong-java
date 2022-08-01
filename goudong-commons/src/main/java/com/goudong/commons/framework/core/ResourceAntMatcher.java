@@ -27,9 +27,35 @@ public class ResourceAntMatcher implements Serializable {
      */
     private String remark;
 
+    /**
+     * 是否只能内部服务调用
+     */
+    private Boolean isInner = false;
+
+    /**
+     * 是否关闭
+     * true关闭，false开启
+     */
+    private Boolean disable = false;
+
     public ResourceAntMatcher(String pattern, List<String> methods, String remark) {
         this.pattern = pattern;
         this.methods = methods;
         this.remark = remark;
+    }
+
+    public ResourceAntMatcher(String pattern, List<String> methods, String remark, Boolean isInner) {
+        this.pattern = pattern;
+        this.methods = methods;
+        this.remark = remark;
+        this.isInner = isInner;
+    }
+
+    public ResourceAntMatcher(String pattern, List<String> methods, String remark, Boolean isInner, Boolean disable) {
+        this.pattern = pattern;
+        this.methods = methods;
+        this.remark = remark;
+        this.isInner = isInner;
+        this.disable = disable;
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,8 @@ public class BpmAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             BaseUserDTO user = UserContext.get();
-            if (user == null) {
+            // id=0，表示是匿名用户。
+            if (user == null || user.getId() == 0) {
                 LogUtil.warn(log, "本次请求未认证");
                 throw new ClientException(ClientExceptionEnum.UNAUTHORIZED);
             }
@@ -49,10 +51,15 @@ public class BpmAuthenticationFilter implements Filter {
                             new Authentication() {
                                 @Override
                                 public Collection<? extends GrantedAuthority> getAuthorities() {
-                                    return user.getRoles() == null ? null : user.getRoles()
+                                    Collection<SimpleGrantedAuthority> roles = user.getRoles() == null ? new ArrayList() : user.getRoles()
                                             .stream()
                                             .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                                             .collect(Collectors.toList());
+
+                                    // 给用户添加默认流程角色，使其能正常使用：processRuntime，taskRuntime
+                                    roles.add( new SimpleGrantedAuthority("ROLE_ACTIVITI_USER"));
+
+                                    return roles;
                                 }
                                 @Override
                                 public Object getCredentials() {

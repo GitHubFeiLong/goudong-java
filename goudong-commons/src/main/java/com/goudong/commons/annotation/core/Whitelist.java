@@ -1,9 +1,6 @@
 package com.goudong.commons.annotation.core;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 
 /**
@@ -13,7 +10,9 @@ import java.lang.annotation.Target;
  * @date 2022/1/8 16:17
  * @version 1.0
  */
-@Target({ElementType.METHOD})
+//@Inherited
+@Documented
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Whitelist {
 
@@ -22,4 +21,10 @@ public @interface Whitelist {
      * @return
      */
     String value() default "白名单";
+
+    /**
+     * 是否关闭该白名单
+     * @return true关闭，false开启
+     */
+    boolean disable() default false;
 }

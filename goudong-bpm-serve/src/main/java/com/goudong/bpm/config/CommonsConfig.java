@@ -53,21 +53,15 @@ public class CommonsConfig {
         return new RepeatAop();
     }
 
-    //@Bean
-    //public FilterRegistrationBean userContextFilter(){
-    //    FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-    //    filterFilterRegistrationBean.setFilter(new UserContextFilter());
-    //    // 执行的顺序(值越低，优先级越高)
-    //    filterFilterRegistrationBean.setOrder(0);
-    //    filterFilterRegistrationBean.addUrlPatterns("/*");
-    //    return filterFilterRegistrationBean;
-    //}
-
+    /**
+     * 请求进入bpm时，将用户信息填入 SecurityContextHolder,并设置 activiti的 AuthenticatedUserId
+     * @return
+     */
     @Bean
     public FilterRegistrationBean bpmAuthenticationFilter(){
         FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
         filterFilterRegistrationBean.setFilter(new BpmAuthenticationFilter());
-        filterFilterRegistrationBean.setOrder(2);//执行的顺序
+        filterFilterRegistrationBean.setOrder(10);//执行的顺序，值越低，优先级越高
         filterFilterRegistrationBean.addUrlPatterns("/*");
         return filterFilterRegistrationBean;
     }
