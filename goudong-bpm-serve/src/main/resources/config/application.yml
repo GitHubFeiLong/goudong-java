@@ -8,11 +8,6 @@ server:
   port: 10005
   servlet:
     context-path: /api/bpm
-# project manifest path
-project:
-  manifest:
-    file:
-      path: classpath:/default-project.json
 spring:
   profiles:
 #    active: dev #默认使用开发环境

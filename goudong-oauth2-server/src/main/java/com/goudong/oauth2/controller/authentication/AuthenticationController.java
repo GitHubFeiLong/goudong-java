@@ -159,6 +159,7 @@ public class AuthenticationController {
             TODO 不是白名单，就需要判断该请求需要什么角色的权限
          */
 
+
         return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
     }
 

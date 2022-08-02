@@ -68,7 +68,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
      */
     @Override
     @Transactional
-    public List<BaseWhitelistDTO> addWhitelist(List<BaseWhitelist2CreateDTO> createDTOS) {
+    public List<BaseWhitelistDTO> addWhitelists(List<BaseWhitelist2CreateDTO> createDTOS) {
         List<BaseWhitelistPO> baseWhitelistPOS = baseWhitelistRepository.findAll();
 
         List<String> pattern = baseWhitelistPOS.stream().map(BaseWhitelistPO::getPattern).collect(Collectors.toList());
@@ -105,7 +105,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
         // 更新redis中白名单列表
         saveWhitelist2Redis(whitelistPOS);
 
-        return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
+        return BeanUtil.copyToList(baseWhitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
     }
 
     /**

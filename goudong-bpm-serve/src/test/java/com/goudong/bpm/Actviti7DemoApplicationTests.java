@@ -94,44 +94,6 @@ public class Actviti7DemoApplicationTests {
                 })
         );
 
-        //SecurityContextHolder.setContext(
-        //        new SecurityContextImpl(
-        //                new Authentication() {
-        //                    @Override
-        //                    public Collection<? extends GrantedAuthority> getAuthorities() {
-        //                        Collection<SimpleGrantedAuthority> roles = user.getRoles() == null ? new ArrayList() : user.getRoles()
-        //                                .stream()
-        //                                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
-        //                                .collect(Collectors.toList());
-        //
-        //                        // 给用户添加默认流程角色，使其能正常使用：processRuntime，taskRuntime
-        //                        roles.add( new SimpleGrantedAuthority("ROLE_ACTIVITI_USER"));
-        //
-        //                        return roles;
-        //                    }
-        //                    @Override
-        //                    public Object getCredentials() {
-        //                        return user.getPassword();
-        //                    }
-        //                    @Override
-        //                    public Object getDetails() {
-        //                        return user;
-        //                    }
-        //                    @Override
-        //                    public Object getPrincipal() {
-        //                        return user;
-        //                    }
-        //                    @Override
-        //                    public boolean isAuthenticated() {
-        //                        return true;
-        //                    }
-        //                    @Override
-        //                    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException { }
-        //                    @Override
-        //                    public String getName() {
-        //                        return user.getUsername();
-        //                    }
-        //                }));
         // 设置当前用户的负责人信息（使用用户名）
         org.activiti.engine.impl.identity.Authentication.setAuthenticatedUserId(user.getUsername());
     }

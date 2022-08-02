@@ -1,9 +1,9 @@
 package com.goudong.commons.autoconfigure;
 
 import com.goudong.commons.config.FeignConfig;
+import com.goudong.commons.framework.apiResource.ApiResourceInitialize;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
-import com.goudong.commons.framework.whitelist.WhitelistInitialize;
-import com.goudong.commons.properties.WhitelistProperties;
+import com.goudong.commons.properties.ApiResourceProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,30 +15,30 @@ import org.springframework.context.annotation.Import;
 
 /**
  * 类描述：
- * 白名单自动配置
- * @author msi
- * @date 2022/1/9 11:54
+ * 接口资源自动配置
+ * @author cfl
+ * @date 2022/8/3 0:25
  * @version 1.0
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(WhitelistProperties.class)
+@EnableConfigurationProperties(ApiResourceProperties.class)
 @Import({FeignConfig.class})
-@ConditionalOnProperty(prefix = "commons.whitelist", name = "enable", havingValue = "true", matchIfMissing = false)
-public class WhitelistAutoConfiguration {
+@ConditionalOnProperty(prefix = "commons.api-resource", name = "enable", havingValue = "true", matchIfMissing = false)
+public class ApiResourceAutoConfiguration {
 
     /**
-     * 白名单处理
-     * 使用DependsOn，让whitelistProperties先加载
+     * api接口资源出来
+     * 让whitelistProperties先加载
      * @param goudongOauth2ServerService openfeign中的权限服务
-     * @param whitelistProperties 白名单配置
+     * @param apiResourceProperties api接口资源配置属性
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public WhitelistInitialize whitelistInitialize(GoudongOauth2ServerService goudongOauth2ServerService, WhitelistProperties whitelistProperties) {
-        LogUtil.debug(log, "启用了白名单自动配置");
-        return new WhitelistInitialize(goudongOauth2ServerService, whitelistProperties);
+    public ApiResourceInitialize apiResourceInitialize(GoudongOauth2ServerService goudongOauth2ServerService, ApiResourceProperties apiResourceProperties) {
+        LogUtil.debug(log, "启用了接口资源自动配置");
+        return new ApiResourceInitialize(goudongOauth2ServerService, apiResourceProperties);
     }
 
 }

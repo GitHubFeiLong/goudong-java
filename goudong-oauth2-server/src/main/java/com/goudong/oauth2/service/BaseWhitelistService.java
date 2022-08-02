@@ -18,7 +18,7 @@ public interface BaseWhitelistService {
      * 添加白名单
      * @param createDTOS 新增白名单接口
      */
-    List<BaseWhitelistDTO> addWhitelist(List<BaseWhitelist2CreateDTO> createDTOS);
+    List<BaseWhitelistDTO> addWhitelists(List<BaseWhitelist2CreateDTO> createDTOS);
 
     /**
      * 查询所有白名单

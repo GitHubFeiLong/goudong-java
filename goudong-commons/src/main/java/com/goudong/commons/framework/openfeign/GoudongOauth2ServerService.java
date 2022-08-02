@@ -1,5 +1,6 @@
 package com.goudong.commons.framework.openfeign;
 
+import com.goudong.commons.dto.oauth2.BaseApiResource2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
@@ -29,7 +30,7 @@ public interface GoudongOauth2ServerService {
      * @return
      */
     @PostMapping("/whitelist/whitelist")
-    Result<List<BaseWhitelistDTO>> addWhitelist(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS);
+    Result<List<BaseWhitelistDTO>> addWhitelists(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS);
 
     /**
      * 查询所有白名单
@@ -44,6 +45,17 @@ public interface GoudongOauth2ServerService {
      */
     @GetMapping("/init/whitelist-2-redis")
     Result<List<BaseWhitelistDTO>> initWhitelist2Redis();
+
+    //~ 接口资源
+    //==================================================================================================================
+    /**
+     * 新增接口资源
+     * @param createDTOS
+     * @return
+     */
+    @PostMapping("/api-resource/api-resource")
+    Result<List<BaseWhitelistDTO>> addApiResources(List<BaseApiResource2CreateDTO> createDTOS);
+
 
     //~认证
     //==================================================================================================================

@@ -43,8 +43,8 @@ public class EnumIgnoreCaseConstraintValidator implements ConstraintValidator<En
         for (int i = 0; i < values.length; i++) {
             String name = (String)nameMethod.invoke(values[i]);
             valueNameList.add(name);
-            // 存在name()与value相等，表名是枚举成员
-            if (Objects.equals(name, value)) {
+            // 存在name()与value相等，表名是枚举成员,忽略大小写
+            if (name.equalsIgnoreCase(value)) {
                 return true;
             }
         }

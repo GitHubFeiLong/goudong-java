@@ -1,4 +1,4 @@
-package com.goudong.oauth2.controller.whitelist;
+package com.goudong.oauth2.controller;
 
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
@@ -52,7 +52,7 @@ public class BaseWhitelistController {
     @ApiOperation(value = "保存白名单", notes = "该接口将查询所有的白名单，并和参数进行一一比对，然后再决定进行更新或新增白名单")
     @PostMapping("/whitelist")
     @Transactional
-    public Result<List<BaseWhitelistDTO>> addWhitelist(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS) {
+    public Result<List<BaseWhitelistDTO>> addWhitelists(@RequestBody List<BaseWhitelist2CreateDTO> createDTOS) {
         /*
             参数校验
          */
@@ -70,7 +70,7 @@ public class BaseWhitelistController {
             }
         });
 
-        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.addWhitelist(createDTOS);
+        List<BaseWhitelistDTO> baseWhitelistDTOS = baseWhitelistService.addWhitelists(createDTOS);
 
         return Result.ofSuccess(baseWhitelistDTOS);
 

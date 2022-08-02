@@ -13,7 +13,7 @@ import java.util.Objects;
 
 /**
  * 类描述：
- *
+ * 注解@EnumValidator的底层功能
  * @Author e-Feilong.Chen
  * @Date 2022/2/11 14:46
  */

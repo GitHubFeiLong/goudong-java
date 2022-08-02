@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @date 2022/1/15 12:27
  * @version 1.0
  */
+@Deprecated
 public interface StorageTblRepository extends JpaRepository<StorageTblPO, Integer>, JpaSpecificationExecutor<StorageTblPO> {
 
 }
