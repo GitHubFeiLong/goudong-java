@@ -4,8 +4,11 @@ import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.annotation.validator.EnumValidator;
 import com.goudong.commons.constant.core.HttpHeaderConst;
+import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.oauth2.Oauth2Exception;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
@@ -25,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -170,11 +175,27 @@ public class AuthenticationController {
         }
 
         /*
-            TODO 不是白名单，不是内部调用，就需要判断该请求需要什么角色的权限
+            不是白名单，不是内部调用，就需要判断该请求需要什么角色的权限
          */
+        baseMenuService.findAll2Tree();
+        // 循环用户所有角色
+        for (GrantedAuthority role : authentication.getAuthorities()) {
+            // 查询角色又拥有的权限
+            List<BaseMenuDTO> menus = baseMenuService.findAllByRole(role.getAuthority());
+            // 循环权限，查看是否符合
+            for (BaseMenuDTO menu : menus) {
+                String menuUrl = menu.getMetadata().getUrl();
+                String menuMethod = menu.getMetadata().getMethod();
+                // 符合条件，退出循环
+                if (antPathMatcher.match(menuUrl, uri) && Objects.equals(menuMethod, method)) {
+                    LogUtil.debug(log, "本次请求用户有权访问role:{} uri:{}", role.getAuthority(), httpServletRequest.getRequestURI());
+                    return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+                }
+            }
+        }
 
-
-        return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+        // 没有权限，拒绝访问
+        throw new Oauth2Exception(ClientExceptionEnum.FORBIDDEN);
     }
 
     /**

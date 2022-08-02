@@ -1,2 +1,18 @@
 ﻿前端请求接口：
 网关 -> 转发到具体服务
+
+UEL java EL 工具类${}
+
+redis 添加key 时设置过期时间，加参数 加上一个随机时间，避免缓存雪崩
+
+
+可以实现jpa json 查看com.goudong.oauth2.po.BaseMenuPO
+<dependency>
+    <groupId>com.vladmihalcea</groupId>
+    <artifactId>hibernate-types-52</artifactId>
+    <version>${hibernate-types-52.version}</version>
+</dependency>
+
+
+## 一些小sql汇总
+用于保存sql脚本，太多文件不太好，强迫症

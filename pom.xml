@@ -79,6 +79,7 @@
         <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
         <xxl-job-core.version>2.3.1</xxl-job-core.version>
         <activiti-spring-boot-starter.version>7.0.0.Beta5</activiti-spring-boot-starter.version>
+        <hibernate-types-52.version>2.16.3</hibernate-types-52.version>
     </properties>
 
     <dependencies>
@@ -296,6 +297,12 @@
                 <groupId>org.activiti</groupId>
                 <artifactId>activiti-spring-boot-starter</artifactId>
                 <version>${activiti-spring-boot-starter.version}</version>
+            </dependency>
+            <!--hibernate type-->
+            <dependency>
+                <groupId>com.vladmihalcea</groupId>
+                <artifactId>hibernate-types-52</artifactId>
+                <version>${hibernate-types-52.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

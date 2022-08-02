@@ -2,9 +2,11 @@ package com.goudong.commons.dto.oauth2;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 类描述：
- * 菜单表
+ * 菜单表,放这里是为了方便UserDTO
  * @Author e-Feilong.Chen
  * @Date 2021/8/12 15:23
  */
@@ -22,9 +24,14 @@ public class BaseMenuDTO {
     /**
      * 前端菜单组件的信息
      */
-    private String metadata;
+    private MetadataDTO metadata;
     /**
      * 备注
      */
     private String remark;
+
+    /**
+     * 子节点
+     */
+    private List<BaseMenuDTO> children;
 }

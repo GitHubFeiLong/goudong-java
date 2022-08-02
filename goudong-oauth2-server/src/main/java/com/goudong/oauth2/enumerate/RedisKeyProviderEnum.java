@@ -3,6 +3,7 @@ package com.goudong.oauth2.enumerate;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
 import com.goudong.commons.framework.redis.RedisKeyProvider;
+import com.goudong.oauth2.dto.BaseMenuDTO2Redis;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -32,6 +33,16 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      */
     AUTHENTICATION("goudong-oauth2-server:authentication:${client_side}:${access_token}", DataType.STRING, BaseUserDTO.class, 2, TimeUnit.HOURS),
 
+    /**
+     * 将所有菜单数据保存到redis
+     */
+    MENU_ALL("goudong-oauth2-server:menu:ALL", DataType.LIST, BaseMenuDTO2Redis.class, 1, TimeUnit.DAYS),
+
+    /**
+     * 将角色对应的菜单保存到redis
+     * @param role 角色英文名
+     */
+    MENU_ROLE("goudong-oauth2-server:menu:${role}", DataType.LIST, BaseMenuDTO2Redis.class, 1, TimeUnit.DAYS)
     ;
     //~fields
     //==================================================================================================================

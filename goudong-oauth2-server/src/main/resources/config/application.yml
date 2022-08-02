@@ -99,12 +99,12 @@ seata:
 commons:
   # 配置白名单
   whitelist:
-    enable: true
+    enable: false
     sleep: 15
     failure-retry-num: 5
   # 配置api资源
   api-resource:
-    enable: true
+    enable: false
 
 # 配置oauth2
 ########################################################################################################################
