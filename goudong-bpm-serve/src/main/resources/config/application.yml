@@ -122,3 +122,15 @@ knife4j:
     password: knife4j  # 密码
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
+
+# 配置commons
+########################################################################################################################
+commons:
+  # 配置白名单
+  whitelist:
+    enable: false
+    sleep: 15
+    failure-retry-num: 5
+  # 配置api资源
+  api-resource:
+    enable: false

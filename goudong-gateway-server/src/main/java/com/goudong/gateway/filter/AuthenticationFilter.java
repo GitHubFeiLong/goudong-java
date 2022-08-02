@@ -82,7 +82,10 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         if (!CollectionUtils.isEmpty(tokenList)) {
             token = tokenList.get(0);
         }
+
         // 鉴权，返回用户信息
+        // 注意：内部服务间使用Feign调用，不会走网关！所以也就不会在进行鉴权！
+        // 如果需求是内部服务也要鉴权，那么就需要每个服务都添加全局拦截器，调用下面这个鉴权方法即可！！
         BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method, token).getData();
 
         // 将用户信息保存到请求头中，供下游服务使用

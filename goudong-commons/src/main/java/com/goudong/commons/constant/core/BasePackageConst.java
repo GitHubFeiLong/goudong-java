@@ -18,9 +18,9 @@ public class BasePackageConst {
     public static final String MESSAGE = "com.goudong.message";
     public static final String USER = "com.goudong.user";
     public static final String OAUTH2 = "com.goudong.oauth2";
-    public static final String SECURITY = "com.goudong.security";
     public static final String COMMODITY = "com.goudong.commodity";
     public static final String FILE = "com.goudong.file";
+    public static final String BPM = "com.goudong.bpm";
 
     /*=========================* 控制层包名 *=========================*/
 
@@ -30,9 +30,10 @@ public class BasePackageConst {
     public static final String FILE_CONTROLLER = "com.goudong.file.controller";
     public static final String COMMODITY_CONTROLLER = "com.goudong.commodity.controller";
 
+    public static final String BPM_CONTROLLER = "com.goudong.bpm.controller";
+
     /*=========================* DAO包 *=========================*/
 
-    public static final String SECURITY_MAPPER = "com.goudong.security.mapper";
     public static final String OAUTH2_MAPPER = "com.goudong.oauth2.mapper";
     public static final String USER_MAPPER = "com.goudong.user.mapper";
     public static final String COMMONS_MAPPER = "com.goudong.commons.mapper";

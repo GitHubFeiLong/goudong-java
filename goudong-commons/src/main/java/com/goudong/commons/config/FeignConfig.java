@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.stream.Collectors;
 
 /**
@@ -58,9 +59,9 @@ public class FeignConfig {
         return Logger.Level.FULL;
     }
 
-
     /**
      * 使用feign调用远程服务时,会先拦截请求,填充请求头信息
+     * 注意：内部服务间使用Feign调用，不会走网关！所以也就不会在进行鉴权！
      * @return
      */
     @Bean
@@ -74,6 +75,16 @@ public class FeignConfig {
                     //老请求
                     HttpServletRequest request = requestAttributes.getRequest();
 
+                    // 将原请求头保留
+                    Enumeration<String> headerNames = request.getHeaderNames();
+                    if (headerNames != null) {
+                        while (headerNames.hasMoreElements()) {
+                            String name = headerNames.nextElement();
+                            String values = request.getHeader(name);
+                            requestTemplate.header(name, values);
+                        }
+                    }
+
                     //2.同步请求头信息->Authorization,X-Aes-Key
                     String token = request.getHeader(HttpHeaders.AUTHORIZATION);
                     requestTemplate
@@ -82,6 +93,8 @@ public class FeignConfig {
                             .header(HttpHeaderConst.X_REQUEST_USER, request.getHeader(HttpHeaderConst.X_REQUEST_USER))
                             // 自定义X-Aes-Key密钥
                             .header(HttpHeaderConst.X_AES_KEY, request.getHeader(HttpHeaderConst.X_AES_KEY))
+                            // 自定义内部服务调用的请求头标识
+                            .header(HttpHeaderConst.X_INNER, HttpHeaderConst.X_INNER)
                     ;
 
                 }
@@ -113,4 +126,5 @@ public class FeignConfig {
             }
         };
     }
+
 }

@@ -2,32 +2,38 @@ package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.constant.core.HttpMethodConst;
+import com.goudong.commons.annotation.validator.EnumValidator;
+import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseMenuService;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
 import com.goudong.oauth2.service.BaseWhitelistService;
+import io.seata.common.util.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -41,6 +47,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/authentication")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
     /**
@@ -63,15 +70,10 @@ public class AuthenticationController {
      */
     private final BaseUserService baseUserService;
 
-    public AuthenticationController(BaseWhitelistService baseWhitelistService,
-                                    BaseMenuService baseMenuService,
-                                    BaseTokenService baseTokenService,
-                                    BaseUserService baseUserService) {
-        this.baseWhitelistService = baseWhitelistService;
-        this.baseMenuService = baseMenuService;
-        this.baseTokenService = baseTokenService;
-        this.baseUserService = baseUserService;
-    }
+    /**
+     * request对象
+     */
+    private final HttpServletRequest httpServletRequest;
 
     /**
      * 登录接口
@@ -136,27 +138,39 @@ public class AuthenticationController {
             @ApiImplicitParam(name = "uri", value = "请求uri", required = true),
             @ApiImplicitParam(name = "method", value = "请求方法", required = true)
     })
-    public Result<BaseUserDTO> authorize(@NotBlank String uri, @NotBlank String method) {
-        if (!HttpMethodConst.ALL_HTTP_METHOD.contains(method.toUpperCase())) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数错误",
-                    String.format("参数method=%s不正确", method));
-        }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<BaseWhitelistDTO> whitelistDTOS = baseWhitelistService.findAll();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
+    public Result<BaseUserDTO> authorize(@NotBlank String uri, @EnumValidator(enumClass = HttpMethod.class) String method) {
 
+        // 获取当前用户
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         /*
             判断是否是白名单
          */
-        long count = whitelistDTOS.stream()
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        List<BaseWhitelistDTO> whitelistDTOS = baseWhitelistService.findAll().stream()
                 .filter(f -> antPathMatcher.match(f.getPattern(), uri) && f.getMethods().contains(method))
-                .count();
-        if (count > 0) {
-            return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+                .collect(Collectors.toList());
+        // 请求是白名单或者是内部接口时（集合中所有元素的isInner都是true时）
+        if (CollectionUtils.isNotEmpty(whitelistDTOS)) {
+            // 是否是内部接口
+            boolean isInner = whitelistDTOS.stream().filter(f -> f.getIsInner()).count() == whitelistDTOS.size();
+            if (isInner) {
+                // 内部接口，需要判断请求
+                if (StringUtils.isNotBlank(httpServletRequest.getHeader(HttpHeaderConst.X_INNER))) {
+                    LogUtil.debug(log, "本次请求属于内部请求,不需要鉴权，url:{}", httpServletRequest.getRequestURI());
+                    return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+                }
+                // 不是内部请求
+                LogUtil.debug(log, "本次请求不属于内部请求，url:{}", httpServletRequest.getRequestURI());
+
+            } else {
+                LogUtil.debug(log, "本次请求命中白名单，不需要鉴权:{}", httpServletRequest.getRequestURI());
+                // 白名单直接放行
+                return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+            }
         }
 
         /*
-            TODO 不是白名单，就需要判断该请求需要什么角色的权限
+            TODO 不是白名单，不是内部调用，就需要判断该请求需要什么角色的权限
          */
 
 

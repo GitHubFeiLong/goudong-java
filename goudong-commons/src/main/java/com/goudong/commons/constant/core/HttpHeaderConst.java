@@ -29,6 +29,12 @@ public class HttpHeaderConst {
      */
     public static final String X_AES_KEY = "X-Aes-Key";
 
+    /**
+     * 内部服务之间进行调用，新增一个固定请求头，表明这是一个内部请求调用。
+     * 而网关会在拦截器中，将该请求头去掉，防止伪造
+     */
+    public static final String X_INNER = "X-Inner";
+
     //~methods
     //==================================================================================================================
 

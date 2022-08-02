@@ -46,6 +46,7 @@ public class ResourceUtil {
             BasePackageConst.OAUTH2_CONTROLLER,
             BasePackageConst.MESSAGE_CONTROLLER,
             BasePackageConst.FILE_CONTROLLER,
+            BasePackageConst.BPM_CONTROLLER,
     };
 
     /**

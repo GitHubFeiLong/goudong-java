@@ -99,10 +99,9 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
             baseWhitelistRepository.saveAll(saveBaseWhitelistPOList);
         }
 
-        // 查询
         List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAllByIsDisable(false);
 
-        // 更新redis中白名单列表
+        // 更新redis白名单
         saveWhitelist2Redis(whitelistPOS);
 
         return BeanUtil.copyToList(baseWhitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
@@ -137,12 +136,22 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
             return BeanUtil.copyToList(whitelistDTOS, BaseWhitelistDTO.class, CopyOptions.create());
         }
 
-        List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAll();
+        // 此时多个请求miss
+        synchronized (this) {
 
-        // 更新redis白名单
-        saveWhitelist2Redis(whitelistPOS);
+            // 再次判断缓存是否有值
+            whitelistDTOS = redisTool.getList(RedisKeyProviderEnum.WHITELIST, BaseWhitelistDTO2Redis.class);
+            if (CollectionUtils.isNotEmpty(whitelistDTOS)) {
+                return BeanUtil.copyToList(whitelistDTOS, BaseWhitelistDTO.class, CopyOptions.create());
+            }
 
-        return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
+            List<BaseWhitelistPO> whitelistPOS = baseWhitelistRepository.findAllByIsDisable(false);
+
+            // 更新redis白名单
+            saveWhitelist2Redis(whitelistPOS);
+
+            return BeanUtil.copyToList(whitelistPOS, BaseWhitelistDTO.class, CopyOptions.create());
+        }
     }
 
     /**
