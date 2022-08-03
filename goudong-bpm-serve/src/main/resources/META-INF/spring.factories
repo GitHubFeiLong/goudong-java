@@ -1,4 +1,4 @@
-# 子模块开启指定功能的自动配置，只需创建一样的文件即可，多个自动配置类使用逗号分隔
+# 自动配置，多个使用逗号分隔
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.goudong.commons.autoconfigure.WhitelistAutoConfiguration,\
   com.goudong.commons.autoconfigure.ApiResourceAutoConfiguration

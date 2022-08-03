@@ -38,10 +38,14 @@ oauth2:
 ![用户认证流程-认证成功处理器流程.svg](./README.assets/用户认证流程-认证成功处理器流程.svg)
 
 
+## 鉴权
+本套系统，采用网关鉴权，外网访问服务须进行鉴权，内网内部不需要鉴权，鉴权流程图如下：
+
+![网关鉴权流程图](./README.assets/鉴权流程图.svg)
+
 
 
 2. http://localhost:10003/api/oauth2/oauth/authorize?response_type=code&client_id=admin&redirect_uri=http://www.baidu.com&scope=all&state=normal
-3. 
 # Oauth2.0
 讲解和教程：https://mp.weixin.qq.com/s/IjNtY9gYpfP6-hOuatlMfQ
 

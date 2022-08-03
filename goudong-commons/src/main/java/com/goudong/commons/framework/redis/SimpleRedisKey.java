@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
- *
+ * 使用类来处理生成key，暂时还不实用，先留着后面优化
  * @Author e-Feilong.Chen
  * @Date 2022/1/11 12:30
  */
