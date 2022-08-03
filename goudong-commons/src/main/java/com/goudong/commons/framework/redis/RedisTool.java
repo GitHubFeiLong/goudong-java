@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import com.goudong.commons.annotation.aop.RedisRandomSecond;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  * 类描述：
  * Redis操作RedisKeyProvider
  * TODO 这里需要使用Lua脚本进行修改，避免执行一半成功一半失败
+ * TODO 使用ThreadLocal，让某些数据对准时性要求不高时，在给过期时间时，加上一点随机数，避免缓存雪崩的问题。
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
  */
@@ -31,8 +33,37 @@ import java.util.concurrent.TimeUnit;
 @Validated
 public class RedisTool extends RedisTemplate {
 
+    /**
+     * 添加随机的时长单位秒
+     */
+    private static final int RANDOM_SECOND = 10;
+
+    /**
+     * 使用ThreadLocal变量，在其它方法执行时，做其它操作。
+     * 方法内判断是否有开启失效时间增加随机秒，然后进行处理
+     */
+    private static final ThreadLocal<Boolean> RANDOM_LABEL = new ThreadLocal<>();
+
     //~methods
     //==================================================================================================================
+
+    /**
+     * 启动
+     * @return
+     */
+    public RedisTool enableRandom() {
+        RANDOM_LABEL.set(true);
+        return this;
+    }
+
+    /**
+     * 禁用
+     * @return
+     */
+    public RedisTool disableRandom() {
+        RANDOM_LABEL.remove();
+        return this;
+    }
 
     /**
      * 获取redis的key
@@ -196,6 +227,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
+    @RedisRandomSecond
     public boolean set(@Valid RedisKeyProvider redisKey, Object value, Object... param){
         DataType dataType = redisKey.getRedisType();
         // TODO Class先不做校验，看下注解是否有效
