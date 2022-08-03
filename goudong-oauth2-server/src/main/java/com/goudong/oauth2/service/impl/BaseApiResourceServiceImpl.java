@@ -11,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,28 +41,29 @@ public class BaseApiResourceServiceImpl implements BaseApiResourceService {
      * @return
      */
     @Override
+    @Transactional
     public List<BaseApiResourceDTO> addApiResources(@NotEmpty List<BaseApiResource2CreateDTO> createDTOS) {
         // 查询该服务下的
         List<BaseApiResourcePO> existsApiResourcePOS = baseApiResourceRepository.findAllByApplicationName(createDTOS.get(0).getApplicationName());
 
         List<BaseApiResourcePO> saveApiResourcePOS = BeanUtil.copyToList(createDTOS, BaseApiResourcePO.class, CopyOptions.create());
 
+        existsApiResourcePOS.get(0).equals(saveApiResourcePOS.get(0));
         // 数据库不存在数据，直接保存
         if (CollectionUtils.isEmpty(existsApiResourcePOS)) {
             baseApiResourceRepository.saveAll(saveApiResourcePOS);
             return BeanUtil.copyToList(saveApiResourcePOS, BaseApiResourceDTO.class, CopyOptions.create());
         }
 
-        List<BaseApiResourcePO> needSaveApiResourcePOS = new ArrayList<>();
+        // 需要新增的部分
+        Collection<BaseApiResourcePO> needSaveApiResourcePOS = CollectionUtils.subtract(saveApiResourcePOS, existsApiResourcePOS);
 
-        // 首先是修改已存在数据
         existsApiResourcePOS.stream().forEach(p1->{
+
             saveApiResourcePOS.stream().forEach(p2->{
                 // 相同，修改
                 if (Objects.equals(p1.getPattern() + p1.getMethod(), p2.getPattern()+p2.getMethod())) {
                     p1.setRemark(p2.getRemark());
-                } else {
-                    needSaveApiResourcePOS.add(p2);
                 }
             });
         });

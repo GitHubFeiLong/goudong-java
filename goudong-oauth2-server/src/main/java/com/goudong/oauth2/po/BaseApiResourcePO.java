@@ -8,6 +8,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Objects;
 
 
 /**
@@ -39,5 +40,18 @@ public class BaseApiResourcePO extends BasePO implements Serializable  {
      * 备注
      */
     private String remark;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseApiResourcePO that = (BaseApiResourcePO) o;
+        return Objects.equals(pattern, that.pattern) && Objects.equals(method, that.method) && Objects.equals(applicationName, that.applicationName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pattern, method, applicationName);
+    }
 }
 

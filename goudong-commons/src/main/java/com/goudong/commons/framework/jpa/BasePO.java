@@ -70,6 +70,6 @@ public abstract class BasePO implements Serializable {
      * 删除状态 0 正常1 删除
      */
     @Column(name = "deleted")
-    private Boolean deleted;
+    protected Boolean deleted;
 
 }

@@ -1,8 +1,11 @@
 package com.goudong.commons.enumerate.core;
 
+import com.goudong.commons.utils.core.LogUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -43,6 +46,11 @@ public enum DatabaseKeyEnum {
      * 角色菜单表角色id和菜单id唯一索引
      */
     UK_BASE_ROLE_MENU__BASE_ROLE_ID_BASE_MENU_ID("保存角色菜单失败，角色已拥有菜单"),
+
+    /**
+     * api接口资源表的唯一索引
+     */
+    UQ_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("保存api_resource失败，数据已存在")
     ;
 
     /**
@@ -59,7 +67,10 @@ public enum DatabaseKeyEnum {
      * @param keyName 索引名(唯一索引名)
      * @return
      */
-    public static String getClientMessage (String keyName) {
+    public static String getClientMessage (@NotNull String keyName) {
+        if (StringUtils.isBlank(keyName)) {
+            return null;
+        }
         DatabaseKeyEnum[] values = DatabaseKeyEnum.values();
         for (int i = 0; i < values.length; i++) {
             if (Objects.equals(keyName, values[i].name().toLowerCase())) {
@@ -67,6 +78,7 @@ public enum DatabaseKeyEnum {
             }
         }
         // 如果系统报错是数据库约束（非空、唯一等），但是没有在该枚举中进行配置，那么就直接返回null对象，使用数据库的提示
+        LogUtil.error(log, "请新增成员变量：{}", keyName.toUpperCase());
         return null;
     }
 }
