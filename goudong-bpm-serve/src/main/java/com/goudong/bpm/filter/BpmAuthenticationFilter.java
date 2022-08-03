@@ -39,8 +39,7 @@ public class BpmAuthenticationFilter implements Filter {
         try {
             BaseUserDTO user = UserContext.get();
             // id=0，表示是匿名用户。
-            //if (user == null || user.getId() == 0) {
-            if (user == null && user.getId() == 0) {
+            if (user == null) {
                 LogUtil.warn(log, "本次请求未认证");
                 throw new ClientException(ClientExceptionEnum.UNAUTHORIZED);
             }

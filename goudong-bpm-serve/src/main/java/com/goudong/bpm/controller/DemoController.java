@@ -1,6 +1,6 @@
 package com.goudong.bpm.controller;
 
-import com.goudong.commons.annotation.core.Inner;
+import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
@@ -34,7 +34,8 @@ public class DemoController {
     //~methods
     //==================================================================================================================
     @ApiOperation(value = "测试")
-    @Inner
+    //@Inner
+    @Whitelist
     @GetMapping("/demo")
     public String demo() {
         Result<BaseUserDTO> baseUserDTOResult = goudongOauth2ServerService.currentUser();
