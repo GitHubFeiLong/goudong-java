@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * 类描述：
  * commons配置Jpa
+ *
  * @author msi
  * @version 1.0
  * @date 2021/12/12 12:05

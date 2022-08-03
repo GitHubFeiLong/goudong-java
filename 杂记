@@ -16,3 +16,20 @@ redis 添加key 时设置过期时间，加参数 加上一个随机时间，避
 
 ## 一些小sql汇总
 用于保存sql脚本，太多文件不太好，强迫症
+
+
+## jpa
+
+这种方式会生成一个 hibernate_sequence 表存储序列。seata使用会报错
+```java
+@Id
+@GeneratedValue(strategy= GenerationType.AUTO)
+private Long id;
+```
+
+## Feign
+feign 在调用时如果参数丢失，需要加上参数注解
+```java
+@DeleteMapping("/warehouse/del-warehouse")
+Result<Object> save(@RequestParam("product") String product);
+```
