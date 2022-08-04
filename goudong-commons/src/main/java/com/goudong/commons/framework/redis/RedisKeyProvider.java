@@ -44,4 +44,26 @@ public interface RedisKeyProvider extends Serializable {
      * @return
      */
     TimeUnit getTimeUnit();
+
+    /**
+     * 根据对象的getTime()和getTimeUnit() 获取一个second
+     * 在设置key过期时间时，直接使用秒做为单位，方便加上随机数
+     * @return
+     */
+    default long getTime2Second(RedisTool.Entry entry) {
+
+        long time = getTime();
+
+        // 如果gai key 设置的是永不失效，就不额外处理
+        if (time == -1) {
+            return time;
+        }
+
+        // 如果 开启了雪崩处理,加上指定秒
+        if (entry != null && entry.getEnableSnowSlideHandlerSnow()) {
+            return getTimeUnit().toSeconds(time) + entry.getSnowSlideHandlerSecond();
+        }
+
+        return getTimeUnit().toSeconds(time);
+    }
 }

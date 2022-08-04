@@ -2,9 +2,7 @@ package com.goudong.user.config;
 
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
-import com.goudong.commons.aop.RedisRandomSecondAop;
 import com.goudong.commons.aop.RepeatAop;
-import com.goudong.commons.framework.redis.RedisTool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -50,10 +48,4 @@ public class CommonsConfig {
     public RepeatAop repeatAop() {
         return new RepeatAop();
     }
-
-    @Bean
-    public RedisRandomSecondAop redisRandomSecondAop(RedisTool redisTool) {
-        return new RedisRandomSecondAop(redisTool);
-    }
-
 }

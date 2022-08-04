@@ -1,17 +1,15 @@
 package com.goudong.commons.aop;
 
 import com.goudong.commons.framework.redis.RedisTool;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.stereotype.Component;
 
 /**
  * 类描述：
- * RedisTool的切面，
+ * 雪崩处理器AOP
  * 前置通知（Before）：在目标方法被调用之前调用通知功能
  * 后置通知（After）：在目标方法完成之后调用通知，此时不会关心方法的输出是什么
  * 返回通知（After-returning）：在目标方法成功执行之后调用通知
@@ -26,15 +24,18 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Aspect
-@Component
-@RequiredArgsConstructor
-public class RedisRandomSecondAop {
+public class SnowSlideHandlerAop {
 
-	private final RedisTool redisTool;
-	 /**
+	private RedisTool redisTool;
+
+	public SnowSlideHandlerAop(RedisTool redisTool) {
+		this.redisTool = redisTool;
+	}
+
+	/**
 	  * 定义切点
 	  */
-	 @Pointcut(value = "@annotation(com.goudong.commons.annotation.aop.RedisRandomSecond)")
+	 @Pointcut(value = "@annotation(com.goudong.commons.annotation.aop.SnowSlideHandler)")
 	 public void redisRandomSecond(){
 	 	// aop 切点，避免代码检测报错问题
 	 }

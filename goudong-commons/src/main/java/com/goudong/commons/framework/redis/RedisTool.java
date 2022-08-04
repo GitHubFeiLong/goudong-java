@@ -2,14 +2,15 @@ package com.goudong.commons.framework.redis;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
-import com.goudong.commons.annotation.aop.RedisRandomSecond;
+import com.goudong.commons.annotation.aop.SnowSlideHandler;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.PrimitiveTypeUtil;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.connection.DataType;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * 类描述：
  * Redis操作RedisKeyProvider
  * TODO 这里需要使用Lua脚本进行修改，避免执行一半成功一半失败
- * TODO 使用ThreadLocal，让某些数据对准时性要求不高时，在给过期时间时，加上一点随机数，避免缓存雪崩的问题。
+ *
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
  */
@@ -34,15 +35,32 @@ import java.util.concurrent.TimeUnit;
 public class RedisTool extends RedisTemplate {
 
     /**
-     * 添加随机的时长单位秒
-     */
-    private static final int RANDOM_SECOND = 10;
-
-    /**
      * 使用ThreadLocal变量，在其它方法执行时，做其它操作。
      * 方法内判断是否有开启失效时间增加随机秒，然后进行处理
+     * 使用ThreadLocal，让某些数据对准时性要求不高时，在给过期时间时，加上一点随机数，避免缓存雪崩的问题。
+     *
+     * @see com.goudong.commons.aop.SnowSlideHandlerAop 进行清理ThreadLocal
      */
-    private static final ThreadLocal<Boolean> RANDOM_LABEL = new ThreadLocal<>();
+    private static final ThreadLocal<Entry> ENTRY_THREAD_LOCAL = new ThreadLocal<>();
+
+    @Getter
+    static class Entry {
+        /**
+         * 是否启用雪崩处理
+         */
+        private Boolean enableSnowSlideHandlerSnow = false;
+
+        /**
+         * 新增多少秒
+         */
+        private Long snowSlideHandlerSecond = 0L;
+
+        public Entry(boolean enableSnowSlideHandlerSnow) {
+            this.enableSnowSlideHandlerSnow = enableSnowSlideHandlerSnow;
+            // 随机增加0~60s
+            this.snowSlideHandlerSecond = RandomUtil.randomLong(0, 60);
+        }
+    }
 
     //~methods
     //==================================================================================================================
@@ -52,7 +70,7 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     public RedisTool enableRandom() {
-        RANDOM_LABEL.set(true);
+        ENTRY_THREAD_LOCAL.set(new Entry(true));
         return this;
     }
 
@@ -61,7 +79,7 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     public RedisTool disableRandom() {
-        RANDOM_LABEL.remove();
+        ENTRY_THREAD_LOCAL.remove();
         return this;
     }
 
@@ -227,7 +245,6 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    @RedisRandomSecond
     public boolean set(@Valid RedisKeyProvider redisKey, Object value, Object... param){
         DataType dataType = redisKey.getRedisType();
         // TODO Class先不做校验，看下注解是否有效
@@ -244,7 +261,6 @@ public class RedisTool extends RedisTemplate {
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
                 throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
         }
-
     }
 
     /**
@@ -255,6 +271,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
+    @SnowSlideHandler
     private boolean setString(RedisKeyProvider redisKey, Object value, Object... param) {
         String key = getKey(redisKey, param);
 
@@ -263,8 +280,10 @@ public class RedisTool extends RedisTemplate {
             value = JSON.toJSONString(value);
         }
 
-        if (redisKey.getTime() > 0) {
-            super.opsForValue().set(key, value, redisKey.getTime(), redisKey.getTimeUnit());
+        // 获取过期时间单位秒
+        long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
+        if (second > 0) {
+            super.opsForValue().set(key, value, second, TimeUnit.SECONDS);
         } else {
             super.opsForValue().set(key, value);
         }
@@ -279,6 +298,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
+    @SnowSlideHandler
     private boolean setHash(RedisKeyProvider redisKey, Object value, Object... param){
         // 获取完整的 key
         String key = getKey(redisKey, param);
@@ -289,9 +309,12 @@ public class RedisTool extends RedisTemplate {
             return false;
         }
         super.opsForHash().putAll(key, stringObjectMap);
-        if (redisKey.getTime() > 0) {
+
+        // 获取过期时间单位秒
+        long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
+        if (second > 0) {
             // 设置过期时常
-            super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
+            super.expire(key, second, TimeUnit.SECONDS);
         }
 
         if (redisKey.getJavaType().isInstance(value)) {
@@ -311,6 +334,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
+    @SnowSlideHandler
     private boolean setList(RedisKeyProvider redisKey, Object value, Object[] param) {
         // 转换list
         List list = (List)value;
@@ -325,9 +349,13 @@ public class RedisTool extends RedisTemplate {
             }
             // 添加
             super.opsForList().rightPushAll(key, list);
+
+            // 获取过期时间单位秒
+            long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
             // 设置过期时间
-            if (redisKey.getTime() > 0) {
-                super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
+            if (second > 0) {
+                // 设置过期时常
+                super.expire(key, second, TimeUnit.SECONDS);
             }
             // 类型比较
             if (redisKey.getJavaType().isInstance(list.get(0))) {
@@ -352,6 +380,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
+    @SnowSlideHandler
     private boolean setSet(RedisKeyProvider redisKey, Object value, Object[] param) {
         Set set;
         try {
@@ -364,8 +393,13 @@ public class RedisTool extends RedisTemplate {
         // 获取完整的 key
         String key = getKey(redisKey, param);
         super.opsForSet().add(key, set);
-        if (redisKey.getTime() > 0) {
-            super.expire(key, redisKey.getTime(), redisKey.getTimeUnit());
+
+        // 获取过期时间单位秒
+        long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
+        // 设置过期时间
+        if (second > 0) {
+            // 设置过期时常
+            super.expire(key, second, TimeUnit.SECONDS);
         }
 
         if (CollectionUtils.isNotEmpty(set)) {
@@ -378,10 +412,8 @@ public class RedisTool extends RedisTemplate {
             }
         }
 
-
         return true;
     }
-
 
     /**
      * 类似门面,设置数据到redis,根据{@link RedisKeyProvider#getKey()}和{@link RedisKeyProvider#getJavaType()}进行获取值.
@@ -490,7 +522,7 @@ public class RedisTool extends RedisTemplate {
     }
 
     public static void main(String[] args) {
-        String 吃 = StrUtil.format("陈飞龙 {ad}岁，早饭{}了", "18", "吃");
-        System.out.println("吃 = " + 吃);
+        //String 吃 = StrUtil.format("陈飞龙 {ad}岁，早饭{}了", "18", "吃");
+        //System.out.println("吃 = " + 吃);
     }
 }

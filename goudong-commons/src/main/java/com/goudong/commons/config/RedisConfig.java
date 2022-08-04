@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.goudong.commons.aop.SnowSlideHandlerAop;
 import com.goudong.commons.framework.redis.RedisTool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -112,5 +113,15 @@ public class RedisConfig {
         template.setHashValueSerializer(serializer);
         template.afterPropertiesSet();
         return template;
+    }
+
+    /**
+     * redisTool 的aop注入
+     * @param redisTool
+     * @return
+     */
+    @Bean
+    public SnowSlideHandlerAop snowSlideHandleAop(RedisTool redisTool) {
+        return new SnowSlideHandlerAop(redisTool);
     }
 }

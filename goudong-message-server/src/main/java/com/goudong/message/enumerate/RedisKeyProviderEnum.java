@@ -5,6 +5,7 @@ import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * 用户服务的redis key，及 过期时间，及时间的单位
  * 参数使用`${}`进行包裹，例如"user:${user-id}",RedisTool会动态设置参数值
  *
+ * @see com.goudong.commons.framework.redis.RedisKeyTemplateProviderEnum
  * @author msi
  * @date 2022/1/26 16:46
  * @version 1.0
@@ -80,19 +82,19 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
     }
 
     /**
-     *
+     * 必须拥有该构造方法
      * @param key key模板字符串
      * @param redisType redis数据类型
      * @param javaType java数据类型
      * @param time 过期时长
-     * @param timeUnit 过期时长单位
+     * @param timeUnit 过期时长单位。 如果传入null，就使用默认秒作为单位
      */
-    RedisKeyProviderEnum(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit) {
+    RedisKeyProviderEnum(String key, DataType redisType, Class javaType, long time, TimeUnit timeUnit){
         this.key = key;
         this.redisType = redisType;
         this.javaType = javaType;
         this.time = time;
-        this.timeUnit = timeUnit;
+        this.timeUnit = Optional.ofNullable(timeUnit).orElseGet(()->TimeUnit.SECONDS);
     }
 
     //~methods
