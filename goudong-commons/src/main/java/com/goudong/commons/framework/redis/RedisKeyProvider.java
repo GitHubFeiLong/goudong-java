@@ -8,6 +8,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * 类描述：
  * RedisKey定义接口，能获取到一些关键信息
+ *
+ * 使用方式有两种：
+ * 1. 使用枚举方式，参考 {@link RedisKeyTemplateProviderEnum}
+ * 2. 使用常量方式，参考 {@link SimpleRedisKey}
  * @Author e-Feilong.Chen
  * @Date 2022/1/11 14:48
  */

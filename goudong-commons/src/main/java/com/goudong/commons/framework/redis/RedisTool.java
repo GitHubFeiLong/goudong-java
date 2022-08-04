@@ -504,7 +504,7 @@ public class RedisTool extends RedisTemplate {
      * @param param
      * @return
      */
-    public <T> Set<T> getSet(RedisKeyProvider redisKey,  Class<T> clazz, Object... param) {
+    public <T> Set<T> getSet(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         // 获取完整的 key
         String key = getKey(redisKey, param);
         // TODO set还不是清楚怎么使用
