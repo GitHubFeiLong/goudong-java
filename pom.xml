@@ -134,6 +134,17 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson-spring-boot-starter.version}</version>
+                <!--排除其它依赖-->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-actuator</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -298,7 +309,7 @@
                 <artifactId>activiti-spring-boot-starter</artifactId>
                 <version>${activiti-spring-boot-starter.version}</version>
             </dependency>
-            <!--hibernate type-->
+            <!--hibernate type(用来解决对象保存数据库的json)-->
             <dependency>
                 <groupId>com.vladmihalcea</groupId>
                 <artifactId>hibernate-types-52</artifactId>

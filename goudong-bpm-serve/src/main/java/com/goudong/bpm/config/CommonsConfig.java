@@ -1,11 +1,15 @@
 package com.goudong.bpm.config;
 
 import com.goudong.commons.annotation.enable.*;
+import com.goudong.commons.aop.ApiRepeatAop;
 import com.goudong.commons.aop.LoggingAop;
-import com.goudong.commons.aop.RepeatAop;
+import com.goudong.commons.framework.redis.RedisTool;
+import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
@@ -42,23 +46,8 @@ public class CommonsConfig {
      * 防止重复请求
      * @return
      */
-    // @Bean
-    // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    public RepeatAop repeatAop() {
-        return new RepeatAop();
+    @Bean
+    public ApiRepeatAop repeatAop(HttpServletRequest request, RedisTool redisTool, RedissonClient redissonClient) {
+        return new ApiRepeatAop(request, redisTool, redissonClient);
     }
-
-    ///**
-    // * 请求进入bpm时，将用户信息填入 SecurityContextHolder,并设置 activiti的 AuthenticatedUserId
-    // * @return
-    // */
-    //@Bean("bpmAuthenticationFilter")
-    //public FilterRegistrationBean bpmAuthenticationFilter(){
-    //    FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
-    //    filterFilterRegistrationBean.setFilter(new BpmAuthenticationFilter());
-    //    filterFilterRegistrationBean.setOrder(10);//执行的顺序，值越低，优先级越高
-    //    filterFilterRegistrationBean.addUrlPatterns("/*");
-    //    return filterFilterRegistrationBean;
-    //}
-
 }

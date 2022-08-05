@@ -17,6 +17,7 @@
         <module>activiti-spring-boot</module>
         <module>seata-client-a</module>
         <module>seata-client-b</module>
+        <module>xxl-job</module>
     </modules>
 
     <properties>

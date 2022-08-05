@@ -124,6 +124,27 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     }
 
     /**
+     * 创建匿名用户
+     * @param sessionId 用户会话唯一id
+     * @return
+     */
+    public static BaseUserPO createAnonymousUser(String sessionId) {
+        BaseUserPO anonymousUser = new BaseUserPO();
+        anonymousUser.setAuthenticated(true);
+        // 这里id不能修改，其他地方已经定义了0是匿名用户
+        anonymousUser.setId(0L);
+        anonymousUser.setUsername("匿名用户");
+        anonymousUser.setSessionId(sessionId);
+        // 创建匿名角色
+        BaseRolePO baseRolePO = new BaseRolePO();
+        baseRolePO.setId(0L);
+        baseRolePO.setRoleName(RoleConst.ROLE_ANONYMOUS);
+        baseRolePO.setRoleNameCn("匿名角色");
+        anonymousUser.setRoles(Lists.newArrayList(baseRolePO));
+        return anonymousUser;
+    }
+
+    /**
      * 获取用户权限，本质上是用户的角色信息
      * @return
      */
@@ -231,4 +252,9 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
         return this.username;
     }
 
+    /**
+     * 自定义的一个会话id，用于区分发起请求的用户，可以是认证过后的token可以是未登录的cookie
+     */
+    @Transient
+    private String sessionId;
 }

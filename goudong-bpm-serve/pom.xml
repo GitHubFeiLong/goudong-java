@@ -167,6 +167,13 @@
             <artifactId>commons-io</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <!--排除其它依赖-->
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

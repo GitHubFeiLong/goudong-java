@@ -1,7 +1,6 @@
 package com.goudong.oauth2.service.impl;
 
 import com.alibaba.fastjson.JSON;
-
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
@@ -123,13 +122,18 @@ public class BaseUserServiceImpl implements BaseUserService {
     public BaseUserPO getAuthentication(HttpServletRequest request) {
         LogUtil.info(log, "uri:{},method:{}", request.getRequestURI(), request.getMethod());
         // 获取请求头中设置的accessToken
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.isNotBlank(header) && header.startsWith("Bearer ")) {
+        String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        // 请求的sessionId，默认使用Cookie，当authorization不为空时，使用token做sessionId
+        String sessionId = request.getHeader(HttpHeaders.COOKIE);
+        if (StringUtils.isNotBlank(authorization) && authorization.startsWith("Bearer ")) {
             // 截取，获取完整的访问令牌
-            String accessToken = header.substring(7);
+            String accessToken = authorization.substring(7);
             // 获取客户端类型
             ClientSideEnum clientSide = ClientSideEnum.getClientSide(request);
             String clientSideLowerName = clientSide.getLowerName();
+
+            // 有token，就将session设置成token
+            sessionId = accessToken;
 
             // 获取redis中用户信息
             String json = redisTool.getString(RedisKeyProviderEnum.AUTHENTICATION, clientSideLowerName, accessToken);
@@ -140,6 +144,13 @@ public class BaseUserServiceImpl implements BaseUserService {
                 // 判断用户是否过期，未过期直接返回 TODO 后期有锁定等其它状态直接追加判断
                 if (baseUserPO.isAccountNonExpired()) {
                     LogUtil.info(log, "user:{}", baseUserPO);
+                    baseUserPO.setSessionId(sessionId);
+
+                    // 刷新redis中认证信息的失效时间
+                    TokenExpires tokenExpires = TokenExpires.getTokenExpires(clientSide, tokenExpiresProperties);
+                    redisTool.expireByCustom(RedisKeyProviderEnum.AUTHENTICATION, tokenExpires.getAccess(),
+                            tokenExpires.getAccessTimeUnit(), clientSide.getLowerName(), accessToken);
+
                     return baseUserPO;
                 }
 
@@ -163,6 +174,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                         this.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
 
                         // 返回用户信息
+                        baseUserPO.setSessionId(sessionId);
                         return baseUserPO;
                     }
 
@@ -179,7 +191,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         // redis中不存在，数据库不存在令牌，设置一个匿名用户
-        return BaseUserPO.createAnonymousUser();
+        return BaseUserPO.createAnonymousUser(sessionId);
     }
 
     /**

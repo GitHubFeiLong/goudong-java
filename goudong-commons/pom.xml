@@ -67,7 +67,7 @@
             <artifactId>redisson-spring-boot-starter</artifactId>
             <!--排除其它依赖-->
             <optional>true</optional>
-            <exclusions>
+            <!--<exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
@@ -76,7 +76,7 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-actuator</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
         <!--validation-->
         <dependency>

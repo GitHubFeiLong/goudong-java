@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  * 因为activiti集成了security，所以这里我们需要使用这个拦截器，将网关传递的用户信息填充到spring security上下文中
  *extends OncePerRequestFilter
  *
+ * FilterRegistrationBean使用
  * @author cfl
  * @version 1.0
  * @date 2022/7/31 23:11

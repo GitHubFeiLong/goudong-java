@@ -26,9 +26,6 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848 # nacos服务集群
-    alibaba:
-      seata:
-        tx-service-group: my_test_tx_group #配置事务分组；nacos的service.vgroupMapping.my_test_tx_group=default
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
@@ -79,20 +76,6 @@ knife4j:
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
 
-## seata server相关配置
-########################################################################################################################
-seata:
-  registry: #配置seata的注册中心，告诉微服务怎么去访问seate server
-    type: nacos
-    nacos:
-      server-addr: 127.0.0.1:8848 # seata server 所注册的nacos地址
-      application: seata-server # 服务名
-      group: SEATA_GROUP # seata server 所在的分组
-  config: # 配置seata的配置中心，可以读取关于 seata client的一些配置
-    type: nacos
-    nacos:
-      server-addr: 127.0.0.1:8848
-      group: SEATA_GROUP
 
 # 配置commons
 ########################################################################################################################
@@ -104,7 +87,7 @@ commons:
     failure-retry-num: 5
   # 配置api资源
   api-resource:
-    enable: true
+    enable: false
 
 # 配置oauth2
 ########################################################################################################################
@@ -115,7 +98,7 @@ oauth2:
     # 浏览器
     browser:
       access: 1
-      access-time-unit: minutes
+      access-time-unit: hours
       refresh: 2
       refresh-time-unit: days
 

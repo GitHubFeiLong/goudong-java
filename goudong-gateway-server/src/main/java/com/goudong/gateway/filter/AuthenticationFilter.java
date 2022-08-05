@@ -77,16 +77,28 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             });
         }
 
+        // 本次请求是登录认证时，不需要进行后面的处理
+        if (uri.contains("/authentication/login")) {
+            return chain.filter(exchange);
+        }
+
+        // 获取请求头Authorization对应的属性值
         List<String> tokenList = request.getHeaders().get(HttpHeaders.AUTHORIZATION);
         String token = null;
         if (!CollectionUtils.isEmpty(tokenList)) {
             token = tokenList.get(0);
         }
 
+        // 获取cookie，用来做用户标识
+        String cookie = request.getHeaders().getFirst(HttpHeaders.COOKIE);
+        if (cookie != null && cookie.contains("=")) {
+            cookie = cookie.substring(cookie.indexOf("=") + 1);
+        }
+
         // 鉴权，返回用户信息
         // 注意：内部服务间使用Feign调用，不会走网关！所以也就不会在进行鉴权！
         // 如果需求是内部服务也要鉴权，那么就需要每个服务都添加全局拦截器，调用下面这个鉴权方法即可！！
-        BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method, token).getData();
+        BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method, token, cookie).getData();
 
         // 将用户信息保存到请求头中，供下游服务使用
         ServerHttpRequest newRequest = request

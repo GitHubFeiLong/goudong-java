@@ -1,21 +1,14 @@
-package com.goudong.user.task;
+package com.goudong.modules.xxljob.task;
 
 import com.xxl.job.core.handler.annotation.XxlJob;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * 类描述：
  *
  * @author cfl
  * @version 1.0
- * @date 2022/7/13 21:37
+ * @date 2022/8/4 21:40
  */
-@Slf4j
-@Component
 public class XxlJobDemo {
     //~fields
     //==================================================================================================================
@@ -23,8 +16,9 @@ public class XxlJobDemo {
     //~methods
     //==================================================================================================================
     @XxlJob("demo")
-    public String demo () {
-        log.info("demo");
-        return "demo1" + LocalDateTime.now().toLocalDate();
+    public String demo() {
+        String s = "成功" + (int)(Math.random() * 100);
+        System.out.println(s);
+        return s;
     }
 }

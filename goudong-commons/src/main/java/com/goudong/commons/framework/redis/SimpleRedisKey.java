@@ -13,6 +13,15 @@ import java.util.concurrent.TimeUnit;
 public class SimpleRedisKey extends AbstractRedisKey{
     private static final long serialVersionUID = 6929800213090426273L;
 
+    /**
+     * 设置Api接口限流
+     * @param sessionIdApi 用户的sessionId和api地址拼接
+     */
+    public static final SimpleRedisKey API_REPEAT_KEY = new SimpleRedisKey("goudong-commons:api-repeat:${sessionIdApi}", DataType.STRING, Integer.class);
+
+    /**
+     * 类似
+     */
     public static final SimpleRedisKey KEY1 = new SimpleRedisKey("key1:${key2}", DataType.STRING, Object.class);
 
     //~fields

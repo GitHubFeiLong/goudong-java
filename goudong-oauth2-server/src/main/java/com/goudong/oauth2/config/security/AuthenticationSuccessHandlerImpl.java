@@ -85,6 +85,8 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
         // 将认证信息存储到redis中
         BaseUserDTO baseUser = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
+        baseUser.setSessionId(tokenDTO.getSessionId());
+        baseUserPO.setSessionId(tokenDTO.getSessionId());
         baseUserService.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
 
         // 保存认证日志

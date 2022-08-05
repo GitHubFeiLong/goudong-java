@@ -71,6 +71,10 @@ public class FeignConfig {
             public void apply(RequestTemplate requestTemplate) {
                 //1.RequestContextHolder拿到当前请求的数据，相当与拿到controller入参的HttpServletRequest
                 ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+                /*
+                    服务之间的调用（不包含网关）,会进入if
+                 */
                 if (requestAttributes != null) {
                     //老请求
                     HttpServletRequest request = requestAttributes.getRequest();
@@ -96,9 +100,11 @@ public class FeignConfig {
                             // 自定义内部服务调用的请求头标识
                             .header(HttpHeaderConst.X_INNER, HttpHeaderConst.X_INNER)
                     ;
-
+                } else {
+                    /*
+                        gateway 使用Feign时，
+                     */
                 }
-
             }
         };
     }

@@ -30,7 +30,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     /**
      * 根据用户名获取用户详情
-     * TODO 使用feign 调用权限服务获取用户信息？？？
+     *
      * @param username the username identifying the user whose data is required.
      *
      * @return

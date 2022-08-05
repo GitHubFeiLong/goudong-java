@@ -245,6 +245,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
+    @SnowSlideHandler
     public boolean set(@Valid RedisKeyProvider redisKey, Object value, Object... param){
         DataType dataType = redisKey.getRedisType();
         // TODO Class先不做校验，看下注解是否有效
@@ -271,7 +272,6 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    @SnowSlideHandler
     private boolean setString(RedisKeyProvider redisKey, Object value, Object... param) {
         String key = getKey(redisKey, param);
 
@@ -298,7 +298,6 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    @SnowSlideHandler
     private boolean setHash(RedisKeyProvider redisKey, Object value, Object... param){
         // 获取完整的 key
         String key = getKey(redisKey, param);
@@ -334,7 +333,6 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    @SnowSlideHandler
     private boolean setList(RedisKeyProvider redisKey, Object value, Object[] param) {
         // 转换list
         List list = (List)value;
@@ -380,7 +378,6 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    @SnowSlideHandler
     private boolean setSet(RedisKeyProvider redisKey, Object value, Object[] param) {
         Set set;
         try {

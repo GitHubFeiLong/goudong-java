@@ -2,8 +2,10 @@ package com.goudong.commons.framework.mvc.error;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
+import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.framework.core.Result;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -58,9 +60,19 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             // 设置响应码值
             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, be.getStatus());
             return map;
+        } else {
+            // 其它不确定异常
+            BasicException be = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, error.getMessage());
+            Result result = Result.ofFail(be);
+            Map<String, Object> map = BeanUtil.beanToMap(result);
+
+            // 设置响应码值
+            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, be.getStatus());
+            return map;
         }
 
-        return super.getErrorAttributes(webRequest, options);
+        // 使用默认的错误
+        // return super.getErrorAttributes(webRequest, options);
     }
 
 }

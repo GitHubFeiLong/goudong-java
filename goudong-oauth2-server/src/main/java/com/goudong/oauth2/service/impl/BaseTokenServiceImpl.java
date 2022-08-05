@@ -128,7 +128,11 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         // 新建
         this.baseTokenRepository.save(baseTokenPO);
 
-        return BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
+        BaseTokenDTO baseTokenDTO = BeanUtil.copyProperties(baseTokenPO, BaseTokenDTO.class);
+
+        // 设置sessionId
+        baseTokenDTO.setSessionId(baseTokenDTO.getAccessToken());
+        return baseTokenDTO;
     }
 
 

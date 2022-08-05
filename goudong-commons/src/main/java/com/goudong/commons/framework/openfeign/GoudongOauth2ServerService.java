@@ -74,12 +74,15 @@ public interface GoudongOauth2ServerService {
      * @param uri 请求地址
      * @param method 请求方式
      * @param token 令牌
+     * @param cookie
      * @return
      */
     @GetMapping("/authentication/authorize")
     Result<BaseUserDTO> authorize(@RequestParam("uri") @NotBlank String uri
             , @RequestParam("method") @NotBlank String method
-            , @RequestHeader(HttpHeaders.AUTHORIZATION) String token) ;
+            , @RequestHeader(HttpHeaders.AUTHORIZATION) String token
+            , @RequestHeader(HttpHeaders.COOKIE) String cookie
+    );
 
     //~ 测试seata
     //==================================================================================================================

@@ -2,7 +2,6 @@ package com.goudong.message.config;
 
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
-import com.goudong.commons.aop.RepeatAop;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -43,8 +42,8 @@ public class CommonsConfig {
      */
     // @Bean
     // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    public RepeatAop repeatAop() {
-        return new RepeatAop();
-    }
+    //public ApiRepeatAop repeatAop() {
+    //    return new ApiRepeatAop();
+    //}
 
 }

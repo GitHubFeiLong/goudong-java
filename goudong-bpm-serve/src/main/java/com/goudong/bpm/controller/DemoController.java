@@ -1,5 +1,6 @@
 package com.goudong.bpm.controller;
 
+import com.goudong.commons.annotation.aop.ApiRepeat;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.framework.core.Result;
@@ -37,6 +38,7 @@ public class DemoController {
     //@Inner
     @Whitelist
     @GetMapping("/demo")
+    @ApiRepeat(10)
     public String demo() {
         Result<BaseUserDTO> baseUserDTOResult = goudongOauth2ServerService.currentUser();
         LogUtil.info(log, "进入控制器");
