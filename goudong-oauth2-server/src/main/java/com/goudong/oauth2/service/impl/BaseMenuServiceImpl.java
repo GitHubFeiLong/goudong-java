@@ -51,12 +51,12 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     //==================================================================================================================
 
     /**
-     * 查询所有菜单，返回Tree
+     * 查询所有菜单
      *
      * @return
      */
     @Override
-    public List<BaseMenuDTO> findAll2Tree() {
+    public List<BaseMenuDTO> findAll() {
         // 查询redis是否存在，不存在再加锁查询数据库
         List<BaseMenuDTO2Redis> menuDTO2Redis = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO2Redis.class);
         if (CollectionUtils.isNotEmpty(menuDTO2Redis)) {

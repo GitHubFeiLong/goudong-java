@@ -178,19 +178,30 @@ public class AuthenticationController {
         /*
             不是白名单，不是内部调用，就需要判断该请求需要什么角色的权限
          */
-        baseMenuService.findAll2Tree();
-        // 循环用户所有角色
-        for (GrantedAuthority role : authentication.getAuthorities()) {
-            // 查询角色又拥有的权限
-            List<BaseMenuDTO> menus = baseMenuService.findAllByRole(role.getAuthority());
-            // 循环权限，查看是否符合
-            for (BaseMenuDTO menu : menus) {
-                String menuUrl = menu.getMetadata().getUrl();
-                String menuMethod = menu.getMetadata().getMethod();
-                // 符合条件，退出循环
-                if (antPathMatcher.match(menuUrl, uri) && Objects.equals(menuMethod, method)) {
-                    LogUtil.debug(log, "本次请求用户有权访问role:{} uri:{}", role.getAuthority(), httpServletRequest.getRequestURI());
-                    return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+        List<BaseMenuDTO> allMenu = baseMenuService.findAll();
+
+        // 判断是否需要鉴权
+        long count = allMenu.parallelStream().filter(f -> {
+            // 符合条件，本次请求需要鉴权
+            return antPathMatcher.match(f.getMetadata().getUrl(), uri) && Objects.equals(f.getMetadata().getMethod(), method);
+        }).count();
+        boolean isNeedAuthentication = count > 0;
+
+        // 只有需要”鉴权“时，才进行鉴权
+        if (isNeedAuthentication) {
+            // 循环用户所有角色
+            for (GrantedAuthority role : authentication.getAuthorities()) {
+                // 查询角色又拥有的权限
+                List<BaseMenuDTO> menus = baseMenuService.findAllByRole(role.getAuthority());
+                // 循环权限，查看是否符合
+                for (BaseMenuDTO menu : menus) {
+                    String menuUrl = menu.getMetadata().getUrl();
+                    String menuMethod = menu.getMetadata().getMethod();
+                    // 符合条件，退出循环
+                    if (antPathMatcher.match(menuUrl, uri) && Objects.equals(menuMethod, method)) {
+                        LogUtil.debug(log, "本次请求用户有权访问role:{} uri:{}", role.getAuthority(), httpServletRequest.getRequestURI());
+                        return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+                    }
                 }
             }
         }

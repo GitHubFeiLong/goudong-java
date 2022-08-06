@@ -17,10 +17,10 @@ import java.util.List;
 public interface BaseMenuService {
 
     /**
-     * 查询所有菜单，返回Tree
+     * 查询所有菜单
      * @return
      */
-    List<BaseMenuDTO> findAll2Tree();
+    List<BaseMenuDTO> findAll();
 
     /**
      * 查询指定role的菜单资源
