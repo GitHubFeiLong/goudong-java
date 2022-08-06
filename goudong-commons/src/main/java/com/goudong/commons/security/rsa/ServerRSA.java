@@ -5,6 +5,7 @@ import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
 import com.goudong.commons.utils.core.IOUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
+import org.springframework.core.io.ClassPathResource;
 import sun.security.rsa.RSAPublicKeyImpl;
 
 import java.io.File;
@@ -38,13 +39,11 @@ public class ServerRSA {
     /**
      * 公钥文件保存文件位置
      */
-    @Deprecated
     private static final String PUBLIC_KEY_PATH = new StringBuilder().append(".ssh").append(File.separator).append("server").append(File.separator).append("rsa.pub").toString();
 
     /**
      * 私钥文件保存文件位置
      */
-    @Deprecated
     private static final String PRIVATE_KEY_PATH = new StringBuilder().append(".ssh").append(File.separator).append("server").append(File.separator).append("rsa").toString();
 
     /**
@@ -121,11 +120,10 @@ public class ServerRSA {
      */
     @SneakyThrows
     private static PublicKey getPublicKeyByFile() {
-        //ClassPathResource publicClassPathResource = new ClassPathResource(PUBLIC_KEY_PATH);
-        File publicKeyFile = new File(ServerRSA.class.getResource("/.ssh/server/rsa").getFile());
-
+        ClassPathResource publicClassPathResource = new ClassPathResource(PUBLIC_KEY_PATH);
         // 公钥文件是否存在
-        if (publicKeyFile.exists()) {
+        if (publicClassPathResource.exists()) {
+            File publicKeyFile = publicClassPathResource.getFile();
             // 公钥文件存储时使用Base64编码后保存d的
             String publicKeyBase64 = IOUtil.readFile(publicKeyFile);
 
@@ -145,9 +143,10 @@ public class ServerRSA {
      */
     @SneakyThrows
     private static PrivateKey getPrivateKeyByFile()  {
-        File privateKeyFile = new File(ServerRSA.class.getResource("/.ssh/server/rsa").getFile());
+        ClassPathResource privateClassPathResource = new ClassPathResource(PRIVATE_KEY_PATH);
         // 私钥文件是否存在
-        if (privateKeyFile.exists()) {
+        if (privateClassPathResource.exists()) {
+            File privateKeyFile = privateClassPathResource.getFile();
             // 公钥文件存储时使用Base64编码后保存d的
             String privateKeyBase64 = IOUtil.readFile(privateKeyFile);
 
