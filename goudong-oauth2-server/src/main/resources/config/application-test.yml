@@ -2,8 +2,7 @@ logging:
   config: classpath:log4j2/log4j2-dev.xml
   level:
     ROOT: INFO
-    com.goudong.oauth2: DEBUG
-    com.goudong: INFO
+    com.goudong: DEBUG
 server:
   port: 10003
   servlet:
