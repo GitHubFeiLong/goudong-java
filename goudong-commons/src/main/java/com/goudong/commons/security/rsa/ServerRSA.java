@@ -1,15 +1,11 @@
 package com.goudong.commons.security.rsa;
 
-import cn.hutool.core.util.StrUtil;
 import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
-import com.goudong.commons.utils.core.IOUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
-import org.springframework.core.io.ClassPathResource;
 import sun.security.rsa.RSAPublicKeyImpl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -120,18 +116,22 @@ public class ServerRSA {
      */
     @SneakyThrows
     private static PublicKey getPublicKeyByFile() {
-        ClassPathResource publicClassPathResource = new ClassPathResource(PUBLIC_KEY_PATH);
-        // 公钥文件是否存在
-        if (publicClassPathResource.exists()) {
-            File publicKeyFile = publicClassPathResource.getFile();
-            // 公钥文件存储时使用Base64编码后保存d的
-            String publicKeyBase64 = IOUtil.readFile(publicKeyFile);
 
-            return (PublicKey) RSAUtil.base642Key(publicKeyBase64, true);
-        }
+        final String publicKeyBase64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgMMsJimfsZqN//iyRVfC/v2Yec7mf5lUeuFIsrquofl5VFwoUx13UQvV8WI4alHNCXKsnvNuIqQ7ESOznQ3aS4ZEvhpwnjMxDDvjZ9xCXRVU06e7ppI8I8neT2PtSh7IvV3gSRauLxMRkNw5UIhiPQ4hps0kLzfZwsRm17/FE/gBbN1MvNY77JneRgwsbuMIUaxn22Aqq2uZgTOOlLsHaGnthDBXb7QPlngxe/wAQF5cckJg4qzQ2AUtBV9PXrnK07cBT+cUWTYhKrvK2VWDXEgmv8b62WacpPVLuCJE9JWmuVqTgYhzTGfXGBr8l8hjCO8FOBzGPmgZTee3HcAcDQIDAQAB";
+        return (PublicKey) RSAUtil.base642Key(publicKeyBase64, true);
 
-        String errorMessage = StrUtil.format("保存公钥的资源文件不存在:{}", PUBLIC_KEY_PATH);
-        throw new FileNotFoundException(errorMessage);
+        //ClassPathResource publicClassPathResource = new ClassPathResource(PUBLIC_KEY_PATH);
+        //// 公钥文件是否存在
+        //if (publicClassPathResource.exists()) {
+        //    File publicKeyFile = publicClassPathResource.getFile();
+        //    // 公钥文件存储时使用Base64编码后保存d的
+        //    String publicKeyBase64 = IOUtil.readFile(publicKeyFile);
+        //
+        //    return (PublicKey) RSAUtil.base642Key(publicKeyBase64, true);
+        //}
+        //
+        //String errorMessage = StrUtil.format("保存公钥的资源文件不存在:{}", PUBLIC_KEY_PATH);
+        //throw new FileNotFoundException(errorMessage);
     }
 
     /**
@@ -143,18 +143,23 @@ public class ServerRSA {
      */
     @SneakyThrows
     private static PrivateKey getPrivateKeyByFile()  {
-        ClassPathResource privateClassPathResource = new ClassPathResource(PRIVATE_KEY_PATH);
-        // 私钥文件是否存在
-        if (privateClassPathResource.exists()) {
-            File privateKeyFile = privateClassPathResource.getFile();
-            // 公钥文件存储时使用Base64编码后保存d的
-            String privateKeyBase64 = IOUtil.readFile(privateKeyFile);
+        // 公钥文件存储时使用Base64编码后保存d的
+        String privateKeyBase64 = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCAwywmKZ+xmo3/+LJFV8L+/Zh5zuZ/mVR64Uiyuq6h+XlUXChTHXdRC9XxYjhqUc0Jcqye824ipDsRI7OdDdpLhkS+GnCeMzEMO+Nn3EJdFVTTp7umkjwjyd5PY+1KHsi9XeBJFq4vExGQ3DlQiGI9DiGmzSQvN9nCxGbXv8UT+AFs3Uy81jvsmd5GDCxu4whRrGfbYCqra5mBM46Uuwdoae2EMFdvtA+WeDF7/ABAXlxyQmDirNDYBS0FX09eucrTtwFP5xRZNiEqu8rZVYNcSCa/xvrZZpyk9Uu4IkT0laa5WpOBiHNMZ9cYGvyXyGMI7wU4HMY+aBlN57cdwBwNAgMBAAECggEAedItjt2KjMmg1zA/2YMypXTgMT4irU4vsyI5WX9tgSk6NSoLrLcQD8mW3A0FOvGxfuLTln7REE045PpWEJzujs21c/Yn3kSoft6aQ8ULtG1eF/F1hB6Ob32pqorsEVgWq7KJZBzlJvxvfhIc16hw6TrZc6paNaItkCuo8S4qEr0M1FbfzfWNpa1BcahqizpAyELoXCBHTaspVPYmCbzMLLaq+9gT1oitbuSb09JKvlkH3CxvWNGb7XX010VpTq4uFX/TqcCReF7LVAr411STRMf3L0NcacXRTVy29tViajj8VaOqKjWi3u9/3Z4NFeDX6G3u1cnwSnVIkwYEYI8RAQKBgQDjAn4SaAhuWw9jjUbksjfLfrIYxgfX1YXSjjpUuqndqa9JjbVvGdFogAaDv1+TUUJogA5g9K5hGpF/oFldoQvs2O6vaicAxkfgJvjUmYZCE3EgRI97FhYe4mGchhCZLcBLXKZ2raaNFN1WKI5WS40TrAAnxeK9+CPfDJzUozeInQKBgQCRNLt2waYrISkTwTw0URYjujTaLV8t/7hU8fOl5NK6bWFxoYwI9V6EC2MVqg5NhQzmCRNE00j7fo4CZICADQUHzA2x5JwcH/fd8hS5bmjEsHVnqL0CGFuX23TulQ8SrwVr8uyxq5HpkTEHrXK+KY8AQCf+YN280MWYE2tjiIHuMQKBgDzLOxYU1EUxj8J6YET40WZm7K0jw4/yt972hfqQ7tLVEYNiNvek82bH+nan9qGOPnmb6b3faR/KLLMAL06axYXNZsaFaCKV90O5TCQrZUAm0sHwenhdJtloiPmREbrj/L5x9oaL5LGdp9TeEZhcrVBaXMRKA3oajQi76PgtKb8lAoGAMxBPSJELJamwr2DKEj/dwEywX3WLPjrqkPzRSSqyLJtgpDxCabgYN+llO+4kv4AlrBPO8eo3hTHZMOA1DFMHzNkmi8OwXnejjCqgvSEluN2xO/XsGfuE4l9rvKcwuMpR5sd0E3sZggDsNB379wHYZycoqV1ZPRhSFIvnvQX5Y1ECgYAlFwc1twrEMJJaqtagk7s7rdNFTbGd9GHen8Mj1bA+zO8hHVVvE2o9xZsTqm0k/yCPvatjjuk1BNLJconQgNxwnK1q07H7rYMSgeyifjCLHoMF8YzA4XIGDM+EFxhlBdA/+M/B6JffFBrx5EjHrCvQHW1COjsLUdBeQHWqxEBk9Q==";
 
-            return (PrivateKey) RSAUtil.base642Key(privateKeyBase64, false);
-        }
+        return (PrivateKey) RSAUtil.base642Key(privateKeyBase64, false);
 
-        String errorMessage = StrUtil.format("保存私钥的资源文件不存在:{}", PRIVATE_KEY_PATH);
-        throw new FileNotFoundException(errorMessage);
+        //ClassPathResource privateClassPathResource = new ClassPathResource(PRIVATE_KEY_PATH);
+        //// 私钥文件是否存在
+        //if (privateClassPathResource.exists()) {
+        //    File privateKeyFile = privateClassPathResource.getFile();
+        //    // 公钥文件存储时使用Base64编码后保存d的
+        //    String privateKeyBase64 = IOUtil.readFile(privateKeyFile);
+        //
+        //    return (PrivateKey) RSAUtil.base642Key(privateKeyBase64, false);
+        //}
+        //
+        //String errorMessage = StrUtil.format("保存私钥的资源文件不存在:{}", PRIVATE_KEY_PATH);
+        //throw new FileNotFoundException(errorMessage);
     }
 
     /**
