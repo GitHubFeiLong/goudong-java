@@ -76,26 +76,27 @@ public class ReceptionCodeConfig {
      * 监听短信发送验证码队列
      * exclusive=true, 标明只能有一个消费者获取该队列的数据
      */
-    @RabbitListener(queues = CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE)
+    @RabbitListener(queues = CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, exclusive=true)
     @RabbitHandler
     public void phoneCode(@Payload String phone, Channel channel, Message message) throws Exception {
         LogUtil.debug(log, "{} 队列收到消息。内容是：{}", CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, phone);
         try {
+            AssertUtil.isPhone(phone, "消费消息，手机号格式错误");
+            // 验证码
+            String code = RandomStringUtils.randomNumeric(6);
+            LogUtil.debug(log, "phone:{}, code:{}", phone, code);
+            redisTool.set(RedisKeyProviderEnum.PHONE_CODE, code, phone);
+            // 发送短信
+            sendSms.sendCode(phone, code);
+
             // 告诉服务器收到这条消息 已经被我消费了 可以在队列删掉 这样以后就不会再发了 否则消息服务器以为这条消息没处理掉 后续还会在发
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
-        } catch (IOException e) {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),true);
+        } catch (Exception e) {
             LogUtil.error(log,"{} 队列消费消息失败。内容是：{}",CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, phone);
             e.printStackTrace();
             //丢弃这条消息
             //channel.basicNack(message.getMessageProperties().getDeliveryTag(), false,false);
         }
-        AssertUtil.isPhone(phone, "消费消息，手机号格式错误");
-        // 验证码
-        String code = RandomStringUtils.randomNumeric(6);
-        LogUtil.debug(log, "phone:{}, code:{}", phone, code);
-        redisTool.set(RedisKeyProviderEnum.PHONE_CODE, code, phone);
-        // 发送短信
-        sendSms.sendCode(phone, code);
     }
 
     /**
