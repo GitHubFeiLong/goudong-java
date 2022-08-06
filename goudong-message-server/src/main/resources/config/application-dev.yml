@@ -10,22 +10,22 @@ server:
     context-path: /api/message # 访问应用统一前缀
 spring:
   profiles:
-    active: dev
+    active: test
   application:
     name: goudong-message-server
   mvc:
     throw-exception-if-no-handler-found: true #出现错误时, 直接抛出异常
   resources:
-    add-mappings: false #工程中的资源文件建立映射
+    add-mappings: true #工程中的资源文件建立映射
   # json日期格式化
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/goudong_message?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    password: "${MYSQL_PASSWORD}"
   ## Redis
   redis:
     database: 0   # Redis数据库索引（默认为0）
@@ -76,14 +76,10 @@ spring:
   ## flyway数据迁移
   flyway:
     #是否开启
-    enabled: true
-    locations: classpath:db/migration #迁移脚本的位置，默认db/migration
+    enabled: false
+    baseline-version: 0
     baseline-on-migrate: true
-    out-of-order: false
-    table: flyway_schema_history
-    url: jdbc:mysql://127.0.0.1:3306/nacos?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    user: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    table: goudong_message_server_flyway_schema_history
 
 
 mybatis-plus:
@@ -116,9 +112,6 @@ mybatis-plus:
     supportMethodsArguments: true
     params: count=countSql
 
-
-
-
 knife4j:
   enable: true         # 是否开启Knife4j增强模式，默认值为false
   production: false    # 生产环境开启
@@ -130,7 +123,8 @@ knife4j:
     enableDebug: true # 启用调试，默认为true 无效
 
 
-# 自定义配置
+# 配置message
+########################################################################################################################
 message:
   alibaba:
     message:
@@ -138,15 +132,4 @@ message:
       accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
       signName: ${ALIBABA_MESSAGE_SIGN_NAME}
       templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
-goudong:
-  alibaba:
-    message:
-      accessKeyId: ${ALIBABA_MESSAGE_ACCESS_KEY_ID}
-      accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
-      signName: ${ALIBABA_MESSAGE_SIGN_NAME}
-      templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
-  # 自定义定时器
-  scheduler:
-    scanIgnoreResource: # 扫描白名单
-      cron: "-" #定时器表达式（-）（0/10 * * * * ?）
 

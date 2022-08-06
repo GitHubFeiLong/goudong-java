@@ -3,6 +3,7 @@ logging:
   level:
     ROOT: INFO
     com.goudong.user: DEBUG
+    com.goudong: DEBUG
 
 server:
   port: 10001
@@ -17,20 +18,26 @@ spring:
     add-mappings: false #工程中的资源文件建立映射
   application:
     name: goudong-user-server #微服务名
-  # json日期格式化
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848 # nacos服务集群
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: GMT+8
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    password: "${MYSQL_PASSWORD}"
+    #    password: "l(=8gp_04h*&"
     druid:
       # 下面为连接池的补充设置，应用到上面所有数据源中
       # 初始化大小，最小，最大
@@ -80,11 +87,13 @@ spring:
     password: ${REDIS_PASSWORD}
     timeout: 3000
 
-# redisson配置
-redisson:
-  password: ${spring.redis.password}
-  singleServerConfig:
-    address: ${spring.redis.host}:${spring.redis.port}
+  ## flyway数据迁移
+  flyway:
+    #是否开启
+    enabled: true
+    baseline-version: 0
+    baseline-on-migrate: true
+    table: goudong_user_server_flyway_schema_history
 
 ribbon:
   ReadTimeout: 5000 #建立连接所用时间（避免超时）
@@ -100,9 +109,17 @@ knife4j:
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true  # 启用调试，默认为true 无效
 
-# 自定义配置
-user:
-  page:
-    bind-page: http://localhost:9998/bindPage.html
-    transition-page: http://localhost:9998/transition.html
-    index-page: http://localhost:9998/index.html
+# commons配置
+commons:
+  # 白名单配置
+  whitelist:
+    # 是否开启白名单（生产环境建议不开启）
+    enable: false
+    # 自定义其他框架静态资源。
+    whitelists:
+      - pattern: /api/*.html
+        method: GET
+      - pattern: /api/*.js
+        method: GET
+      - pattern: /api/whitelist/**
+        method: GET,POST,DELETE,PUT

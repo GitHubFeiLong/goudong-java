@@ -9,6 +9,8 @@ server:
   servlet:
     context-path: /api/file
 spring:
+  profiles:
+  #    active: dev #默认使用开发环境
   main:
     allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
   mvc:
@@ -33,7 +35,7 @@ spring:
       max-file-size: -1
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    url: jdbc:mysql://192.168.74.128:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
     password: "${MYSQL_PASSWORD}"
   jpa:
