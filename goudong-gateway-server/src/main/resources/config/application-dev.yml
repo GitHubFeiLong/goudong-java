@@ -3,7 +3,6 @@ logging:
   level:
     ROOT: INFO
     com.goudong: INFO
-    com.goudong.gateway: DEBUG
 server:
   port: 10000
 spring:

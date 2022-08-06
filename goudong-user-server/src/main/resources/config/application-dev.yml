@@ -2,7 +2,6 @@ logging:
   config: classpath:log4j2/log4j2-dev.xml
   level:
     ROOT: INFO
-    com.goudong.user: DEBUG
     com.goudong: DEBUG
 
 server:

@@ -45,7 +45,7 @@ spring:
   # rabbitMQ
   ##############
   rabbitmq:
-    host: 47.108.31.41  # mq ip地址
+    host: 127.0.0.1  # mq ip地址
     port: 5672 # 端口 默认5672
     username: ${RABBITMQ_USERNAME} # 用户名
     password: ${RABBITMQ_PASSWORD} # 密码
