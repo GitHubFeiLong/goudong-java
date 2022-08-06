@@ -147,7 +147,7 @@ public class AuthenticationController {
     public Result<BaseUserDTO> authorize(@NotBlank String uri, @EnumValidator(enumClass = HttpMethod.class) String method) {
 
         // 获取当前用户
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        BaseUserPO authentication = (BaseUserPO)SecurityContextHolder.getContext().getAuthentication();
         /*
             判断是否是白名单
          */
@@ -189,6 +189,13 @@ public class AuthenticationController {
 
         // 只有需要”鉴权“时，才进行鉴权
         if (isNeedAuthentication) {
+            // 如果用户此时是匿名用户，那么就直接拒绝访问（）
+            if (authentication.getId() == 0) {
+                LogUtil.warn(log, "拒绝匿名用户访问敏感资源，必须先认证");
+                // 没有权限，拒绝访问
+                throw new Oauth2Exception(ClientExceptionEnum.UNAUTHORIZED);
+            }
+
             // 循环用户所有角色
             for (GrantedAuthority role : authentication.getAuthorities()) {
                 // 查询角色又拥有的权限
