@@ -124,8 +124,8 @@ commons:
     # 自定义其他框架静态资源。
     whitelists:
       - pattern: /api/*.html
-        method: GET
+        methods: GET
       - pattern: /api/*.js
-        method: GET
+        methods: GET
       - pattern: /api/whitelist/**
-        method: GET,POST,DELETE,PUT
+        methods: GET,POST,DELETE,PUT
