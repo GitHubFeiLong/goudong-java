@@ -204,10 +204,13 @@ public class AuthenticationController {
                     }
                 }
             }
+
+            // 没有权限，拒绝访问
+            throw new Oauth2Exception(ClientExceptionEnum.FORBIDDEN);
         }
 
-        // 没有权限，拒绝访问
-        throw new Oauth2Exception(ClientExceptionEnum.FORBIDDEN);
+        // 不需要鉴权，直接放行
+        return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
     }
 
     /**
