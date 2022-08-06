@@ -82,6 +82,12 @@
             <artifactId>commons-pool2</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--hutool-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
