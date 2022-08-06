@@ -1,16 +1,14 @@
 logging:
-  config: classpath:log4j2/log4j2-prod.xml
+  config: classpath:log4j2/log4j2-dev.xml
   level:
     ROOT: INFO
-    com.goudong.message: INFO
+    com.goudong.message: DEBUG
 
 server:
   port: 10002
   servlet:
     context-path: /api/message # 访问应用统一前缀
 spring:
-  profiles:
-    active: dev
   application:
     name: goudong-message-server
   mvc:
@@ -23,22 +21,31 @@ spring:
     time-zone: GMT+8
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/goudong_message?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
     username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    password: "${MYSQL_PASSWORD}"
   ## Redis
   redis:
-    database: 0   # Redis数据库索引（默认为0）
-    host: 127.0.0.1 # Redis服务器地址
-    port: 6379
-    password: ${REDIS_PASSWORD}
+    password: "${REDIS_PASSWORD}"
     timeout: 3000
+    sentinel:
+      master: mymaster
+      nodes:
+        - 192.168.74.128:26379
+        - 192.168.74.128:26380
+        - 192.168.74.128:26381
+    lettuce:
+      pool:
+        max-active: 100 # 连接池最大连接数（使用负值表示没有限制）
+        max-idle: 100 # 连接池中的最大空闲连接
+        min-idle: 50 # 连接池中的最小空闲连接
+        max-wait: 6000 # 连接池最大阻塞等待时间（使用负值表示没有限制）
 
   #############
   # rabbitMQ
   ##############
   rabbitmq:
-    host: 47.108.31.41  # mq ip地址
+    host: 192.168.74.128  # mq ip地址
     port: 5672 # 端口 默认5672
     username: ${RABBITMQ_USERNAME} # 用户名
     password: ${RABBITMQ_PASSWORD} # 密码
@@ -76,14 +83,10 @@ spring:
   ## flyway数据迁移
   flyway:
     #是否开启
-    enabled: true
-    locations: classpath:db/migration #迁移脚本的位置，默认db/migration
+    enabled: false
+    baseline-version: 0
     baseline-on-migrate: true
-    out-of-order: false
-    table: flyway_schema_history
-    url: jdbc:mysql://127.0.0.1:3306/nacos?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    user: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    table: goudong_message_server_flyway_schema_history
 
 
 mybatis-plus:
@@ -116,9 +119,6 @@ mybatis-plus:
     supportMethodsArguments: true
     params: count=countSql
 
-
-
-
 knife4j:
   enable: true         # 是否开启Knife4j增强模式，默认值为false
   production: false    # 生产环境开启
@@ -129,7 +129,8 @@ knife4j:
   setting:             # 前端Ui的个性化配置属性
     enableDebug: true # 启用调试，默认为true 无效
 
-# 自定义配置
+# 配置message
+########################################################################################################################
 message:
   alibaba:
     message:
@@ -137,15 +138,5 @@ message:
       accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
       signName: ${ALIBABA_MESSAGE_SIGN_NAME}
       templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
-goudong:
-  alibaba:
-    message:
-      accessKeyId: ${ALIBABA_MESSAGE_ACCESS_KEY_ID}
-      accessKeySecret: ${ALIBABA_MESSAGE_ACCESS_KEY_SECRET}
-      signName: ${ALIBABA_MESSAGE_SIGN_NAME}
-      templateCode: ${ALIBABA_MESSAGE_TEMPLATE_CODE}
-  # 自定义定时器
-  scheduler:
-    scanIgnoreResource: # 扫描白名单
-      cron: "-" #定时器表达式（-）（0/10 * * * * ?）
+
 

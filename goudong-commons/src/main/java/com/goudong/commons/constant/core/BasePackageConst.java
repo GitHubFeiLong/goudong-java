@@ -36,6 +36,5 @@ public class BasePackageConst {
 
     public static final String OAUTH2_MAPPER = "com.goudong.oauth2.mapper";
     public static final String USER_MAPPER = "com.goudong.user.mapper";
-    public static final String COMMONS_MAPPER = "com.goudong.commons.mapper";
     public static final String MESSAGE_MAPPER = "com.goudong.message.mapper";
 }

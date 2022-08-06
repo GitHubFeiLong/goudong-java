@@ -23,7 +23,7 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER, BasePackageConst.COMMONS_MAPPER})
+@MapperScan(basePackages = {BasePackageConst.MESSAGE_MAPPER})
 @EnableScheduling
 @Slf4j
 public class GoudongMessageServer {

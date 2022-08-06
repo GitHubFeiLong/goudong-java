@@ -1,7 +1,5 @@
 package com.goudong.commons;
 
-import com.goudong.commons.constant.core.BasePackageConst;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -12,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  */
 @SpringBootApplication
-@MapperScan(BasePackageConst.COMMONS_MAPPER)
+//@MapperScan(BasePackageConst.COMMONS_MAPPER)
 public class GoudongCommons {
     public static void main(String[] args) {
         SpringApplication.run(GoudongCommons.class, args);
