@@ -1,15 +1,18 @@
 package com.goudong.commons.utils.core;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
- *
+ * 请求对象的一些工具
  * @author msi
  * @version 1.0
  * @date 2022/1/19 21:15
  */
-public class RequestUtil {
+@Slf4j
+public class HttpServletRequestUtil {
 
     //~fields
     //==================================================================================================================
@@ -50,4 +53,5 @@ public class RequestUtil {
         }
         return isMoblie;
     }
+
 }

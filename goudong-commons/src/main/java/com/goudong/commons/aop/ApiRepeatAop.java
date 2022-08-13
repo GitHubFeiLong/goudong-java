@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
- * 使用AOP防止用户重复提交表单
+ * 使用AOP防止用户重复提交表单，用户将参数进行修改后再次提交不会锁住
  *
  * @see com.goudong.commons.annotation.aop.ApiRepeat
  * @Author msi
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @Aspect
-@ConditionalOnClass(value = {RedisTool.class})
+@ConditionalOnClass(value = {RedisTool.class, RedissonClient.class})
 public class ApiRepeatAop {
 
 	private final HttpServletRequest request;
@@ -68,10 +68,25 @@ public class ApiRepeatAop {
 		// 用户对象必须有值（只要进入网关的请求，都会有值,如果连用户都分不开就没有必要做限流了 对吧）
 		if (baseUserDTO != null && StringUtils.isNotBlank(sessionId = baseUserDTO.getSessionId())) {
 			// 当前请求url
-			String sessionIdApi = sessionId + request.getRequestURI();
+
+			// 接口参数
+			Object[] args = pjp.getArgs();
+			StringBuilder methodParameter = new StringBuilder();
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					methodParameter.append(args[i] == null ? "null" : args[i].toString());
+				}
+			}
+
+			// 获取请求路径
+			StringBuilder requestData = new StringBuilder()
+					.append(request.getMethod())
+					.append(request.getRequestURI())
+					.append(methodParameter);
 
 			// 因为功能只是进行控制访问频率，所以以用户和请求路径为key
-			String redisKey = GenerateRedisKeyUtil.generateByClever(SimpleRedisKey.API_REPEAT_KEY, sessionIdApi);
+			String redisKey = GenerateRedisKeyUtil.generateByClever(SimpleRedisKey.API_REPEAT_KEY, sessionId, requestData);
+
 
 			// 获取注解的参数
 			//Class clazz = pjp.getTarget().getClass();

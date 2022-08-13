@@ -11,9 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 类描述：
@@ -40,6 +38,15 @@ public class DemoController {
     @GetMapping("/demo")
     @ApiRepeat(10)
     public String demo() {
+        Result<BaseUserDTO> baseUserDTOResult = goudongOauth2ServerService.currentUser();
+        LogUtil.info(log, "进入控制器");
+        return "hello world" + SecurityContextHolder.getContext().getAuthentication();
+    }
+    @ApiOperation(value = "测试POST")
+    @Whitelist
+    @PostMapping("/demo/post")
+    @ApiRepeat(10)
+    public String demoPost(@RequestBody BaseUserDTO userDTO) {
         Result<BaseUserDTO> baseUserDTOResult = goudongOauth2ServerService.currentUser();
         LogUtil.info(log, "进入控制器");
         return "hello world" + SecurityContextHolder.getContext().getAuthentication();

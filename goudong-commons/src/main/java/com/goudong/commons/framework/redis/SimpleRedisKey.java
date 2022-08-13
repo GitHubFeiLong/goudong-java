@@ -15,9 +15,10 @@ public class SimpleRedisKey extends AbstractRedisKey{
 
     /**
      * 设置Api接口限流
-     * @param sessionIdApi 用户的sessionId和api地址拼接
+     * @param sessionId 用户的sessionId
+     * @param requestData 请求url和请求参数
      */
-    public static final SimpleRedisKey API_REPEAT_KEY = new SimpleRedisKey("goudong-commons:api-repeat:${sessionIdApi}", DataType.STRING, Integer.class);
+    public static final SimpleRedisKey API_REPEAT_KEY = new SimpleRedisKey("goudong-commons:api-repeat:${sessionId}:${requestData}", DataType.STRING, Integer.class);
 
     /**
      * 类似
