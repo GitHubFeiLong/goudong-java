@@ -84,4 +84,9 @@ public class BaseUserDTO extends BasePO {
      * 验证码
      */
     private String code;
+
+    /**
+     * 头像地址
+     */
+    private String avatar;
 }

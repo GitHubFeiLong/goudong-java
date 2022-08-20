@@ -3,8 +3,6 @@
 
 UEL java EL 工具类${}
 
-redis 添加key 时设置过期时间，加参数 加上一个随机时间，避免缓存雪崩
-
 
 可以实现jpa json 查看com.goudong.oauth2.po.BaseMenuPO
 <dependency>

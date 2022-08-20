@@ -1,30 +1,37 @@
 package com.goudong.user.service.impl;
 
 import cn.hutool.core.date.DateTime;
+import com.goudong.commons.constant.core.DateConst;
+import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.commons.dto.core.JPAPageResultConvert;
+import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseRoleService;
 import com.goudong.user.service.BaseUserService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +42,7 @@ import java.util.stream.Collectors;
  * @Date 2022/1/7 15:34
  */
 @Service
+@RequiredArgsConstructor
 public class BaseUserServiceImpl implements BaseUserService {
 
     /**
@@ -49,13 +57,15 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     private final GoudongMessageServerService goudongMessageServerService;
 
-    public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
-                               BaseRoleService baseRoleService,
-                               GoudongMessageServerService goudongMessageServerService) {
-        this.baseUserRepository = baseUserRepository;
-        this.baseRoleService = baseRoleService;
-        this.goudongMessageServerService = goudongMessageServerService;
-    }
+    private final EntityManager entityManager;
+
+    //public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
+    //                           BaseRoleService baseRoleService,
+    //                           GoudongMessageServerService goudongMessageServerService) {
+    //    this.baseUserRepository = baseUserRepository;
+    //    this.baseRoleService = baseRoleService;
+    //    this.goudongMessageServerService = goudongMessageServerService;
+    //}
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -207,6 +217,100 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账号不存在");
+    }
+
+    /**
+     * 根据某个字段进行分页
+     *
+     * @param page
+     * @return
+     */
+    @Override
+    public BasePageResult<BaseUserDTO> pageByField(BaseUser2QueryPageDTO page) {
+        Specification<BaseUserPO> specification = new Specification<BaseUserPO>() {
+            @Override
+            public Predicate toPredicate(Root<BaseUserPO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                Predicate predicate = null;
+                if (StringUtils.isNotBlank(page.getUsername())) {
+                    Path<String> username = root.get("username");
+                    predicate = criteriaBuilder.like(username, page.getUsername() + "%");
+                } else if (StringUtils.isNotBlank(page.getPhone())) {
+                    Path<String> phone = root.get("phone");
+                    predicate = criteriaBuilder.like(phone, page.getPhone() + "%");
+                } else if (StringUtils.isNotBlank(page.getEmail())) {
+                    Path<String> email = root.get("email");
+                    predicate = criteriaBuilder.like(email, page.getEmail() + "%");
+                } else if (StringUtils.isNotBlank(page.getNickname())) {
+                    Path<String> nickname = root.get("nickname");
+                    predicate = criteriaBuilder.like(nickname, page.getNickname() + "%");
+                }
+
+                return predicate;
+            }
+        };
+
+        PageRequest pageRequest = PageRequest.of(page.getJPAPage(), (int)page.getSize(), Sort.sort(BaseUserPO.class).by(BaseUserPO::getCreateTime).descending());
+
+        Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
+
+        BasePageResult<BaseUserDTO> convert = JPAPageResultConvert.convert(all, BaseUserDTO.class);
+
+        // 脱敏
+        convert.getContent().forEach(p->{
+            p.setPassword(null);
+        });
+        return convert;
+    }
+
+    /**
+     * 用户分页查询
+     *
+     * @param page
+     * @return
+     */
+    @Transactional
+    @Override
+    public BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
+        PageRequest pageRequest = PageRequest.of(page.getJPAPage(), (int)page.getSize(), Sort.sort(BaseUserPO.class).by(BaseUserPO::getCreateTime).descending());
+        Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> and = new ArrayList<>();
+            if (StringUtils.isNotBlank(page.getUsername())) {
+                and.add(criteriaBuilder.like(root.get("username"), page.getUsername() + "%"));
+            }
+            if (StringUtils.isNotBlank(page.getPhone())) {
+                and.add(criteriaBuilder.like(root.get("phone"), page.getPhone() + "%"));
+            }
+            if (StringUtils.isNotBlank(page.getEmail())) {
+                and.add(criteriaBuilder.like(root.get("email"), page.getEmail() + "%"));
+            }
+            if (StringUtils.isNotBlank(page.getNickname())) {
+                and.add(criteriaBuilder.like(root.get("nickname"), page.getNickname() + "%"));
+            }
+            if (page.getStartValidTime() != null && page.getEndValidTime() != null) {
+                and.add(criteriaBuilder.greaterThanOrEqualTo(root.get("validTime").as(String.class), page.getStartValidTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
+                and.add(criteriaBuilder.lessThanOrEqualTo(root.get("validTime").as(String.class), page.getEndValidTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
+            }
+            if (page.getStartCreateTime() != null && page.getEndCreateTime() != null) {
+                and.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(String.class), page.getStartCreateTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
+                and.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(String.class), page.getEndCreateTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
+            }
+
+            if (CollectionUtils.isNotEmpty(and)) {
+                return query.where(and.toArray(new Predicate[and.size()])).getRestriction();
+            }
+
+            return query.getRestriction();
+        };
+
+        Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
+
+        BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = JPAPageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+
+        // 脱敏
+        convert.getContent().forEach(p->{
+            p.setPassword(null);
+        });
+        return convert;
     }
 
     /**

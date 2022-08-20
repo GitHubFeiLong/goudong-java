@@ -74,6 +74,12 @@ public class BaseUserPO extends BasePO {
     private Date validTime;
 
     /**
+     * 头像地址
+     */
+    @Column(name = "avatar", nullable = false)
+    private String avatar;
+
+    /**
      * qq登录后，系统获取腾讯的open_id
      */
     @Column(name = "qq_open_id")

@@ -1,18 +1,16 @@
 package com.goudong.user.controller.user;
 
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.dto.user.BaseUser2CreateDTO;
-import com.goudong.commons.dto.user.BaseUser2UpdateOpenIdDTO;
-import com.goudong.commons.dto.user.BaseUser2UpdatePasswordDTO;
-import com.goudong.commons.dto.user.BaseUserDTO;
+import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.commons.dto.user.*;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
+import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
@@ -208,4 +206,17 @@ public class BaseUerController {
         BaseUserDTO authorityUserDTO = baseUserService.getUserDetailByLoginName(loginName);
         return Result.ofSuccess(authorityUserDTO);
     }
+
+    @GetMapping("/page-field")
+    @ApiOperation(value = "用户表的下拉分页查询")
+    public Result<BasePageResult<BaseUserDTO>> pageByField (BaseUser2QueryPageDTO page){
+        return Result.ofSuccess(baseUserService.pageByField(page));
+    }
+
+    @GetMapping("/page")
+    @ApiOperation(value = "分页查询")
+    public Result<BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
+        return Result.ofSuccess(baseUserService.page(page));
+    }
+
 }

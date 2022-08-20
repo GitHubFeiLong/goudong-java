@@ -1,5 +1,6 @@
 package com.goudong.commons.dto.oauth2;
 
+import com.goudong.commons.po.core.BasePO;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Data
-public class BaseUserDTO {
+public class BaseUserDTO extends BasePO {
 
     private static final long serialVersionUID = -1209701285445397589L;
 

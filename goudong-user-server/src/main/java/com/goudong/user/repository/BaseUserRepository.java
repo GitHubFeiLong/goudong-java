@@ -53,4 +53,5 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      * @return
      */
     BaseUserPO findByQqOpenId(String qqOpenId);
+
 }

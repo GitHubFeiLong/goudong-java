@@ -1,5 +1,7 @@
 package com.goudong.user.service;
 
+import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.user.po.BaseUserPO;
 
@@ -53,4 +55,18 @@ public interface BaseUserService {
      * @return
      */
     BaseUserDTO updatePassword(BaseUserDTO baseUserDTO);
+
+    /**
+     * 根据某个字段进行分页
+     * @param page
+     * @return
+     */
+    BasePageResult<BaseUserDTO> pageByField(BaseUser2QueryPageDTO page);
+
+    /**
+     * 用户分页查询
+     * @param page
+     * @return
+     */
+    BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page);
 }

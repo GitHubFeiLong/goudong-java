@@ -1,9 +1,9 @@
 package com.goudong.commons.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
@@ -16,27 +16,20 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.goudong.commons.constant.core.DateConst;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * 类描述：
@@ -121,90 +114,4 @@ public class JacksonConfig {
     public Jdk8Module jdk8TimeModule() {
         return new Jdk8Module();
     }
-
-    //~ 没作用的
-    //==================================================================================================================
-    /**
-     * jackson配置属性
-     * @return
-     */
-    // @Bean
-    JacksonProperties jacksonProperties() {
-        JacksonProperties properties = new JacksonProperties();
-        properties.setDateFormat(DateConst.DATE_TIME_FORMATTER);
-        properties.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
-        properties.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
-        properties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return properties;
-    }
-    // @Bean
-    public ObjectMapper serializingObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new ParameterNamesModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .registerModule(javaTimeModule())
-                .registerModule(jdk8TimeModule());
-        return mapper;
-    }
-
-    /**
-     * 配置序列化和反序列化
-     * @return
-     */
-    // @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-        return builder -> {
-            builder.serializerByType(Long.class, new ToStringSerializer());
-            builder.serializerByType(Long.TYPE, new ToStringSerializer());
-            // builder.serializerByType(Date.class, new DateJsonSerializer());
-            builder.serializerByType(Date.class, new DateSerializer(false, new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER)));
-            builder.deserializerByType(Date.class, new DateDeserializers.DateDeserializer(
-                    DateDeserializers.DateDeserializer.instance
-                    , new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER)
-                    , null));
-            builder.serializerByType(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DateConst.DATE_FORMATTER)));
-            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DateConst.DATE_FORMATTER)));
-            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(DateConst.TIME_FORMATTER)));
-            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DateConst.TIME_FORMATTER)));
-            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DateConst.DATE_TIME_FORMATTER)));
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DateConst.DATE_TIME_FORMATTER)));
-            builder.failOnEmptyBeans(false);
-            builder.failOnUnknownProperties(false);
-        };
-    }
-
-    /**
-     * 序列化Date
-     */
-    @Deprecated
-    public static class DateJsonSerializer extends JsonSerializer<Date> {
-        @Override
-        public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            SimpleDateFormat formatter = new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER);
-            String formattedDate = formatter.format(date);
-            jsonGenerator.writeString(formattedDate);
-        }
-    }
-
-    /**
-     * 反序列化Date
-     */
-    @Deprecated
-    public static class DateJsonDeserializer extends JsonDeserializer<Date> {
-
-        @Override
-        public Date deserialize(JsonParser jp, DeserializationContext deserializationContext) throws IOException {
-            SimpleDateFormat format = new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER);
-            String date = jp.getText();
-            try {
-                return format.parse(date);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
 }
-

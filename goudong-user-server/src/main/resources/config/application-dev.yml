@@ -113,7 +113,7 @@ knife4j:
 commons:
   # 配置白名单
   whitelist:
-    enable: true
+    enable: false
     sleep: 15
     failure-retry-num: 5
   # 配置api资源
