@@ -1,11 +1,20 @@
 package com.goudong.user.service.impl;
 
 import com.goudong.commons.constant.user.RoleConst;
+import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.user.RoleException;
+import com.goudong.commons.utils.JPAPageResultConvert;
+import com.goudong.user.dto.BaseRole2QueryPageDTO;
+import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseRoleService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,5 +41,31 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         String serverMessage = String.format("预置的角色：%s不存在", RoleConst.ROLE_USER);
         return baseRoleRepository.findByRoleName(RoleConst.ROLE_USER)
                 .orElseThrow(()-> new RoleException(ServerExceptionEnum.SERVER_ERROR, serverMessage));
+    }
+
+    /**
+     * 分页查询角色
+     *
+     * @param page
+     * @return
+     */
+    @Override
+    public BasePageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page) {
+        PageRequest pageRequest = PageRequest.of(page.getJPAPage(),
+                page.getJPASize(),
+                Sort.sort(BaseRolePO.class).by(BaseRolePO::getCreateTime).descending());
+
+        Specification<BaseRolePO> specification = (root, query, criteriaBuilder) -> {
+            if (StringUtils.isNotBlank(page.getRoleNameCn())) {
+                query.where(criteriaBuilder.like(root.get("roleNameCn"), page.getRoleNameCn() + "%"));
+            }
+            return query.getRestriction();
+        };
+
+        Page<BaseRolePO> all = baseRoleRepository.findAll(specification, pageRequest);
+
+        BasePageResult<BaseRoleDTO> convert = JPAPageResultConvert.convert(all, BaseRoleDTO.class);
+
+        return convert;
     }
 }

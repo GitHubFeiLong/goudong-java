@@ -1,5 +1,8 @@
 package com.goudong.user.service;
 
+import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.user.dto.BaseRole2QueryPageDTO;
+import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.po.BaseRolePO;
 
 /**
@@ -15,4 +18,11 @@ public interface BaseRoleService {
      * @return
      */
     BaseRolePO findByRoleUser();
+
+    /**
+     * 分页查询角色
+     * @param page
+     * @return
+     */
+    BasePageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page);
 }

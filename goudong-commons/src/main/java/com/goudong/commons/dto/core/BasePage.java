@@ -38,6 +38,15 @@ public class BasePage {
     }
 
     /**
+     * 获取spring-data-jpa 框架的页码（以0开始），
+     * @return
+     */
+    @ApiModelProperty(hidden = true)
+    public int getJPASize() {
+        return (int)(size);
+    }
+
+    /**
      * 获取mybatis-plus 框架的页码
      * @return
      */

@@ -60,7 +60,7 @@ public class Swagger3Config {
     public Docket UserDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
                 .title("用户")
-                .description("用户角色权限相关接口")
+                .description("用户相关接口")
                 .version("1.0")
                 .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
                 .build();
@@ -73,9 +73,29 @@ public class Swagger3Config {
                 .build()
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
-                .groupName("用户角色权限")
+                .groupName("用户")
                 ;
+    }
 
+    @Bean
+    public Docket RoleDocket() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("角色")
+                .description("角色相关接口")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.user.controller.role"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("角色")
+                ;
     }
 
 }

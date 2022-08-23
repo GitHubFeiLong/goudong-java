@@ -1,6 +1,7 @@
-package com.goudong.commons.dto.core;
+package com.goudong.commons.utils;
 
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.utils.core.BeanUtil;
 import org.springframework.data.domain.Page;
 
