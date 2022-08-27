@@ -1,5 +1,6 @@
 package com.goudong.file.config;
 
+import com.goudong.commons.utils.core.SwaggerUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -42,6 +43,7 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("download")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
 
     }
@@ -64,6 +66,7 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("link")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
 
     }
@@ -86,6 +89,7 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("upload")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
 
     }

@@ -1,5 +1,6 @@
 package com.goudong.bpm.config;
 
+import com.goudong.commons.utils.core.SwaggerUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,7 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("all api")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
     }
 

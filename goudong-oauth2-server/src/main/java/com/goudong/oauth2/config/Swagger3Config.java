@@ -1,5 +1,6 @@
 package com.goudong.oauth2.config;
 
+import com.goudong.commons.utils.core.SwaggerUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,7 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("all api")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
     }
 
@@ -79,6 +81,8 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("登录")
+                // 添加全局请求参数
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
     }
 
