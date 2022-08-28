@@ -6,6 +6,7 @@ import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class UserContextFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String requestUser = ((HttpServletRequest) servletRequest).getHeader(HttpHeaderConst.X_REQUEST_USER);
         try {
-            if (requestUser != null) {
+            if (StringUtils.isNotBlank(requestUser)) {
                 String decodeJson = URLDecoder.decode(requestUser, "UTF-8");
                 BaseUserDTO baseUserDTO = JSONObject.parseObject(decodeJson, BaseUserDTO.class);
                 LogUtil.debug(log, "当前请求用户信息：{}", baseUserDTO);

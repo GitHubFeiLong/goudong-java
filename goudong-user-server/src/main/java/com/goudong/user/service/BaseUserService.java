@@ -3,6 +3,7 @@ package com.goudong.user.service;
 import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
+import com.goudong.commons.dto.user.SimpleCreateUserReq;
 import com.goudong.user.po.BaseUserPO;
 
 import java.util.List;
@@ -69,4 +70,11 @@ public interface BaseUserService {
      * @return
      */
     BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page);
+
+    /**
+     * 后台简单新增一个用户
+     * @param createDTO
+     * @return
+     */
+    BaseUserDTO simpleCreateUser(SimpleCreateUserReq createDTO);
 }

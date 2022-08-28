@@ -1,10 +1,12 @@
 package com.goudong.user.service.impl;
 
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.user.RoleException;
 import com.goudong.commons.utils.JPAPageResultConvert;
+import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.po.BaseRolePO;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 类描述：
@@ -67,5 +71,19 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         BasePageResult<BaseRoleDTO> convert = JPAPageResultConvert.convert(all, BaseRoleDTO.class);
 
         return convert;
+    }
+
+    /**
+     * 根据角色id集合查询角色
+     *
+     * @param roleIds
+     * @return
+     */
+    @Override
+    public List<BaseRoleDTO> listByIds(List<Long> roleIds) {
+        Specification<BaseRolePO> specification = ((root, query, criteriaBuilder) -> query.where(root.get("id").in(roleIds)).getRestriction());
+
+        List<BaseRolePO> roles = baseRoleRepository.findAll(specification);
+        return BeanUtil.copyToList(roles, BaseRoleDTO.class, CopyOptions.create());
     }
 }

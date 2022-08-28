@@ -18,26 +18,22 @@ import java.util.Objects;
 @Slf4j
 @Getter
 public enum DatabaseKeyEnum {
+    //~ 用户表 base_user
+    //==================================================================================================================
     /**
-     * 用户表邮箱唯一索引
+     * 用户表 邮箱唯一索引
      */
-    UK_BASE_USER__EMAIL_DELETED_ENTERPRISE_ID("保存用户失败，邮箱重复"),
-    UK_BASE_USER__EMAIL_DELETED("保存用户失败，邮箱重复"),
+    UQ_BASE_USER_EMAIL("保存用户失败，邮箱已存在"),
     /**
-     * 用户表手机号唯一索引
+     * 用户表 用户名唯一索引
      */
-    UK_BASE_USER_PHONE_DELETED_ENTERPRISE_ID("保存用户失败，手机号重复"),
-    UK_BASE_USER_PHONE_DELETED("保存用户失败，手机号重复"),
+    UQ_BASE_USER_USERNAME("保存用户失败，用户名已存在"),
     /**
-     * 用户表工号唯一索引
+     * 用户表手机唯一索引
      */
-    UK_BASE_USER_JOB_NUMBER_DELETED_ENTERPRISE_ID("保存用户失败，工号重复"),
-    UK_BASE_USER_JOB_NUMBER_DELETED("保存用户失败，工号重复"),
-    /**
-     * 用户表用户名唯一索引
-     */
-    UK_BASE_USER_USERNAME_DELETED_ENTERPRISE_ID("保存用户失败，用户名重复"),
-    UK_BASE_USER_USERNAME_DELETED("保存用户失败，用户名重复"),
+    UQ_BASE_USER_PHONE("保存用户失败，手机号已存在"),
+
+
     /**
      * 用户角色表用户id和角色id唯一索引
      */
@@ -50,7 +46,7 @@ public enum DatabaseKeyEnum {
     /**
      * api接口资源表的唯一索引
      */
-    UQ_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("保存api_resource失败，数据已存在")
+    UQ_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("保存api_resource失败，数据已存在"),
     ;
 
     /**

@@ -27,23 +27,23 @@ public class BasePageResult<T> {
     /**
      * 当前页码
      */
-    private Long pageNumber;
+    private Long page;
 
     /**
      * 每页显示条目数
      */
-    private Long pageSize;
+    private Long size;
 
     /**
      * 分页结果
      */
     private List<T> content;
 
-    public BasePageResult(Long total, Long totalPage, Long pageNumber, Long pageSize, List<T> content) {
+    public BasePageResult(Long total, Long totalPage, Long page, Long size, List<T> content) {
         this.total = total;
         this.totalPage = totalPage;
-        this.pageNumber = pageNumber;
-        this.pageSize = pageSize;
+        this.page = page;
+        this.size = size;
         this.content = content;
     }
 }

@@ -65,4 +65,8 @@ public class SwaggerUtil {
 
         return requestParameters;
     }
+
+    public static List<Response> getGlobalResponses() {
+
+    }
 }

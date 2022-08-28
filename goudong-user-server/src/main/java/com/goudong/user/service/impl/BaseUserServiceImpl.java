@@ -1,10 +1,13 @@
 package com.goudong.user.service.impl;
 
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
+import com.goudong.commons.dto.user.SimpleCreateUserReq;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.ClientException;
@@ -13,6 +16,7 @@ import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.JPAPageResultConvert;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
@@ -311,6 +315,31 @@ public class BaseUserServiceImpl implements BaseUserService {
             p.setPassword(null);
         });
         return convert;
+    }
+
+    /**
+     * 后台简单新增一个用户
+     *
+     * @param createDTO
+     * @return
+     */
+    @Override
+    public BaseUserDTO simpleCreateUser(SimpleCreateUserReq createDTO) {
+        // 手机号，邮箱，用户名 等交由数据库唯一索引处理
+        // 角色校验
+        List<BaseRoleDTO> baseRoleDTOS = baseRoleService.listByIds(createDTO.getRoleIds());
+        // 有角色不存在
+        if (baseRoleDTOS.size() != createDTO.getRoleIds().size()) {
+            List<Long> dbRoleIds = baseRoleDTOS.stream().map(BaseRoleDTO::getId).collect(Collectors.toList());
+            Collection<Long> subtract = CollectionUtils.subtract(dbRoleIds, createDTO.getRoleIds());
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "角色无效：" + subtract);
+        }
+
+        BaseUserPO baseUserPO = BeanUtil.copyProperties(createDTO, BaseUserPO.class);
+        baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
+        baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
+        baseUserRepository.save(baseUserPO);
+        return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
     }
 
     /**

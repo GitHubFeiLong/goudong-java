@@ -79,7 +79,7 @@ public class BaseUerController {
     @ApiOperation(value = "检查手机号", notes = "检查手机号是否可以使用，true可以使用")
     @ApiImplicitParam(name = "phone", value = "手机号")
     @Whitelist("根据手机号获取账号")
-    public Result<Boolean> getUserByPhone(@PathVariable String phone) {
+    public Result<Boolean> checkPhone(@PathVariable String phone) {
         AssertUtil.isPhone(phone, "手机号码格式不正确");
         BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
         Result<Boolean> booleanResult = Result.ofSuccess(baseUserPO == null);
@@ -105,7 +105,7 @@ public class BaseUerController {
     @ApiOperation(value = "检查用户名是否存在", notes = "注册时，检查用户名是否可用。可用时，返回空集合；\n当不可用时，返回3个可用的用户名")
     @ApiImplicitParam(name = "username", value = "用户名")
     @Whitelist("检查用户名是否存在")
-    public Result<List<String>> getUserByUsername(@PathVariable String username) {
+    public Result<List<String>> checkUsername(@PathVariable String username) {
         List<String> strings = baseUserService.generateUserName(username);
         return Result.ofSuccess(strings);
     }
@@ -119,7 +119,7 @@ public class BaseUerController {
     @GetMapping("/check-registry/email/{email}")
     @ApiOperation(value = "检查邮箱能否使用", notes = "当返回对象的data属性为True时，表示可以使用")
     @Whitelist("检查邮箱能否使用")
-    public Result<Boolean> checkEmailInUse(@PathVariable String email) {
+    public Result<Boolean> checkEmail(@PathVariable String email) {
         AssertUtil.isEmail(email, "邮箱格式错误");
 
         BaseUserPO byEmail = baseUserRepository.findByEmail(email);
@@ -133,9 +133,22 @@ public class BaseUerController {
      * @param createDTO
      * @return
      */
+    @PostMapping("/simple-create-user")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "创建普通账号", notes = "后台手动创建单个用户")
+    public Result<BaseUserDTO> simpleCreateUser(@RequestBody @Validated SimpleCreateUserReq createDTO) {
+        BaseUserDTO baseUserDTO = baseUserService.simpleCreateUser(createDTO);
+        return Result.ofSuccess(baseUserDTO);
+    }
+
+    /**
+     * 新增用户
+     * @param createDTO
+     * @return
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "创建普通账号", notes = "注册用户")
+    @ApiOperation(value = "创建普通账号", notes = "后台手动创建用户")
     @Whitelist("创建普通账号")
     public Result<BaseUserDTO> createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
         AssertUtil.isPhone(createDTO.getPhone(), "手机号格式错误");

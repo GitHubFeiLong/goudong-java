@@ -5,6 +5,9 @@ import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.po.BaseRolePO;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
 /**
  * 接口描述：
  * 角色持久层
@@ -25,4 +28,11 @@ public interface BaseRoleService {
      * @return
      */
     BasePageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page);
+
+    /**
+     * 根据角色id集合查询角色
+     * @param roleIds
+     * @return
+     */
+    List<BaseRoleDTO> listByIds(@NotEmpty List<Long> roleIds);
 }

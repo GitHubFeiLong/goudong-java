@@ -7,6 +7,7 @@ import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.gateway.hanlder.RequestDecodeHandler;
 import com.goudong.gateway.hanlder.ResponseDecodeHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.NettyWriteResponseFilter;
@@ -72,7 +73,7 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
     private Mono<Void> operationExchange(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 查看请求头是否自定义的请求头(X-Aes-Key)
         String aesKeyEncrypt = exchange.getRequest().getHeaders().getFirst(HttpHeaderConst.X_AES_KEY);
-        if(aesKeyEncrypt != null){
+        if(StringUtils.isNotBlank(aesKeyEncrypt)){
             // 使用RSA私钥解密密文的AES密钥
             String aesKey = ServerRSA.getInstance().privateKeyDecrypt(aesKeyEncrypt);
             LogUtil.info(log,"本次请求使用了AES解密,AES密钥为{}", aesKey);
