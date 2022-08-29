@@ -9,6 +9,10 @@ import lombok.Data;
  */
 @Data
 public class BaseRoleDTO {
+    /**
+     * 角色id
+     */
+    private String id;
 
     /**
      * 角色名称(必须以ROLE_起始命名)

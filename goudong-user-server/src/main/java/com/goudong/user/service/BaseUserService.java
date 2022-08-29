@@ -77,4 +77,11 @@ public interface BaseUserService {
      * @return
      */
     BaseUserDTO simpleCreateUser(SimpleCreateUserReq createDTO);
+
+    /**
+     * 根据id查询用户信息
+     * @param id
+     * @return
+     */
+    com.goudong.commons.dto.oauth2.BaseUserDTO getUserById(Long id);
 }

@@ -232,4 +232,10 @@ public class BaseUerController {
         return Result.ofSuccess(baseUserService.page(page));
     }
 
+    @GetMapping("/{id}")
+    @ApiOperation(value = "查询用户信息")
+    public Result<com.goudong.commons.dto.oauth2.BaseUserDTO> getUserById (@PathVariable Long id){
+        return Result.ofSuccess(baseUserService.getUserById(id));
+    }
+
 }

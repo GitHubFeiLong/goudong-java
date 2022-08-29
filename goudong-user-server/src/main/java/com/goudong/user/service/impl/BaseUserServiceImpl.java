@@ -343,6 +343,19 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
+     * 根据id查询用户信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public com.goudong.commons.dto.oauth2.BaseUserDTO getUserById(Long id) {
+        BaseUserPO baseUserPO = baseUserRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+        return BeanUtil.copyProperties(baseUserPO, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+    }
+
+    /**
      * 绑定opendId
      *
      * @param userDTO
