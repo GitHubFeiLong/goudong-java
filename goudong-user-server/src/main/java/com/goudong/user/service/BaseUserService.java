@@ -4,6 +4,7 @@ import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.dto.user.SimpleCreateUserReq;
+import com.goudong.user.dto.AdminEditUserReq;
 import com.goudong.user.po.BaseUserPO;
 
 import java.util.List;
@@ -84,4 +85,11 @@ public interface BaseUserService {
      * @return
      */
     com.goudong.commons.dto.oauth2.BaseUserDTO getUserById(Long id);
+
+    /**
+     * admin平台修改用户信息
+     * @param req
+     * @return
+     */
+    BaseUserDTO adminEditUser(AdminEditUserReq req);
 }

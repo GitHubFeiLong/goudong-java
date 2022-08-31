@@ -11,6 +11,7 @@ import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.user.dto.AdminEditUserReq;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseUserService;
@@ -238,4 +239,9 @@ public class BaseUerController {
         return Result.ofSuccess(baseUserService.getUserById(id));
     }
 
+    @PutMapping("/admin/user")
+    @ApiOperation(value = "admin-更新用户信息")
+    public Result<BaseUserDTO> adminEditUser (@RequestBody @Validated AdminEditUserReq req){
+        return Result.ofSuccess(baseUserService.adminEditUser(req));
+    }
 }

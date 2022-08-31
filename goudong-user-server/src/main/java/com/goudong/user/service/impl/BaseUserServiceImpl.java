@@ -16,6 +16,7 @@ import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.JPAPageResultConvert;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.user.dto.AdminEditUserReq;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
@@ -353,6 +354,31 @@ public class BaseUserServiceImpl implements BaseUserService {
     public com.goudong.commons.dto.oauth2.BaseUserDTO getUserById(Long id) {
         BaseUserPO baseUserPO = baseUserRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
         return BeanUtil.copyProperties(baseUserPO, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+    }
+
+    /**
+     * admin平台修改用户信息
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    @Transactional
+    public BaseUserDTO adminEditUser(AdminEditUserReq req) {
+        BaseUserPO userPO = baseUserRepository.findById(req.getId()).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+
+        List<BaseRoleDTO> roles = baseRoleService.listByIds(req.getRoleIds());
+        if (req.getRoleIds().size() != roles.size()) {
+            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "角色不正确");
+        }
+
+        userPO.setNickname(req.getNickName());
+        userPO.setAvatar(req.getAvatar());
+        userPO.setValidTime(req.getValidTime());
+        userPO.setRemark(req.getRemark());
+        userPO.setRoles(BeanUtil.copyToList(roles, BaseRolePO.class, CopyOptions.create()));
+
+        return BeanUtil.copyProperties(userPO, BaseUserDTO.class);
     }
 
     /**
