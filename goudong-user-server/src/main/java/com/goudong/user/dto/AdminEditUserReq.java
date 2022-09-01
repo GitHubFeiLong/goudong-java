@@ -28,7 +28,7 @@ public class AdminEditUserReq {
     private List<Long> roleIds;
 
     @ApiModelProperty(value = "昵称")
-    private String nickName;
+    private String nickname;
 
     @ApiModelProperty(value = "头像地址")
     private String avatar;

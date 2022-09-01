@@ -372,7 +372,7 @@ public class BaseUserServiceImpl implements BaseUserService {
             throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "角色不正确");
         }
 
-        userPO.setNickname(req.getNickName());
+        userPO.setNickname(req.getNickname());
         userPO.setAvatar(req.getAvatar());
         userPO.setValidTime(req.getValidTime());
         userPO.setRemark(req.getRemark());

@@ -77,4 +77,9 @@ public class BaseUserDTO extends BasePO {
      * 自定义的一个会话id，用于区分发起请求的用户，可以是认证过后的token可以是未登录的cookie
      */
     private String sessionId;
+
+    /**
+     * 头像地址
+     */
+    private String avatar;
 }
