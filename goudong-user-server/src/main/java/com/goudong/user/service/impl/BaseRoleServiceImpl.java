@@ -3,12 +3,16 @@ package com.goudong.user.service.impl;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.user.RoleException;
 import com.goudong.commons.utils.JPAPageResultConvert;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
+import com.goudong.user.dto.ModifyRoleReq;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseRoleService;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -85,5 +90,49 @@ public class BaseRoleServiceImpl implements BaseRoleService {
 
         List<BaseRolePO> roles = baseRoleRepository.findAll(specification);
         return BeanUtil.copyToList(roles, BaseRoleDTO.class, CopyOptions.create());
+    }
+
+    /**
+     * 新增角色
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public BaseRoleDTO addRole(AddRoleReq req) {
+        BaseRolePO rolePO = BeanUtil.copyProperties(req, BaseRolePO.class);
+        rolePO.setRoleName("ROLE_" + req.getRoleNameCn());
+        baseRoleRepository.save(rolePO);
+        return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
+    }
+
+    /**
+     * 修改角色
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    @Transactional
+    public BaseRoleDTO modifyRole(ModifyRoleReq req) {
+        BaseRolePO rolePO = baseRoleRepository.findById(req.getId()).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+        rolePO.setRoleNameCn(req.getRoleNameCn());
+        rolePO.setRemark(req.getRemark());
+
+        return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
+    }
+
+    /**
+     * 删除角色
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public BaseRoleDTO removeRole(Long id) {
+        BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+        baseRoleRepository.delete(rolePO);
+        rolePO.setDeleted(true);
+        return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
     }
 }

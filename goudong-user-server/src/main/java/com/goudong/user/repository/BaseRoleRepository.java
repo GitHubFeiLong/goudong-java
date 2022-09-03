@@ -21,4 +21,11 @@ public interface BaseRoleRepository extends JpaRepository<BaseRolePO, Long>, Jpa
      * @return
      */
     Optional<BaseRolePO> findByRoleName(String roleName);
+
+    /**
+     * 根据角色名查询
+     * @param roleNameCn
+     * @return
+     */
+    Optional<BaseRolePO> findByRoleNameCn(String roleNameCn);
 }

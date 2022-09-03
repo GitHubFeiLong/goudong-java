@@ -38,6 +38,10 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 获取认证用户，并将其设置到 SecurityContext中
         try {
+            if (httpServletRequest.getRequestURI().contains("/api/oauth2/authentication/refresh-token")) {
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+                return;
+            }
             BaseUserPO baseUserPO = baseUserService.getAuthentication(httpServletRequest);
             // 官网建议，避免跨多个线程的竞态条件
             SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();

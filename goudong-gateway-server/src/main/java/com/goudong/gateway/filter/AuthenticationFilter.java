@@ -77,8 +77,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             });
         }
 
-        // 本次请求是登录认证时，不需要进行后面的处理
-        if (uri.contains("/authentication/login")) {
+        // 本次请求是登录认证/刷新令牌时，不需要进行后面的token校验
+        if (uri.contains("/authentication/login") || uri.contains("/api/oauth2/authentication/refresh-token")) {
             return chain.filter(exchange);
         }
 

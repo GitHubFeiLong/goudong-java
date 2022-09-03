@@ -1,8 +1,10 @@
 package com.goudong.user.service;
 
 import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
+import com.goudong.user.dto.ModifyRoleReq;
 import com.goudong.user.po.BaseRolePO;
 
 import javax.validation.constraints.NotEmpty;
@@ -35,4 +37,25 @@ public interface BaseRoleService {
      * @return
      */
     List<BaseRoleDTO> listByIds(@NotEmpty List<Long> roleIds);
+
+    /**
+     * 新增角色
+     * @param req
+     * @return
+     */
+    BaseRoleDTO addRole(AddRoleReq req);
+
+    /**
+     * 修改角色
+     * @param req
+     * @return
+     */
+    BaseRoleDTO modifyRole(ModifyRoleReq req);
+
+    /**
+     * 删除角色
+     * @param id
+     * @return
+     */
+    BaseRoleDTO removeRole(Long id);
 }

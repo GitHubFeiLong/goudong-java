@@ -185,6 +185,11 @@
             <artifactId>commons-io</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--easyexcel-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->
