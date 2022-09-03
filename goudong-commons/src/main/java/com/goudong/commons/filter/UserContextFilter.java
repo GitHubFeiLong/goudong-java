@@ -1,6 +1,6 @@
 package com.goudong.commons.filter;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
@@ -42,7 +42,7 @@ public class UserContextFilter implements Filter {
         try {
             if (StringUtils.isNotBlank(requestUser)) {
                 String decodeJson = URLDecoder.decode(requestUser, "UTF-8");
-                BaseUserDTO baseUserDTO = JSONObject.parseObject(decodeJson, BaseUserDTO.class);
+                BaseUserDTO baseUserDTO = JSONUtil.toBean(decodeJson, BaseUserDTO.class);
                 LogUtil.debug(log, "当前请求用户信息：{}", baseUserDTO);
                 UserContext.set(baseUserDTO);
             }

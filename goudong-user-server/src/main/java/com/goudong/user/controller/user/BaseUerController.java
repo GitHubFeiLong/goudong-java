@@ -25,6 +25,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.List;
 
@@ -243,5 +244,12 @@ public class BaseUerController {
     @ApiOperation(value = "admin-更新用户信息")
     public Result<BaseUserDTO> adminEditUser (@RequestBody @Validated AdminEditUserReq req){
         return Result.ofSuccess(baseUserService.adminEditUser(req));
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "删除用户")
+    public Result<BaseUserDTO> deleteUserById (@PathVariable @Min(value = 100, message = "错误") Long id){
+        BaseUserDTO userDTO = baseUserService.deleteUserById(id);
+        return Result.ofSuccess(userDTO);
     }
 }

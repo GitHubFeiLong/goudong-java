@@ -92,4 +92,11 @@ public interface BaseUserService {
      * @return
      */
     BaseUserDTO adminEditUser(AdminEditUserReq req);
+
+    /**
+     * 根据id删除用户
+     * @param id
+     * @return
+     */
+    BaseUserDTO deleteUserById(Long id);
 }

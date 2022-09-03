@@ -382,6 +382,19 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
+     * 根据id删除用户
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public BaseUserDTO deleteUserById(Long id) {
+        BaseUserPO user = baseUserRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+        baseUserRepository.delete(user);
+        return BeanUtil.copyProperties(user, BaseUserDTO.class);
+    }
+
+    /**
      * 绑定opendId
      *
      * @param userDTO
