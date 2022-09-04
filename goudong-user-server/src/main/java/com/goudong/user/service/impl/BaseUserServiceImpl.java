@@ -276,7 +276,6 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Transactional
     @Override
     public BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
-        PageRequest pageRequest = PageRequest.of(page.getJPAPage(), (int)page.getSize(), Sort.sort(BaseUserPO.class).by(BaseUserPO::getCreateTime).descending());
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
             if (StringUtils.isNotBlank(page.getUsername())) {
@@ -300,22 +299,45 @@ public class BaseUserServiceImpl implements BaseUserService {
                 and.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(String.class), page.getEndCreateTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
             }
 
+            // 分页
+            Order weightOrder = criteriaBuilder.desc(root.get("createTime"));
             if (CollectionUtils.isNotEmpty(and)) {
-                return query.where(and.toArray(new Predicate[and.size()])).getRestriction();
+                return query.where(and.toArray(new Predicate[and.size()])).orderBy(weightOrder).getRestriction();
             }
 
-            return query.getRestriction();
+            return query.orderBy(weightOrder).getRestriction();
         };
 
-        Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
-
-        BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = JPAPageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+        BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = null;
+        if (page.getPage() != 0 && page.getSize() != 0) {
+            PageRequest pageRequest = PageRequest.of(page.getJPAPage(), (int)page.getSize());
+            Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
+            convert = JPAPageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+        } else {
+            // 导出时
+            List<BaseUserPO> all = baseUserRepository.findAll(specification);
+            List<com.goudong.commons.dto.oauth2.BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
+            convert = new BasePageResult<>(baseUserDTOS);
+        }
 
         // 脱敏
         convert.getContent().forEach(p->{
             p.setPassword(null);
         });
         return convert;
+    }
+
+    /**
+     * 根据id查询
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    @Transactional
+    public List<com.goudong.commons.dto.oauth2.BaseUserDTO> findAllById(List<Long> ids) {
+        List<BaseUserPO> allById = baseUserRepository.findAllById(ids);
+        return BeanUtil.copyToList(allById, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
     }
 
     /**

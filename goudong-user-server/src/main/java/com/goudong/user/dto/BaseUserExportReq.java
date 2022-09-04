@@ -1,25 +1,28 @@
-package com.goudong.commons.dto.user;
+package com.goudong.user.dto;
 
 import com.goudong.commons.constant.core.DateConst;
-import com.goudong.commons.dto.core.BasePage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 类描述：
- * 用户分页查询的条件
+ * 用户导出分页参数
  * @author cfl
  * @date 2022/8/20 8:22
  * @version 1.0
  */
 @Data
-public class BaseUser2QueryPageDTO extends BasePage implements Serializable {
+public class BaseUserExportReq implements Serializable {
 
     private static final long serialVersionUID = -2290257073855491469L;
+
+    @ApiModelProperty("勾选的用户id")
+    private List<Long> ids;
 
     @ApiModelProperty("用户名")
     private String username;

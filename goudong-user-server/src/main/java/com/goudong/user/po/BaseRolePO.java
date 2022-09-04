@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "base_role")
-@SQLDelete(sql = "update base_role set deleted=true where id=?")
+@SQLDelete(sql = "update base_role set deleted=null where id=?")
 @Where(clause = "deleted=false")
 public class BaseRolePO extends BasePO {
 

@@ -39,6 +39,10 @@ public class BasePageResult<T> {
      */
     private List<T> content;
 
+    public BasePageResult(List<T> content) {
+        this.content = content;
+    }
+
     public BasePageResult(Long total, Long totalPage, Long page, Long size, List<T> content) {
         this.total = total;
         this.totalPage = totalPage;

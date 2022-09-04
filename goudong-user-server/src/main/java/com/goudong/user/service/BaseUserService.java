@@ -73,6 +73,13 @@ public interface BaseUserService {
     BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page);
 
     /**
+     * 根据id查询
+     * @param ids
+     * @return
+     */
+    List<com.goudong.commons.dto.oauth2.BaseUserDTO> findAllById(List<Long> ids);
+
+    /**
      * 后台简单新增一个用户
      * @param createDTO
      * @return

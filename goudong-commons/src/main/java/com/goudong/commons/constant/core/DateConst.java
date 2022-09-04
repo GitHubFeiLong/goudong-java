@@ -18,6 +18,11 @@ public class DateConst {
     public static final String DATE_TIME_FORMATTER = "yyyy-MM-dd HH:mm:ss";
 
     /**
+     * 日期时间格式 yyyyMMddHHmmss
+     */
+    public static final String DATE_TIME_FORMATTER_SHORT = "yyyyMMddHHmmss";
+
+    /**
      * 日期格式
      */
     public static final String DATE_FORMATTER = "yyyy-MM-dd";

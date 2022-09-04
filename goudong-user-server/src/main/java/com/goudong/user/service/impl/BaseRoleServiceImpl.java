@@ -117,6 +117,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     public BaseRoleDTO modifyRole(ModifyRoleReq req) {
         BaseRolePO rolePO = baseRoleRepository.findById(req.getId()).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
         rolePO.setRoleNameCn(req.getRoleNameCn());
+        rolePO.setRoleName("ROLE_" + req.getRoleNameCn());
         rolePO.setRemark(req.getRemark());
 
         return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
@@ -132,7 +133,6 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     public BaseRoleDTO removeRole(Long id) {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
         baseRoleRepository.delete(rolePO);
-        rolePO.setDeleted(true);
         return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
     }
 }

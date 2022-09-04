@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+
 /**
  * 类描述：
  * 角色控制层
@@ -52,7 +54,7 @@ public class BaseRoleController {
 
     @DeleteMapping("{id}")
     @ApiOperation(value = "删除角色")
-    public Result<BaseRoleDTO> removeRole (@PathVariable Long id){
+    public Result<BaseRoleDTO> removeRole (@PathVariable @Min(value = 100) Long id){
         return Result.ofSuccess(baseRoleService.removeRole(id));
     }
 
