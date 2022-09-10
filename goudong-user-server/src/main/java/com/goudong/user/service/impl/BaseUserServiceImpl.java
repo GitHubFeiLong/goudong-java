@@ -359,6 +359,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         BaseUserPO baseUserPO = BeanUtil.copyProperties(createDTO, BaseUserPO.class);
+        baseUserPO.setPassword(BCrypt.hashpw("123456", BCrypt.gensalt()));
         baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
         baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
         baseUserRepository.save(baseUserPO);

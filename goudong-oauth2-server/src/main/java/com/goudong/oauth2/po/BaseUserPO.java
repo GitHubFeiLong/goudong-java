@@ -97,6 +97,12 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     @Transient
     private Boolean authenticated = true;
 
+    /**
+     * 头像地址
+     */
+    @Column(name = "avatar", nullable = false)
+    private String avatar;
+
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
