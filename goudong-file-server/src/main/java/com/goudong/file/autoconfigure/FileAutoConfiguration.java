@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.constant.core.SystemEnvConst;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.commons.utils.core.StringUtil;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
@@ -97,18 +96,17 @@ public class FileAutoConfiguration {
         }
 
         StringBuilder body = new StringBuilder();
-        body.append("\t[序号]\t[类型]\t[上限]\n");
-        AtomicInteger integer = new AtomicInteger(1);
-        int border = fileTypeList.size();
+
+        final String template = "%-8s%-8s%-8s\n";
+        String title = String.format(template, "NUMBER", "TYPE", "MAX");
+        body.append(title);
+        AtomicInteger number = new AtomicInteger(1);
         fileTypeList.stream().forEach(p->{
-            body.append("\t").append(integer.get())
-                    .append("\t\t").append(StringUtil.fillSpace(p.getType().toString(), 8))
-                    .append(p.getLength()).append(p.getFileLengthUnit());
-            if(integer.getAndIncrement() < border){
-                body.append("\n");
-            }
+            String row = String.format(template, number.getAndIncrement(), p.getType().toString(), String.valueOf(p.getLength()) + p.getFileLengthUnit());
+            body.append(row);
         });
-        LogUtil.info(log, "\n应用中文件上传的磁盘目录为:'{}',支持上传的文件类型及最大限制如下:\n{}", rootDir,
+
+        LogUtil.info(log, "\n应用中文件上传的磁盘目录为:\"{}\",支持上传的文件类型及最大限制如下:\n{}", rootDir,
                 body.toString());
         return upload;
     }
