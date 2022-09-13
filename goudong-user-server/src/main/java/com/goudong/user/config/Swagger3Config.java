@@ -59,7 +59,7 @@ public class Swagger3Config {
 
 
     @Bean
-    public Docket UserDocket() {
+    public Docket userDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
                 .title("用户")
                 .description("用户相关接口")
@@ -81,7 +81,7 @@ public class Swagger3Config {
     }
 
     @Bean
-    public Docket RoleDocket() {
+    public Docket roleDocket() {
         ApiInfo apiInfo =  new ApiInfoBuilder()
                 .title("角色")
                 .description("角色相关接口")
@@ -98,6 +98,28 @@ public class Swagger3Config {
                 // 支持的通讯协议集合
                 .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
                 .groupName("角色")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
+                ;
+    }
+
+    @Bean
+    public Docket menuDocket() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("菜单")
+                .description("菜单相关接口")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.user.controller.menu"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("菜单")
                 .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
     }

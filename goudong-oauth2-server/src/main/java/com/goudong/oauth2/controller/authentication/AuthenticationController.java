@@ -181,10 +181,10 @@ public class AuthenticationController {
         List<BaseMenuDTO> allMenu = baseMenuService.findAll();
 
         // 判断是否需要鉴权
-        long count = allMenu.parallelStream().filter(f -> {
-            // 符合条件，本次请求需要鉴权
-            return antPathMatcher.match(f.getMetadata().getUrl(), uri) && Objects.equals(f.getMetadata().getMethod(), method);
-        }).count();
+        long count = allMenu.parallelStream()
+                .filter(BaseMenuDTO::getApi)
+                .filter(f -> antPathMatcher.match(f.getPath(), uri) && Objects.equals(f.getMethod(), method))
+                .count();
         boolean isNeedAuthentication = count > 0;
 
         // 只有需要”鉴权“时，才进行鉴权
@@ -202,7 +202,7 @@ public class AuthenticationController {
                 List<BaseMenuDTO> menus = baseMenuService.findAllByRole(role.getAuthority());
                 // 循环权限，查看是否符合
                 for (BaseMenuDTO menu : menus) {
-                    String menuUrl = menu.getMetadata().getUrl();
+                    String menuUrl = menu.getMetadata().getPath();
                     String menuMethod = menu.getMetadata().getMethod();
                     // 符合条件，退出循环
                     if (antPathMatcher.match(menuUrl, uri) && Objects.equals(menuMethod, method)) {
