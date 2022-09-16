@@ -20,12 +20,12 @@
     </developers>
 
     <!--Spring Boot-->
-    <parent>
+    <!--<parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.8.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
+        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;
+    </parent>-->
 
     <modules>
         <module>goudong-commons</module>
@@ -47,6 +47,7 @@
         <goudong-gateway-server.version>1.0-SNAPSHOT</goudong-gateway-server.version>
         <!--框架-->
         <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
+        <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
         <spring-cloud-dependencies.version>Hoxton.SR12</spring-cloud-dependencies.version>
         <spring-cloud-alibaba-dependencies.version>2.2.7.RELEASE</spring-cloud-alibaba-dependencies.version>
         <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
@@ -114,6 +115,14 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--spring-boot-starter-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot-starter.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

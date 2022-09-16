@@ -18,11 +18,13 @@
         <module>seata-client-a</module>
         <module>seata-client-b</module>
         <module>xxl-job</module>
+        <module>junit5-demo</module>
     </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
         <activiti-engine.version>7.0.0.Beta1</activiti-engine.version>
     </properties>
 
