@@ -20,12 +20,12 @@
     </developers>
 
     <!--Spring Boot-->
-    <!--<parent>
+    <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.8.RELEASE</version>
-        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;
-    </parent>-->
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
     <modules>
         <module>goudong-commons</module>
@@ -46,7 +46,6 @@
         <goudong-commons.version>1.0-SNAPSHOT</goudong-commons.version>
         <goudong-gateway-server.version>1.0-SNAPSHOT</goudong-gateway-server.version>
         <!--框架-->
-        <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
         <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
         <spring-cloud-dependencies.version>Hoxton.SR12</spring-cloud-dependencies.version>
         <spring-cloud-alibaba-dependencies.version>2.2.7.RELEASE</spring-cloud-alibaba-dependencies.version>
@@ -82,6 +81,7 @@
         <activiti-spring-boot-starter.version>7.0.0.Beta5</activiti-spring-boot-starter.version>
         <hibernate-types-52.version>2.16.3</hibernate-types-52.version>
         <easyexcel.version>3.0.5</easyexcel.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -126,6 +126,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <!--其他微服务-->
             <!--自定义的commons组件-->
             <dependency>
@@ -133,10 +134,17 @@
                 <artifactId>goudong-commons</artifactId>
                 <version>${goudong-commons.version}</version>
             </dependency>
-            <!--junit-->
+            <!--junit4-->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
+                <scope>test</scope>
+            </dependency>
+            <!--junit5-->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- redisson -->
@@ -265,7 +273,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-devtools</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
 
             <dependency>
