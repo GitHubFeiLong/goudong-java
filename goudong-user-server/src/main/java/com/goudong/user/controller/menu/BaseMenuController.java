@@ -22,12 +22,12 @@ import java.util.List;
  * @version 1.0
  * @date 2022/9/13 20:53
  */
-@Api(tags = "菜单相关接口")
+@Api(tags = "菜单")
 @Slf4j
 @RestController
 @RequestMapping("/base-menu")
 @RequiredArgsConstructor
-public class MenuController {
+public class BaseMenuController {
     //~fields
     //==================================================================================================================
     private final BaseMenuService baseMenuService;

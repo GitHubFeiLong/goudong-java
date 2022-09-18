@@ -44,4 +44,9 @@ public class BaseRolePO extends BasePO {
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns={@JoinColumn(name = "user_id")})
     private List<BaseUserPO> users = new ArrayList<>();
+
+    @ManyToMany(targetEntity=BaseMenuPO.class, fetch = FetchType.LAZY)
+    @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns={@JoinColumn(name = "menu_id")})
+    private List<BaseMenuPO> menus = new ArrayList<>();
 }

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.goudong.commons.function.core.SFunction;
 import com.goudong.commons.tree.example.Menu;
-import com.goudong.commons.tree.v1.AbstractTree;
 import com.goudong.commons.utils.core.ColumnUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -138,7 +137,7 @@ public class Tree {
             return toTreeByReflect(nodes);
         }
 
-        throw new RuntimeException("集合转换成树错误，请尝试将节点继承"+ AbstractTree.class.getName() + "或设置成员变量等方法");
+        throw new RuntimeException("集合转换成树错误，请尝试将节点实现"+ TreeInterface.class.getName() + "或设置成员变量等方法");
     }
 
     /**

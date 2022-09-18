@@ -46,11 +46,12 @@ public interface TreeInterface {
      * @return
      */
     static List<TreeInterface> getChildrenByInterface(TreeInterface root, List<TreeInterface> nodes){
-        return nodes.stream().filter(f -> Objects.equals(root.getId(), f.getParentId()))
+        List<TreeInterface> children = nodes.stream().filter(f -> Objects.equals(root.getId(), f.getParentId()))
                 .map(m -> {
                     m.setChildren(getChildrenByInterface(m, nodes));
                     return m;
                 }).collect(Collectors.toList());
+        return children.isEmpty() ? null : children;
     }
 
     /**

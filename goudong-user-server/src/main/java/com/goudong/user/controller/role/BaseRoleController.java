@@ -8,6 +8,8 @@ import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.dto.ModifyRoleReq;
 import com.goudong.user.service.BaseRoleService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 类描述：
@@ -40,6 +44,12 @@ public class BaseRoleController {
         return Result.ofSuccess(baseRoleService.page(page));
     }
 
+    @GetMapping("/{id}")
+    @ApiOperation(value = "根据id查询角色信息")
+    public Result<BaseRoleDTO> getById (@PathVariable("id") Long id){
+        return Result.ofSuccess(baseRoleService.getById(id));
+    }
+
     @PostMapping
     @ApiOperation(value = "新增角色")
     public Result<BaseRoleDTO> addRole (@RequestBody @Validated AddRoleReq req){
@@ -56,6 +66,17 @@ public class BaseRoleController {
     @ApiOperation(value = "删除角色")
     public Result<BaseRoleDTO> removeRole (@PathVariable @Min(value = 100) Long id){
         return Result.ofSuccess(baseRoleService.removeRole(id));
+    }
+
+    @PostMapping("/permissions/{id}")
+    @ApiOperation(value = "修改权限")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "角色id"),
+            @ApiImplicitParam(name = "menuIds", value = "菜单id"),
+    })
+    public Result<BaseRoleDTO> updatePermissions(@PathVariable("id")@Min(value = 100) Long id,
+                                                 @RequestBody @NotNull List<Long> menuIds) {
+        return Result.ofSuccess(baseRoleService.updatePermissions(id, menuIds));
     }
 
 

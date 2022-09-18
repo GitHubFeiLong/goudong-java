@@ -46,6 +46,20 @@ public class BeanUtil {
         return cn.hutool.core.bean.BeanUtil.copyProperties(source, clazz, ignoreProperties);
     }
 
+    public static void copyProperties(Object source, Object target) {
+        if (source == null) {
+            return;
+        }
+        cn.hutool.core.bean.BeanUtil.copyProperties(source, target);
+    }
+
+    public static void copyProperties(Object source, Object target, String...ignoreProperties) {
+        if (source == null) {
+            return;
+        }
+        cn.hutool.core.bean.BeanUtil.copyProperties(source, target, ignoreProperties);
+    }
+
     @SneakyThrows
     public static <T> List<T> copyToList(List sourceList, Class<T> clazz, CopyOptions copyOptions) {
         if (sourceList == null || sourceList.isEmpty()) {

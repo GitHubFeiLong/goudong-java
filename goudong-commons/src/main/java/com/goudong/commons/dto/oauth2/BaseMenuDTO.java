@@ -1,5 +1,6 @@
 package com.goudong.commons.dto.oauth2;
 
+import com.goudong.commons.tree.v2.TreeInterface;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @Date 2021/8/12 15:23
  */
 @Data
-public class BaseMenuDTO {
+public class BaseMenuDTO implements TreeInterface {
     private static final long serialVersionUID = -4844654607239619613L;
     /**
      * 主键id
@@ -54,7 +55,16 @@ public class BaseMenuDTO {
     private String remark;
 
     /**
+     * 是否选择
+     */
+    private boolean checked;
+    /**
      * 子节点
      */
     private List<BaseMenuDTO> children;
+
+    @Override
+    public void setChildren(List children) {
+        this.children = children;
+    }
 }

@@ -50,6 +50,10 @@ public enum DatabaseKeyEnum {
      * api接口资源表的唯一索引
      */
     UQ_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("保存api_resource失败，数据已存在"),
+
+    //~ 菜单表 base_menu
+    //==================================================================================================================
+    UK_BASE_MENU_PATH_METHOD("请勿重复添加相同菜单"),
     ;
 
     /**

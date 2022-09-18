@@ -8,6 +8,7 @@ import com.goudong.user.dto.ModifyRoleReq;
 import com.goudong.user.po.BaseRolePO;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -58,4 +59,19 @@ public interface BaseRoleService {
      * @return
      */
     BaseRoleDTO removeRole(Long id);
+
+    /**
+     * 根据id查询角色
+     * @param id
+     * @return
+     */
+    BaseRoleDTO getById(Long id);
+
+    /**
+     * 修改角色的权限
+     * @param id 角色id
+     * @param menuIds 菜单
+     */
+    BaseRoleDTO updatePermissions(@NotNull Long id, @NotNull List<Long> menuIds);
+
 }

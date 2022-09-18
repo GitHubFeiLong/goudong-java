@@ -51,17 +51,19 @@ public class BasicException extends RuntimeException{
         // 默认500异常
         BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR);
 
+        if (throwable instanceof RuntimeException) {
+            return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage(), "RuntimeException " + throwable.getMessage());
+        }
+
         // 空指针
         if (throwable instanceof NullPointerException) {
-            return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "空指针异常", "null");
+            return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "空指针异常", "NullPointerException null");
         }
 
         // 上传文件错误
         if (throwable instanceof MultipartException) {
-            return ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "上传文件失败", throwable.getMessage());
+            return ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "上传文件失败", "MultipartException " +throwable.getMessage());
         }
-
-
 
         if (throwable instanceof IndexOutOfBoundsException ) {
             return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, "");

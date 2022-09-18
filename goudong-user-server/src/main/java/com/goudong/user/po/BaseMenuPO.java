@@ -6,8 +6,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.http.HttpMethod;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 类描述：
@@ -35,7 +36,7 @@ public class BaseMenuPO extends BasePO {
     /**
      * 是否是api
      */
-    private Boolean api = false;
+    private Boolean api;
 
     /**
      * 前端的路由或后端的接口，
@@ -61,4 +62,9 @@ public class BaseMenuPO extends BasePO {
      * 是否是系统菜单（true：是；false：不是）
      */
     private Boolean sys;
+
+    @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
+    @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "menu_id")},
+            inverseJoinColumns={@JoinColumn(name = "role_id")})
+    private List<BaseRolePO> roles = new ArrayList<>();
 }
