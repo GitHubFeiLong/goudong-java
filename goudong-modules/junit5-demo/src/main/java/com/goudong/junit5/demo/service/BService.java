@@ -1,28 +1,22 @@
 package com.goudong.junit5.demo.service;
 
+import org.springframework.stereotype.Service;
+
 /**
  * 类描述：
  *
- * @author msi
+ * @author cfl
  * @version 1.0
- * @date 2022/9/16 11:18
+ * @date 2022/9/18 1:24
  */
-@org.springframework.stereotype.Service
-public class Service {
-
+@Service
+public class BService {
     //~fields
     //==================================================================================================================
 
     //~methods
     //==================================================================================================================
-    public int add(int i1, int i2) {
-        return i1+i2;
-    }
-
-    public int sub(int i1, int i2) {
-        return i1-i2;
-    }
-
-    public Service() {
+    public int badd(int i1, int i2) {
+        return i1 + i2;
     }
 }

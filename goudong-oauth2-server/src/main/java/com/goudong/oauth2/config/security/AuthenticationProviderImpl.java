@@ -1,13 +1,17 @@
 package com.goudong.oauth2.config.security;
 
+import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.commons.dto.oauth2.BaseRoleDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.core.BeanUtil;
-import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
-import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
+import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseAuthenticationLogService;
+import com.goudong.oauth2.service.BaseMenuService;
+import com.goudong.oauth2.service.BaseRoleService;
 import com.goudong.oauth2.service.BaseUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -21,8 +25,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -34,6 +41,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     private static final BCryptPasswordEncoder BCRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();
@@ -50,15 +58,19 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     private final BaseUserService baseUserService;
 
     /**
+     * 菜单接口
+     */
+    private final BaseMenuService baseMenuService;
+
+    /**
+     * 角色服务层接口
+     */
+    private final BaseRoleService baseRoleService;
+    /**
      * 认证日志服务层接口
      */
     private final BaseAuthenticationLogService baseAuthenticationLogService;
 
-    public AuthenticationProviderImpl(BaseUserService baseUserService,
-                                      BaseAuthenticationLogService baseAuthenticationLogService) {
-        this.baseUserService = baseUserService;
-        this.baseAuthenticationLogService = baseAuthenticationLogService;
-    }
 
     /**
      * 自定义登录认证
@@ -112,9 +124,19 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         // 验证通过，返回用户信息
         BaseUserPO baseUserPO = BeanUtil.copyProperties(userInfo, BaseUserPO.class);
+
+        // no session 解决jpa的lazy
+        baseUserPO.getRoles().stream().forEach(p->p.setMenus(null));
+
+        // 查询菜单
+        List<Long> roleIds = baseUserPO.getRoles().stream().map(BaseRolePO::getId).collect(Collectors.toList());
+        List<BaseRoleDTO> roleDTOS = baseRoleService.listByIds(roleIds);
+        Set<BaseMenuDTO> menuDTOS = roleDTOS
+                .stream()
+                .flatMap(m -> m.getMenus().stream()).collect(Collectors.toSet());
+
         baseUserPO.setPassword(null);
-
-
+        baseUserPO.setMenus(menuDTOS);
         return baseUserPO;
     }
 

@@ -26,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -86,6 +87,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @throws AuthenticationException
      */
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws AuthenticationException {
         BaseUserPO byLogin = baseUserRepository.findByLogin(username);
         return byLogin;
@@ -104,6 +106,7 @@ public class BaseUserServiceImpl implements BaseUserService {
 
         // 删除多余的属性
         BaseUserDTO baseUserDTO = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
+        baseUserDTO.getRoles().stream().forEach(p->p.setMenus(null));
         // 设置key
         redisTool.set(RedisKeyProviderEnum.AUTHENTICATION, baseUserDTO, clientSideEnum.getLowerName(), accessToken);
         // 修改key过期时间

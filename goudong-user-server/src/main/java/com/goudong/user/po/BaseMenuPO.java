@@ -56,4 +56,9 @@ public class BaseMenuPO extends BasePO {
      * 备注
      */
     private String remark;
+
+    /**
+     * 是否是系统菜单（true：是；false：不是）
+     */
+    private Boolean sys;
 }

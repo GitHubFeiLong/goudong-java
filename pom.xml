@@ -134,12 +134,6 @@
                 <artifactId>goudong-commons</artifactId>
                 <version>${goudong-commons.version}</version>
             </dependency>
-            <!--junit4-->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <scope>test</scope>
-            </dependency>
             <!--junit5-->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

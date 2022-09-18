@@ -44,9 +44,9 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     @Override
     public List<BaseMenuDTO> init(List<InitMenuReq> req) {
 
-        long count = baseMenuRepository.count();
+        long count = baseMenuRepository.countBySys(true);
         if (count > 1) {
-            throw ClientException.clientException(ClientExceptionEnum.FORBIDDEN, "没有权限操作");
+            throw ClientException.clientException(ClientExceptionEnum.FORBIDDEN, "请勿重复初始菜单");
         }
 
         List<BaseMenuPO> pos = new ArrayList<>();
@@ -55,6 +55,9 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         });
 
         log.info(pos.toString());
+
+        // 设置成系统菜单
+        pos.stream().forEach(m->m.setSys(true));
 
         baseMenuRepository.saveAll(pos);
 

@@ -33,7 +33,7 @@ public class MenuController {
     private final BaseMenuService baseMenuService;
     //~methods
     //==================================================================================================================
-    @PostMapping
+    @PostMapping("/init")
     @ApiOperation(value = "初始化")
     public Result<List<BaseMenuDTO>> init(@RequestBody List<InitMenuReq> req) {
         return Result.ofSuccess(baseMenuService.init(req));

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.goudong.commons.constant.user.RoleConst;
+import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,10 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 类描述：
@@ -263,4 +261,10 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
      */
     @Transient
     private String sessionId;
+
+    /**
+     * 用户对应的菜单
+     */
+    @Transient
+    private Set<BaseMenuDTO> menus;
 }

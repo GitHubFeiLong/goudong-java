@@ -13,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface BaseMenuRepository extends JpaRepository<BaseMenuPO, Long>, JpaSpecificationExecutor<BaseMenuPO> {
 
+    Integer countBySys(boolean sys);
 }

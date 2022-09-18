@@ -2,6 +2,8 @@ package com.goudong.commons.dto.oauth2;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 角色
  * authority_role
@@ -28,4 +30,9 @@ public class BaseRoleDTO {
      * 备注
      */
     private String remark;
+
+    /**
+     * 菜单
+     */
+    private List<BaseMenuDTO> menus;
 }
