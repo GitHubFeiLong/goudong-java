@@ -3,7 +3,10 @@ package com.goudong.oauth2.po;
 import com.goudong.commons.dto.oauth2.MetadataDTO;
 import com.goudong.commons.framework.jpa.BasePO;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -65,6 +68,16 @@ public class BaseMenuPO extends BasePO {
      * 备注
      */
     private String remark;
+
+    /**
+     * 是否是系统菜单（true：是；false：不是）
+     */
+    private Boolean sys;
+
+    /**
+     * 是否是隐藏菜单
+     */
+    private Boolean hide;
 
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "menu_id")},

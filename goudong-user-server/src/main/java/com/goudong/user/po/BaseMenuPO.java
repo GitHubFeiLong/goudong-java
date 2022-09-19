@@ -63,6 +63,11 @@ public class BaseMenuPO extends BasePO {
      */
     private Boolean sys;
 
+    /**
+     * 是否是隐藏菜单
+     */
+    private Boolean hide;
+
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "menu_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})

@@ -58,6 +58,18 @@ public class BaseMenuDTO implements TreeInterface {
      * 是否选择
      */
     private boolean checked;
+
+
+    /**
+     * 是否是系统菜单（true：是；false：不是）
+     */
+    private Boolean sys;
+
+    /**
+     * 是否是隐藏菜单
+     */
+    private Boolean hide;
+
     /**
      * 子节点
      */

@@ -21,6 +21,7 @@ import org.springframework.core.env.Environment;
 @EnableCommonsJpaConfig
 @EnableCommonsJacksonConfig
 @EnableCommonsUserContextFilter
+@EnableCommonsHideMenuConfig
 public class CommonsConfig {
 
     //~fields

@@ -181,29 +181,36 @@ public class AuthenticationController {
         List<BaseMenuDTO> allMenu = baseMenuService.findAll();
 
         // 判断是否需要鉴权
-        long count = allMenu.parallelStream()
+        List<BaseMenuDTO> matchingMenus = allMenu.parallelStream()
                 .filter(BaseMenuDTO::getApi)
                 .filter(f -> antPathMatcher.match(f.getPath(), uri) && Objects.equals(f.getMethod(), method))
-                .count();
-        boolean isNeedAuthentication = count > 0;
+                .collect(Collectors.toList());
+
+        boolean isNeedAuthentication = matchingMenus.size() > 0;
 
         // 只有需要”鉴权“时，才进行鉴权
         if (isNeedAuthentication) {
-            // 如果用户此时是匿名用户，那么就直接拒绝访问（）
+            // 如果用户此时是匿名用户，那么就直接拒绝访问
             if (authentication.getId() == 0) {
                 LogUtil.warn(log, "拒绝匿名用户访问敏感资源，必须先认证");
                 // 没有权限，拒绝访问
                 throw new Oauth2Exception(ClientExceptionEnum.UNAUTHORIZED);
             }
 
+            // 如果是隐藏菜单就直接放行
+            if (matchingMenus.stream().filter(f->f.getHide()).count() >= 1) {
+                LogUtil.debug(log, "用户已登录，允许访问隐藏菜单 %s %s", uri, method);
+                return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+            }
+
             // 循环用户所有角色
             for (GrantedAuthority role : authentication.getAuthorities()) {
-                // 查询角色又拥有的权限
+                // 查询角色拥有的权限
                 List<BaseMenuDTO> menus = baseMenuService.findAllByRole(role.getAuthority());
                 // 循环权限，查看是否符合
                 for (BaseMenuDTO menu : menus) {
-                    String menuUrl = menu.getMetadata().getPath();
-                    String menuMethod = menu.getMetadata().getMethod();
+                    String menuUrl = menu.getPath();
+                    String menuMethod = menu.getMethod();
                     // 符合条件，退出循环
                     if (antPathMatcher.match(menuUrl, uri) && Objects.equals(menuMethod, method)) {
                         LogUtil.debug(log, "本次请求用户有权访问role:{} uri:{}", role.getAuthority(), httpServletRequest.getRequestURI());

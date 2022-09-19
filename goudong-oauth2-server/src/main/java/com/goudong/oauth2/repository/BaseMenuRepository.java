@@ -4,6 +4,8 @@ import com.goudong.oauth2.po.BaseMenuPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 /**
  * 接口描述：
  * 菜单持久层
@@ -18,5 +20,12 @@ public interface BaseMenuRepository extends JpaRepository<BaseMenuPO, Long>, Jpa
 
     //~methods
     //==================================================================================================================
+
+    /**
+     * 查询所有隐藏菜单
+     * @param hide
+     * @return
+     */
+    List<BaseMenuPO> findAllByHide(boolean hide);
 
 }

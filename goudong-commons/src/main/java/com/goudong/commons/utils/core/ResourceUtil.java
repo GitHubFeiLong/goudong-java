@@ -1,6 +1,7 @@
 package com.goudong.commons.utils.core;
 
 import com.google.common.collect.Lists;
+import com.goudong.commons.annotation.core.HideMenu;
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.BasePackageConst;
@@ -103,6 +104,18 @@ public class ResourceUtil {
     }
 
     /**
+     * 扫描白名单
+     *
+     * @param contextPath 应用上下文路径
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static List<ResourceAntMatcher> scanHideMenu(String contextPath) throws IOException, ClassNotFoundException {
+        return ResourceUtil.scanResourceByType(contextPath, ScanTypeEnum.HIDE_MENU);
+    }
+
+    /**
      * 根据类型，扫描资源接口
      * @param contextPath 服务设置的上下文路径
      * @param scanTypeEnum 扫描类型
@@ -147,7 +160,7 @@ public class ResourceUtil {
                         if (httpMethodAnnotation != null) {
                             // 接口备注（白名单备注|菜单备注）。
                             String remark = "api";
-
+                            List<ResourceAntMatcher> antMatchers;
                             switch (scanTypeEnum) {
                                 // 当是获取白名单资源时
                                 case WHITELIST: {
@@ -173,6 +186,22 @@ public class ResourceUtil {
                                         resourceAntMatchers.addAll(
                                                 ResourceUtil.annotation2ResourceAntMatcherByWhitelist(httpMethodAnnotation, prefixArr, remark, isInner, disable)
                                         );
+                                    }
+
+                                    break;
+                                }
+                                // 隐藏菜单时
+                                case HIDE_MENU: {
+                                    HideMenu hideMenu = AnnotationUtils.findAnnotation(method, HideMenu.class);
+
+                                    if (hideMenu != null) {
+                                        // 备注
+                                        remark = hideMenu.value();
+                                        boolean hideMenuApi = hideMenu.api();
+                                        boolean hideMenuSys = hideMenu.sys();
+
+                                        antMatchers = ResourceUtil.annotation2ResourceAntMatcherByHideMenu(httpMethodAnnotation, prefixArr, hideMenuApi, hideMenuSys, remark);
+                                        resourceAntMatchers.addAll(antMatchers);
                                     }
 
                                     break;
@@ -257,7 +286,38 @@ public class ResourceUtil {
                                                                            String remark,
                                                                            boolean isInner,
                                                                            boolean disable) {
-        return annotation2ResourceAntMatcher(ScanTypeEnum.WHITELIST, annotation, prefixArr, remark, isInner, disable);
+        List<ResourceAntMatcher> resourceAntMatchers = annotation2ResourceAntMatcher(ScanTypeEnum.WHITELIST, annotation, prefixArr);
+        resourceAntMatchers.stream().forEach(p->{
+            p.setRemark(remark);
+            p.setIsInner(isInner);
+            p.setIsDisable(disable);
+        });
+
+        return resourceAntMatchers;
+    }
+
+    /**
+     * 将接口请求注解转换成 apiResource数据
+     * @param annotation 注解（值可能是 @Requestmapping、@Getmapping、@PostMapping、@DeleteMapping、@PutMapping等）
+     * @param prefixArr 控制器类上的注解，请求前缀
+     * @param hideMenuApi 是否是api
+     * @param hideMenuSys 是否是系统预置
+     * @param remark 备注
+     * @return
+     */
+    private static List<ResourceAntMatcher> annotation2ResourceAntMatcherByHideMenu (Annotation annotation,
+                                                                                     String[] prefixArr,
+                                                                                     boolean hideMenuApi,
+                                                                                     boolean hideMenuSys,
+                                                                                     String remark) {
+        List<ResourceAntMatcher> resourceAntMatchers = annotation2ResourceAntMatcher(ScanTypeEnum.API_RESOURCE, annotation, prefixArr);
+
+        resourceAntMatchers.stream().forEach(p->{
+            p.setRemark(remark);
+            p.setApi(hideMenuApi);
+            p.setSys(hideMenuSys);
+        });
+        return resourceAntMatchers;
     }
 
     /**
@@ -268,7 +328,7 @@ public class ResourceUtil {
      */
     private static List<ResourceAntMatcher> annotation2ResourceAntMatcherByApiResource (Annotation annotation,
                                                                                       String[] prefixArr) {
-        return annotation2ResourceAntMatcher(ScanTypeEnum.API_RESOURCE, annotation, prefixArr, null, false, false);
+        return annotation2ResourceAntMatcher(ScanTypeEnum.API_RESOURCE, annotation, prefixArr);
     }
 
     /**
@@ -276,17 +336,11 @@ public class ResourceUtil {
      * @param scanTypeEnum 类型，类型不同生成对象的结果不同
      * @param annotation 注解（值可能是 @Requestmapping、@Getmapping、@PostMapping、@DeleteMapping、@PutMapping等）
      * @param prefixArr 控制器类上的注解，请求前缀
-     * @param remark 备注
-     * @param isInner 是否只能内部服务调用
-     * @param disable 是否关闭该白名单
      * @return
      */
     private static List<ResourceAntMatcher> annotation2ResourceAntMatcher (ScanTypeEnum scanTypeEnum,
                                                                            Annotation annotation,
-                                                                           String[] prefixArr,
-                                                                           String remark,
-                                                                           boolean isInner,
-                                                                           boolean disable) {
+                                                                           String[] prefixArr) {
         if (annotation instanceof RequestMapping) {
             RequestMapping requestMapping = (RequestMapping) annotation;
             // 请求方式
@@ -299,7 +353,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(scanTypeEnum, remark, methods, path, isInner, disable);
+            return addResourceAntMatcher(scanTypeEnum, methods, path);
         }
 
         if (annotation instanceof GetMapping) {
@@ -311,7 +365,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(scanTypeEnum, remark, methods, path, isInner, disable);
+            return addResourceAntMatcher(scanTypeEnum, methods, path);
         }
 
         if (annotation instanceof PostMapping) {
@@ -323,7 +377,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(scanTypeEnum, remark, methods, path, isInner, disable);
+            return addResourceAntMatcher(scanTypeEnum, methods, path);
         }
 
         if (annotation instanceof PutMapping) {
@@ -335,7 +389,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(scanTypeEnum, remark, methods, path, isInner, disable);
+            return addResourceAntMatcher(scanTypeEnum, methods, path);
         }
 
         if (annotation instanceof DeleteMapping) {
@@ -347,7 +401,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(scanTypeEnum, remark, methods, path, isInner, disable);
+            return addResourceAntMatcher(scanTypeEnum, methods, path);
         }
 
         if (annotation instanceof PatchMapping) {
@@ -359,7 +413,7 @@ public class ResourceUtil {
             // 请求路径
             String[] path = combinationPath(prefixArr, value);
 
-            return addResourceAntMatcher(scanTypeEnum, remark, methods, path, isInner, disable);
+            return addResourceAntMatcher(scanTypeEnum, methods, path);
         }
 
         String errorMessage = StringUtil.format("注解{}不是有效的http接口注解",annotation);
@@ -369,22 +423,26 @@ public class ResourceUtil {
     /**
      * 根据请求路径和接口请求method数据生成ResourceAntMatcher集合
      * @param scanTypeEnum 类型
-     * @param remark 接口备注
      * @param methods 接口请求方式数组
      * @param path 接口请求路径数组
-     * @param isInner 是否只能内部服务调用
-     * @param disable 是否关闭该白名单
      * @return
      */
-    private static List<ResourceAntMatcher> addResourceAntMatcher(ScanTypeEnum scanTypeEnum, String remark, RequestMethod[] methods, String[] path, boolean isInner, boolean disable) {
+    private static List<ResourceAntMatcher> addResourceAntMatcher(ScanTypeEnum scanTypeEnum, RequestMethod[] methods, String[] path) {
         final List<ResourceAntMatcher> var0 = new ArrayList<>();
-
+        List<String> httpMethods;
         switch (scanTypeEnum) {
             // 白名单，方法存数组
             case WHITELIST:
-                List<String> httpMethods = Stream.of(methods).map(RequestMethod::name).collect(Collectors.toList());
+                httpMethods = Stream.of(methods).map(RequestMethod::name).collect(Collectors.toList());
                 for (int i = 0; i < path.length; i++) {
-                    var0.add(ResourceAntMatcher.createByWhitelist(path[i], httpMethods, remark, isInner, disable));
+                    var0.add(ResourceAntMatcher.createByWhitelist(path[i], httpMethods));
+                }
+                break;
+            case HIDE_MENU:
+                for (int i = 0; i < path.length; i++) {
+                    for (int j = 0; j < methods.length; j++) {
+                        var0.add(ResourceAntMatcher.createByHideMenu(path[i], methods[j].name()));
+                    }
                 }
                 break;
             // api 资源，将一个pattern多个method的接口保存多条记录
@@ -458,6 +516,11 @@ public class ResourceUtil {
          * 白名单
          */
         WHITELIST,
+
+        /**
+         * 隐藏菜单
+         */
+        HIDE_MENU,
 
         /**
          * api接口资源

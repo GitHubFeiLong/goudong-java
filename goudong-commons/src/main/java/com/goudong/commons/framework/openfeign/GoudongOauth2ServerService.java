@@ -1,9 +1,6 @@
 package com.goudong.commons.framework.openfeign;
 
-import com.goudong.commons.dto.oauth2.BaseApiResource2CreateDTO;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
-import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
+import com.goudong.commons.dto.oauth2.*;
 import com.goudong.commons.framework.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
@@ -88,4 +85,15 @@ public interface GoudongOauth2ServerService {
     //==================================================================================================================
     @DeleteMapping("/seata/del")
     Result delStorage();
+
+    //~ 菜单
+    //==================================================================================================================
+
+    /**
+     * 添加隐藏菜单
+     * @param createDTOS
+     * @return
+     */
+    @PostMapping("/base-menu/hide-menu")
+    Result<List<BaseMenuDTO>> addHideMenu(List<HideMenu2CreateDTO> createDTOS);
 }

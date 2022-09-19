@@ -25,13 +25,20 @@ public class ResourceAntMatcher implements Serializable {
      * 创建一个白名单需要的对象
      * @param pattern
      * @param methods
-     * @param remark
-     * @param isInner
-     * @param isDisable
      * @return
      */
-    public static ResourceAntMatcher createByWhitelist(String pattern, List<String> methods, String remark, Boolean isInner, Boolean isDisable) {
-        return new ResourceAntMatcher(pattern, methods, remark, isInner, isDisable);
+    public static ResourceAntMatcher createByWhitelist(String pattern, List<String> methods) {
+        return new ResourceAntMatcher(pattern, methods);
+    }
+
+    /**
+     * 创建一个隐藏菜单需要的对象
+     * @param pattern
+     * @param method
+     * @return
+     */
+    public static ResourceAntMatcher createByHideMenu(String pattern, String method) {
+        return new ResourceAntMatcher(pattern, method);
     }
 
     /**
@@ -76,9 +83,18 @@ public class ResourceAntMatcher implements Serializable {
      */
     private Boolean isDisable = false;
 
+    private Boolean sys = false;
+
+    private Boolean api = false;
+
     public ResourceAntMatcher(String pattern, String method) {
         this.pattern = pattern;
         this.method = method;
+    }
+
+    public ResourceAntMatcher(String pattern, List<String> methods) {
+        this.pattern = pattern;
+        this.methods = methods;
     }
 
     public ResourceAntMatcher(String pattern, List<String> methods, String remark, Boolean isInner, Boolean isDisable) {

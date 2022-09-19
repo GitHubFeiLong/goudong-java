@@ -119,3 +119,5 @@ commons:
   # 配置api资源
   api-resource:
     enable: false
+  hide-menu:
+    enable: true

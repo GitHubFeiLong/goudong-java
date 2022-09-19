@@ -1,13 +1,16 @@
 package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.lang.Assert;
 import com.goudong.commons.constant.user.RoleConst;
+import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.user.RoleException;
+import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.tree.v2.Tree;
 import com.goudong.commons.utils.JPAPageResultConvert;
 import com.goudong.commons.utils.core.BeanUtil;
@@ -15,12 +18,15 @@ import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.dto.ModifyRoleReq;
+import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseMenuRepository;
 import com.goudong.user.repository.BaseRoleRepository;
+import com.goudong.user.service.BaseMenuService;
 import com.goudong.user.service.BaseRoleService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +35,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +53,11 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     private final BaseRoleRepository baseRoleRepository;
 
     private final BaseMenuRepository baseMenuRepository;
+
+    private final BaseMenuService baseMenuService;
+
+    private final RedisTool redisTool;
+
 
     /**
      * 查询预置的普通角色
@@ -153,9 +167,11 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     public BaseRoleDTO getById(Long id) {
         BaseRolePO rolePO = baseRoleRepository.findById(id)
                 .orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
-        // 查询所有菜单资源
-        List<BaseMenuPO> all = baseMenuRepository.findAll();
-        List<BaseMenuDTO> permissions = BeanUtil.copyToList(all, BaseMenuDTO.class, CopyOptions.create());
+
+        // 当前用户所拥有的菜单权限，不能越级设置权限
+        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = UserContext.get().getRoles();
+        List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
+        List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
 
         BaseRoleDTO baseRoleDTO = BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
         List<Long> menuIds = baseRoleDTO.getMenus().stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
@@ -183,6 +199,15 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Transactional
     public BaseRoleDTO updatePermissions(Long id, List<Long> menuIds) {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+
+        // 校验数据
+        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = UserContext.get().getRoles();
+        List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
+        List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
+        List<Long> hasMenuIds = permissions.stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
+
+        Assert.isTrue(hasMenuIds.containsAll(menuIds), ()->ClientException.clientException(ClientExceptionEnum.FORBIDDEN, "暂无权限", "当前用户没权限没有权限设置的部分权限"));
+
         List<BaseMenuPO> menus = baseMenuRepository.findAllById(menuIds);
         if (menus.size() == menuIds.size()) {
             rolePO.setMenus(menus);
@@ -191,4 +216,6 @@ public class BaseRoleServiceImpl implements BaseRoleService {
 
         throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "菜单无效");
     }
+
+
 }

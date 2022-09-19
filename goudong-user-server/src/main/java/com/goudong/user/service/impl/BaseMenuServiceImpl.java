@@ -2,13 +2,20 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.IdUtil;
+import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.redis.RedisTool;
+import com.goudong.commons.tree.v2.Tree;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.user.dto.InitMenuReq;
+import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
+import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseMenuRepository;
+import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseMenuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +25,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +43,36 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
     private final RedisTool redisTool;
 
-    // private final BaseRoleMenuRepository baseRoleMenuRepository;
+    private final BaseRoleRepository baseRoleRepository;
+
+    /**
+     * 查询所有菜单
+     *
+     * @return
+     */
+    public List<BaseMenuDTO> findAll() {
+        // 查询redis是否存在，不存在再加锁查询数据库
+        List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class);
+        if (CollectionUtils.isNotEmpty(menuDTOS)) {
+            return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
+        }
+        synchronized (this) {
+            menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class);
+            if (CollectionUtils.isNotEmpty(menuDTOS)) {
+                return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
+            }
+            // 查询数据库
+            List<BaseMenuPO> menus = baseMenuRepository.findAll();
+            if (CollectionUtils.isNotEmpty(menus)) {
+                menuDTOS = BeanUtil.copyToList(menus, BaseMenuDTO.class, CopyOptions.create());
+                redisTool.set(RedisKeyProviderEnum.MENU_ALL, menuDTOS);
+
+                return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
+            }
+        }
+
+        return new ArrayList<>(0);
+    }
 
     /**
      * 初始化
@@ -105,8 +138,68 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 批量保存或更新
         baseMenuRepository.saveAll(pos);
 
+        // 查询admin拥有的角色
+        BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(()-> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "管理员角色不存在"));
+        // 修改角色
+        baseRolePO.setMenus(pos);
+
         redisTool.delete("goudong-oauth2-server:menu:ALL");
         return BeanUtil.copyToList(pos, BaseMenuDTO.class, CopyOptions.create());
+    }
+
+    public List<BaseMenuDTO> findAllByRoleName(String role) {
+        // 匿名角色，不需要查询权限
+        if(RoleConst.ROLE_ANONYMOUS.equals(role)) {
+            return new ArrayList<>(0);
+        }
+        // 查询redis是否存在，不存在再加锁查询数据库
+        List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, role);
+        if (CollectionUtils.isNotEmpty(menuDTOS)) {
+            return menuDTOS;
+        }
+        synchronized (this) {
+            menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, role);
+            if (CollectionUtils.isNotEmpty(menuDTOS)) {
+                return menuDTOS;
+            }
+            // 查询数据库
+            BaseRolePO baseRolePO = baseRoleRepository.findByRoleName(role)
+                    .orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
+            List<BaseMenuPO> menus = baseRolePO.getMenus();
+
+            if (CollectionUtils.isNotEmpty(menus)) {
+                menuDTOS = BeanUtil.copyToList(menus, BaseMenuDTO.class, CopyOptions.create());
+
+                redisTool.set(RedisKeyProviderEnum.MENU_ROLE, menuDTOS, role);
+
+                return menuDTOS;
+            }
+        }
+
+        return new ArrayList<>(0);
+    }
+
+    /**
+     * 查询指定role的菜单资源
+     *
+     * @param roles
+     * @return
+     */
+    // @Override
+    @Transactional
+    public List<BaseMenuDTO> findAllByRoleNames(final List<String> roles) {
+        List<BaseMenuDTO> all = new ArrayList<>();
+        roles.stream().forEach(role -> {
+            all.addAll(findAllByRoleName(role));
+        });
+
+        // 进行去重
+        List<BaseMenuDTO> values = all.stream()
+                .collect(Collectors.toMap(k -> k.getId(), p -> p, (k1, k2) -> k1))
+                .values()
+                .stream().collect(Collectors.toList());
+
+        return values;
     }
 
     /**

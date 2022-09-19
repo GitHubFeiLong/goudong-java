@@ -14,9 +14,28 @@ import java.util.List;
 public interface BaseMenuService {
 
     /**
+     * 查询系统所有菜单
+     * @return
+     */
+    List<BaseMenuDTO> findAll();
+    /**
      * 初始化
      * @param req
      * @return
      */
     List<BaseMenuDTO> init(List<InitMenuReq> req);
+
+    /**
+     * 查询角色的多有菜单
+     * @param role
+     * @return
+     */
+    List<BaseMenuDTO> findAllByRoleName(String role);
+
+    /**
+     * 根据角色名查询进行去重后的所有菜单
+     * @param roleNames
+     * @return
+     */
+    List<BaseMenuDTO> findAllByRoleNames(List<String> roleNames);
 }

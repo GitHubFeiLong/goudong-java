@@ -1,8 +1,12 @@
 package com.goudong.oauth2.service.impl;
+import com.google.common.collect.Lists;
+import java.util.Date;
+import com.goudong.commons.dto.oauth2.MetadataDTO;
 
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.redis.RedisTool;
@@ -22,6 +26,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -71,16 +77,8 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             List<BaseMenuPO> menus = baseMenuRepository.findAll();
             if (CollectionUtils.isNotEmpty(menus)) {
                 menuDTO2Redis = BeanUtil.copyToList(menus, BaseMenuDTO2Redis.class, CopyOptions.create());
-                // 获取Tree
-                List<BaseMenuDTO2Redis> menuTree = Tree.getInstance().id(BaseMenuDTO2Redis::getId)
-                        .parentId(BaseMenuDTO2Redis::getParentId)
-                        .children(BaseMenuDTO2Redis::getChildren)
-                        .toTree(menuDTO2Redis);
-
-                // TODO 需要将其直接转换成前端需要格式，后面读取缓存后直接返回前端，不用额外处理格式等
-                redisTool.set(RedisKeyProviderEnum.MENU_ALL, menuTree);
-
-                return BeanUtil.copyToList(menuTree, BaseMenuDTO.class, CopyOptions.create());
+                redisTool.set(RedisKeyProviderEnum.MENU_ALL, menuDTO2Redis);
+                return BeanUtil.copyToList(menuDTO2Redis, BaseMenuDTO.class, CopyOptions.create());
             }
         }
 
@@ -125,5 +123,51 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         }
 
         return new ArrayList<>(0);
+    }
+
+    /**
+     * 保存隐藏菜单
+     *
+     * @param createDTOS
+     * @return
+     */
+    @Override
+    @Transactional
+    public List<BaseMenuDTO> addHideMenu(List<HideMenu2CreateDTO> createDTOS) {
+        // 查询隐藏菜单
+        List<BaseMenuPO> allByHide = baseMenuRepository.findAllByHide(true);
+
+        Map<String, HideMenu2CreateDTO> map1 = createDTOS.stream().collect(Collectors.toMap(k -> k.getPath() + k.getMethod().toUpperCase(), p -> p, (k1, k2) -> k1));
+        Map<String, BaseMenuPO> map2 = allByHide.stream().collect(Collectors.toMap(k -> k.getPath() + k.getMethod().toUpperCase(), p -> p, (k1, k2) -> k1));
+
+        List<BaseMenuPO> adds = new ArrayList<>();
+        List<BaseMenuPO> result = new ArrayList<>(createDTOS.size());
+        map1.forEach((k,v)->{
+            BaseMenuPO baseMenuPO = map2.get(k);
+            if (baseMenuPO != null) {
+                baseMenuPO.setRemark(v.getRemark());
+                baseMenuPO.setApi(v.getApi());
+                baseMenuPO.setSys(v.getSys());
+
+                result.add(baseMenuPO);
+            } else {
+                BaseMenuPO po = new BaseMenuPO();
+                po.setName("系统预置的隐藏菜单");
+                po.setApi(v.getApi());
+                po.setPath(v.getPath());
+                po.setMethod(v.getMethod());
+                po.setRemark(v.getRemark());
+                po.setSys(v.getSys());
+                po.setHide(true);
+                adds.add(po);
+            }
+        });
+
+
+        baseMenuRepository.saveAll(adds);
+
+        result.addAll(adds);
+
+        return BeanUtil.copyToList(result, BaseMenuDTO.class, CopyOptions.create());
     }
 }
