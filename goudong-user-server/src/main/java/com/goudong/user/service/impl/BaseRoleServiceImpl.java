@@ -18,7 +18,6 @@ import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.dto.ModifyRoleReq;
-import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseMenuRepository;
@@ -26,7 +25,6 @@ import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseMenuService;
 import com.goudong.user.service.BaseRoleService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,10 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

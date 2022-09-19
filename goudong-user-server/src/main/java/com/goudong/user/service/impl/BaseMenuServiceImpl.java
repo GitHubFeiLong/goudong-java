@@ -8,7 +8,6 @@ import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.redis.RedisTool;
-import com.goudong.commons.tree.v2.Tree;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
@@ -25,7 +24,10 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

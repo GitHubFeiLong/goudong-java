@@ -3,7 +3,6 @@ package com.goudong.commons.dto.oauth2;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 /**
  * 类描述：

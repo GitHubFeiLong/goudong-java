@@ -1,20 +1,9 @@
 package com.goudong.commons.properties;
 
-import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
-import com.goudong.commons.framework.whitelist.BaseWhitelistDTO;
-import com.goudong.commons.utils.core.ResourceUtil;
-import com.goudong.commons.utils.core.StringUtil;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * 类描述：
