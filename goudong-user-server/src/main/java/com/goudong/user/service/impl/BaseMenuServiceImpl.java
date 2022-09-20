@@ -21,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Example;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,7 +146,9 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         List<BaseMenuPO> addMenus = CollectionUtils.subtract(pos, baseRolePO.getMenus()).stream().collect(Collectors.toList());
         baseRolePO.setMenus(addMenus);
 
-        redisTool.delete("goudong-oauth2-server:menu:ALL");
+        // 删除redis中的所有菜单，和redis中角色的菜单权限。
+        redisTool.deleteKeys(RedisKeyProviderEnum.MENU_ROLE);
+
         return BeanUtil.copyToList(pos, BaseMenuDTO.class, CopyOptions.create());
     }
 
@@ -241,4 +246,21 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         }
     }
 
+
+    /**
+     * 获取匹配的所有key，使用scan避免阻塞
+     *
+     * @param patten 匹配keys的规则
+     * @return 返回获取到的keys
+     */
+    public static Set<String> getKeysByScan(RedisTemplate redisTemplate, String patten) {
+        return (Set<String>) redisTemplate.execute(connect -> {
+            Set<String> binaryKeys = new HashSet<>();
+            Cursor<byte[]> cursor = connect.scan(new ScanOptions.ScanOptionsBuilder().match(patten).count(200000).build());
+            while (cursor.hasNext() && binaryKeys.size() < 200000) {
+                binaryKeys.add(new String(cursor.next()));
+            }
+            return binaryKeys;
+        }, true);
+    }
 }

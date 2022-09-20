@@ -18,6 +18,7 @@ import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.dto.ModifyRoleReq;
+import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseMenuRepository;
@@ -145,6 +146,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
      * @return
      */
     @Override
+    @Transactional
     public BaseRoleDTO removeRole(Long id) {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
         baseRoleRepository.delete(rolePO);
@@ -206,6 +208,9 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         List<BaseMenuPO> menus = baseMenuRepository.findAllById(menuIds);
         if (menus.size() == menuIds.size()) {
             rolePO.setMenus(menus);
+
+            // 删除redis中的当前角色
+            redisTool.deleteKey(RedisKeyProviderEnum.MENU_ROLE, rolePO.getRoleName());
             return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
         }
 

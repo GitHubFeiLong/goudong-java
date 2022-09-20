@@ -14,7 +14,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.connection.DataType;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -95,6 +97,24 @@ public class RedisTool extends RedisTemplate {
     }
 
     /**
+     * 根据key，使用scan获取匹配的所有key，使用scan避免阻塞
+     *
+     * @return 返回获取到的keys
+     */
+    public Set<String> getKey(RedisKeyProvider redisKey) {
+        String pattern = redisKey.getKey().replaceAll("\\$\\{.*\\}", "*");
+
+        return (Set<String>) super.execute(connect -> {
+            Set<String> binaryKeys = new HashSet<>();
+            Cursor<byte[]> cursor = connect.scan(new ScanOptions.ScanOptionsBuilder().match(pattern).count(200000).build());
+            while (cursor.hasNext() && binaryKeys.size() < 200000) {
+                binaryKeys.add(new String(cursor.next()));
+            }
+            return binaryKeys;
+        }, true);
+    }
+
+    /**
      * 删除单个key
      *
      * @param redisKey redisKey对象
@@ -160,6 +180,14 @@ public class RedisTool extends RedisTemplate {
         for (int i = 0; i < redisKeys.size(); i++) {
             this.deleteKey(redisKeys.get(i), params.get(i).toArray(new Object[params.get(i).size()]));
         }
+    }
+
+    /**
+     * 根据key模板，进行模糊删除key
+     * @param redisKey
+     */
+    public void deleteKeys(RedisKeyProvider redisKey) {
+        super.delete(getKey(redisKey));
     }
 
     /**
