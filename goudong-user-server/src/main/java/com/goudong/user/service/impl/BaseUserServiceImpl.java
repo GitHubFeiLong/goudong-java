@@ -346,6 +346,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @param createDTO
      * @return
      */
+    @Transactional
     @Override
     public BaseUserDTO simpleCreateUser(SimpleCreateUserReq createDTO) {
         // 手机号，邮箱，用户名 等交由数据库唯一索引处理

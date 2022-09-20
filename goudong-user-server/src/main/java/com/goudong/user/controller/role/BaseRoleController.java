@@ -1,6 +1,5 @@
 package com.goudong.user.controller.role;
 
-import com.goudong.commons.annotation.core.HideMenu;
 import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.user.dto.AddRoleReq;
@@ -45,7 +44,6 @@ public class BaseRoleController {
         return Result.ofSuccess(baseRoleService.page(page));
     }
 
-    @HideMenu("哈哈哈哈")
     @GetMapping("/{id}")
     @ApiOperation(value = "根据id查询角色信息")
     public Result<BaseRoleDTO> getById (@PathVariable("id") Long id){

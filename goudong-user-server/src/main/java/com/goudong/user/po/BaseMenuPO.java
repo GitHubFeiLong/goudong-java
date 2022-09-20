@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 类描述：
@@ -72,4 +73,18 @@ public class BaseMenuPO extends BasePO {
     @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "menu_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
     private List<BaseRolePO> roles = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BaseMenuPO that = (BaseMenuPO) o;
+        return Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name) && Objects.equals(api, that.api) && Objects.equals(path, that.path) && Objects.equals(method, that.method) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), parentId, name, api, path, method);
+    }
 }

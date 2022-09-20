@@ -24,10 +24,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -143,7 +140,8 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 查询admin拥有的角色
         BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(()-> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "管理员角色不存在"));
         // 修改角色
-        baseRolePO.setMenus(pos);
+        List<BaseMenuPO> addMenus = CollectionUtils.subtract(pos, baseRolePO.getMenus()).stream().collect(Collectors.toList());
+        baseRolePO.setMenus(addMenus);
 
         redisTool.delete("goudong-oauth2-server:menu:ALL");
         return BeanUtil.copyToList(pos, BaseMenuDTO.class, CopyOptions.create());
@@ -227,6 +225,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         po.setName(req.getName());
         po.setApi(req.getApi());
         po.setPath(req.getPath());
+        po.setHide(false);
         if (StringUtils.isNotBlank(req.getMethod())) {
             po.setMethod(req.getMethod().toUpperCase());
         }
