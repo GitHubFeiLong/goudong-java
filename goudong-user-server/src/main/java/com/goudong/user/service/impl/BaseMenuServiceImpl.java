@@ -202,7 +202,16 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         List<BaseMenuDTO> values = all.stream()
                 .collect(Collectors.toMap(k -> k.getId(), p -> p, (k1, k2) -> k1))
                 .values()
-                .stream().collect(Collectors.toList());
+                .stream()
+                // 排序下
+                .sorted(new Comparator<BaseMenuDTO>() {
+                    @Override
+                    public int compare(BaseMenuDTO o1, BaseMenuDTO o2) {
+                        // 返回正数：升序，返回负数 降序
+                        return o1.getId() > o2.getId() ? 1 : -1 ;
+                    }
+                })
+                .collect(Collectors.toList());
 
         return values;
     }
