@@ -1,5 +1,6 @@
 package com.goudong.commons.framework.core;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.enumerate.core.ExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
@@ -194,7 +195,8 @@ public class Result<T> implements Serializable {
         return new Result("406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
     }
 
-
+    // ~ 属性设置
+    //==================================================================================================================
     public Result code(String code) {
         this.code = code;
         return this;
@@ -215,8 +217,43 @@ public class Result<T> implements Serializable {
         return this;
     }
 
-    public Result data(Map dataMap) {
+    public Result dataMap(Map dataMap) {
         this.dataMap = dataMap;
+        return this;
+    }
+    public Result dataMap(DataMap dataMap) {
+        this.dataMap = BeanUtil.beanToMap(dataMap, false, true);
+        return this;
+    }
+
+    public Result dataMapPut(Map dataMap) {
+        this.dataMap.putAll(dataMap);
+        return this;
+    }
+
+    public Result dataMapPut(DataMap dataMap) {
+        this.dataMap.putAll(BeanUtil.beanToMap(dataMap, false, true));
+        return this;
+    }
+
+    public Result dataMapPut(String key, Object value) {
+        this.dataMap.put(key, value);
+        return this;
+    }
+
+    public Result dataMapPut(String... kv) {
+        // 不是偶数位
+        if (kv.length < 2 && kv.length % 2 != 0) {
+            throw new IllegalArgumentException("参数kv数组不正确，要是2的倍数，其中奇数是key偶数是value");
+        }
+
+        // 步长为2
+        for (int i = 0, length = kv.length; i < length; i+=2) {
+            String key = kv[i];
+            String value = kv[i+1];
+            this.dataMap.put(key, value);
+        }
+
         return this;
     }
 

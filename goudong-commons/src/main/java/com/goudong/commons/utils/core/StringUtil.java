@@ -157,4 +157,22 @@ public class StringUtil {
         return URI_ANT_PATTERN.matcher(uriAnt).matches();
     }
 
+
+    /**
+     * 判断字符串是null或者是空串
+     * @param str
+     * @return
+     */
+    public static boolean isBlank(String str) {
+        return str == null || str.trim().length() == 0;
+    }
+
+    /**
+     * 字符串不是空串，不是null
+     * @param str
+     * @return
+     */
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
+    }
 }
