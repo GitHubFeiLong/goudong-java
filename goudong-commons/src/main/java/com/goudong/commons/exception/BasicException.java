@@ -72,7 +72,7 @@ public class BasicException extends RuntimeException{
 
         // 上传文件错误
         if (throwable instanceof MultipartException) {
-            return ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "上传文件失败", "MultipartException " +throwable.getMessage());
+            return ClientException.client(ClientExceptionEnum.BAD_REQUEST, "上传文件失败", "MultipartException " +throwable.getMessage());
         }
 
         if (throwable instanceof IndexOutOfBoundsException ) {
@@ -87,13 +87,21 @@ public class BasicException extends RuntimeException{
         if (message.startsWith("com.netflix.client.ClientException")) {
             return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
         }
-        // // 服务器还未注册到注册中心，网关调用报错
-        // if (message.startsWith()) {
-        //
-        // }
-
 
         return basicException;
+    }
+
+    // ~ 常用静态方法
+    // =================================================================================================================
+    public static BasicException client() {
+        return new ClientException();
+    }
+    public static BasicException client(String clientMessage) {
+        return new ClientException(clientMessage);
+    }
+
+    public static BasicException client(String clientMessage, Object[] clientMessageTemplate) {
+        return BasicException.client(ClientException.DEFAULT_EXCEPTION, clientMessage, clientMessageTemplate);
     }
 
     /**
@@ -101,7 +109,7 @@ public class BasicException extends RuntimeException{
      * @param exceptionEnum
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum) {
-        return new BasicException(exceptionEnum);
+        return new ClientException(exceptionEnum);
     }
 
     /**
@@ -110,7 +118,7 @@ public class BasicException extends RuntimeException{
      * @param clientMessage 自定义客户端提示信息
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage) {
-        return new BasicException(exceptionEnum, clientMessage);
+        return new ClientException(exceptionEnum, clientMessage);
     }
 
     /**
@@ -120,18 +128,7 @@ public class BasicException extends RuntimeException{
      * @param serverMessage 自定义服务端提示信息
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
-        return new BasicException(exceptionEnum, clientMessage, serverMessage);
-    }
-
-    /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
-     * @param clientMessageTemplate 自定义客户端提示信息模板
-     * @param params 模板参数
-     */
-    public static BasicException clientByTemplate(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object... params) {
-        String clientMessage = MessageFormatUtil.format(clientMessageTemplate, params);
-        return new BasicException(exceptionEnum, clientMessage);
+        return new ClientException(exceptionEnum, clientMessage, serverMessage);
     }
 
     /**
@@ -139,18 +136,42 @@ public class BasicException extends RuntimeException{
      * @param exceptionEnum
      * @param clientMessageTemplate 自定义客户端提示信息模板
      * @param clientMessageParams 模板参数
-     * @param serverMessageTemplate 自定义服务提示信息模板
-     * @param serverMessageParams 模板参数
      */
-    public static BasicException clientByTemplate(ClientExceptionEnum exceptionEnum,
-                                                  String clientMessageTemplate,
-                                                  Object[] clientMessageParams,
-                                                  String serverMessageTemplate,
-                                                  Object[] serverMessageParams) {
+    public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams) {
+        String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
+        return new ClientException(exceptionEnum, clientMessage);
+    }
 
-        return new BasicException(exceptionEnum,
+    public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return new ClientException(exceptionEnum, MessageFormatUtil.format(clientMessageTemplate, clientMessageParams), serverMessage);
+    }
+
+    public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage, Object[] serverMessageParams) {
+        return new ClientException(exceptionEnum, clientMessage, MessageFormatUtil.format(serverMessage, serverMessageParams));
+    }
+
+
+    public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return new ClientException(exceptionEnum,
                 MessageFormatUtil.format(clientMessageTemplate, clientMessageParams),
                 MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
+    }
+
+
+    /**
+     * 服务端异常
+     * @param serverMessage 服务端异常信息
+     */
+    public static BasicException server(String serverMessage) {
+        return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
+    }
+
+    /**
+     * 服务端异常
+     * @param serverMessageTemplate 服务端异常信息
+     */
+    public static BasicException server(String serverMessageTemplate, Object[] serverMessageParams) {
+        return BasicException.server(MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
     }
 
     /**
@@ -158,7 +179,7 @@ public class BasicException extends RuntimeException{
      * @param exceptionEnum
      */
     public static BasicException server(ServerExceptionEnum exceptionEnum) {
-        return new BasicException(exceptionEnum);
+        return new ServerException(exceptionEnum);
     }
 
     /**
@@ -167,7 +188,7 @@ public class BasicException extends RuntimeException{
      * @param serverMessage 自定义服务端提示信息
      */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String serverMessage) {
-        return new BasicException(exceptionEnum, serverMessage);
+        return new ServerException(exceptionEnum, serverMessage);
     }
 
     /**
@@ -176,38 +197,44 @@ public class BasicException extends RuntimeException{
      * @param clientMessage 自定义客户端提示信息
      * @param serverMessage 自定义服务端提示信息
      */
-    public static BasicException server(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
-        return new BasicException(exceptionEnum, clientMessage, serverMessage);
+    public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
+        return new ServerException(exceptionEnum, clientMessage, serverMessage);
     }
 
     /**
      * 服务端异常
      * @param exceptionEnum
      * @param serverMessageTemplate 自定义服务端提示信息模板
-     * @param params 模板参数
-     */
-    public static BasicException serverByTemplate(ClientExceptionEnum exceptionEnum, String serverMessageTemplate, Object... params) {
-        String serverMessage = MessageFormatUtil.format(serverMessageTemplate, params);
-        return new BasicException(exceptionEnum, serverMessage);
-    }
-
-    /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
-     * @param clientMessageTemplate 自定义客户端提示信息模板
-     * @param clientMessageParams 模板参数
-     * @param serverMessageTemplate 自定义服务提示信息模板
      * @param serverMessageParams 模板参数
      */
-    public static BasicException serverByTemplate(ServerExceptionEnum exceptionEnum,
-                                                  String clientMessageTemplate,
-                                                  Object[] clientMessageParams,
-                                                  String serverMessageTemplate,
-                                                  Object[] serverMessageParams) {
+    public static BasicException server(ServerExceptionEnum exceptionEnum, String serverMessageTemplate, Object[] serverMessageParams) {
+        String serverMessage = MessageFormatUtil.format(serverMessageTemplate, serverMessageParams);
+        return new ServerException(exceptionEnum, serverMessage);
+    }
 
-        return new BasicException(exceptionEnum,
+    public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return new ServerException(exceptionEnum, clientMessage, MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
+    }
+
+    public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return new ServerException(exceptionEnum, MessageFormatUtil.format(clientMessageTemplate, clientMessageParams), serverMessage);
+    }
+
+    public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+
+        return new ServerException(exceptionEnum,
                 MessageFormatUtil.format(clientMessageTemplate, clientMessageParams),
                 MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
+    }
+
+    // ~ 常用构造方法
+    // =================================================================================================================
+    public BasicException() {
+        super();
+    }
+
+    public BasicException(String message) {
+        this(ClientExceptionEnum.BAD_REQUEST, message);
     }
 
     /**

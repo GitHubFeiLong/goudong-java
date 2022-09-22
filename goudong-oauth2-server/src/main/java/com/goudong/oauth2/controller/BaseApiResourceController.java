@@ -65,7 +65,7 @@ public class BaseApiResourceController {
         // 校验application_name
         int size = createDTOS.stream().map(m -> m.getApplicationName()).collect(Collectors.toSet()).size();
         if (size > 1) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数applicationName错误");
+            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "参数applicationName错误");
         }
 
         // method修改成大写

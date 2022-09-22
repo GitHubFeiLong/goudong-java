@@ -417,7 +417,7 @@ public class ResourceUtil {
         }
 
         String errorMessage = StringUtil.format("注解{}不是有效的http接口注解",annotation);
-        throw ServerException.serverException(errorMessage);
+        throw ServerException.server(errorMessage);
     }
 
     /**

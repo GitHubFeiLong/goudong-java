@@ -49,7 +49,7 @@ public class AssertUtil extends Assert{
      */
     private static void throwBasicExceptionByEnum(ExceptionEnumInterface exceptionEnumInterface) {
         if (exceptionEnumInterface instanceof ClientExceptionEnum) {
-            throw ClientException.clientException((ClientExceptionEnum) exceptionEnumInterface);
+            throw ClientException.client((ClientExceptionEnum) exceptionEnumInterface);
         } else if (exceptionEnumInterface instanceof ServerExceptionEnum) {
             throw ServerException.serverException((ServerExceptionEnum) exceptionEnumInterface);
         }

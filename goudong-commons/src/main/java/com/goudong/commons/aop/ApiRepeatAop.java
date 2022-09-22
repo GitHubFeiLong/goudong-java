@@ -111,7 +111,7 @@ public class ApiRepeatAop {
 
 			// 获取锁失败
 			LogUtil.debug(log, "sessionId:{}, api:{}, 重复请求已被阻止", sessionId, request.getRequestURI());
-			throw ClientException.clientException(ClientExceptionEnum.TOO_MANY_REQUESTS);
+			throw ClientException.client(ClientExceptionEnum.TOO_MANY_REQUESTS);
 		}
 
 		/*

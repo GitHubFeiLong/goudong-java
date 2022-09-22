@@ -51,7 +51,7 @@ public class WarehouseController {
     public Result<WarehousePO> save(String product) {
 
         WarehousePO warehousePO = warehouseRepository.findByProduct(product)
-                .orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "产品不存在库存"));
+                .orElseThrow(() -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "产品不存在库存"));
 
         // 减少1
         warehousePO.setNumber(warehousePO.getNumber().subtract(BigDecimal.ONE));

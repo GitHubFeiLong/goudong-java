@@ -90,7 +90,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
         // 用户名/电话/邮箱不传时直接抛出异常
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码");
+            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码");
         }
 
         // 将用户账号设置到request中，再登录成功和失败处理器中记录认证日志

@@ -135,7 +135,7 @@ public class GlobalExceptionHandler {
             if (serverMessage.contains("Data truncation: Data too long for column")) {
                 String column = serverMessage.substring(serverMessage.indexOf("'") + 1, serverMessage.lastIndexOf("'"));
                 String clientMessage = StringUtil.format("参数{}太长", column);
-                basicException = ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
+                basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
             }
         } else if (exception.getCause() instanceof org.hibernate.exception.ConstraintViolationException) { // 外键约束 || 唯一索引约束 || 非空约束
             org.hibernate.exception.ConstraintViolationException constraintViolationException = (org.hibernate.exception.ConstraintViolationException)exception.getCause();
@@ -145,7 +145,7 @@ public class GlobalExceptionHandler {
                     DatabaseKeyEnum.getClientMessage(constraintName)
             ).orElse(message);
             String serverMessage = constraintViolationException.getCause().getMessage();
-            basicException = ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
+            basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
             System.out.println(123);
         } else {
             if (message.startsWith("Cannot add or update a child row: a foreign key constraint fails") && message.endsWith("ON DELETE RESTRICT ON UPDATE RESTRICT)")) {
@@ -153,7 +153,7 @@ public class GlobalExceptionHandler {
                 // e.getRootCause().getMessage() => Cannot add or update a child row: a foreign key constraint fails (`icc`.`base_role_menu`, CONSTRAINT `fk_base_role_menu__base_menu_id` FOREIGN KEY (`base_menu_id`) REFERENCES `base_menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT)
                 String clientMessage = StringUtil.format("参数错误");
                 String serverMessage = message;
-                basicException = ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
+                basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
             }
         }
 
@@ -209,7 +209,7 @@ public class GlobalExceptionHandler {
                 //
                 // }
                 String clientMessage = StringUtil.format("参数{}的值{}", paramName, validationMessage);
-                basicException = ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage, constraintViolationException.getMessage());
+                basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, constraintViolationException.getMessage());
             }
 
         }

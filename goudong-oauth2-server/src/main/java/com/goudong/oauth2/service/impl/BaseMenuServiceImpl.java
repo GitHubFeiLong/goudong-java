@@ -106,7 +106,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             }
             // 查询数据库
             BaseRolePO baseRolePO = baseRoleRepository.findByRoleName(role)
-                    .orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
+                    .orElseThrow(() -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
             List<BaseMenuPO> menus = baseRolePO.getMenus();
 
             if (CollectionUtils.isNotEmpty(menus)) {

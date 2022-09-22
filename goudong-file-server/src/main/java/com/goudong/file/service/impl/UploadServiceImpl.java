@@ -247,7 +247,7 @@ public class UploadServiceImpl implements UploadService {
         // 不存在文件夹，再创建文件夹
         if (!dirFile.exists() && !dirFile.mkdirs()) {
             LogUtil.warn(log, "创建文件夹失败");
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
+            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
         }
 
         FilePO filePO = new FilePO();
@@ -271,7 +271,7 @@ public class UploadServiceImpl implements UploadService {
         String newFullFilename = dir + File.separator + filePO.getCurrentFilename();
         File newFile = new File(newFullFilename);
         if (newFile.exists()) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
+            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "文件已存在");
         }
         // 创建文件
         try(InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(newFile)) {

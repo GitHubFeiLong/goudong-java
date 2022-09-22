@@ -53,7 +53,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.NOT_FOUND.value());
             return map;
         } else if (error == null) {
-            BasicException be = ClientException.clientException(ClientExceptionEnum.NOT_FOUND);
+            BasicException be = ClientException.client(ClientExceptionEnum.NOT_FOUND);
             Result result = Result.ofFail(be);
             Map<String, Object> map = BeanUtil.beanToMap(result);
 

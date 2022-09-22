@@ -61,7 +61,7 @@ public class BaseMenuController {
         createDTOS.stream().forEach(p->{
             if (!HttpMethodConst.ALL_HTTP_METHOD.contains(p.getMethod().toUpperCase())) {
                 String serverMessage = String.format("保存隐藏菜单错误，method不正确:%s", p.getMethod());
-                throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "保存隐藏菜单失败",serverMessage);
+                throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "保存隐藏菜单失败",serverMessage);
             }
         });
 

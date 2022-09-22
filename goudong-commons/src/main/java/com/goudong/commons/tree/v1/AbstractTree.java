@@ -158,7 +158,7 @@ public abstract class AbstractTree<T> implements Tree<T> {
 
         log.error("没有找到您要查找的信息，查找条件：{}", selfValue);
         String clientMessage = StringUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
-        throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, clientMessage);
+        throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage);
     }
 
 }

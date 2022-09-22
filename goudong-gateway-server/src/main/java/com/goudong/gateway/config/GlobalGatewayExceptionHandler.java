@@ -71,7 +71,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
             ResponseStatusException responseStatusException = (ResponseStatusException)throwable;
             // 404 资源不存在
             if (responseStatusException.getStatus() == HttpStatus.NOT_FOUND) {
-                basicException = ClientException.clientException(ClientExceptionEnum.NOT_FOUND);
+                basicException = ClientException.client(ClientExceptionEnum.NOT_FOUND);
             }
         } else {
             basicException = BasicException.generateByServer(throwable);

@@ -14,6 +14,11 @@ public class ServerException extends BasicException{
     public static final String clientMessage = "服务器内部错误";
 
     /**
+     * 默认500异常
+     */
+    public static final ServerExceptionEnum DEFAULT_EXCEPTION = ServerExceptionEnum.SERVER_ERROR;
+
+    /**
      * 服务器内部错误，自己抛出的500异常
      * @param serverMessage 错误描述
      * @return
@@ -62,6 +67,13 @@ public class ServerException extends BasicException{
         throw new BasicException(400, "500400", clientMessage, serverMessage);
     }
 
+    public ServerException() {
+        super(ServerException.DEFAULT_EXCEPTION);
+    }
+
+    public ServerException(String serverMessage) {
+        super(ServerException.DEFAULT_EXCEPTION, serverMessage);
+    }
     public ServerException(ServerExceptionEnum serverExceptionEnum) {
         super(serverExceptionEnum);
     }

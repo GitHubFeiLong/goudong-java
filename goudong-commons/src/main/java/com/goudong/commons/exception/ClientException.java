@@ -13,10 +13,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientException extends BasicException {
 
     /**
+     * 默认400异常
+     */
+    public static final ClientExceptionEnum DEFAULT_EXCEPTION = ClientExceptionEnum.BAD_REQUEST;
+
+    /**
      * 代替 构造方法(用起舒服些)
      * @param clientExceptionEnum 客户端错误枚举
      * @return
      */
+    @Deprecated
     public static ClientException clientException (ClientExceptionEnum clientExceptionEnum) {
         return new ClientException(clientExceptionEnum);
     }
@@ -27,6 +33,7 @@ public class ClientException extends BasicException {
      * @param clientMessage 动态自定义客户端提示信息
      * @return
      */
+    @Deprecated
     public static ClientException clientException (ClientExceptionEnum clientExceptionEnum, String clientMessage) {
         return new ClientException(clientExceptionEnum, clientMessage);
     }
@@ -38,8 +45,17 @@ public class ClientException extends BasicException {
      * @param serverMessage 动态自定义服务端异常提示信息
      * @return
      */
+    @Deprecated
     public static ClientException clientException (ClientExceptionEnum clientExceptionEnum, String clientMessage, String serverMessage) {
         return new ClientException(clientExceptionEnum, clientMessage, serverMessage);
+    }
+
+    public ClientException() {
+        super(DEFAULT_EXCEPTION);
+    }
+
+    public ClientException(String clientMessage) {
+        super(DEFAULT_EXCEPTION, clientMessage);
     }
 
     public ClientException(ClientExceptionEnum clientExceptionEnum) {

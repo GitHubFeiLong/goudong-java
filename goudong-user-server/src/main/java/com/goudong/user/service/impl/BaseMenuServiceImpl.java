@@ -141,7 +141,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         baseMenuRepository.saveAll(pos);
 
         // 查询admin拥有的角色
-        BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(()-> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "管理员角色不存在"));
+        BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(()-> ClientException.client(ClientExceptionEnum.NOT_FOUND, "管理员角色不存在"));
         // 修改角色
         List<BaseMenuPO> addMenus = CollectionUtils.subtract(pos, baseRolePO.getMenus()).stream().collect(Collectors.toList());
         baseRolePO.setMenus(addMenus);
@@ -169,7 +169,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             }
             // 查询数据库
             BaseRolePO baseRolePO = baseRoleRepository.findByRoleName(role)
-                    .orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
+                    .orElseThrow(() -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
             List<BaseMenuPO> menus = baseRolePO.getMenus();
 
             if (CollectionUtils.isNotEmpty(menus)) {

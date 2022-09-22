@@ -131,7 +131,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Override
     @Transactional
     public BaseRoleDTO modifyRole(ModifyRoleReq req) {
-        BaseRolePO rolePO = baseRoleRepository.findById(req.getId()).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+        BaseRolePO rolePO = baseRoleRepository.findById(req.getId()).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
         rolePO.setRoleNameCn(req.getRoleNameCn());
         rolePO.setRoleName("ROLE_" + req.getRoleNameCn());
         rolePO.setRemark(req.getRemark());
@@ -148,7 +148,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Override
     @Transactional
     public BaseRoleDTO removeRole(Long id) {
-        BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+        BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
         baseRoleRepository.delete(rolePO);
         return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
     }
@@ -163,7 +163,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Transactional
     public BaseRoleDTO getById(Long id) {
         BaseRolePO rolePO = baseRoleRepository.findById(id)
-                .orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+                .orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
 
         // 当前用户所拥有的菜单权限，不能越级设置权限
         List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = UserContext.get().getRoles();
@@ -195,7 +195,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Override
     @Transactional
     public BaseRoleDTO updatePermissions(Long id, List<Long> menuIds) {
-        BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+        BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
 
         // 校验数据
         List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = UserContext.get().getRoles();
@@ -203,7 +203,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
         List<Long> hasMenuIds = permissions.stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
 
-        Assert.isTrue(hasMenuIds.containsAll(menuIds), ()->ClientException.clientException(ClientExceptionEnum.FORBIDDEN, "暂无权限", "当前用户没权限没有权限设置的部分权限"));
+        Assert.isTrue(hasMenuIds.containsAll(menuIds), ()->ClientException.client(ClientExceptionEnum.FORBIDDEN, "暂无权限", "当前用户没权限没有权限设置的部分权限"));
 
         List<BaseMenuPO> menus = baseMenuRepository.findAllById(menuIds);
         if (menus.size() == menuIds.size()) {
@@ -214,7 +214,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
             return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
         }
 
-        throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "菜单无效");
+        throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "菜单无效");
     }
 
 

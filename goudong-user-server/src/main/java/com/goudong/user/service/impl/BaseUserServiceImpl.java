@@ -128,7 +128,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                 // 查询填写的基本信息是否已存在
                 List<BaseUserPO> baseUserPOS = ListUsersByLoginName(baseUserDTO.getUsername(), baseUserDTO.getPhone(), baseUserDTO.getEmail());
                 if (CollectionUtils.isNotEmpty(baseUserPOS)) {
-                    throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在");
+                    throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在");
                 }
                 return createBaseUser(userPO);
             case MY_SELF:
@@ -214,14 +214,14 @@ public class BaseUserServiceImpl implements BaseUserService {
             Result<Boolean> booleanResult = goudongMessageServerService.checkPhoneCode(baseUserPO.getPhone(), baseUserDTO.getCode());
             if(Objects.equals(booleanResult.getData(), Boolean.FALSE)) {
                 // 验证码错误，或更新失败
-                throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "验证码失效");
+                throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "验证码失效");
             }
 
             baseUserPO.setPassword(new BCryptPasswordEncoder().encode(baseUserDTO.getPassword()));
             return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
         }
 
-        throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账号不存在");
+        throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "账号不存在");
     }
 
     /**
@@ -356,7 +356,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         if (baseRoleDTOS.size() != createDTO.getRoleIds().size()) {
             List<Long> dbRoleIds = baseRoleDTOS.stream().map(BaseRoleDTO::getId).collect(Collectors.toList());
             Collection<Long> subtract = CollectionUtils.subtract(dbRoleIds, createDTO.getRoleIds());
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "角色无效：" + subtract);
+            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "角色无效：" + subtract);
         }
 
         BaseUserPO baseUserPO = BeanUtil.copyProperties(createDTO, BaseUserPO.class);
@@ -376,7 +376,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     @Transactional
     public com.goudong.commons.dto.oauth2.BaseUserDTO getUserById(Long id) {
-        BaseUserPO baseUserPO = baseUserRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+        BaseUserPO baseUserPO = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
         return BeanUtil.copyProperties(baseUserPO, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
     }
 
@@ -389,11 +389,11 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     @Transactional
     public BaseUserDTO adminEditUser(AdminEditUserReq req) {
-        BaseUserPO userPO = baseUserRepository.findById(req.getId()).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+        BaseUserPO userPO = baseUserRepository.findById(req.getId()).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
 
         List<BaseRoleDTO> roles = baseRoleService.listByIds(req.getRoleIds());
         if (req.getRoleIds().size() != roles.size()) {
-            throw ClientException.clientException(ClientExceptionEnum.BAD_REQUEST, "角色不正确");
+            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "角色不正确");
         }
 
         userPO.setNickname(req.getNickname());
@@ -413,7 +413,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     public BaseUserDTO deleteUserById(Long id) {
-        BaseUserPO user = baseUserRepository.findById(id).orElseThrow(() -> ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+        BaseUserPO user = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
         baseUserRepository.delete(user);
         return BeanUtil.copyProperties(user, BaseUserDTO.class);
     }
@@ -435,7 +435,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         boolean error = byLogin ==null
                 || !new BCryptPasswordEncoder().matches(userDTO.getPassword(), byLogin.getPassword());
         if (error) {
-            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "账户名与密码不匹配，请重新输入");
+            throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "账户名与密码不匹配，请重新输入");
         }
         // 修改openId
         byLogin.setQqOpenId(userDTO.getQqOpenId());

@@ -106,7 +106,7 @@ public class LinkController {
     public Result<FileDTO> fileInfo() {
         long fileId = (long)request.getAttribute(LinkController.FILE_ID);
         FilePO filePO = fileRepository.findById(fileId)
-                .orElseThrow(()-> ClientException.clientException(ClientExceptionEnum.NOT_FOUND));
+                .orElseThrow(()-> ClientException.client(ClientExceptionEnum.NOT_FOUND));
         FileDTO fileDTO = BeanUtil.copyProperties(filePO, FileDTO.class);
         fileDTO.setMimeType(request.getServletContext().getMimeType(filePO.getCurrentFilename()));
         return Result.ofSuccess(fileDTO);
@@ -118,12 +118,12 @@ public class LinkController {
     public void file() throws IOException {
         long fileId = (long)request.getAttribute(LinkController.FILE_ID);
         FilePO filePO = fileRepository.findById(fileId)
-                .orElseThrow(()-> ClientException.clientException(ClientExceptionEnum.NOT_FOUND));
+                .orElseThrow(()-> ClientException.client(ClientExceptionEnum.NOT_FOUND));
 
         File file = new File(filePO.getFilePath());
         if (!file.exists()) {
             LogUtil.error(log, "{}不存在", filePO.getFilePath());
-            throw ClientException.clientException(ClientExceptionEnum.NOT_FOUND, "文件已失效", "文件路径不存在文件信息");
+            throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "文件已失效", "文件路径不存在文件信息");
         }
         String originalFilename = filePO.getOriginalFilename();
         String mimeType = request.getServletContext().getMimeType(file.getName());

@@ -1,5 +1,7 @@
 package com.goudong.commons.enumerate.core;
 
+import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ClientException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -83,5 +85,40 @@ public enum ClientExceptionEnum implements ExceptionEnumInterface {
         this.code = code;
         this.clientMessage = clientMessage;
         this.serverMessage = serverMessage;
+    }
+
+    @Override
+    public BasicException client() {
+        throw ClientException.client(this);
+    }
+
+    @Override
+    public BasicException client(String clientMessage) {
+        throw ClientException.client(this, clientMessage);
+    }
+
+    @Override
+    public BasicException client(String clientMessage, String serverMessage) {
+        throw ClientException.client(this, clientMessage, serverMessage);
+    }
+
+    @Override
+    public BasicException client(String clientMessageTemplate, Object[] clientMessageParams) {
+        throw ClientException.client(this, clientMessageTemplate, clientMessageParams);
+    }
+
+    @Override
+    public BasicException client(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        throw ClientException.client(this, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    @Override
+    public BasicException client(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ClientException.client(this, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    @Override
+    public BasicException client(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ClientException.client(this, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 }

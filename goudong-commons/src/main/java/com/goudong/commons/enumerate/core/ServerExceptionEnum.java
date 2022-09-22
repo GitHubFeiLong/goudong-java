@@ -1,6 +1,7 @@
 package com.goudong.commons.enumerate.core;
 
-import com.goudong.commons.enumerate.core.ExceptionEnumInterface;
+import com.goudong.commons.exception.BasicException;
+import com.goudong.commons.exception.ServerException;
 import lombok.Getter;
 
 /**
@@ -18,13 +19,13 @@ public enum ServerExceptionEnum implements ExceptionEnumInterface {
      * 500 Internal Server Error
      * 服务器遇到了不知道如何处理的情况。
      */
-    SERVER_ERROR(500, "500", "服务器内部错误，请联系网管。", "500 Internal Server Error - 服务器遇到了不知道如何处理的情况。"),
+    SERVER_ERROR(500, "500", "服务器内部错误，请联系管理员。", "500 Internal Server Error - 服务器遇到了不知道如何处理的情况。"),
 
     /**
      * 502 Bad Gateway
      * 此错误响应表明服务器作为网关需要得到一个处理这个请求的响应，但是得到一个错误的响应。
      */
-    BAD_GATEWAY(502, "502", "服务器内部错误，请联系网管。", "502 Bad Gateway - 此错误响应表明服务器作为网关需要得到一个处理这个请求的响应，但是得到一个错误的响应。"),
+    BAD_GATEWAY(502, "502", "服务器内部错误，请联系管理员。", "502 Bad Gateway - 此错误响应表明服务器作为网关需要得到一个处理这个请求的响应，但是得到一个错误的响应。"),
 
     /**
      * 503 Service Unavailable
@@ -59,5 +60,36 @@ public enum ServerExceptionEnum implements ExceptionEnumInterface {
         this.code = code;
         this.clientMessage = clientMessage;
         this.serverMessage = serverMessage;
+    }
+
+
+    @Override
+    public BasicException server() {
+        throw ServerException.server(this);
+    }
+
+    @Override
+    public BasicException server(String serverMessage) {
+        throw ServerException.server(this, serverMessage);
+    }
+
+    @Override
+    public BasicException server(String clientMessage, String serverMessage) {
+        throw ServerException.server(this, clientMessage, serverMessage);
+    }
+
+    @Override
+    public BasicException server(String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ServerException.server(this, serverMessageTemplate, serverMessageParams);
+    }
+
+    @Override
+    public BasicException server(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ServerException.server(this, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    @Override
+    public BasicException server(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ServerException.server(this, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 }
