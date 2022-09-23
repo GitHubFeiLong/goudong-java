@@ -58,8 +58,9 @@ public enum ClientExceptionEnum implements ExceptionEnumInterface {
     /**
      * 429 Too Many Requests
      * 用户在给定的时间内发送了太多请求（“限制请求速率”）。
+     * @see HttpStatus#TOO_MANY_REQUESTS
      */
-    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS.value(), "429", "服务器繁忙，请稍后重试", "429 Too Many Requests - 该资源限制用户重复提交请求"),
+    TOO_MANY_REQUESTS(429, "429", "服务器繁忙，请稍后重试", "429 Too Many Requests - 该资源限制用户重复提交请求"),
 
     ;
     /**
@@ -89,36 +90,36 @@ public enum ClientExceptionEnum implements ExceptionEnumInterface {
 
     @Override
     public BasicException client() {
-        throw ClientException.client(this);
+        return ClientException.client(this);
     }
 
     @Override
     public BasicException client(String clientMessage) {
-        throw ClientException.client(this, clientMessage);
+        return ClientException.client(this, clientMessage);
     }
 
     @Override
     public BasicException client(String clientMessage, String serverMessage) {
-        throw ClientException.client(this, clientMessage, serverMessage);
+        return ClientException.client(this, clientMessage, serverMessage);
     }
 
     @Override
     public BasicException client(String clientMessageTemplate, Object[] clientMessageParams) {
-        throw ClientException.client(this, clientMessageTemplate, clientMessageParams);
+        return ClientException.client(this, clientMessageTemplate, clientMessageParams);
     }
 
     @Override
     public BasicException client(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
-        throw ClientException.client(this, clientMessageTemplate, clientMessageParams, serverMessage);
+        return ClientException.client(this, clientMessageTemplate, clientMessageParams, serverMessage);
     }
 
     @Override
     public BasicException client(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
-        throw ClientException.client(this, clientMessage, serverMessageTemplate, serverMessageParams);
+        return ClientException.client(this, clientMessage, serverMessageTemplate, serverMessageParams);
     }
 
     @Override
     public BasicException client(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        throw ClientException.client(this, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return ClientException.client(this, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 }

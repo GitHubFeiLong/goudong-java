@@ -2,6 +2,7 @@ package com.goudong.commons.exception;
 
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.file.FileException;
 import com.goudong.commons.utils.core.ArrayUtil;
 import org.junit.jupiter.api.Test;
 
@@ -26,5 +27,13 @@ class BasicExceptionTest {
         // ServerExceptionEnum.SERVER_ERROR.server("serverMessage:{},{2}", ArrayUtil.create(1, 2));
         // ServerExceptionEnum.SERVER_ERROR.server("clientMessage","serverMessage:{},{2}", ArrayUtil.create(1, 2));
         ServerExceptionEnum.SERVER_ERROR.server("clientMessage:{},{2}", ArrayUtil.create(1, 2), "serverMessage:{},{2}", ArrayUtil.create(1, 2));
+    }
+
+    @Test
+    void test3() {
+        BasicException shibai = ClientException.client("shibai").convert(FileException.class);
+        shibai.printStackTrace();
+        throw shibai;
+        // System.out.println("shibai = " + fileException);
     }
 }

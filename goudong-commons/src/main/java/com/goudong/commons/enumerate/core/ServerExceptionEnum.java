@@ -65,31 +65,31 @@ public enum ServerExceptionEnum implements ExceptionEnumInterface {
 
     @Override
     public BasicException server() {
-        throw ServerException.server(this);
+        return ServerException.server(this);
     }
 
     @Override
     public BasicException server(String serverMessage) {
-        throw ServerException.server(this, serverMessage);
+        return ServerException.server(this, serverMessage);
     }
 
     @Override
     public BasicException server(String clientMessage, String serverMessage) {
-        throw ServerException.server(this, clientMessage, serverMessage);
+        return ServerException.server(this, clientMessage, serverMessage);
     }
 
     @Override
     public BasicException server(String serverMessageTemplate, Object[] serverMessageParams) {
-        throw ServerException.server(this, serverMessageTemplate, serverMessageParams);
+        return ServerException.server(this, serverMessageTemplate, serverMessageParams);
     }
 
     @Override
     public BasicException server(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
-        throw ServerException.server(this, clientMessage, serverMessageTemplate, serverMessageParams);
+        return ServerException.server(this, clientMessage, serverMessageTemplate, serverMessageParams);
     }
 
     @Override
     public BasicException server(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        throw ServerException.server(this, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return ServerException.server(this, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 }

@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     /**
      * 错误日志模板
      */
-    public static final String LOG_ERROR_INFO = "http响应码：{}，错误代码：{}，客户端错误信息：{}，服务端错误信息：{}";
+    public static final String LOG_ERROR_INFO = "http响应码：{}，错误代码：{}，客户端错误信息：{}，服务端错误信息：{}，扩展信息：{}";
 
     /**
      * 请求对象
@@ -106,7 +106,7 @@ public class GlobalExceptionHandler {
         //     response.setHeader(Header.WWW_AUTHENTICATE.getValue(), "Basic realm=\"\"");
         // }
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage(), exception.getDataMap());
         // 堆栈跟踪
         printErrorMessage("basicExceptionDispose", exception);
 
@@ -164,7 +164,7 @@ public class GlobalExceptionHandler {
             basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
         }
 
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
         // 堆栈跟踪
         printErrorMessage("dataIntegrityViolationExceptionDispose", exception);
         return Result.ofFail(basicException);
@@ -214,7 +214,7 @@ public class GlobalExceptionHandler {
 
         }
 
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
         // 堆栈跟踪
         printErrorMessage("transactionSystemExceptionDispose", exception);
         return Result.ofFail(basicException);
@@ -233,7 +233,7 @@ public class GlobalExceptionHandler {
         // 设置响应码
         response.setStatus(basicException.getStatus());
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
         // 堆栈跟踪
         printErrorMessage("runtimeExceptionDispose", exception);
 
@@ -250,7 +250,7 @@ public class GlobalExceptionHandler {
         BasicException serverException = new ServerException(ServerExceptionEnum.SERVER_ERROR);
         this.response.setStatus(serverException.status);
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage());
+        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage(), null);
         // 堆栈跟踪
         printErrorMessage("runtimeExceptionDispose", exception);
         serverException.setServerMessage(exception.getMessage());

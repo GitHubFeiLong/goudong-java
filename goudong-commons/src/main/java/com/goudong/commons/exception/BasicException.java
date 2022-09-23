@@ -15,6 +15,9 @@ import org.springframework.web.multipart.MultipartException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.goudong.commons.enumerate.core.ClientExceptionEnum.*;
+import static com.goudong.commons.enumerate.core.ServerExceptionEnum.SERVER_ERROR;
+
 /**
  * 类描述：
  * 自定义异常的基类，其它模块的异常继承进行扩展
@@ -32,29 +35,36 @@ public class BasicException extends RuntimeException{
     /**
      * http 响应码
      */
+    @ApiModelProperty(value = "http 响应码", required = true, example = "404")
     public int status;
+
     /**
      * 错误代码
      */
+    @ApiModelProperty(value = "错误代码，非1失败", required = true, example = "1")
     public String code;
+
     /**
      * 客户端状态码对应信息
      */
-    @ApiModelProperty(value = "状态码对应描述", required = true, example = "用户不存在")
+    @ApiModelProperty(value = "客户端提示信息（前端使用）", required = true, example = "用户不存在")
     public String clientMessage;
 
     /**
      * 服务器状态码对应信息
      */
-    @ApiModelProperty(value = "状态码对应描述", required = true, example = "用户不存在")
+    @ApiModelProperty(value = "服务端提示信息（后端使用）", required = true, example = "根据id查询不到用户信息")
     public String serverMessage;
 
+    /**
+     * 额外信息
+     */
     @ApiModelProperty(value = "返回额外信息")
     public Map dataMap = new HashMap();
 
     /**
      * 根据异常对象，返回自定义的服务异常对象
-     * @param throwable
+     * @param throwable 异常对象
      * @return
      */
     public static BasicException generateByServer(Throwable throwable) {
@@ -93,138 +103,797 @@ public class BasicException extends RuntimeException{
 
     // ~ 常用静态方法
     // =================================================================================================================
+
+    // ~ 客户端异常
+    // =================================================================================================================
+    /**
+     * 返回默认异常
+     * @see ClientException#DEFAULT_EXCEPTION
+     * @return
+     */
     public static BasicException client() {
         return new ClientException();
     }
+
+    /**
+     * 返回默认异常,自定义clientMessage
+     * @see ClientException#DEFAULT_EXCEPTION
+     * @param clientMessage 客户端提示信息
+     * @return
+     */
     public static BasicException client(String clientMessage) {
         return new ClientException(clientMessage);
     }
 
-    public static BasicException client(String clientMessage, Object[] clientMessageTemplate) {
-        return BasicException.client(ClientException.DEFAULT_EXCEPTION, clientMessage, clientMessageTemplate);
+    /**
+     * 返回默认异常,自定义clientMessage模板
+     * @see ClientException#DEFAULT_EXCEPTION
+     * @param clientMessageTemplate 客户端提示信息模板
+     * @param clientMessageParams 客户端模板参数
+     * @return
+     */
+    public static BasicException client(String clientMessageTemplate, Object[] clientMessageParams) {
+        return BasicException.client(ClientException.DEFAULT_EXCEPTION, clientMessageTemplate, clientMessageParams);
     }
 
     /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
+     * 返回指定客户端异常
+     * @param exceptionEnum 指定异常类型
+     * @return
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum) {
         return new ClientException(exceptionEnum);
     }
 
     /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
+     * 返回指定客户端异常，自定义clientMessage
+     * @param exceptionEnum 指定异常类型
      * @param clientMessage 自定义客户端提示信息
+     * @return
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage) {
         return new ClientException(exceptionEnum, clientMessage);
     }
 
     /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
+     * 返回指定客户端异常，自定义clientMessage和serverMessage
+     * @param exceptionEnum 客户端异常类型
      * @param clientMessage 自定义客户端提示信息
      * @param serverMessage 自定义服务端提示信息
+     * @return
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
         return new ClientException(exceptionEnum, clientMessage, serverMessage);
     }
 
     /**
-     * 客户端误操作造成异常
-     * @param exceptionEnum
+     * 返回指定客户端异常，自定义clientMessageTemplate
+     * @param exceptionEnum 客户端异常类型
      * @param clientMessageTemplate 自定义客户端提示信息模板
-     * @param clientMessageParams 模板参数
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
      */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams) {
         String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
         return new ClientException(exceptionEnum, clientMessage);
     }
 
+    /**
+     * 返回指定客户端异常，自定义clientMessageTemplate和serverMessage
+     * @param exceptionEnum 客户端异常类型
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
         return new ClientException(exceptionEnum, MessageFormatUtil.format(clientMessageTemplate, clientMessageParams), serverMessage);
     }
 
-    public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage, Object[] serverMessageParams) {
-        return new ClientException(exceptionEnum, clientMessage, MessageFormatUtil.format(serverMessage, serverMessageParams));
+    /**
+     * 返回指定客户端异常，自定义clientMessage和serverMessageTemplate
+     * @param exceptionEnum 客户端异常类型
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return new ClientException(exceptionEnum, clientMessage, MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
     }
 
-
+    /**
+     * 返回指定客户端异常，自定义clientMessage模板和serverMessage
+     * @param exceptionEnum 客户端异常类型
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
     public static BasicException client(ClientExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
         return new ClientException(exceptionEnum,
                 MessageFormatUtil.format(clientMessageTemplate, clientMessageParams),
                 MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
     }
 
+    //~ ClientExceptionEnum.BAD_REQUEST 400
+    //==================================================================================================================
 
     /**
-     * 服务端异常
-     * @param serverMessage 服务端异常信息
+     * 返回400异常
+     * @return
+     */
+    public static BasicException clientByBadRequest() {
+        return ClientException.client(BAD_REQUEST);
+    }
+
+    /**
+     * 返回400异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByBadRequest(String clientMessage) {
+        return ClientException.client(BAD_REQUEST, clientMessage);
+    }
+
+    /**
+     * 返回400异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByBadRequest(String clientMessage, String serverMessage) {
+        return ClientException.client(BAD_REQUEST, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回400异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByBadRequest(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(BAD_REQUEST, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回400异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByBadRequest(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(BAD_REQUEST, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回400异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByBadRequest(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(BAD_REQUEST, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回400异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByBadRequest(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(BAD_REQUEST, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+    //~ ClientExceptionEnum.UNAUTHORIZED 401
+    //==================================================================================================================
+    /**
+     * 返回401异常
+     * @return
+     */
+    public static BasicException clientByUnauthorized() {
+        return ClientException.client(UNAUTHORIZED);
+    }
+
+    /**
+     * 返回401异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByUnauthorized(String clientMessage) {
+        return ClientException.client(UNAUTHORIZED, clientMessage);
+    }
+
+    /**
+     * 返回401异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByUnauthorized(String clientMessage, String serverMessage) {
+        return ClientException.client(UNAUTHORIZED, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回401异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByUnauthorized(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(UNAUTHORIZED, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回401异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByUnauthorized(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(UNAUTHORIZED, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回401异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByUnauthorized(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(UNAUTHORIZED, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回401异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByUnauthorized(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(UNAUTHORIZED, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+    //~ ClientExceptionEnum.FORBIDDEN 403
+    //==================================================================================================================
+    /**
+     * 返回403异常
+     * @return
+     */
+    public static BasicException clientByForbidden() {
+        return ClientException.client(FORBIDDEN);
+    }
+
+    /**
+     * 返回403异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByForbidden(String clientMessage) {
+        return ClientException.client(FORBIDDEN, clientMessage);
+    }
+
+    /**
+     * 返回403异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByForbidden(String clientMessage, String serverMessage) {
+        return ClientException.client(FORBIDDEN, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回403异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByForbidden(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(FORBIDDEN, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回403异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByForbidden(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(FORBIDDEN, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回403异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByForbidden(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(FORBIDDEN, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回403异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByForbidden(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(FORBIDDEN, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+    //~ ClientExceptionEnum.NOT_FOUND 404
+    //==================================================================================================================
+    /**
+     * 返回404异常
+     * @return
+     */
+    public static BasicException clientByNotFound() {
+        return ClientException.client(NOT_FOUND);
+    }
+
+    /**
+     * 返回404异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByNotFound(String clientMessage) {
+        return ClientException.client(NOT_FOUND, clientMessage);
+    }
+
+    /**
+     * 返回404异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByNotFound(String clientMessage, String serverMessage) {
+        return ClientException.client(NOT_FOUND, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回404异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByNotFound(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(NOT_FOUND, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回404异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByNotFound(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(NOT_FOUND, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回404异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByNotFound(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(NOT_FOUND, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回404异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByNotFound(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(NOT_FOUND, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+    //~ ClientExceptionEnum.NOT_ACCEPTABLE 406
+    //==================================================================================================================
+    /**
+     * 返回406异常
+     * @return
+     */
+    public static BasicException clientByNotAcceptable() {
+        return ClientException.client(NOT_ACCEPTABLE);
+    }
+
+    /**
+     * 返回406异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByNotAcceptable(String clientMessage) {
+        return ClientException.client(NOT_ACCEPTABLE, clientMessage);
+    }
+
+    /**
+     * 返回406异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByNotAcceptable(String clientMessage, String serverMessage) {
+        return ClientException.client(NOT_ACCEPTABLE, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回406异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByNotAcceptable(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(NOT_ACCEPTABLE, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回406异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByNotAcceptable(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(NOT_ACCEPTABLE, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回406异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByNotAcceptable(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(NOT_ACCEPTABLE, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回406异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByNotAcceptable(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(NOT_ACCEPTABLE, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+    //~ ClientExceptionEnum.UNPROCESSABLE_ENTITY 422
+    //==================================================================================================================
+    /**
+     * 返回422异常
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity() {
+        return ClientException.client(UNPROCESSABLE_ENTITY);
+    }
+
+    /**
+     * 返回422异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity(String clientMessage) {
+        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessage);
+    }
+
+    /**
+     * 返回422异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity(String clientMessage, String serverMessage) {
+        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回422异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回422异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回422异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回422异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByUnprocessableEntity(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+    //~ ClientExceptionEnum.TOO_MANY_REQUESTS 429
+    //==================================================================================================================
+    /**
+     * 返回429异常
+     * @return
+     */
+    public static BasicException clientByTooManyRequests() {
+        return ClientException.client(TOO_MANY_REQUESTS);
+    }
+
+    /**
+     * 返回429异常,自定义clientMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @return
+     */
+    public static BasicException clientByTooManyRequests(String clientMessage) {
+        return ClientException.client(TOO_MANY_REQUESTS, clientMessage);
+    }
+
+    /**
+     * 返回429异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByTooManyRequests(String clientMessage, String serverMessage) {
+        return ClientException.client(TOO_MANY_REQUESTS, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回429异常,自定义clientMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByTooManyRequests(String clientMessageTemplate, Object[] clientMessageParams) {
+        return ClientException.client(TOO_MANY_REQUESTS, clientMessageTemplate, clientMessageParams);
+    }
+
+    /**
+     * 返回429异常,自定义clientMessageTemplate和serverMessage
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException clientByTooManyRequests(String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        return ClientException.client(TOO_MANY_REQUESTS, clientMessageTemplate, clientMessageParams, serverMessage);
+    }
+
+    /**
+     * 返回429异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByTooManyRequests(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(TOO_MANY_REQUESTS, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回429异常,自定义clientMessageTemplate和serverMessageTemplate
+     * @param clientMessageTemplate 自定义服客户端提示信息模板
+     * @param clientMessageParams 自定义服客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException clientByTooManyRequests(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        return ClientException.client(TOO_MANY_REQUESTS, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+    }
+
+
+    // ~ 服务端异常
+    // =================================================================================================================
+    /**
+     * 返回默认异常,自定义serverMessage
+     * @param serverMessage 自定义服务端提示信息
+     * @return
      */
     public static BasicException server(String serverMessage) {
         return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
     }
 
     /**
-     * 服务端异常
-     * @param serverMessageTemplate 服务端异常信息
+     * 返回默认异常,自定义serverMessageTemplate
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
      */
     public static BasicException server(String serverMessageTemplate, Object[] serverMessageParams) {
         return BasicException.server(MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
     }
 
     /**
-     * 服务端异常
-     * @param exceptionEnum
+     * 返回指定服务端异常
+     * @param exceptionEnum 指定异常类型
+     * @return
      */
     public static BasicException server(ServerExceptionEnum exceptionEnum) {
         return new ServerException(exceptionEnum);
     }
 
     /**
-     * 服务端异常
-     * @param exceptionEnum
+     * 返回指定服务端异常，自定义serverMessage
+     * @param exceptionEnum 指定异常类型
      * @param serverMessage 自定义服务端提示信息
+     * @return
      */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String serverMessage) {
         return new ServerException(exceptionEnum, serverMessage);
     }
 
     /**
-     * 服务端异常
-     * @param exceptionEnum
+     * 返回指定服务端异常,自定义clientMessage和serverMessage
+     * @param exceptionEnum 指定异常类型
      * @param clientMessage 自定义客户端提示信息
      * @param serverMessage 自定义服务端提示信息
+     * @return
      */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
         return new ServerException(exceptionEnum, clientMessage, serverMessage);
     }
 
     /**
-     * 服务端异常
-     * @param exceptionEnum
+     * 返回指定服务端异常,自定义serverMessageTemplate
+     * @param exceptionEnum 指定异常类型
      * @param serverMessageTemplate 自定义服务端提示信息模板
-     * @param serverMessageParams 模板参数
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
      */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String serverMessageTemplate, Object[] serverMessageParams) {
         String serverMessage = MessageFormatUtil.format(serverMessageTemplate, serverMessageParams);
         return new ServerException(exceptionEnum, serverMessage);
     }
 
+    /**
+     * 返回指定服务端异常，自定义clientMessage和serverMessageTemplate
+     * @param exceptionEnum 指定异常类型
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
         return new ServerException(exceptionEnum, clientMessage, MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
     }
 
+    /**
+     * 返回指定服务端异常，自定义clientMessageTemplate和serverMessage
+     * @param exceptionEnum 指定异常类型
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
         return new ServerException(exceptionEnum, MessageFormatUtil.format(clientMessageTemplate, clientMessageParams), serverMessage);
     }
 
+    /**
+     * 返回指定服务端异常，自定义clientMessageTemplate和serverMessageTemplate
+     * @param exceptionEnum 指定异常类型
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
     public static BasicException server(ServerExceptionEnum exceptionEnum, String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
 
         return new ServerException(exceptionEnum,
                 MessageFormatUtil.format(clientMessageTemplate, clientMessageParams),
                 MessageFormatUtil.format(serverMessageTemplate, serverMessageParams));
+    }
+
+    // ~ ServerExceptionEnum.SERVER_ERROR 500
+    // =================================================================================================================
+
+    /**
+     * 返回500异常
+     * @return
+     */
+    public static BasicException serverByServerError() {
+        throw ServerException.server(SERVER_ERROR);
+    }
+
+    /**
+     * 返回500异常,自定义serverMessage
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException serverByServerError(String serverMessage) {
+        throw ServerException.server(SERVER_ERROR, serverMessage);
+    }
+
+    /**
+     * 返回500异常,自定义clientMessage和serverMessage
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException serverByServerError(String clientMessage, String serverMessage) {
+        throw ServerException.server(SERVER_ERROR, clientMessage, serverMessage);
+    }
+
+    /**
+     * 返回500异常,自定义serverMessageTemplate
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException serverByServerError(String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ServerException.server(SERVER_ERROR, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回500异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessage 自定义客户端提示信息
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException serverByServerError(String clientMessage, String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ServerException.server(SERVER_ERROR, clientMessage, serverMessageTemplate, serverMessageParams);
+    }
+
+    /**
+     * 返回500异常,自定义clientMessage和serverMessageTemplate
+     * @param clientMessageTemplate 自定义客户端提示信息模板
+     * @param clientMessageParams 自定义客户端提示信息模板参数
+     * @param serverMessageTemplate 自定义服务端提示信息模板
+     * @param serverMessageParams 自定义服务端提示信息模板参数
+     * @return
+     */
+    public static BasicException serverByServerError(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        throw ServerException.server(SERVER_ERROR, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     // ~ 常用构造方法
@@ -306,48 +975,106 @@ public class BasicException extends RuntimeException{
         this.serverMessage = serverMessage;
     }
 
-    //~ 补充额外信息
+    //~ 实例方法
     //==================================================================================================================
+    /**
+     * 使用此方法，将返回指定类型的对象，在堆栈打印时方便查看,推荐使用其他子类异常时使用
+     * 使用方式示例：{@code BasicException.client("用户不存在").convert(UserException.class)}
+     * 这样会返回一个 UserException实例，在进行e.printStackTrace() 时会显示UserException的堆栈信息。
+     * @param target 转换后的实例类型
+     * @return
+     */
+    public BasicException convert(Class<? extends BasicException> target) {
+        BasicException basicException = BeanUtil.copyProperties(this, target);
+        return basicException;
+    }
 
+    /**
+     * 设置错误代码
+     * @param code
+     * @return
+     */
     public BasicException code(String code) {
         this.code = code;
         return this;
     }
 
+    /**
+     * 设置clientMessage
+     * @param clientMessage
+     * @return
+     */
     public BasicException clientMessage(String clientMessage) {
         this.clientMessage = clientMessage;
         return this;
     }
 
+    /**
+     * 设置serverMessage
+     * @param serverMessage
+     * @return
+     */
     public BasicException serverMessage(String serverMessage) {
         this.serverMessage = serverMessage;
         return this;
     }
 
+    /**
+     * 设置dataMap
+     * @param dataMap
+     * @return
+     */
     public BasicException dataMap(Map dataMap) {
         this.dataMap = dataMap;
         return this;
     }
+
+    /**
+     * 设置dataMap
+     * @param dataMap
+     * @return
+     */
     public BasicException dataMap(DataMap dataMap) {
         this.dataMap = BeanUtil.beanToMap(dataMap, false, true);
         return this;
     }
 
+    /**
+     * 扩展dataMap
+     * @param dataMap
+     * @return
+     */
     public BasicException dataMapPut(Map dataMap) {
         this.dataMap.putAll(dataMap);
         return this;
     }
 
+    /**
+     * 扩展dataMap
+     * @param dataMap
+     * @return
+     */
     public BasicException dataMapPut(DataMap dataMap) {
         this.dataMap.putAll(BeanUtil.beanToMap(dataMap, false, true));
         return this;
     }
 
+    /**
+     * 扩展dataMap
+     * @param key
+     * @param value
+     * @return
+     */
     public BasicException dataMapPut(String key, Object value) {
         this.dataMap.put(key, value);
         return this;
     }
 
+    /**
+     * 扩展dataMap
+     * @param kv 字符串数组，奇数位是key，偶数位是value
+     * @return
+     */
     public BasicException dataMapPut(String... kv) {
         // 不是偶数位
         if (kv.length < 2 && kv.length % 2 != 0) {
