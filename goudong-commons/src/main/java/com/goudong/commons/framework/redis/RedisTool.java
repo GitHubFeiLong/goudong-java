@@ -13,10 +13,9 @@ import com.goudong.commons.utils.core.PrimitiveTypeUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.DataType;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -27,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * 类描述：
  * Redis操作RedisKeyProvider
- * TODO 这里需要使用Lua脚本进行修改，避免执行一半成功一半失败
  *
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
@@ -101,7 +99,7 @@ public class RedisTool extends RedisTemplate {
      *
      * @return 返回获取到的keys
      */
-    public Set<String> getKey(RedisKeyProvider redisKey) {
+    public Set<String> getKeyPattern(RedisKeyProvider redisKey) {
         String pattern = redisKey.getKey().replaceAll("\\$\\{.*\\}", "*");
 
         return (Set<String>) super.execute(connect -> {
@@ -153,10 +151,20 @@ public class RedisTool extends RedisTemplate {
                         params.length)
         );
 
-        // 循环删除key
-        for (int i = 0; i < redisKeys.size(); i++) {
-            this.deleteKey(redisKeys.get(i), params[i]);
-        }
+        // 开启事务批量删除
+        super.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                Set<String> delKes = new HashSet<>();
+                // 循环删除key
+                for (int i = 0; i < redisKeys.size(); i++) {
+                    delKes.add(getKey(redisKeys.get(i), params[i]));
+                }
+                operations.delete(delKes);
+                return true;
+            }
+        });
     }
 
     /**
@@ -176,18 +184,29 @@ public class RedisTool extends RedisTemplate {
                         params.size())
         );
 
-        // 循环删除key
-        for (int i = 0; i < redisKeys.size(); i++) {
-            this.deleteKey(redisKeys.get(i), params.get(i).toArray(new Object[params.get(i).size()]));
-        }
+        // 开启事务批量删除
+        super.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                Set<String> delKes = new HashSet<>();
+                // 循环删除key
+                for (int i = 0; i < redisKeys.size(); i++) {
+                    delKes.add(getKey(redisKeys.get(i), params.get(i).toArray(new Object[params.get(i).size()])));
+                }
+
+                operations.delete(delKes);
+                return true;
+            }
+        });
     }
 
     /**
      * 根据key模板，进行模糊删除key
      * @param redisKey
      */
-    public void deleteKeys(RedisKeyProvider redisKey) {
-        super.delete(getKey(redisKey));
+    public void deleteKeysByPattern(RedisKeyProvider redisKey) {
+        super.delete(getKeyPattern(redisKey));
     }
 
     /**
@@ -276,7 +295,6 @@ public class RedisTool extends RedisTemplate {
     @SnowSlideHandler
     public boolean set(@Valid RedisKeyProvider redisKey, Object value, Object... param){
         DataType dataType = redisKey.getRedisType();
-        // TODO Class先不做校验，看下注解是否有效
         switch (dataType) {
             case STRING:
                 return setString(redisKey, value, param);
@@ -328,21 +346,30 @@ public class RedisTool extends RedisTemplate {
      */
     private boolean setHash(RedisKeyProvider redisKey, Object value, Object... param){
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        final String key = getKey(redisKey, param);
         // 需要将为空的过滤掉
         Map<String, Object> stringObjectMap = BeanUtil.beanToMap(value, false, true);
         if (stringObjectMap == null) {
             LogUtil.warn(log, "设置Hash到redis中失败, value为空");
             return false;
         }
-        super.opsForHash().putAll(key, stringObjectMap);
-
         // 获取过期时间单位秒
         long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
-        if (second > 0) {
-            // 设置过期时常
-            super.expire(key, second, TimeUnit.SECONDS);
-        }
+        super.execute(new SessionCallback<Boolean>() {
+            @Override
+            public Boolean execute(RedisOperations operations) throws DataAccessException {
+                // 开启事务
+                operations.multi();
+                operations.opsForHash().putAll(key, stringObjectMap);
+                if (second > 0) {
+                    // 设置过期时常
+                    operations.expire(key, second, TimeUnit.SECONDS);
+                }
+                // 提交
+                operations.exec();
+                return true;
+            }
+        });
 
         if (redisKey.getJavaType().isInstance(value)) {
             LogUtil.debug(log, "设置Hash到redis中成功, redisType与javaType匹配！");
@@ -369,20 +396,32 @@ public class RedisTool extends RedisTemplate {
         if (CollectionUtils.isNotEmpty(list)) {
             // 获取完整的 key
             String key = getKey(redisKey, param);
-            // 删除key
-            if (super.hasKey(key)) {
-                super.delete(key);
-            }
-            // 添加
-            super.opsForList().rightPushAll(key, list);
-
             // 获取过期时间单位秒
             long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
-            // 设置过期时间
-            if (second > 0) {
-                // 设置过期时常
-                super.expire(key, second, TimeUnit.SECONDS);
-            }
+
+            super.execute(new SessionCallback<Boolean>() {
+                @Override
+                public Boolean execute(RedisOperations operations) throws DataAccessException {
+                    // 开启事务
+                    operations.multi();
+                    // 删除key
+                    Boolean hasKey = operations.hasKey(key);
+                    if (hasKey) {
+                        operations.delete(key);
+                    }
+
+                    // 添加
+                    operations.opsForList().rightPushAll(key, list);
+                    if (second > 0) {
+                        // 设置过期时常
+                        operations.expire(key, second, TimeUnit.SECONDS);
+                    }
+                    // 提交
+                    operations.exec();
+                    return true;
+                }
+            });
+
             // 类型比较
             if (redisKey.getJavaType().isInstance(list.get(0))) {
                 LogUtil.debug(log, "设置List到redis中成功, redisType与javaType匹配！");
@@ -393,7 +432,7 @@ public class RedisTool extends RedisTemplate {
             return true;
         }
 
-        LogUtil.warn(log, "设置List到redis中失败, Values must not be 'null' or empty！");
+        LogUtil.error(log, "设置List到redis中失败, Values must not be 'null' or empty！");
         return false;
     }
 
@@ -417,15 +456,30 @@ public class RedisTool extends RedisTemplate {
 
         // 获取完整的 key
         String key = getKey(redisKey, param);
-        super.opsForSet().add(key, set);
-
         // 获取过期时间单位秒
         long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
-        // 设置过期时间
-        if (second > 0) {
-            // 设置过期时常
-            super.expire(key, second, TimeUnit.SECONDS);
-        }
+        super.execute(new SessionCallback<Boolean>() {
+            @Override
+            public Boolean execute(RedisOperations operations) throws DataAccessException {
+                // 开启事务
+                operations.multi();
+                // 删除key
+                Boolean hasKey = operations.hasKey(key);
+                if (hasKey) {
+                    operations.delete(key);
+                }
+
+                // 添加
+                operations.opsForSet().add(key, set);
+                if (second > 0) {
+                    // 设置过期时常
+                    operations.expire(key, second, TimeUnit.SECONDS);
+                }
+                // 提交
+                operations.exec();
+                return true;
+            }
+        });
 
         if (CollectionUtils.isNotEmpty(set)) {
             Object obj = set.stream().findFirst().get();
@@ -542,12 +596,7 @@ public class RedisTool extends RedisTemplate {
             }
         });
 
-        // return set;
         return super.opsForSet().members(key);
     }
 
-    public static void main(String[] args) {
-        //String 吃 = StrUtil.format("陈飞龙 {ad}岁，早饭{}了", "18", "吃");
-        //System.out.println("吃 = " + 吃);
-    }
 }

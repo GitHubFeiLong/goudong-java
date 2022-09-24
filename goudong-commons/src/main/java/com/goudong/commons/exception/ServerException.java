@@ -23,6 +23,7 @@ public class ServerException extends BasicException{
      * @param serverMessage 错误描述
      * @return
      */
+    @Deprecated
     public static ServerException serverException (String serverMessage) {
         return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
     }
@@ -32,6 +33,7 @@ public class ServerException extends BasicException{
      * @param serverExceptionEnum
      * @return
      */
+    @Deprecated
     public static ServerException serverException (ServerExceptionEnum serverExceptionEnum) {
         return new ServerException(serverExceptionEnum);
     }
@@ -42,6 +44,7 @@ public class ServerException extends BasicException{
      * @param serverMessage 错误信息
      * @return
      */
+    @Deprecated
     public static ServerException serverException (ServerExceptionEnum serverExceptionEnum, String serverMessage) {
         return new ServerException(serverExceptionEnum, serverMessage);
     }
@@ -53,6 +56,7 @@ public class ServerException extends BasicException{
      * @param serverMessage 服务端错误信息
      * @return
      */
+    @Deprecated
     public static ServerException serverException (ServerExceptionEnum serverExceptionEnum, String clientMessage, String serverMessage) {
         return new ServerException(serverExceptionEnum, clientMessage, serverMessage);
     }

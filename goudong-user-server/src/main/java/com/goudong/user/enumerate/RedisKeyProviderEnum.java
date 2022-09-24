@@ -6,6 +6,7 @@ import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,13 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      * 将角色对应的菜单保存到redis
      * @param role 角色英文名
      */
-    MENU_ROLE("goudong-oauth2-server:menu:${role}", DataType.LIST, BaseMenuDTO.class, 1, TimeUnit.DAYS)
+    MENU_ROLE("goudong-oauth2-server:menu:${role}", DataType.LIST, BaseMenuDTO.class, 1, TimeUnit.DAYS),
+
+    /**
+     * 将角色对应的菜单保存到redis
+     * @param role 角色英文名
+     */
+    TEST("test", DataType.HASH, Map.class, 1, TimeUnit.DAYS)
     ;
     //~fields
     //==================================================================================================================

@@ -147,7 +147,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         baseRolePO.setMenus(addMenus);
 
         // 删除redis中的所有菜单，和redis中角色的菜单权限。
-        redisTool.deleteKeys(RedisKeyProviderEnum.MENU_ROLE);
+        redisTool.deleteKeysByPattern(RedisKeyProviderEnum.MENU_ROLE);
 
         return BeanUtil.copyToList(pos, BaseMenuDTO.class, CopyOptions.create());
     }
