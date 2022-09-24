@@ -37,6 +37,11 @@ public class Result<T> implements Serializable {
     private static final long serialVersionUID = -212122772006061476L;
 
     /**
+     * http状态码
+     */
+    @ApiModelProperty(value = "http状态码", required = true, example = "200")
+    private int status = 200;
+    /**
      * 状态码
      */
     @ApiModelProperty(value = "响应码", required = true, example = "404")
@@ -74,8 +79,55 @@ public class Result<T> implements Serializable {
     public Result() {
     }
 
+    public Result(int status) {
+        this.status = status;
+    }
+
+
+
+    @Deprecated
     public Result(String code) {
         this.code = code;
+    }
+
+    public Result(int status, String code) {
+        this.status = status;
+        this.code = code;
+    }
+
+    public Result(int status, String code, T data) {
+        this.status = status;
+        this.code = code;
+        this.data = data;
+    }
+
+    public Result(int status, String code, String clientMessage) {
+        this.status = status;
+        this.code = code;
+        this.clientMessage = clientMessage;
+    }
+
+    public Result(int status, String code, String clientMessage, T data) {
+        this.status = status;
+        this.code = code;
+        this.clientMessage = clientMessage;
+        this.data = data;
+    }
+
+    public Result(int status, String code, String clientMessage, String serverMessage) {
+        this.status = status;
+        this.code = code;
+        this.clientMessage = clientMessage;
+        this.serverMessage = serverMessage;
+    }
+
+    public Result(int status, String code, String clientMessage, String serverMessage, T data, Map dataMap) {
+        this.status = status;
+        this.code = code;
+        this.clientMessage = clientMessage;
+        this.serverMessage = serverMessage;
+        this.data = data;
+        this.dataMap = dataMap;
     }
 
     public Result(String code, String clientMessage, String serverMessage) {
@@ -95,7 +147,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result<Object> ofSuccess() {
-        return new Result(Result.SUCCESS).clientMessage(DEFAULT_SUCCESS_CLIENT_MESSAGE);
+        return new Result(200, Result.SUCCESS, DEFAULT_SUCCESS_CLIENT_MESSAGE);
     }
 
     /**
@@ -103,7 +155,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static <T> Result<T> ofSuccess(T t) {
-        return new Result(Result.SUCCESS, DEFAULT_SUCCESS_CLIENT_MESSAGE, null, t);
+        return new Result(200, Result.SUCCESS, DEFAULT_SUCCESS_CLIENT_MESSAGE, t);
     }
 
     /**
@@ -114,7 +166,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static <T> Result<T> ofSuccess(String clientMessage, T t) {
-        return new Result(Result.SUCCESS, clientMessage, null, t);
+        return new Result(200, Result.SUCCESS, clientMessage, t);
     }
 
     /**
@@ -122,14 +174,14 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFail() {
-        return new Result(Result.FAIL);
+        return new Result(500, Result.FAIL);
     }
     /**
      * 返回失败，带数据
      * @return
      */
     public static <T> Result<T> ofFail(T t) {
-        return new Result(Result.FAIL, null, null, t);
+        return new Result(500, Result.FAIL, t);
     }
 
     /**
@@ -137,7 +189,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFail(ExceptionEnumInterface enumInterface) {
-        return new Result(enumInterface.getCode(), enumInterface.getClientMessage(), enumInterface.getServerMessage(), null);
+        return new Result(enumInterface.getStatus(), enumInterface.getCode(), enumInterface.getClientMessage(), enumInterface.getServerMessage());
     }
 
     /**
@@ -145,7 +197,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFail(BasicException basicException) {
-        return new Result(basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), null);
+        return new Result(basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
     }
 
     /**
@@ -155,7 +207,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByBadRequest(String clientMessage, String serverMessage) {
-        return new Result("400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
+        return new Result(400, "400", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
     }
 
     /**
@@ -165,7 +217,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByForBidden(String clientMessage, String serverMessage) {
-        return new Result("403", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
+        return new Result(403, "403", clientMessage, HttpStatus.BAD_REQUEST.getReasonPhrase() + " - " + serverMessage);
     }
 
     /**
@@ -174,7 +226,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByNotFound(String url) {
-        return new Result("404", "当前请求资源不存在，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url);
+        return new Result(404, "404", "当前请求资源不存在，请稍后再试", HttpStatus.NOT_FOUND.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
     /**
@@ -183,7 +235,7 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByMethodNotAllowed(String url) {
-        return new Result("405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url);
+        return new Result(405, "405", "当前资源请求方式错误，请稍后再试", HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase() + " - 目标资源资源不存在：" + url);
     }
 
     /**
@@ -192,11 +244,15 @@ public class Result<T> implements Serializable {
      * @return
      */
     public static Result ofFailByNotAcceptable(String serverMessage) {
-        return new Result("406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
+        return new Result(406, "406", "当前请求携带的请求头错误", HttpStatus.NOT_ACCEPTABLE.getReasonPhrase() + " - " + serverMessage);
     }
 
     // ~ 属性设置
     //==================================================================================================================
+    public Result status() {
+        this.status = status;
+        return this;
+    }
     public Result code(String code) {
         this.code = code;
         return this;

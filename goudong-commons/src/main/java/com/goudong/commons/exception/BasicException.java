@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
 import com.goudong.commons.enumerate.core.ServerExceptionEnum;
 import com.goudong.commons.framework.core.DataMap;
+import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.MessageFormatUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -103,6 +104,11 @@ public class BasicException extends RuntimeException{
 
     // ~ 常用静态方法
     // =================================================================================================================
+    public static BasicException ofResult(Result result) {
+        BasicException basicException = new BasicException(result.getStatus(), result.getCode(), result.getClientMessage(), result.getServerMessage())
+                .dataMap(result.getDataMap());
+        return basicException;
+    }
 
     // ~ 客户端异常
     // =================================================================================================================

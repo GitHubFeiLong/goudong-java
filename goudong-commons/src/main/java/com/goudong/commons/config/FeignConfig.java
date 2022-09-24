@@ -125,7 +125,7 @@ public class FeignConfig {
                     if (result.getCode() == null) {
                         return new BasicException(response.status(), String.valueOf(response.status()), ServerExceptionEnum.SERVER_ERROR.getClientMessage(), body);
                     }
-                    return new BasicException(response.status(), result.getCode(), result.getClientMessage(), result.getServerMessage());
+                    return BasicException.ofResult(result);
                 } catch (Exception e) {
                     return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, e.getMessage());
                 }
