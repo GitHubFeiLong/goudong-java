@@ -1,12 +1,7 @@
 package com.goudong.commons.framework.redis;
 
-import com.goudong.user.GoudongUserServer;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 
@@ -17,15 +12,15 @@ import java.util.HashMap;
  * @version 1.0
  * @date 2022/9/24 20:43
  */
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = GoudongUserServer.class)
+// @ExtendWith(SpringExtension.class)
+// @SpringBootTest(classes = GoudongUserServer.class)
 class RedisToolTest {
     //~fields
     //==================================================================================================================
 
     //~methods
     //==================================================================================================================
-    @SpyBean
+    // @SpyBean
     RedisTool redisTool;
 
     @Test
@@ -38,5 +33,12 @@ class RedisToolTest {
         redisTool.set(RedisKeyProviderEnum.TEST, map);
 
         System.out.println(map);
+    }
+
+    @Test
+    void test2() {
+        double d = Math.random() * 10;
+        System.out.println("d = " + d);
+        System.out.println((int)d|Integer.reverseBytes(0));
     }
 }

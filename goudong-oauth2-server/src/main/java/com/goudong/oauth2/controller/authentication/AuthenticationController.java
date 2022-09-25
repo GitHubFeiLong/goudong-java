@@ -8,7 +8,6 @@ import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.enumerate.core.ClientExceptionEnum;
-import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.oauth2.Oauth2Exception;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;
@@ -117,9 +116,8 @@ public class AuthenticationController {
     @PostMapping("/refresh-token")
     @ApiOperation(value = "刷新令牌")
     public Result<BaseTokenDTO> refreshToken(String refreshToken) {
-        // BaseTokenDTO baseTokenDTO = baseTokenService.refreshToken(refreshToken);
-        // return Result.ofSuccess(baseTokenDTO);
-        throw BasicException.clientByBadRequest();
+        BaseTokenDTO baseTokenDTO = baseTokenService.refreshToken(refreshToken);
+        return Result.ofSuccess(baseTokenDTO);
     }
 
     /**

@@ -405,11 +405,7 @@ public class RedisTool extends RedisTemplate {
                     // 开启事务
                     operations.multi();
                     // 删除key
-                    Boolean hasKey = operations.hasKey(key);
-                    if (hasKey) {
-                        operations.delete(key);
-                    }
-
+                    operations.delete(key);
                     // 添加
                     operations.opsForList().rightPushAll(key, list);
                     if (second > 0) {
@@ -464,11 +460,7 @@ public class RedisTool extends RedisTemplate {
                 // 开启事务
                 operations.multi();
                 // 删除key
-                Boolean hasKey = operations.hasKey(key);
-                if (hasKey) {
-                    operations.delete(key);
-                }
-
+                operations.delete(key);
                 // 添加
                 operations.opsForSet().add(key, set);
                 if (second > 0) {
