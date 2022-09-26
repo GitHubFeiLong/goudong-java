@@ -99,7 +99,7 @@
         </dependency>
     </dependencies>
 
-    <!--同一版本管控-->
+    <!--统一版本管控-->
     <dependencyManagement>
         <dependencies>
             <!--spring cloud-->
