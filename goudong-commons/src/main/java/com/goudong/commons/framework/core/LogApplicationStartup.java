@@ -75,8 +75,8 @@ public class LogApplicationStartup {
                     .orElse(false);
             if (basicEnabled) {
                 allMessage.append(
-                    StringUtil.format("\n\t用户名：\t{}" +
-                                    "\n\t密码：\t{}",
+                    StringUtil.format("\n\t用户名:\t\t{}" +
+                                    "\n\t密码:\t\t{}",
                             env.getProperty("knife4j.basic.username"),
                             env.getProperty("knife4j.basic.password")
                     )
@@ -87,7 +87,7 @@ public class LogApplicationStartup {
         if (env.getActiveProfiles().length > 0) {
             allMessage.append(
                     StringUtil.format(
-                            "\n\tProfile(s): \t{}",
+                            "\n\tProfile(s): {}",
                             env.getActiveProfiles())
             );
         }

@@ -2,6 +2,7 @@ package com.goudong.commons.framework.redis;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.goudong.commons.po.core.BasePO;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.*;
@@ -9,21 +10,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.DataType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+// @RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @Slf4j
 class RedisToolTest {
 
@@ -149,6 +149,7 @@ class RedisToolTest {
         setSet();
     }
 
+    @Test
     void setString() {
         boolean boo1 = redisTool.set(
                 new SimpleRedisKey("goudong:goudong-user-server:test:string1", DataType.STRING, String.class),
@@ -166,6 +167,7 @@ class RedisToolTest {
 
         Assert.isTrue(boo3, "设置\"\"到redis失败");
     }
+
 
     void setHash() {
         // 设置HASH
@@ -214,16 +216,17 @@ class RedisToolTest {
         Assert.isTrue(boo3, "设置"+user3+"到redis失败");
     }
 
+    @Test
     void setSet() {
         // 设置Set
         boolean boo1 = redisTool.set(
                 new SimpleRedisKey("goudong:goudong-user-server:test:set1", DataType.SET, String.class),
-                null);
+                Sets.newHashSet(1, 2, 3, 4));
         Assert.isTrue(boo1, "设置 null 到 Set失败");
 
         boolean boo2 = redisTool.set(
                 new SimpleRedisKey("goudong:goudong-user-server:test:set2", DataType.SET, String.class),
-                new HashSet<>());
+                Sets.newHashSet("1", "2", "3", "4"));
         Assert.isTrue(boo2, "设置 空集合 到 Set失败");
 
         HashSet<Object> hashSet = new HashSet<>();
@@ -232,6 +235,17 @@ class RedisToolTest {
                 new SimpleRedisKey("goudong:goudong-user-server:test:set3", DataType.SET, String.class),
                 hashSet);
         Assert.isTrue(boo3, String.format("设置 %s 到 Set失败", hashSet));
+    }
+
+    @Test
+    void getSet() {
+        // 设置Set
+        Set<String> set = (Set<String>)redisTool.get(
+                new SimpleRedisKey("goudong:goudong-user-server:test:set1", DataType.SET, String.class));
+
+        set = (Set<String>)redisTool.get(
+                new SimpleRedisKey("goudong:goudong-user-server:test:set2", DataType.SET, String.class));
+        System.out.println(set);
     }
 
     @Test
@@ -270,6 +284,25 @@ class RedisToolTest {
         Assert.isTrue(user3 == null, "获取无效key错误");
     }
 
+    public static final SimpleRedisKey ZSET_TEMPLATE =
+            new SimpleRedisKey("test:zset:${id}", DataType.ZSET, DefaultTypedTuple.class, 100, TimeUnit.SECONDS);
+
+    @Test
+    void testZSet(){
+        Set<DefaultTypedTuple> zset = new HashSet();
+        zset.add(new DefaultTypedTuple("cfl", 100D));
+        zset.add(new DefaultTypedTuple("zs", 90D));
+        zset.add(new DefaultTypedTuple("wmz", 15D));
+        redisTool.set(ZSET_TEMPLATE, zset, 1);
+
+        Set<DefaultTypedTuple> o = (Set<DefaultTypedTuple>)redisTool.get(ZSET_TEMPLATE, 1);
+        Iterator<DefaultTypedTuple> iterator = o.iterator();
+        while (iterator.hasNext()) {
+            DefaultTypedTuple next = iterator.next();
+            System.out.format("score:%s,value:%s", next.getScore(), next.getValue());
+        }
+
+    }
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

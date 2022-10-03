@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 类描述：
- * Redis操作RedisKeyProvider
+ * Redis操作RedisKeyProvider,只实现了一部分的简单功能，例如：设置，获取，删除，修改过期时间。其余的需要自己手动调用底层API，例如取交集，并集等
  *
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
@@ -287,6 +287,7 @@ public class RedisTool extends RedisTemplate {
 
     /**
      * 类似门面,设置数据到redis,根据{@link RedisKeyProvider#getKey()}和{@link RedisKeyProvider#getJavaType()}进行设置值.
+     * 该方法会将原有的数据进行删除后在设置新的值
      * @param redisKey redis-key对象
      * @param value 需要被保存的值
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
@@ -304,6 +305,8 @@ public class RedisTool extends RedisTemplate {
                 return setList(redisKey, value, param);
             case SET:
                 return setSet(redisKey, value, param);
+            case ZSET:
+                return setZSet(redisKey, value, param);
             default:
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
                 throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
@@ -360,6 +363,9 @@ public class RedisTool extends RedisTemplate {
             public Boolean execute(RedisOperations operations) throws DataAccessException {
                 // 开启事务
                 operations.multi();
+                // 删除key
+                operations.delete(key);
+
                 operations.opsForHash().putAll(key, stringObjectMap);
                 if (second > 0) {
                     // 设置过期时常
@@ -487,6 +493,49 @@ public class RedisTool extends RedisTemplate {
     }
 
     /**
+     * 设置ZSet类型数据到redis中
+     * @see DataType#ZSET
+     * @param redisKey redis-key对象
+     * @param value 需要被保存的值
+     * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
+     * @return
+     */
+    private boolean setZSet(RedisKeyProvider redisKey, Object value, Object[] param) {
+        Set<DefaultTypedTuple> zset;
+        try {
+            zset = (Set<DefaultTypedTuple>)value;
+        } catch (ClassCastException e) {
+            LogUtil.error(log, "设置ZSet到redis中失败!value:{}, errMsg: ", value, e.getMessage());
+            return false;
+        }
+
+        // 获取完整的 key
+        String key = getKey(redisKey, param);
+        // 获取过期时间单位秒
+        long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
+        super.execute(new SessionCallback<Boolean>() {
+            @Override
+            public Boolean execute(RedisOperations operations) throws DataAccessException {
+                // 开启事务
+                operations.multi();
+                // 删除key
+                operations.delete(key);
+                // 添加
+                operations.opsForZSet().add(key, zset);
+                if (second > 0) {
+                    // 设置过期时常
+                    operations.expire(key, second, TimeUnit.SECONDS);
+                }
+                // 提交
+                operations.exec();
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    /**
      * 类似门面,设置数据到redis,根据{@link RedisKeyProvider#getKey()}和{@link RedisKeyProvider#getJavaType()}进行获取值.
      * @param redisKey redis-key对象
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
@@ -500,11 +549,13 @@ public class RedisTool extends RedisTemplate {
             case STRING:
                 return getString(redisKey, param);
             case HASH:
-                return BeanUtil.toBean(super.opsForHash().entries(key), javaType);
+                return getHash(redisKey, redisKey.getJavaType(), param);
             case LIST:
                 return getList(redisKey, redisKey.getJavaType(), param);
             case SET:
                 return getSet(redisKey, redisKey.getJavaType(), param);
+            case ZSET:
+                return getZSet(redisKey, redisKey.getJavaType(), param);
             default:
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
                 throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
@@ -578,17 +629,25 @@ public class RedisTool extends RedisTemplate {
     public <T> Set<T> getSet(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         // 获取完整的 key
         String key = getKey(redisKey, param);
-        // TODO set还不是清楚怎么使用
-        Set set = new HashSet();
-        super.opsForSet().members(key).forEach(v->{
-            if (v instanceof LinkedHashMap) {
-                set.add(BeanUtil.toBean(v, clazz));
-            } else {
-                set.add(v);
-            }
+        return super.opsForSet().members(key);
+    }
+
+    /**
+     * 获取 dataType 为ZSet的所有元素
+     *
+     * @param redisKey
+     * @param param
+     * @return
+     */
+    public <T> Set<T> getZSet(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
+        // 获取完整的 key
+        String key = getKey(redisKey, param);
+        Set<T> set = new HashSet();
+        super.opsForZSet().rangeWithScores(key, 0, -1).forEach(v->{
+            set.add((T)v);
         });
 
-        return super.opsForSet().members(key);
+        return set;
     }
 
 }
