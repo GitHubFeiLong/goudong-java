@@ -311,7 +311,7 @@ commons:
 
 ### RedisTemplate扩展
 
-RedisOperationsUtil，主要是因为整个系统的redis key 进行统一枚举处理（RedisKeyEnum），需要将key模板解析，redis失效等额外信息进行处理封装。
+RedisTool，主要是因为整个系统的redis key 进行统一枚举处理（RedisKeyEnum），需要将key模板解析，redis失效等额外信息进行处理封装。
 
 
 
