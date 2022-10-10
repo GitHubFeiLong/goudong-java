@@ -19,6 +19,7 @@
         <module>seata-client-b</module>
         <module>xxl-job</module>
         <module>junit5-demo</module>
+        <module>rabbitmq-demo</module>
     </modules>
     <dependencies>
         <dependency>
