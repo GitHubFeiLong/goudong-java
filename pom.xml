@@ -369,9 +369,9 @@
     <repositories>
         <!--aliyun-public-repository-->
         <repository>
-            <id>central</id>
+            <id>aliyunmaven</id>
             <name>aliyun-public-repository</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <url>https://maven.aliyun.com/repository/public</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
@@ -382,6 +382,7 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
+
         <!-- required for org.hyperic:sigar -->
         <repository>
             <id>jboss-public-repository</id>
