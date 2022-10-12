@@ -41,7 +41,7 @@ public class Recv1 {
                 }finally{
                     System.out.println("Recv [1] done!");
 
-                    // 手动回执
+                    // 手动回执 false 表示只确认 envelope.DelivertTag 这条消息，true 表示确认 小于等于 b.DelivertTag 的所有消息（批量确认）
                     channel.basicAck(envelope.getDeliveryTag(), false);
                 }
             }
