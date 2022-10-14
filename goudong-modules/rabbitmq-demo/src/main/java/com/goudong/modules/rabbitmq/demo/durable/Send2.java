@@ -9,23 +9,23 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * 类描述：
- * 队列不持久化
+ * 队列持久化
  * @author cfl
  * @version 1.0
  * @date 2022/10/13 21:55
  */
-public class Send1 {
+public class Send2 {
     //~fields
     //==================================================================================================================
-    public static final String QUEUE_NAME = "test_durable_queue";
+    public static final String QUEUE_NAME = "test_durable_1_queue";
     //~methods
     //==================================================================================================================
     public static void main(String[] args) throws IOException, TimeoutException {
         Connection connection = ConnectionUtil.getConnection();
 
         Channel channel = connection.createChannel();
-        // 申明队列，关闭持久化（durable=false）
-        boolean durable = false;
+        // 申明队列，开启持久化（durable=true）
+        boolean durable = true;
         channel.queueDeclare(QUEUE_NAME, durable, false, false, null);
 
         for (int i = 0; i < 50; i++) {
