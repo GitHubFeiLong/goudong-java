@@ -2,17 +2,19 @@ package com.goudong.modules.rabbitmq.demo.dead.letter;
 
 import com.goudong.modules.rabbitmq.demo.util.ConnectionUtil;
 import com.rabbitmq.client.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
  * 类描述：
- * 死信队列的消费者
+ * 测试死信队列，死信队列消费者
  * @author cfl
  * @version 1.0
  * @date 2022/10/14 16:17
  */
+@Slf4j
 public class DeadLetterRecv {
 
     public static void main(String[] args) throws IOException, TimeoutException {
@@ -32,7 +34,7 @@ public class DeadLetterRecv {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 System.out.println("死信队列接收到消息：" + new String(body));
-
+                System.out.printf("死信消息properties：%s", properties);
                 channel.basicAck(envelope.getDeliveryTag(), false);
             }
         });
