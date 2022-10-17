@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.goudong.commons.enumerate.core.ClientExceptionEnum.*;
 import static com.goudong.commons.enumerate.core.ServerExceptionEnum.SERVER_ERROR;
@@ -108,6 +110,51 @@ public class BasicException extends RuntimeException{
         BasicException basicException = new BasicException(result.getStatus(), result.getCode(), result.getClientMessage(), result.getServerMessage())
                 .dataMap(result.getDataMap());
         return basicException;
+    }
+
+    // ~ quick 异常
+    // =================================================================================================================
+    public static BasicException quick(Integer status) {
+        Optional<ClientExceptionEnum> clientOptional = Stream.of(ClientExceptionEnum.values())
+                .filter(f -> f.getStatus() == status)
+                .findFirst();
+        if (clientOptional.isPresent()) {
+            return client(clientOptional.get());
+        }
+
+
+        Optional<ServerExceptionEnum> serverOptional = Stream.of(ServerExceptionEnum.values())
+                .filter(f -> f.getStatus() == status)
+                .findFirst();
+        if (serverOptional.isPresent()) {
+            return server(serverOptional.get());
+        }
+
+        throw new IllegalArgumentException("参数错误,状态码未定义 " + status);
+    }
+
+    public static BasicException quick(Integer status, String clientMessage) {
+        return quick(status).clientMessage(clientMessage);
+    }
+
+    public static BasicException quick(Integer status, String clientMessage, String serverMessage) {
+        return quick(status).clientMessage(clientMessage).serverMessage(serverMessage);
+    }
+
+    public static BasicException quick(Integer status, String clientMessageTemplate, Object[] clientMessageParams) {
+        String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
+        return quick(status).clientMessage(clientMessage);
+    }
+
+    public static BasicException quick(Integer status, String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
+        String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
+        return quick(status).clientMessage(clientMessage).serverMessage(serverMessage);
+    }
+
+    public static BasicException quick(Integer status, String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
+        String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
+        String serverMessage = MessageFormatUtil.format(serverMessageTemplate, serverMessageParams);
+        return quick(status).clientMessage(clientMessage).serverMessage(serverMessage);
     }
 
     // ~ 客户端异常

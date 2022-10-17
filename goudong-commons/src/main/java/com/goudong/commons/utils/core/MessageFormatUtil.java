@@ -18,7 +18,8 @@ public final class MessageFormatUtil {
     //==================================================================================================================
 
     /**
-     * 默认转换 MessageFormatterEnum.LOG_FORMAT
+     * 默认转换
+     * @see MessageFormatEnum#LOG_FORMAT
      * @param messagePattern
      * @param args
      * @return

@@ -4,8 +4,8 @@ spring:
     username: admin # 用户名
     password: 123456 # 密码
     virtual-host: virtual01 # 需要提前创建虚拟主机，并设置权限
-    publisher-confirm-type: CORRELATED # 开启消息确认
-    publisher-returns: true #开启发送失败退回
+    publisher-confirm-type: CORRELATED # 开启消息确认，确认消息已发送到交换机（Exchange）
+    publisher-returns: true #开启发送失败退回，确认消息已发送到队列
     # 开启ACK
     listener:
       simple:
