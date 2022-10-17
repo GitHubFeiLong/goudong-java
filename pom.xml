@@ -39,6 +39,7 @@
         <module>goudong-oauth2-service-serve</module>
         <module>goudong-modules</module>
         <module>goudong-bpm-serve</module>
+        <module>goudong-modules/rabbitmq-spring-boot</module>
     </modules>
 
     <properties>
@@ -372,15 +373,12 @@
             <id>aliyunmaven</id>
             <name>aliyun-public-repository</name>
             <url>https://maven.aliyun.com/repository/public</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
+        </repository>
+
+        <repository>
+            <id>com.github.jgraph</id>
+            <name>Mulesoft repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
         </repository>
 
         <!-- required for org.hyperic:sigar -->

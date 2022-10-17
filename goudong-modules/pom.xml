@@ -20,11 +20,17 @@
         <module>xxl-job</module>
         <module>junit5-demo</module>
         <module>rabbitmq-demo</module>
+        <module>rabbitmq-spring-boot</module>
     </modules>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 
@@ -34,5 +40,6 @@
         <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
         <activiti-engine.version>7.0.0.Beta1</activiti-engine.version>
     </properties>
+
 
 </project>

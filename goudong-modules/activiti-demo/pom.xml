@@ -103,4 +103,17 @@
             <artifactId>commons-io</artifactId>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>com.github.jgraph</id>
+            <name>Mulesoft repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
 </project>
