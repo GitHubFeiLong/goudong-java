@@ -21,6 +21,7 @@
         <module>junit5-demo</module>
         <module>rabbitmq-demo</module>
         <module>rabbitmq-spring-boot</module>
+        <module>redis-master-slave</module>
     </modules>
     <dependencies>
         <dependency>

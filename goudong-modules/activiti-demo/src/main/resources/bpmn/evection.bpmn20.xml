@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn"
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
-             typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath"
-             targetNamespace="http://www.activiti.org/processdef">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
   <process id="myEvection" name="出差申请" isExecutable="true">
     <startEvent id="sid-740e6bf1-b100-4f12-98fa-6ee92c5e9aca"/>
     <userTask id="sid-029fa19a-3e23-43e5-9516-e726852e2ebd" name="创建出差申请" activiti:assignee="zhangsan"/>
@@ -23,7 +19,7 @@
         <omgdc:Bounds x="50.0" y="-120.0" width="30.0" height="30.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape-b2ac67c9-1847-4f1f-88d7-fddeea9909a9" bpmnElement="sid-029fa19a-3e23-43e5-9516-e726852e2ebd">
-        <omgdc:Bounds x="20.0" y="-35.0" width="100.0" height="80.0"/>
+        <omgdc:Bounds x="15.0" y="-35.0" width="100.0" height="80.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape-44eedccc-7f98-47ba-a205-aa5f85552d04" bpmnElement="sid-80a674fa-af24-4989-ac8a-0cc3a36c0d5a">
         <omgdc:Bounds x="15.0" y="95.0" width="100.0" height="80.0"/>
@@ -39,10 +35,10 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge-ea55f2d4-78fa-491c-89d8-b4c3fdd7888f" bpmnElement="sid-eeb85975-b12b-4476-b67f-60f15c2583c6">
         <omgdi:waypoint x="65.0" y="-90.0"/>
-        <omgdi:waypoint x="70.0" y="-35.0"/>
+        <omgdi:waypoint x="65.0" y="-35.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge-b1cac548-3e49-44e6-873c-fc6c2bdcdcf7" bpmnElement="sid-8873617b-7a73-4d68-a631-757ce7d07b4d">
-        <omgdi:waypoint x="70.0" y="45.0"/>
+        <omgdi:waypoint x="65.0" y="45.0"/>
         <omgdi:waypoint x="65.0" y="95.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge-eca4a791-5fd2-43b6-b11a-f11995760904" bpmnElement="sid-98350c93-91fd-49ad-a0ee-bb9ddfb5b45a">
