@@ -1,10 +1,8 @@
 package com.goudong.exception.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import com.goudong.exception.core.GlobalExceptionHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2022/10/23 21:47
  */
 @Configuration
-public class ExceptionConfiguration {
+public class ExceptionAutoConfiguration {
     //~fields
     //==================================================================================================================
 
