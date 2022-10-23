@@ -8,7 +8,7 @@ import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
 import com.goudong.commons.dto.user.BaseUserDTO;
 import com.goudong.commons.dto.user.SimpleCreateUserReq;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;

@@ -1,6 +1,6 @@
 package com.goudong.commons.exception.security.aes;
 
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 
 /**

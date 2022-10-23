@@ -4,7 +4,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;

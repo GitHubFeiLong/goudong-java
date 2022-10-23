@@ -1,8 +1,8 @@
 package com.goudong.commons.exception;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.framework.core.DataMap;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.MessageFormatUtil;
@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.goudong.commons.enumerate.core.ClientExceptionEnum.*;
-import static com.goudong.commons.enumerate.core.ServerExceptionEnum.SERVER_ERROR;
+import static com.goudong.commons.exception.enumerate.ClientExceptionEnum.*;
+import static com.goudong.commons.exception.enumerate.ServerExceptionEnum.SERVER_ERROR;
 
 /**
  * 类描述：
@@ -72,15 +72,15 @@ public class BasicException extends RuntimeException{
      */
     public static BasicException generateByServer(Throwable throwable) {
         // 默认500异常
-        BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR);
+        BasicException basicException = ServerException.server(ServerExceptionEnum.SERVER_ERROR);
 
         if (throwable instanceof RuntimeException) {
-            return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage(), "RuntimeException " + throwable.getMessage());
+            return ServerException.server(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage(), "RuntimeException " + throwable.getMessage());
         }
 
         // 空指针
         if (throwable instanceof NullPointerException) {
-            return ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "空指针异常", "NullPointerException null");
+            return ServerException.server(ServerExceptionEnum.SERVER_ERROR, "空指针异常", "NullPointerException null");
         }
 
         // 上传文件错误
@@ -89,7 +89,7 @@ public class BasicException extends RuntimeException{
         }
 
         if (throwable instanceof IndexOutOfBoundsException ) {
-            return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, "");
+            return ServerException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, "");
         }
         String message = throwable.getMessage();
         if (message == null) {
@@ -98,7 +98,7 @@ public class BasicException extends RuntimeException{
 
         // openFeign调用远程服务，服务还未注册到nacos中
         if (message.startsWith("com.netflix.client.ClientException")) {
-            return ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
+            return ServerException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
         }
 
         return basicException;
@@ -114,6 +114,12 @@ public class BasicException extends RuntimeException{
 
     // ~ quick 异常
     // =================================================================================================================
+
+    /**
+     * 根据响应码（必须在{@code ClientExceptionEnum} 和 {@code ServerExceptionEnum}中已定义），返回对象
+     * @param status http响应码
+     * @return 4xx ClientException; 5xx ServerException
+     */
     public static BasicException quick(Integer status) {
         Optional<ClientExceptionEnum> clientOptional = Stream.of(ClientExceptionEnum.values())
                 .filter(f -> f.getStatus() == status)
@@ -133,24 +139,65 @@ public class BasicException extends RuntimeException{
         throw new IllegalArgumentException("参数错误,状态码未定义 " + status);
     }
 
+    /**
+     * 根据响应码（必须在{@code ClientExceptionEnum} 和 {@code ServerExceptionEnum}中已定义），返回对象
+     * @param status http响应码
+     * @param clientMessage 客户端提示
+     * @return 4xx ClientException; 5xx ServerException
+     */
     public static BasicException quick(Integer status, String clientMessage) {
         return quick(status).clientMessage(clientMessage);
     }
 
+    /**
+     * 根据响应码（必须在{@code ClientExceptionEnum} 和 {@code ServerExceptionEnum}中已定义），返回对象
+     * @param status http响应码
+     * @param clientMessage 客户端提示
+     * @param serverMessage 服务端提示
+     * @return 4xx ClientException; 5xx ServerException
+     */
     public static BasicException quick(Integer status, String clientMessage, String serverMessage) {
         return quick(status).clientMessage(clientMessage).serverMessage(serverMessage);
     }
 
-    public static BasicException quick(Integer status, String clientMessageTemplate, Object[] clientMessageParams) {
-        String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
-        return quick(status).clientMessage(clientMessage);
+    /**
+     * 根据响应码（必须在{@code ClientExceptionEnum} 和 {@code ServerExceptionEnum}中已定义），返回对象
+     * @param status http响应码
+     * @param messageTemplate 提示模板
+     * @param messageParams 提示模板参数
+     * @return 4xx ClientException; 5xx ServerException
+     */
+    public static BasicException quick(Integer status, String messageTemplate, Object[] messageParams) {
+        String message = MessageFormatUtil.format(messageTemplate, messageParams);
+        BasicException quick = quick(status);
+        if (status >= 400 && status < 500) {
+            return quick.clientMessage(message);
+        }
+        return quick.serverMessage(message);
     }
 
+    /**
+     * 根据响应码（必须在{@code ClientExceptionEnum} 和 {@code ServerExceptionEnum}中已定义），返回对象
+     * @param status http响应码
+     * @param clientMessageTemplate 客户端提示模板
+     * @param clientMessageParams 客户端提示模板参数
+     * @param serverMessage 服务端提示
+     * @return 4xx ClientException; 5xx ServerException
+     */
     public static BasicException quick(Integer status, String clientMessageTemplate, Object[] clientMessageParams, String serverMessage) {
         String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
         return quick(status).clientMessage(clientMessage).serverMessage(serverMessage);
     }
 
+    /**
+     * 根据响应码（必须在{@code ClientExceptionEnum} 和 {@code ServerExceptionEnum}中已定义），返回对象
+     * @param status http响应码
+     * @param clientMessageTemplate 客户端提示模板
+     * @param clientMessageParams 客户端提示模板参数
+     * @param serverMessageTemplate 服务端提示
+     * @param serverMessageParams 服务端提示模板参数
+     * @return 4xx ClientException; 5xx ServerException
+     */
     public static BasicException quick(Integer status, String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
         String clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
         String serverMessage = MessageFormatUtil.format(serverMessageTemplate, serverMessageParams);

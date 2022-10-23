@@ -1,7 +1,7 @@
 package com.goudong.file.util;
 
 import cn.hutool.core.io.FileUtil;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.exception.ClientException;
@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.goudong.commons.enumerate.file.FileLengthUnit.*;

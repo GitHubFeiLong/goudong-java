@@ -1,6 +1,7 @@
-package com.goudong.commons.enumerate.core;
+package com.goudong.exception.enumerate;
 
-import com.goudong.commons.exception.BasicException;
+
+import com.goudong.exception.core.BasicException;
 
 /**
  * 接口描述：
@@ -26,6 +27,13 @@ public interface ExceptionEnumInterface {
      * 服务器日志信息
      */
     String getServerMessage();
+
+    /**
+     * 包含状态码
+     * @param status http状态码
+     * @return true 包含；false 不包含
+     */
+    boolean containStatus(int status);
 
     // ~ 定义快捷异常方法
     // =================================================================================================================

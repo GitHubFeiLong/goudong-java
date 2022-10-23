@@ -7,7 +7,7 @@ import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.user.*;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.exception.user.UserException;

@@ -1,6 +1,6 @@
 package com.goudong.commons.exception.security.rsa;
 
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 
 /**

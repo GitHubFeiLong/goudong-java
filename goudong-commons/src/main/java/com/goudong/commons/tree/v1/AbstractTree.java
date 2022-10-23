@@ -1,6 +1,6 @@
 package com.goudong.commons.tree.v1;
 
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.Getter;

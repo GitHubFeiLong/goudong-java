@@ -1,8 +1,8 @@
 package com.goudong.commons.framework.mvc.error;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.exception.ServerException;

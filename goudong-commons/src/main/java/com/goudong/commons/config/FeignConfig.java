@@ -3,7 +3,7 @@ package com.goudong.commons.config;
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.constant.core.BasePackageConst;
 import com.goudong.commons.constant.core.HttpHeaderConst;
-import com.goudong.commons.enumerate.core.ServerExceptionEnum;
+import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;
 import com.goudong.commons.exception.ServerException;
 import com.goudong.commons.framework.core.Result;

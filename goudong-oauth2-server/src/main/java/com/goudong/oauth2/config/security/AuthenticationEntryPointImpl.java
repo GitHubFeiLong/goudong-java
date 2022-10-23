@@ -1,7 +1,7 @@
 package com.goudong.oauth2.config.security;
 
 import com.goudong.commons.constant.core.DateConst;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import org.springframework.http.HttpHeaders;

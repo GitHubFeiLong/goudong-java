@@ -2,7 +2,7 @@ package com.goudong.oauth2.controller;
 
 import com.goudong.commons.dto.oauth2.BaseApiResource2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseApiResourceDTO;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.LogUtil;

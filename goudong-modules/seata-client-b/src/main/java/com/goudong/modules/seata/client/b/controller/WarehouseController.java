@@ -1,7 +1,7 @@
 package com.goudong.modules.seata.client.b.controller;
 
 import com.google.common.collect.Lists;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.modules.seata.client.b.po.WarehousePO;

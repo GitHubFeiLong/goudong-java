@@ -3,7 +3,7 @@ package com.goudong.file.controller.link;
 import cn.hutool.core.io.FileUtil;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.FileDTO;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;

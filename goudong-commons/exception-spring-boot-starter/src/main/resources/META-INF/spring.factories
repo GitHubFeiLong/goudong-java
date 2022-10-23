@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.goudong.commons.autoconfigure.WhitelistAutoConfiguration,\
+  com.goudong.commons.autoconfigure.ApiResourceAutoConfiguration

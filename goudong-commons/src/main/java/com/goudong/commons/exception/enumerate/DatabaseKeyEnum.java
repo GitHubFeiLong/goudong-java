@@ -1,4 +1,4 @@
-package com.goudong.commons.enumerate.core;
+package com.goudong.commons.exception.enumerate;
 
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.Getter;

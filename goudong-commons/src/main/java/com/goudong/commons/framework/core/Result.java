@@ -1,7 +1,7 @@
 package com.goudong.commons.framework.core;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.enumerate.core.ExceptionEnumInterface;
+import com.goudong.commons.exception.ExceptionEnumInterface;
 import com.goudong.commons.exception.BasicException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

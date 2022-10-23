@@ -2,7 +2,7 @@ package com.goudong.commons.aop;
 
 import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.enumerate.core.ClientExceptionEnum;
+import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.framework.redis.GenerateRedisKeyUtil;
 import com.goudong.commons.framework.redis.RedisTool;
