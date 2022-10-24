@@ -29,7 +29,6 @@
 
     <modules>
         <module>goudong-commons</module>
-        <module>goudong-exception-spring-boot-starter</module>
         <module>goudong-gateway-server</module>
         <module>goudong-user-server</module>
         <module>goudong-message-server</module>
@@ -136,11 +135,11 @@
                 <artifactId>goudong-commons</artifactId>
                 <version>${goudong-commons.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>com.goudong</groupId>
                 <artifactId>goudong-exception-spring-boot-starter</artifactId>
                 <version>1.0-SNAPSHOT</version>
-            </dependency>
+            </dependency>-->
             <!--junit5-->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

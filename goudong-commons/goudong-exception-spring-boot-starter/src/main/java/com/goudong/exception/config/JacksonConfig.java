@@ -38,7 +38,7 @@ import java.util.TimeZone;
  * @Author e-Feilong.Chen
  * @Date 2022/1/20 8:58
  */
-@Configuration
+// @Configuration
 public class JacksonConfig {
     //~fields
     //==================================================================================================================

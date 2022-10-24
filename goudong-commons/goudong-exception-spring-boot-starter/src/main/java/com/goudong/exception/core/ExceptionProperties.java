@@ -1,5 +1,6 @@
 package com.goudong.exception.core;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 1.0
  * @date 2022/10/24 9:10
  */
+@Data
 @ConfigurationProperties(prefix = "commons.goudong.exception")
 public class ExceptionProperties {
 

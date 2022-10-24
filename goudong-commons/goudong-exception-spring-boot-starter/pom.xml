@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!--<parent>
+        <groupId>com.goudong</groupId>
+        <artifactId>goudong-commons</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>-->
+    <!--Spring Boot-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.8.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>goudong-exception-spring-boot-starter</artifactId>
+
+    <packaging>jar</packaging>
+    <properties>
+        <!--自定义服务-->
+        <goudong-commons.version>1.0-SNAPSHOT</goudong-commons.version>
+        <goudong-gateway-server.version>1.0-SNAPSHOT</goudong-gateway-server.version>
+        <!--框架-->
+        <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
+        <spring-cloud-dependencies.version>Hoxton.SR12</spring-cloud-dependencies.version>
+        <spring-cloud-alibaba-dependencies.version>2.2.7.RELEASE</spring-cloud-alibaba-dependencies.version>
+        <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
+        <mybatis-spring-boot-starter.version>2.1.4</mybatis-spring-boot-starter.version>
+        <mybatis-plus-boot-starter.version>3.4.0</mybatis-plus-boot-starter.version>
+        <pagehelper-spring-boot-starter.version>1.2.4</pagehelper-spring-boot-starter.version>
+        <mysql-connector-java.version>8.0.16</mysql-connector-java.version>
+        <druid-spring-boot-starter.version>1.2.5</druid-spring-boot-starter.version>
+        <fastjson.version>1.2.75</fastjson.version>
+        <java-jwt.version>3.16.0</java-jwt.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <hutool-all.version>5.6.4</hutool-all.version>
+        <dysmsapi20170525.version>2.0.1</dysmsapi20170525.version>
+        <aliyun-java-sdk-core.version>4.5.16</aliyun-java-sdk-core.version>
+        <dnsjava.version>3.3.1</dnsjava.version>
+        <flyway-maven-plugin.version>7.2.1</flyway-maven-plugin.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <Sdk4J.version>2.0</Sdk4J.version>
+        <log4j-web.version>2.14.0</log4j-web.version>
+        <redisson-spring-boot-starter.version>3.14.0</redisson-spring-boot-starter.version>
+        <mapstruct.version>1.2.0.Final</mapstruct.version>
+        <quartz.version>2.3.2</quartz.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <screw-maven-plugin.version>1.0.5</screw-maven-plugin.version>
+        <screw-core.version>1.0.5</screw-core.version>
+        <maven-plugin-api.version>3.8.1</maven-plugin-api.version>
+        <maven-plugin-annotations.version>3.6.4</maven-plugin-annotations.version>
+        <xxl-job-core.version>2.3.1</xxl-job-core.version>
+        <activiti-spring-boot-starter.version>7.0.0.Beta5</activiti-spring-boot-starter.version>
+        <hibernate-types-52.version>2.16.3</hibernate-types-52.version>
+        <easyexcel.version>3.0.5</easyexcel.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool-all.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- java编译插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <descriptors>
+                        <!-- 这里的意思是依据指定的配置文件进行打包 -->
+                        <descriptor>src/main/resources/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>with-dependence</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- 指定在打包节点执行jar包合并操作 -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,12 +1,5 @@
 package com.goudong.gateway.config;
 
-/**
- * 类描述：
- *
- * @Author e-Feilong.Chen
- * @Date 2021/8/10 15:55
- */
-
 import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.BasicException;

@@ -38,7 +38,7 @@ public interface GoudongMessageServerService {
      * @return
      */
     @GetMapping("/code/check-phone-code/{phone}/{code}")
-    Result<Boolean> checkPhoneCode (@PathVariable String phone, @PathVariable String code);
+    Result<Boolean> checkPhoneCode (@PathVariable("phone") String phone, @PathVariable("code") String code);
 
     /**
      * 验证邮箱验证码是否正确
@@ -47,5 +47,5 @@ public interface GoudongMessageServerService {
      * @return
      */
     @GetMapping("/code/check-email-code/{email}/{code}")
-    Result<Boolean> checkEmailCode (@PathVariable String email, @PathVariable String code);
+    Result<Boolean> checkEmailCode (@PathVariable("email") String email, @PathVariable("code") String code);
 }
