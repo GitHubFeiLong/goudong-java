@@ -17,8 +17,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
+    <groupId>com.goudong.exception</groupId>
     <artifactId>goudong-exception-spring-boot-starter</artifactId>
+    <version>1.0</version>
 
     <packaging>jar</packaging>
     <properties>
@@ -67,11 +68,12 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -102,8 +104,15 @@
 
     <build>
         <plugins>
-            <!-- java编译插件 -->
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                </configuration>
+            </plugin>
+            <!-- java编译插件 -->
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -119,21 +128,21 @@
                 <configuration>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                     <descriptors>
-                        <!-- 这里的意思是依据指定的配置文件进行打包 -->
+                        &lt;!&ndash; 这里的意思是依据指定的配置文件进行打包 &ndash;&gt;
                         <descriptor>src/main/resources/assembly/assembly.xml</descriptor>
                     </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>with-dependence</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- 指定在打包节点执行jar包合并操作 -->
+                        <id>with-dependence</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;
+                        <phase>package</phase> &lt;!&ndash; 指定在打包节点执行jar包合并操作 &ndash;&gt;
                         <goals>
                             <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 </project>
