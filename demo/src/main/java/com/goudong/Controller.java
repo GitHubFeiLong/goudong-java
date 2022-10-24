@@ -21,6 +21,7 @@ public class Controller {
     //==================================================================================================================
     @RequestMapping("/get")
     public Result get() {
-        return Result.ofSuccess("hello world");
+        throw new RuntimeException("运行时异常");
+        // return Result.ofSuccess("hello world");
     }
 }

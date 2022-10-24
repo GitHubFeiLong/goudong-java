@@ -1,7 +1,5 @@
 package com.goudong.exception.enumerate;
 
-import lombok.Getter;
-
 /**
  * 枚举描述：
  * 信息格式化的枚举

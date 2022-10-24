@@ -1,6 +1,9 @@
 package com.goudong.exception.config;
 
+import com.goudong.exception.core.ExceptionProperties;
 import com.goudong.exception.core.GlobalExceptionHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2022/10/23 21:47
  */
 @Configuration
+@EnableConfigurationProperties(ExceptionProperties.class)
+@ConditionalOnProperty(prefix = "commons.goudong.exception", name = "enable", havingValue = "true", matchIfMissing = true)
 public class ExceptionAutoConfiguration {
     //~fields
     //==================================================================================================================

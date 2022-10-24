@@ -1,11 +1,5 @@
 package com.goudong.exception.util;
 
-import com.alibaba.csp.sentinel.util.AssertUtil;
-import com.goudong.exception.core.ServerException;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * 类描述：
  *

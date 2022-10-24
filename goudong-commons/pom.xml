@@ -11,9 +11,9 @@
 
     <artifactId>goudong-commons</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>exception-spring-boot-starter</module>
-    </modules>
+    <!--<modules>
+        <module>goudong-exception-spring-boot-starter</module>
+    </modules>-->
     <packaging>pom</packaging>
 
     <dependencies>
@@ -197,8 +197,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-        </plugins>
-    </build>
 </project>

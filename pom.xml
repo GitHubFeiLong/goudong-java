@@ -29,6 +29,7 @@
 
     <modules>
         <module>goudong-commons</module>
+        <module>goudong-exception-spring-boot-starter</module>
         <module>goudong-gateway-server</module>
         <module>goudong-user-server</module>
         <module>goudong-message-server</module>
@@ -39,7 +40,6 @@
         <module>goudong-oauth2-service-serve</module>
         <module>goudong-modules</module>
         <module>goudong-bpm-serve</module>
-        <module>goudong-modules/rabbitmq-spring-boot</module>
         <module>demo</module>
     </modules>
 
@@ -135,6 +135,11 @@
                 <groupId>com.goudong</groupId>
                 <artifactId>goudong-commons</artifactId>
                 <version>${goudong-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.goudong</groupId>
+                <artifactId>goudong-exception-spring-boot-starter</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
             <!--junit5-->
             <dependency>

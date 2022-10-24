@@ -18,8 +18,52 @@
     <dependencies>
         <dependency>
             <groupId>com.goudong</groupId>
-            <artifactId>exception-spring-boot-starter</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>goudong-exception-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
+
+    <!-- 构建项目需要的信息 -->
+    <build>
+        <!-- 子项目可以引用的默认插件信息。该插件配置项直到被引用时才会被解析或绑定到生命周期。给定插件的任何本地配置都会覆盖这里的配置 -->
+        <pluginManagement>
+            <!-- 使用的插件列表 。 -->
+            <plugins>
+                <!-- plugin元素包含描述插件所需要的信息。 -->
+                <plugin>
+                    <!-- 插件在仓库里的group ID -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <!-- 插件在仓库里的artifact ID -->
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <!-- 被使用的插件的版本（或版本范围） -->
+                    <version>3.8.1</version>
+                    <!-- 作为DOM对象的配置 -->
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <compilerArguments>
+                            <extdirs>${project.basedir}/lib</extdirs>
+                        </compilerArguments>
+                    </configuration>
+                </plugin>
+                <!-- 数据库版本管理插件-->
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!--spring boot打包成可执行jar-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!--git信息-->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
