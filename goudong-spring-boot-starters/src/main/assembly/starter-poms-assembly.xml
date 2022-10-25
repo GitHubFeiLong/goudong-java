@@ -1,0 +1,42 @@
+<assembly>
+    <id>starter-poms</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <moduleSets>
+        <moduleSet>
+            <sources>
+                <fileSets>
+                    <fileSet>
+                        <includes>
+                            <include>**/pom.xml</include>
+                        </includes>
+                    </fileSet>
+                </fileSets>
+            </sources>
+        </moduleSet>
+    </moduleSets>
+</assembly>
+<!--<assembly>
+    <id>with-dependence</id>&lt;!&ndash; 配置文件的标识，同时生成的jar包名字会把这个文本包含进去 &ndash;&gt;
+    <formats>
+        <format>jar</format>&lt;!&ndash; 打包类型，此处为jar &ndash;&gt;
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    &lt;!&ndash;依赖jar包以及项目打包文件存储文件&ndash;&gt;
+    <dependencySets>
+        <dependencySet>
+            <unpack>false</unpack>&lt;!&ndash; 是否解压依赖jar包 &ndash;&gt;
+            <scope>runtime</scope>
+            &lt;!&ndash;存储在projectName-assembly-version/lib下&ndash;&gt;
+            <outputDirectory>BOOT-INF</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.outputDirectory}</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>-->

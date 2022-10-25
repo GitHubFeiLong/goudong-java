@@ -1,6 +1,6 @@
 package com.goudong.exception.enumerate;
 
-import org.apache.commons.lang3.StringUtils;
+import com.goudong.exception.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public enum DatabaseKeyEnum {
      * @return
      */
     public static String getClientMessage (@NotNull String keyName) {
-        if (StringUtils.isBlank(keyName)) {
+        if (StringUtil.isBlank(keyName)) {
             return null;
         }
         DatabaseKeyEnum[] values = DatabaseKeyEnum.values();
