@@ -1,9 +1,9 @@
 package com.goudong.commons.tree.v1;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
 import com.goudong.commons.utils.core.StringUtil;
+import com.goudong.exception.core.ClientException;
+import com.goudong.exception.enumerate.ClientExceptionEnum;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -161,7 +161,7 @@ public class TreeStructureHandler<T> extends AbstractTree<T> {
 
         // 因为构造方法传递节点集合是树形结构的，所以获取指定的节点，就能获取它下面的所有子节点
         T selfNode = Optional.ofNullable(super.findBySelfValue2T(selfValue, super.treeNodes))
-                .orElseThrow(()->ClientException.client(ClientExceptionEnum.BAD_REQUEST, StringUtil.format("未找到指定的节点{}", selfValue)));
+                .orElseThrow(()-> ClientException.client(ClientExceptionEnum.BAD_REQUEST, StringUtil.format("未找到指定的节点{}", selfValue)));
         generalNode.setNode(selfNode);
 
         // 获取该节点的所有子节点

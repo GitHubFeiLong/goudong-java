@@ -48,6 +48,12 @@
             <groupId>org.activiti</groupId>
             <artifactId>activiti-bpmn-layout</artifactId>
             <version>7.0.0.Beta1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.jgraph</groupId>
+                    <artifactId>jgraphx</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.activiti.cloud</groupId>

@@ -10,13 +10,15 @@
 
     <groupId>com.goudong.boot</groupId>
     <artifactId>goudong-spring-boot-starters</artifactId>
-    <version>1.0</version>
-
-    <modelVersion>4.0.0</modelVersion>
-
-    <packaging>pom</packaging>
+    <version>1.0.0</version>
     <name>Goudong Spring Boot Starters</name>
     <description>Goudong Spring Boot Starters</description>
+    <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>goudong-exception-spring-boot-starter</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

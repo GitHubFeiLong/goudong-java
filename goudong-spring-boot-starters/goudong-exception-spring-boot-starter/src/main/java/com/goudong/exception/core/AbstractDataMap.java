@@ -1,5 +1,7 @@
 package com.goudong.exception.core;
 
+import lombok.Data;
+
 /**
  * 类描述：
  * 扩展接口的返回数据,可以继承该类进行扩充
@@ -7,6 +9,7 @@ package com.goudong.exception.core;
  * @version 1.0
  * @date 2022/9/22 14:55
  */
+@Data
 public class AbstractDataMap {
 
     //~fields

@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.goudong.exception.enumerate.ClientExceptionEnum;
 import com.goudong.exception.enumerate.ServerExceptionEnum;
 import com.goudong.exception.util.MessageFormatUtil;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartException;
@@ -25,6 +26,7 @@ import static com.goudong.exception.enumerate.ServerExceptionEnum.SERVER_ERROR;
  * @Date 2020/6/10 19:41
  * @Version 1.0
  */
+@Data
 public class BasicException extends RuntimeException{
 
     public static final Logger log = LoggerFactory.getLogger(BasicException.class);
@@ -1178,47 +1180,5 @@ public class BasicException extends RuntimeException{
         }
 
         return this;
-    }
-
-    //~getter
-    //==================================================================================================================
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getClientMessage() {
-        return clientMessage;
-    }
-
-    public void setClientMessage(String clientMessage) {
-        this.clientMessage = clientMessage;
-    }
-
-    public String getServerMessage() {
-        return serverMessage;
-    }
-
-    public void setServerMessage(String serverMessage) {
-        this.serverMessage = serverMessage;
-    }
-
-    public Map getDataMap() {
-        return dataMap;
-    }
-
-    public void setDataMap(Map dataMap) {
-        this.dataMap = dataMap;
     }
 }

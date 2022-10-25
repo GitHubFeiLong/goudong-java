@@ -59,6 +59,12 @@
         <dependency>
             <groupId>org.activiti</groupId>
             <artifactId>activiti-bpmn-layout</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.jgraph</groupId>
+                    <artifactId>jgraphx</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- activiti 云支持 -->
         <dependency>

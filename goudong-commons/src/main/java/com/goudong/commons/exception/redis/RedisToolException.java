@@ -1,8 +1,9 @@
 package com.goudong.commons.exception.redis;
 
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
-import com.goudong.commons.exception.BasicException;
+
+import com.goudong.exception.core.BasicException;
+import com.goudong.exception.enumerate.ClientExceptionEnum;
+import com.goudong.exception.enumerate.ServerExceptionEnum;
 
 /**
  * 类描述：

@@ -2,13 +2,13 @@ package com.goudong.exception.core;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.exception.enumerate.ExceptionEnumInterface;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 类描述：
@@ -18,6 +18,7 @@ import java.util.Objects;
  * @Date 2020/10/5 18:42
  * @Version 1.0
  */
+@Data
 public class Result<T> implements Serializable {
 
     private static final String DEFAULT_SUCCESS_CLIENT_MESSAGE = "执行成功";
@@ -297,89 +298,5 @@ public class Result<T> implements Serializable {
     public Result timestamp(Date timestamp) {
         this.timestamp = timestamp;
         return this;
-    }
-    //~getter
-    //==================================================================================================================
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getClientMessage() {
-        return clientMessage;
-    }
-
-    public void setClientMessage(String clientMessage) {
-        this.clientMessage = clientMessage;
-    }
-
-    public String getServerMessage() {
-        return serverMessage;
-    }
-
-    public void setServerMessage(String serverMessage) {
-        this.serverMessage = serverMessage;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public Map getDataMap() {
-        return dataMap;
-    }
-
-    public void setDataMap(Map dataMap) {
-        this.dataMap = dataMap;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "Result{" +
-                "status=" + status +
-                ", code='" + code + '\'' +
-                ", clientMessage='" + clientMessage + '\'' +
-                ", serverMessage='" + serverMessage + '\'' +
-                ", data=" + data +
-                ", dataMap=" + dataMap +
-                ", timestamp=" + timestamp +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Result<?> result = (Result<?>) o;
-        return status == result.status && Objects.equals(code, result.code) && Objects.equals(clientMessage, result.clientMessage) && Objects.equals(serverMessage, result.serverMessage) && Objects.equals(data, result.data) && Objects.equals(dataMap, result.dataMap) && Objects.equals(timestamp, result.timestamp);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(status, code, clientMessage, serverMessage, data, dataMap, timestamp);
     }
 }

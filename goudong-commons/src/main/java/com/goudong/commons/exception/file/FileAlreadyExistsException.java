@@ -1,7 +1,8 @@
 package com.goudong.commons.exception.file;
 
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
+
+import com.goudong.exception.enumerate.ClientExceptionEnum;
+import com.goudong.exception.enumerate.ServerExceptionEnum;
 
 /**
  * 类描述：
