@@ -1,6 +1,8 @@
 package com.goudong.core.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * 类描述：
@@ -32,5 +34,18 @@ public class CollectionUtil {
      */
     public static boolean isNotEmpty(Collection coll) {
         return !CollectionUtil.isEmpty(coll);
+    }
+
+    /**
+     * 初始化一个ArrayList
+     * @param elements
+     * @return
+     * @param <E>
+     */
+    public static <E> ArrayList<E> newArrayList(E... elements) {
+        AssertUtil.isNotEmpty(elements);
+        ArrayList<E> list = new ArrayList<>(elements.length);
+        Collections.addAll(list, elements);
+        return list;
     }
 }
