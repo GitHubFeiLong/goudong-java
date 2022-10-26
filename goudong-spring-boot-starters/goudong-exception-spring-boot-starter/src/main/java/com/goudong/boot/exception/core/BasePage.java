@@ -1,5 +1,7 @@
 package com.goudong.boot.exception.core;
 
+import com.goudong.boot.exception.util.ORMTypeEnum;
+import com.goudong.core.util.CollectionUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,16 +31,31 @@ public class BasePage {
     private long size;
 
     /**
+     * 注意：如果有多个ORM，那么需要注意该方法返回不固定
+     * @return
+     */
+    public long getPage() {
+        if (CollectionUtil.isNotEmpty(ORMTypeEnum.CLIENT_TYPES)) {
+            return ORMTypeEnum.CLIENT_TYPES.get(0).getPage(this.page);
+        }
+        return this.page;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    /**
      * 获取spring-data-jpa 框架的页码（以0开始），
      * @return
      */
     @ApiModelProperty(hidden = true)
     public int getJPAPage() {
-        return (int)(page - 1);
+        return (int)ORMTypeEnum.JPA.getPage(page);
     }
 
     /**
-     * 获取spring-data-jpa 框架的页码（以0开始），
+     * 获取spring-data-jpa 框架的size，
      * @return
      */
     @ApiModelProperty(hidden = true)
@@ -52,7 +69,7 @@ public class BasePage {
      */
     @ApiModelProperty(hidden = true)
     private long getMPPage() {
-        return page;
+        return (int)ORMTypeEnum.MYBATIS_PLUS.getPage(page);
     }
 
     /**

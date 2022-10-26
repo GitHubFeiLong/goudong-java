@@ -1,14 +1,11 @@
 package com.goudong.boot.exception.util;
 
 import com.goudong.boot.exception.core.PageResult;
-import com.goudong.boot.exception.enumerate.PageTypeEnum;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.goudong.core.util.CollectionUtil;
 
 /**
  * 类描述：
- *
+ * 分页结果对象转换器
  * @author cfl
  * @version 1.0
  * @date 2022/10/26 17:11
@@ -16,18 +13,30 @@ import java.util.List;
 public class PageResultConvert<E> {
 
     /**
-     * 客户系统支持的分页类型
+     * 使用系统定义的默认转换
+     * @param source 框架原分页结果对象
+     * @param tClazz 转换后的结果类型
+     * @return
+     * @param <E>
      */
-    public static List<PageTypeEnum> CLIENT_TYPES = new ArrayList<>();
-
-    public PageResult<E> convert(Object source, Class<E> tClazz) {
-        if (CLIENT_TYPES.contains(PageTypeEnum.JPA)) {
-
+    public static <E> PageResult<E> convert(Object source, Class<E> tClazz) {
+        // 如果客户端有集成定义的持久层，那么就取其中一个进行转换
+        if (CollectionUtil.isNotEmpty(ORMTypeEnum.CLIENT_TYPES)) {
+            return ORMTypeEnum.CLIENT_TYPES.get(0).convert(source, tClazz);
         }
-
-        if (CLIENT_TYPES.contains(PageTypeEnum.MYBATIS_PLUS)) {
-
-
-        }
+        throw new RuntimeException("持久层没有定义，请更新" + ORMTypeEnum.class);
     }
+
+    /**
+     * 如果客户端集成了多个ORM框架，客户端可以自定义类型转换
+     * @param source 框架原分页结果对象
+     * @param tClazz 转换后的结果类型
+     * @param typeEnum 指定ORM类型
+     * @return
+     * @param <E>
+     */
+    public static <E> PageResult<E> convert(Object source, Class<E> tClazz, ORMTypeEnum typeEnum) {
+        return typeEnum.convert(source, tClazz);
+    }
+
 }

@@ -5,20 +5,40 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.goudong.boot.exception.core.PageResult;
 import com.goudong.boot.exception.core.PageResultConverter;
+import com.goudong.core.util.MessageFormatUtil;
 
 import java.util.List;
 
 /**
  * 类描述：
- *
+ * Mybatis Plus的分页结果转换器
  * @author cfl
  * @version 1.0
  * @date 2022/10/26 17:19
  */
-public class MybatisPlusPage2PageResultConverter<E> implements PageResultConverter<Page, PageResult, E> {
+final class MybatisPlusPage2PageResultConverter<E> implements PageResultConverter<Page, PageResult, E> {
+    /**
+     * 实例
+     */
+    public static MybatisPlusPage2PageResultConverter instance;
+
+    /**
+     * 获取实例
+     * @return
+     */
+    public static MybatisPlusPage2PageResultConverter getInstance() {
+        if (instance == null) {
+            synchronized(MybatisPlusPage2PageResultConverter.class){
+                if (instance == null) {
+                    instance = new MybatisPlusPage2PageResultConverter();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
-    public PageResult<E> convert(Page source, Class<E> tClazz) {
+    public PageResult<E> basicConvert(Page source, Class<E> tClazz) {
 
         Long total = source.getTotal();
         Long page = source.getCurrent();
@@ -29,4 +49,15 @@ public class MybatisPlusPage2PageResultConverter<E> implements PageResultConvert
         return new PageResult<E>(total, totalPage, page, size,content);
     }
 
+    @Override
+    public PageResult convert(Object source, Class<E> tClazz) {
+        if (source instanceof Page) {
+            return basicConvert((Page)source, tClazz);
+        }
+        throw new IllegalArgumentException(MessageFormatUtil.format("参数{}不是{}类型", source, Page.class));
+    }
+
+    private MybatisPlusPage2PageResultConverter(){
+
+    }
 }
