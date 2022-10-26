@@ -1,9 +1,9 @@
 package com.goudong.commons.framework.runner;
 
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
 import com.goudong.commons.framework.core.ResourceAntMatcher;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.HideMenuProperties;
 import com.goudong.commons.utils.core.LogUtil;

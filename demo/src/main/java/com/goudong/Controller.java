@@ -1,6 +1,6 @@
 package com.goudong;
 
-import com.goudong.exception.core.Result;
+import com.goudong.boot.exception.core.Result;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

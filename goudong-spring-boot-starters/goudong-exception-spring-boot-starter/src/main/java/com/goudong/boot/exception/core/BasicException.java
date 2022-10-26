@@ -1,9 +1,9 @@
-package com.goudong.exception.core;
+package com.goudong.boot.exception.core;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.exception.enumerate.ClientExceptionEnum;
-import com.goudong.exception.enumerate.ServerExceptionEnum;
-import com.goudong.exception.util.MessageFormatUtil;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
+import com.goudong.boot.exception.util.MessageFormatUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.goudong.exception.enumerate.ClientExceptionEnum.*;
-import static com.goudong.exception.enumerate.ServerExceptionEnum.SERVER_ERROR;
+import static com.goudong.boot.exception.enumerate.ClientExceptionEnum.*;
+import static com.goudong.boot.exception.enumerate.ServerExceptionEnum.SERVER_ERROR;
 
 
 /**
@@ -224,7 +224,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException client(String clientMessageTemplate, Object[] clientMessageParams) {
-        return BasicException.client(ClientException.DEFAULT_EXCEPTION, clientMessageTemplate, clientMessageParams);
+        return client(ClientException.DEFAULT_EXCEPTION, clientMessageTemplate, clientMessageParams);
     }
 
     /**
@@ -379,7 +379,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByBadRequest(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(BAD_REQUEST, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(BAD_REQUEST, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     //~ ClientExceptionEnum.UNAUTHORIZED 401
@@ -452,7 +452,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByUnauthorized(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(UNAUTHORIZED, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(UNAUTHORIZED, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     //~ ClientExceptionEnum.FORBIDDEN 403
@@ -525,7 +525,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByForbidden(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(FORBIDDEN, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(FORBIDDEN, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     //~ ClientExceptionEnum.NOT_FOUND 404
@@ -598,7 +598,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByNotFound(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(NOT_FOUND, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(NOT_FOUND, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     //~ ClientExceptionEnum.NOT_ACCEPTABLE 406
@@ -671,7 +671,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByNotAcceptable(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(NOT_ACCEPTABLE, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(NOT_ACCEPTABLE, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     //~ ClientExceptionEnum.UNPROCESSABLE_ENTITY 422
@@ -744,7 +744,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByUnprocessableEntity(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(UNPROCESSABLE_ENTITY, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(UNPROCESSABLE_ENTITY, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     //~ ClientExceptionEnum.TOO_MANY_REQUESTS 429
@@ -817,7 +817,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException clientByTooManyRequests(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        return ClientException.client(TOO_MANY_REQUESTS, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        return client(TOO_MANY_REQUESTS, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
 
@@ -984,7 +984,7 @@ public class BasicException extends RuntimeException{
      * @return
      */
     public static BasicException serverByServerError(String clientMessageTemplate, Object[] clientMessageParams, String serverMessageTemplate, Object[] serverMessageParams) {
-        throw ServerException.server(SERVER_ERROR, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
+        throw server(SERVER_ERROR, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
     // ~ 常用构造方法

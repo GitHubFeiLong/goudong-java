@@ -1,7 +1,9 @@
 package com.goudong.commons.exception;
 
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
+import com.goudong.boot.exception.core.BasicException;
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.exception.file.FileException;
 import com.goudong.commons.utils.core.ArrayUtil;
 import org.junit.jupiter.api.Test;

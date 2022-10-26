@@ -1,7 +1,7 @@
 package com.goudong.user.controller.menu;
 
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.service.BaseMenuService;
 import io.swagger.annotations.Api;

@@ -1,9 +1,9 @@
 package com.goudong.commons.exception.oauth2;
 
 
-import com.goudong.exception.core.BasicException;
-import com.goudong.exception.enumerate.ClientExceptionEnum;
-import com.goudong.exception.enumerate.ServerExceptionEnum;
+import com.goudong.boot.exception.core.BasicException;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 
 /**
  * 类描述：

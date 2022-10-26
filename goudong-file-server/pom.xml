@@ -7,11 +7,12 @@
         <groupId>com.goudong</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>goudong-file-server</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <name>Goudong File Server</name>
+    <description>文件服务</description>
     <packaging>jar</packaging>
+    <modelVersion>4.0.0</modelVersion>
 
     <repositories>
         <!-- required for org.hyperic:sigar -->

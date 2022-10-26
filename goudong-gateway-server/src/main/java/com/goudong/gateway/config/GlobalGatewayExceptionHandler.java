@@ -1,11 +1,11 @@
 package com.goudong.gateway.config;
 
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.enumerate.ServerExceptionEnum;
-import com.goudong.commons.exception.BasicException;
-import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.framework.core.Result;
+import com.goudong.boot.exception.core.BasicException;
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.core.Result;
+import com.goudong.boot.exception.core.ServerException;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.Getter;
 import lombok.Setter;

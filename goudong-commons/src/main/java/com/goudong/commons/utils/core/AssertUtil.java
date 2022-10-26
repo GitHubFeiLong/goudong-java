@@ -1,11 +1,11 @@
 package com.goudong.commons.utils.core;
 
-import com.goudong.exception.core.BasicException;
-import com.goudong.exception.core.ClientException;
-import com.goudong.exception.core.ServerException;
-import com.goudong.exception.enumerate.ClientExceptionEnum;
-import com.goudong.exception.enumerate.ExceptionEnumInterface;
-import com.goudong.exception.enumerate.ServerExceptionEnum;
+import com.goudong.boot.exception.core.BasicException;
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.core.ServerException;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ExceptionEnumInterface;
+import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;

@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Configuration
 @EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig

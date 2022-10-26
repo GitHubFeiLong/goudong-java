@@ -1,7 +1,7 @@
 package com.goudong.commons.framework.openfeign;
 
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.oauth2.*;
-import com.goudong.commons.framework.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;

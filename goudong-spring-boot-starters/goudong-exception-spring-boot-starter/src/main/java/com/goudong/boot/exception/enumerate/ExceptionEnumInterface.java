@@ -1,7 +1,7 @@
-package com.goudong.exception.enumerate;
+package com.goudong.boot.exception.enumerate;
 
 
-import com.goudong.exception.core.BasicException;
+import com.goudong.boot.exception.core.BasicException;
 
 /**
  * 接口描述：

@@ -1,6 +1,7 @@
 package com.goudong.commons.utils.core;
 
 import com.google.common.collect.Lists;
+import com.goudong.boot.exception.core.ServerException;
 import com.goudong.commons.annotation.core.HideMenu;
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
@@ -9,7 +10,6 @@ import com.goudong.commons.constant.core.CommonConst;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.enumerate.core.RequestMappingEnum;
 import com.goudong.commons.framework.core.ResourceAntMatcher;
-import com.goudong.exception.core.ServerException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.Resource;

@@ -1,9 +1,11 @@
-package com.goudong.exception.enumerate;
+package com.goudong.boot.exception.enumerate;
+
+import com.goudong.boot.exception.util.MessageFormatUtil;
 
 /**
  * 枚举描述：
  * 信息格式化的枚举
- * @see com.goudong.exception.util.MessageFormatUtil
+ * @see MessageFormatUtil
  * @author msi
  * @version 1.0
  * @date 2022/9/22 16:37

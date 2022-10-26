@@ -1,7 +1,7 @@
-package com.goudong.exception.core;
+package com.goudong.boot.exception.core;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.exception.enumerate.ExceptionEnumInterface;
+import com.goudong.boot.exception.enumerate.ExceptionEnumInterface;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -21,6 +21,8 @@ import java.util.Map;
 @Data
 public class Result<T> implements Serializable {
 
+    private static final long serialVersionUID = -212122772006061476L;
+
     private static final String DEFAULT_SUCCESS_CLIENT_MESSAGE = "执行成功";
     /**
      * 成功
@@ -30,7 +32,6 @@ public class Result<T> implements Serializable {
      * 失败
      */
     public static final String FAIL = "1";
-    private static final long serialVersionUID = -212122772006061476L;
 
     /**
      * http状态码

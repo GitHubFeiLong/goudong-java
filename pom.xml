@@ -85,6 +85,7 @@
         <easyexcel.version>3.0.5</easyexcel.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <lombok.version>1.18.24</lombok.version>
+        <swagger-annotations.version>1.5.22</swagger-annotations.version>
     </properties>
 
     <!--统一版本管控-->
@@ -133,6 +134,11 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-spring-boot-starter</artifactId>
                 <version>${knife4j-spring-boot-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
             </dependency>
             <!--lombok-->
             <dependency>

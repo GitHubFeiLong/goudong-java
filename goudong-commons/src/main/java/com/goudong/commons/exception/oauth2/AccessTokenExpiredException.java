@@ -1,7 +1,7 @@
 package com.goudong.commons.exception.oauth2;
 
 
-import com.goudong.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 
 /**
  * 类描述：

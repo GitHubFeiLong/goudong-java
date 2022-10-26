@@ -1,11 +1,11 @@
 package com.goudong.oauth2.controller;
 
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.core.Result;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.service.BaseMenuService;
 import io.swagger.annotations.Api;

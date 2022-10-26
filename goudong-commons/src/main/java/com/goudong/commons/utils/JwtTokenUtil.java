@@ -11,7 +11,7 @@ package com.goudong.commons.utils;
 // import com.auth0.jwt.interfaces.JWTVerifier;
 // import com.goudong.commons.dto.AuthorityUserDTO;
 // import com.goudong.commons.enumerate.core.ClientExceptionEnum;
-// import com.goudong.commons.exception.ClientException;
+// import com.goudong.boot.exception.core.ClientException;
 // import com.goudong.commons.frame.openfeign.GoudongUserServerService;
 // import com.goudong.commons.utils.core.AssertUtil;
 // import com.goudong.commons.utils.core.StringUtil;

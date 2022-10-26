@@ -1,4 +1,4 @@
-package com.goudong.exception.util;
+package com.goudong.boot.exception.util;
 
 /**
  * 类描述：

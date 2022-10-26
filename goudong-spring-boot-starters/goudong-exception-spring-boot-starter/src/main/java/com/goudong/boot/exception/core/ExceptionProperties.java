@@ -1,4 +1,4 @@
-package com.goudong.exception.core;
+package com.goudong.boot.exception.core;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

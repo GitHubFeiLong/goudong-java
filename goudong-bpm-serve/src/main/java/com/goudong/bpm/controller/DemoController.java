@@ -1,9 +1,9 @@
 package com.goudong.bpm.controller;
 
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.annotation.aop.ApiRepeat;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.utils.core.LogUtil;
 import io.swagger.annotations.Api;

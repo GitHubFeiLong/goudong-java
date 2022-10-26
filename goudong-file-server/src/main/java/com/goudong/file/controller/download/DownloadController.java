@@ -1,8 +1,8 @@
 package com.goudong.file.controller.download;
 
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
 import com.goudong.file.po.FilePO;
 import com.goudong.file.repository.FileRepository;
 import io.swagger.annotations.Api;

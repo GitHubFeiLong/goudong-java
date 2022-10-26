@@ -1,6 +1,6 @@
 package com.goudong.commons.config;
 
-import com.goudong.exception.core.GlobalExceptionHandler;
+import com.goudong.boot.exception.core.GlobalExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

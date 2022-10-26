@@ -1,9 +1,9 @@
 package com.goudong.commons.framework.whitelist;
 
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.framework.core.ResourceAntMatcher;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.WhitelistProperties;
 import com.goudong.commons.utils.core.LogUtil;

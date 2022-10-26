@@ -1,6 +1,6 @@
-package com.goudong.exception.core;
+package com.goudong.boot.exception.core;
 
-import com.goudong.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

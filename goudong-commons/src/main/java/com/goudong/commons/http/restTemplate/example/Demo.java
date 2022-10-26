@@ -1,7 +1,7 @@
 package com.goudong.commons.http.restTemplate.example;
 
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.http.restTemplate.config.BeanConfig;
-import com.goudong.commons.framework.core.Result;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

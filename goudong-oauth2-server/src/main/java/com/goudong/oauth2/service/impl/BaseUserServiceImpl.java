@@ -1,8 +1,8 @@
 package com.goudong.oauth2.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.exception.oauth2.AccessTokenExpiredException;
 import com.goudong.commons.exception.oauth2.AccessTokenInvalidException;

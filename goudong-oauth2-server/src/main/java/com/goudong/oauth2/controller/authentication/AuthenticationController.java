@@ -1,5 +1,7 @@
 package com.goudong.oauth2.controller.authentication;
 
+import com.goudong.boot.exception.core.Result;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.annotation.validator.EnumValidator;
@@ -7,9 +9,7 @@ import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.oauth2.Oauth2Exception;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;

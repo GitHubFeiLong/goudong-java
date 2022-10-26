@@ -12,6 +12,7 @@
     <artifactId>goudong-gateway-server</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Goudong Gateway Server</name>
+    <description>网关</description>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
     <dependencies>
@@ -19,6 +20,12 @@
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>goudong-commons</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--spring boot starter-->
         <dependency>

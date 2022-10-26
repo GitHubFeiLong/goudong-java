@@ -1,8 +1,8 @@
 package com.goudong.oauth2.config;
 
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.core.Result;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.exception.user.AccountExpiredException;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.oauth2.config.security.AccessDeniedHandlerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends com.goudong.commons.exception.GlobalExceptionHandler{
+public class GlobalExceptionHandler extends com.goudong.boot.exception.core.GlobalExceptionHandler{
     //~fields
     //==================================================================================================================
 

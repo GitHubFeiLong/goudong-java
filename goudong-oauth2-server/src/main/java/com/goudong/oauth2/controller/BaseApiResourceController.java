@@ -1,10 +1,10 @@
 package com.goudong.oauth2.controller;
 
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.core.Result;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.dto.oauth2.BaseApiResource2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseApiResourceDTO;
-import com.goudong.commons.exception.enumerate.ClientExceptionEnum;
-import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.service.BaseApiResourceService;
 import io.swagger.annotations.Api;
@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 /**
  * 类描述：
  * 保存系统中所有api接口资源 控制层
- * @author cfl 
- * @date 2022/8/2 22:54 
+ * @author cfl
+ * @date 2022/8/2 22:54
  * @version 1.0
  */
 @Api(tags = "api接口资源")

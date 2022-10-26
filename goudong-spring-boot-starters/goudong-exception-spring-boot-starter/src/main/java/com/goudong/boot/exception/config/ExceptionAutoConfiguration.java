@@ -1,7 +1,7 @@
-package com.goudong.exception.config;
+package com.goudong.boot.exception.config;
 
-import com.goudong.exception.core.ExceptionProperties;
-import com.goudong.exception.core.GlobalExceptionHandler;
+import com.goudong.boot.exception.core.ExceptionProperties;
+import com.goudong.boot.exception.core.GlobalExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

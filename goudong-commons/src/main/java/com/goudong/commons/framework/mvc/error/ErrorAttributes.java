@@ -1,12 +1,12 @@
 package com.goudong.commons.framework.mvc.error;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.goudong.commons.exception.BasicException;
-import com.goudong.commons.exception.ClientException;
-import com.goudong.commons.exception.ServerException;
-import com.goudong.commons.framework.core.Result;
-import com.goudong.exception.enumerate.ClientExceptionEnum;
-import com.goudong.exception.enumerate.ServerExceptionEnum;
+import com.goudong.boot.exception.core.BasicException;
+import com.goudong.boot.exception.core.ClientException;
+import com.goudong.boot.exception.core.Result;
+import com.goudong.boot.exception.core.ServerException;
+import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;

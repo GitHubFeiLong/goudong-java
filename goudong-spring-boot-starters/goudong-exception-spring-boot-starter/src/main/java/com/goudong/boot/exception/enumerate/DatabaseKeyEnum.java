@@ -1,6 +1,6 @@
-package com.goudong.exception.enumerate;
+package com.goudong.boot.exception.enumerate;
 
-import com.goudong.exception.util.StringUtil;
+import com.goudong.boot.exception.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

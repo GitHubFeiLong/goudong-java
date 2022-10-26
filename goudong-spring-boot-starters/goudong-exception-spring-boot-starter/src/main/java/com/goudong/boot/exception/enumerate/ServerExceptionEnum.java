@@ -1,7 +1,7 @@
-package com.goudong.exception.enumerate;
+package com.goudong.boot.exception.enumerate;
 
-import com.goudong.exception.core.BasicException;
-import com.goudong.exception.core.ServerException;
+import com.goudong.boot.exception.core.BasicException;
+import com.goudong.boot.exception.core.ServerException;
 
 /**
  * 类描述：

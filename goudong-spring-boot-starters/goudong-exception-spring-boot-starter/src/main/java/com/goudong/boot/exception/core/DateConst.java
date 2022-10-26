@@ -1,4 +1,4 @@
-package com.goudong.exception.core;
+package com.goudong.boot.exception.core;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;

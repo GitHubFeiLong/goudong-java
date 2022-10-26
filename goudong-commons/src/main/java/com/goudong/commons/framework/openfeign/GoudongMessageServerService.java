@@ -1,8 +1,11 @@
 package com.goudong.commons.framework.openfeign;
 
-import com.goudong.commons.framework.core.Result;
+import com.goudong.boot.exception.core.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 接口描述：

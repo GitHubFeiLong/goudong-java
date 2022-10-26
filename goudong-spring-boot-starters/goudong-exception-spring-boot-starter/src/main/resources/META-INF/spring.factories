@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.goudong.exception.config.ExceptionAutoConfiguration
+  com.goudong.boot.exception.config.ExceptionAutoConfiguration

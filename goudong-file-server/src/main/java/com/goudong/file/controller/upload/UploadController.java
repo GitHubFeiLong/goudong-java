@@ -2,9 +2,9 @@ package com.goudong.file.controller.upload;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
+import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.*;
-import com.goudong.commons.framework.core.Result;
 import com.goudong.file.service.UploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
