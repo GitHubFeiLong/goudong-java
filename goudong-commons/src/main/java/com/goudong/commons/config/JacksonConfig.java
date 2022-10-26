@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * 类描述：
@@ -65,6 +66,8 @@ public class JacksonConfig {
 
         //设置日期格式
         objectMapper.setDateFormat(new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER));
+        // 设置时区
+        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 
         //序列化成json时，将所有的Long变成string，以解决js中的精度丢失。
         SimpleModule simpleModule = new SimpleModule();

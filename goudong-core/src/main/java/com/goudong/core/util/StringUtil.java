@@ -1,8 +1,8 @@
-package com.goudong.boot.exception.util;
+package com.goudong.core.util;
 
 /**
  * 类描述：
- *
+ * String工具类
  * @author cfl
  * @version 1.0
  * @date 2022/10/23 20:48

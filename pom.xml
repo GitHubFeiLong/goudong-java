@@ -40,13 +40,15 @@
         <module>goudong-bpm-serve</module>
         <module>demo</module>
         <module>goudong-spring-boot-starters</module>
+        <module>goudong-core</module>
     </modules>
 
     <properties>
-        <revision>1.0</revision>
         <!--自定义服务-->
         <goudong-commons.version>1.0-SNAPSHOT</goudong-commons.version>
+        <goudong-core.version>1.0-SNAPSHOT</goudong-core.version>
         <goudong-gateway-server.version>1.0-SNAPSHOT</goudong-gateway-server.version>
+        <goudong-exception-spring-boot-starter.version>1.0-SNAPSHOT</goudong-exception-spring-boot-starter.version>
         <!--框架-->
         <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
         <spring-cloud-dependencies.version>Hoxton.SR12</spring-cloud-dependencies.version>
@@ -123,11 +125,11 @@
                 <artifactId>goudong-commons</artifactId>
                 <version>${goudong-commons.version}</version>
             </dependency>
-            <!--<dependency>
+            <dependency>
                 <groupId>com.goudong</groupId>
-                <artifactId>goudong-exception-spring-boot-starter</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>-->
+                <artifactId>goudong-core</artifactId>
+                <version>${goudong-core.version}</version>
+            </dependency>
 
             <!--增强swagger-->
             <dependency>
@@ -348,6 +350,12 @@
                 <version>${easyexcel.version}</version>
             </dependency>
 
+            <!--自定义异常starter-->
+            <dependency>
+                <groupId>com.goudong.boot</groupId>
+                <artifactId>goudong-exception-spring-boot-starter</artifactId>
+                <version>${goudong-exception-spring-boot-starter.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

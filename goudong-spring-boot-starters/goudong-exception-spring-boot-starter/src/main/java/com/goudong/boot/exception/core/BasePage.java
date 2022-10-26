@@ -1,8 +1,8 @@
 package com.goudong.boot.exception.core;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * @Version 1.0
  */
 @Setter
-@ApiModel
+@ToString
 public class BasePage {
 
     @NotNull(message = "分页查询page参数必传")

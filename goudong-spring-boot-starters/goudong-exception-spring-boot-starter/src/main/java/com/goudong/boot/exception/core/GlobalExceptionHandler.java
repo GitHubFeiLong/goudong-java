@@ -2,7 +2,7 @@ package com.goudong.boot.exception.core;
 
 import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
-import com.goudong.boot.exception.util.MessageFormatUtil;
+import com.goudong.core.util.MessageFormatUtil;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

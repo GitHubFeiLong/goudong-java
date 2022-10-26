@@ -10,7 +10,6 @@
 
     <groupId>com.goudong.boot</groupId>
     <artifactId>goudong-spring-boot-starters</artifactId>
-    <version>1.0.0</version>
     <name>Goudong Spring Boot Starters</name>
     <description>Goudong Spring Boot Starters</description>
     <packaging>pom</packaging>

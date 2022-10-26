@@ -3,7 +3,7 @@ package com.goudong.boot.exception.core;
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
-import com.goudong.boot.exception.util.MessageFormatUtil;
+import com.goudong.core.util.MessageFormatUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

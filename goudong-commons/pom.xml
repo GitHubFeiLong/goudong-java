@@ -208,7 +208,6 @@
         <dependency>
             <groupId>com.goudong.boot</groupId>
             <artifactId>goudong-exception-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

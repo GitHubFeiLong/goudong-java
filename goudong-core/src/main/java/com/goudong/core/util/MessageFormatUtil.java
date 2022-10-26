@@ -1,6 +1,6 @@
-package com.goudong.boot.exception.util;
+package com.goudong.core.util;
 
-import com.goudong.boot.exception.enumerate.MessageFormatEnum;
+import com.goudong.core.enumerate.MessageFormatEnum;
 
 /**
  * 类描述：
