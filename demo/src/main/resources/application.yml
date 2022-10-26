@@ -1,0 +1,31 @@
+commons:
+  goudong:
+    exception:
+      enable: false
+spring:
+  main:
+    allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false #工程中的资源文件建立映射
+  application:
+    name: goudong-user-server #微服务名
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 # nacos服务集群
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: GMT+8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    username: ${MYSQL_USERNAME}
+    password: "${MYSQL_PASSWORD}"
