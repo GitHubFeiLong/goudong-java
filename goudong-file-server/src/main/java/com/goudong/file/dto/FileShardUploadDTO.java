@@ -1,4 +1,4 @@
-package com.goudong.commons.dto.file;
+package com.goudong.file.dto;
 
 import com.goudong.commons.annotation.validator.EnumValidator;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
@@ -8,7 +8,10 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**

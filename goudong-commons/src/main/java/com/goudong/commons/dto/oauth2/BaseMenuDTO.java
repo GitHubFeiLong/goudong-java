@@ -1,6 +1,6 @@
 package com.goudong.commons.dto.oauth2;
 
-import com.goudong.commons.tree.v2.TreeInterface;
+import com.goudong.core.util.tree.v2.TreeInterface;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 

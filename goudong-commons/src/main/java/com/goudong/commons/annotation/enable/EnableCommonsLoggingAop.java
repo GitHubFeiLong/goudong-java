@@ -1,10 +1,5 @@
 package com.goudong.commons.annotation.enable;
 
-import com.goudong.commons.config.WebMvcConfig;
-import com.goudong.commons.framework.mvc.error.ErrorAttributes;
-import com.goudong.commons.framework.mvc.error.ErrorController;
-import org.springframework.context.annotation.Import;
-
 import java.lang.annotation.*;
 
 /**
@@ -17,6 +12,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({WebMvcConfig.class, ErrorAttributes.class, ErrorController.class})
+// @Import({WebMvcConfig.class, ErrorAttributes.class, ErrorController.class})
 public @interface EnableCommonsLoggingAop {
 }

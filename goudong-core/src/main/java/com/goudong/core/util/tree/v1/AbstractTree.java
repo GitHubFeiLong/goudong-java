@@ -1,14 +1,9 @@
-package com.goudong.commons.tree.v1;
+package com.goudong.core.util.tree.v1;
 
-import com.goudong.commons.utils.core.StringUtil;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.MessageFormatUtil;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -19,10 +14,7 @@ import java.util.*;
  * @version 1.0
  * @date 2021/9/30 20:35
  */
-@Slf4j
-@Getter
 public abstract class AbstractTree<T> implements Tree<T> {
-
     /**
      * 自己元素标识属性名（例如：id）
      */
@@ -64,22 +56,26 @@ public abstract class AbstractTree<T> implements Tree<T> {
      *     <li>1. childrenFieldName=children</li>
      * </ul>
      *
-     * @param allNodes 节点集合，既可以是树形结构的集合，也可以是一般结构的集合
+     * @param allNodes @NotNull @NotEmpty 节点集合，既可以是树形结构的集合，也可以是一般结构的集合
      */
-    public AbstractTree(@NotNull @NotEmpty List<T> allNodes) {
+    public AbstractTree(List<T> allNodes) {
         this("id", "parentId", "children", allNodes);
     }
 
     /**
      * 构造方法，参数进行严格限制
      * 并判断其字段名字（selfFieldName、parentFieldName、childrenFieldName）有效性
-     * @param selfFieldName 自己元素标识属性名（例如：id）
-     * @param parentFieldName 父元素标识属性名（例如：parentId）
-     * @param childrenFieldName 装子元素集合的属性名（例如：children）
-     * @param allNodes 所有节点集合，可能是一维节点集合，也可能是树形结构的集合。
+     * @param selfFieldName @NotBlank 自己元素标识属性名（例如：id）
+     * @param parentFieldName @NotBlank 父元素标识属性名（例如：parentId）
+     * @param childrenFieldName @NotBlank 装子元素集合的属性名（例如：children）
+     * @param allNodes @NotNull @NotEmpty 所有节点集合，可能是一维节点集合，也可能是树形结构的集合。
      */
-    public AbstractTree(@NotBlank String selfFieldName, @NotBlank String parentFieldName, @NotBlank String childrenFieldName, @NotNull @NotEmpty List<T> allNodes) {
+    public AbstractTree(String selfFieldName, String parentFieldName, String childrenFieldName, List<T> allNodes) {
         // 先进行校验参数合法性
+        AssertUtil.isNotBlank(selfFieldName);
+        AssertUtil.isNotBlank(parentFieldName);
+        AssertUtil.isNotBlank(childrenFieldName);
+        AssertUtil.isNotEmpty(allNodes);
         try {
             allNodes.get(0).getClass().getDeclaredField(selfFieldName);
             allNodes.get(0).getClass().getDeclaredField(parentFieldName);
@@ -98,9 +94,8 @@ public abstract class AbstractTree<T> implements Tree<T> {
      * @param flatNodes 最终扁平化结构集合
      * @param treeNodes 需要处理的树形结构集合
      */
-    @SneakyThrows
-    protected void flatTreeNodesRecursion (List<T> flatNodes, List<T> treeNodes){
-        if(CollectionUtils.isEmpty(treeNodes)) {
+    protected void flatTreeNodesRecursion (List<T> flatNodes, List<T> treeNodes) throws NoSuchFieldException, IllegalAccessException {
+        if(CollectionUtil.isEmpty(treeNodes)) {
             return;
         }
         Iterator<T> iterator = treeNodes.iterator();
@@ -123,9 +118,8 @@ public abstract class AbstractTree<T> implements Tree<T> {
      * @param children 指定集合
      * @return  返回找到的node，并且填充node的子元素属性
      */
-    @SneakyThrows
-    protected T findBySelfValue2T (Object selfValue, List<T> children) {
-        if (CollectionUtils.isEmpty(children)) {
+    protected T findBySelfValue2T (Object selfValue, List<T> children) throws NoSuchFieldException, IllegalAccessException {
+        if (CollectionUtil.isEmpty(children)) {
             return null;
         }
         Iterator<T> iterator = children.iterator();
@@ -153,10 +147,31 @@ public abstract class AbstractTree<T> implements Tree<T> {
                 return null;
             }
         }
-
-        log.error("没有找到您要查找的信息，查找条件：{}", selfValue);
-        String clientMessage = StringUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
-        throw new RuntimeException("clientMessage");
+        String clientMessage = MessageFormatUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
+        throw new RuntimeException(clientMessage);
     }
 
+    public String getSelfFieldName() {
+        return selfFieldName;
+    }
+
+    public String getParentFieldName() {
+        return parentFieldName;
+    }
+
+    public String getChildrenFieldName() {
+        return childrenFieldName;
+    }
+
+    public List<T> getAllNodes() {
+        return allNodes;
+    }
+
+    public List<T> getTreeNodes() {
+        return treeNodes;
+    }
+
+    public List<T> getGeneralNodes() {
+        return generalNodes;
+    }
 }

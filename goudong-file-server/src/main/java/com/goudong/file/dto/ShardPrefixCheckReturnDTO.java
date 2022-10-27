@@ -1,4 +1,4 @@
-package com.goudong.commons.dto.file;
+package com.goudong.file.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

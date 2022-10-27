@@ -1,4 +1,4 @@
-package com.goudong.commons.dto.file;
+package com.goudong.file.dto;
 
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;

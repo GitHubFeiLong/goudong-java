@@ -1,7 +1,7 @@
-package com.goudong.commons.utils.core;
+package com.goudong.core.util;
 
-import com.goudong.commons.function.core.SFunction;
-import lombok.Data;
+
+import com.goudong.core.function.SFunction;
 
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
@@ -12,6 +12,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * 类描述：
@@ -205,7 +206,6 @@ public class ColumnUtil {
      * @date 2022/6/7 15:20
      * @version 1.0
      */
-    @Data
     public static class TestUserDemo implements Serializable {
         private int loginName;
         private String name;
@@ -213,6 +213,70 @@ public class ColumnUtil {
         @ColumnUtil.TableField("nick")
         private String nickName;
         private String isDeleted;
+
+        public int getLoginName() {
+            return loginName;
+        }
+
+        public void setLoginName(int loginName) {
+            this.loginName = loginName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCompanySimpleName() {
+            return companySimpleName;
+        }
+
+        public void setCompanySimpleName(String companySimpleName) {
+            this.companySimpleName = companySimpleName;
+        }
+
+        public String getNickName() {
+            return nickName;
+        }
+
+        public void setNickName(String nickName) {
+            this.nickName = nickName;
+        }
+
+        public String getIsDeleted() {
+            return isDeleted;
+        }
+
+        public void setIsDeleted(String isDeleted) {
+            this.isDeleted = isDeleted;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TestUserDemo that = (TestUserDemo) o;
+            return loginName == that.loginName && Objects.equals(name, that.name) && Objects.equals(companySimpleName, that.companySimpleName) && Objects.equals(nickName, that.nickName) && Objects.equals(isDeleted, that.isDeleted);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(loginName, name, companySimpleName, nickName, isDeleted);
+        }
+
+        @Override
+        public String toString() {
+            return "TestUserDemo{" +
+                    "loginName=" + loginName +
+                    ", name='" + name + '\'' +
+                    ", companySimpleName='" + companySimpleName + '\'' +
+                    ", nickName='" + nickName + '\'' +
+                    ", isDeleted='" + isDeleted + '\'' +
+                    '}';
+        }
     }
 
 

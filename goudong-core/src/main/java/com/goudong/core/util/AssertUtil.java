@@ -162,7 +162,7 @@ public class AssertUtil {
      * @param obj
      * @throws IllegalArgumentException
      */
-    public static void notNull(Object obj) {
+    public static void isNotNull(Object obj) {
         if (obj == null) {
             throw new IllegalArgumentException();
         }
@@ -174,7 +174,7 @@ public class AssertUtil {
      * @param errMsg 自定义异常描述
      * @throws IllegalArgumentException
      */
-    public static void notNull(Object obj, String errMsg) {
+    public static void isNotNull(Object obj, String errMsg) {
         if (obj == null) {
             throw new IllegalArgumentException(errMsg);
         }
@@ -186,7 +186,7 @@ public class AssertUtil {
      * @param supplier 延迟执行自定义异常描述
      * @throws IllegalArgumentException
      */
-    public static void notNull(Object obj, StringSupplier supplier) {
+    public static void isNotNull(Object obj, StringSupplier supplier) {
         if (obj == null) {
             throw new IllegalArgumentException(supplier.get());
         }
@@ -197,7 +197,7 @@ public class AssertUtil {
      * @param obj
      * @param supplier 自定义异常
      */
-    public static void notNull(Object obj, Supplier<RuntimeException> supplier) {
+    public static void isNotNull(Object obj, Supplier<RuntimeException> supplier) {
         if (obj == null) {
             throw supplier.get();
         }
@@ -208,7 +208,7 @@ public class AssertUtil {
      * @param str
      * @throws IllegalArgumentException
      */
-    public static void notBlank(String str) {
+    public static void isNotBlank(String str) {
         if (StringUtil.isBlank(str)) {
             throw new IllegalArgumentException();
         }
@@ -220,7 +220,7 @@ public class AssertUtil {
      * @param errMsg 自定义异常描述
      * @throws IllegalArgumentException
      */
-    public static void notBlank(String str, String errMsg) {
+    public static void isNotBlank(String str, String errMsg) {
         if (StringUtil.isBlank(str)) {
             throw new IllegalArgumentException(errMsg);
         }
@@ -232,7 +232,7 @@ public class AssertUtil {
      * @param supplier 延迟执行自定义异常描述
      * @throws IllegalArgumentException
      */
-    public static void notBlank(String str, StringSupplier supplier) {
+    public static void isNotBlank(String str, StringSupplier supplier) {
         if (StringUtil.isBlank(str)) {
             throw new IllegalArgumentException(supplier.get());
         }
@@ -243,7 +243,7 @@ public class AssertUtil {
      * @param str
      * @param supplier 自定义异常
      */
-    public static void notBlank(String str, Supplier<RuntimeException> supplier) {
+    public static void isNotBlank(String str, Supplier<RuntimeException> supplier) {
         if (StringUtil.isBlank(str)) {
             throw supplier.get();
         }

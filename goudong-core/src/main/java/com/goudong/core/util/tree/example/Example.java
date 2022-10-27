@@ -1,9 +1,10 @@
-package com.goudong.commons.tree.example;
+package com.goudong.core.util.tree.example;
 
-import com.google.common.collect.Lists;
-import com.goudong.commons.tree.v1.GeneralNode;
-import com.goudong.commons.tree.v1.GeneralStructureHandler;
-import com.goudong.commons.tree.v1.TreeStructureHandler;
+
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.tree.v1.GeneralNode;
+import com.goudong.core.util.tree.v1.GeneralStructureHandler;
+import com.goudong.core.util.tree.v1.TreeStructureHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,8 @@ public class Example {
         Menu menu8 = new Menu(8, 7, null);
         Menu menu9 = new Menu(9, 8, null);
 
-        ArrayList<Menu> menus = Lists.newArrayList(menu1, menu2, menu3, menu4, menu5);
-        menus.addAll(Lists.newArrayList(menu6, menu7, menu8, menu9));
+        ArrayList<Menu> menus = CollectionUtil.newArrayList(menu1, menu2, menu3, menu4, menu5);
+        menus.addAll(CollectionUtil.newArrayList(menu6, menu7, menu8, menu9));
         System.out.println("准备的参数 menus = " + menus);
 
         /*

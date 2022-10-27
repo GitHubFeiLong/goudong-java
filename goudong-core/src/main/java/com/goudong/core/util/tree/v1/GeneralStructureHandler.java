@@ -1,9 +1,8 @@
-package com.goudong.commons.tree.v1;
+package com.goudong.core.util.tree.v1;
 
-import com.alibaba.fastjson.JSON;
-import com.goudong.commons.utils.core.StringUtil;
-import lombok.SneakyThrows;
-import org.apache.commons.collections4.CollectionUtils;
+
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.MessageFormatUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,10 +24,10 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
      *  以下属性使用默认值：selfFieldName=id, parentFieldName=parentId, childrenFieldName=children
      * @param allNodes 树形结构node的集合
      */
-    public GeneralStructureHandler(List<T> allNodes) {
+    public GeneralStructureHandler(List<T> allNodes) throws NoSuchFieldException, IllegalAccessException {
         super(allNodes);
         // 将参数保留
-        super.treeNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
+        ///super.treeNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
         this.toGeneralStructure();
     }
 
@@ -41,10 +40,10 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
      * @param childrenFieldName 装子元素集合的属性名（例如：children）
      * @param allNodes 树形结构node的集合。
      */
-    public GeneralStructureHandler(String selfFieldName, String parentFieldName, String childrenFieldName, List<T> allNodes) {
+    public GeneralStructureHandler(String selfFieldName, String parentFieldName, String childrenFieldName, List<T> allNodes) throws NoSuchFieldException, IllegalAccessException {
         super(selfFieldName, parentFieldName, childrenFieldName, allNodes);
         // 将参数保留
-        super.treeNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
+        ///super.treeNodes = (List<T>) JSON.parseArray(JSON.toJSONString(allNodes), allNodes.get(0).getClass());
         this.toGeneralStructure();
     }
 
@@ -64,9 +63,9 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
      * @return 返回一维结构节点集合
      */
     @Override
-    public List<T> toGeneralStructure() {
+    public List<T> toGeneralStructure() throws NoSuchFieldException, IllegalAccessException {
         // 如果已经执行过一次了，直接返回结果。
-        if (CollectionUtils.isNotEmpty(super.generalNodes)) {
+        if (CollectionUtil.isNotEmpty(super.generalNodes)) {
             return super.generalNodes;
         }
         // 递归处理
@@ -78,10 +77,9 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
      * 将 treeNodes 及其子元素递归放入 generalNodes中
      * @param treeNodes 子元素
      */
-    @SneakyThrows
-    private void toGeneralStructureProcessChildren (List<T> treeNodes) {
+    private void toGeneralStructureProcessChildren (List<T> treeNodes) throws NoSuchFieldException, IllegalAccessException {
         // 结束递归条件
-        if (CollectionUtils.isEmpty(treeNodes)) {
+        if (CollectionUtil.isEmpty(treeNodes)) {
             return;
         }
 
@@ -97,7 +95,7 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
             List<T> children = Optional.ofNullable((List<T>)childrenDeclaredField.get(parentNode)).orElse(new ArrayList<T>());
 
             // 子元素不为空就递归执行
-            if (CollectionUtils.isNotEmpty(children)) {
+            if (CollectionUtil.isNotEmpty(children)) {
                 toGeneralStructureProcessChildren(children);
             }
         }
@@ -109,14 +107,13 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
      * @param selfValue 指定node的唯一标识的值（selfFieldName属性的值）
      * @return 返回 {@link GeneralNode},指定node的信息及其子元素信息（子属性是一维结构）
      */
-    @SneakyThrows
     @Override
-    public GeneralNode<T> getNodeDetailBySelfValue2GeneralNode(Object selfValue) {
+    public GeneralNode<T> getNodeDetailBySelfValue2GeneralNode(Object selfValue) throws NoSuchFieldException, IllegalAccessException {
         GeneralNode<T> generalNode = new GeneralNode<>();
 
         // 因为构造方法传递节点集合是树形结构的，所以获取指定的节点，就能获取它下面的所有子节点
         T selfNode = Optional.ofNullable(super.findBySelfValue2T(selfValue, super.treeNodes))
-                .orElseThrow(()-> ClientException.client(ClientExceptionEnum.BAD_REQUEST, StringUtil.format("未找到指定的节点{}", selfValue)));
+                .orElseThrow(()-> new IllegalArgumentException(MessageFormatUtil.format("未找到指定的节点{}", selfValue)));
         generalNode.setNode(selfNode);
 
         // 获取该节点的所有子节点
@@ -137,7 +134,7 @@ public class GeneralStructureHandler<T> extends AbstractTree<T> {
      * @return 返回该节点，并填充了它子属性（子属性是树形结构）
      */
     @Override
-    public T getNodeDetailBySelfValue2T(Object selfValue) {
+    public T getNodeDetailBySelfValue2T(Object selfValue) throws NoSuchFieldException, IllegalAccessException {
         return super.findBySelfValue2T(selfValue, super.treeNodes);
     }
 

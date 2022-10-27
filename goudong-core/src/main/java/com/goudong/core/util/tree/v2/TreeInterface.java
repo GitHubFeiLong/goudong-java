@@ -1,8 +1,8 @@
-package com.goudong.commons.tree.v2;
+package com.goudong.core.util.tree.v2;
 
-import org.apache.commons.collections4.CollectionUtils;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.CollectionUtil;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +29,8 @@ public interface TreeInterface {
      * @param nodes 所有树
      * @return
      */
-    static List<TreeInterface> toTreeByInterface(@NotNull List<TreeInterface> nodes) {
+    static List<TreeInterface> toTreeByInterface(List<TreeInterface> nodes) {
+        AssertUtil.isNotEmpty(nodes);
         return nodes.stream()
                 // 获取父节点
                 .filter(f->f.getParentId() == null)
@@ -59,11 +60,12 @@ public interface TreeInterface {
      * @param nodes
      * @return
      */
-    static List<TreeInterface> toFlatByInterface(@NotNull List<TreeInterface> nodes) {
+    static List<TreeInterface> toFlatByInterface(List<TreeInterface> nodes) {
+        AssertUtil.isNotEmpty(nodes);
         List<TreeInterface> flatList = new ArrayList<>();
         nodes.stream().forEach(p->{
             flatList.add(p);
-            if (CollectionUtils.isNotEmpty(p.getChildren())) {
+            if (CollectionUtil.isNotEmpty(p.getChildren())) {
                 addFlatList(p, flatList);
             }
         });
@@ -79,7 +81,7 @@ public interface TreeInterface {
     static void addFlatList(TreeInterface root, List<TreeInterface> nodes){
         ((List<TreeInterface>)root.getChildren()).stream().forEach(p->{
             nodes.add(p);
-            if (CollectionUtils.isNotEmpty(p.getChildren())) {
+            if (CollectionUtil.isNotEmpty(p.getChildren())) {
                 addFlatList(p, nodes);
             }
             p.setChildren(null);

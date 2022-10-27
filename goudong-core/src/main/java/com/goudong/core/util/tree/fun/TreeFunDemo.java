@@ -1,4 +1,4 @@
-// package com.goudong.commons.tree.fun;
+package com.goudong.core.util.tree.fun;// package com.goudong.commons.tree.fun;
 //
 // import com.goudong.commons.tree.example.Menu;
 // import org.springframework.util.Assert;

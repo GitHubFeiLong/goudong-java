@@ -1,14 +1,11 @@
-package com.goudong.commons.tree.v2;
+package com.goudong.core.util.tree.v2;
 
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.goudong.commons.function.core.SFunction;
-import com.goudong.commons.tree.example.Menu;
-import com.goudong.commons.utils.core.ColumnUtil;
-import org.apache.commons.collections4.CollectionUtils;
+import com.goudong.core.function.SFunction;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.ColumnUtil;
+import com.goudong.core.util.tree.example.Menu;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,16 +57,16 @@ public class Tree {
         Menu menu3 = new Menu(3, 1, null);
         Menu menu4 = new Menu(4, 2, null);
         Menu menu5 = new Menu(5, 4, null);
-        ArrayList<Menu> list1 = Lists.newArrayList(menu1, menu2, menu3, menu4, menu5);
+        ArrayList<Menu> list1 = CollectionUtil.newArrayList(menu1, menu2, menu3, menu4, menu5);
         List<Menu> menus = Tree.getInstance().id(Menu::getId).parentId(Menu::getParentId).children(Menu::getChildren).toTree(list1);
 
         List<Menu> menus1 = Tree.getInstance().toTree(list1);
         List<Menu> children = menus1.get(0).getChildren();
-        System.out.println("JSON.toJSONString(menus) = " + JSON.toJSONString(menus1));
-        System.out.println("JSON.toJSONString(menus) = " + JSON.toJSONString(menus));
+        System.out.println("menus = " + menus1);
+        System.out.println("menus = " + menus);
 
         List<Menu> menus2 = Tree.getInstance().children(Menu::getChildren).toFlat(menus1);
-        System.out.println("JSON.toJSONString(menus) = " + JSON.toJSONString(menus2));
+        System.out.println("menus = " + menus2);
     }
 
     private Tree(){
@@ -122,8 +119,9 @@ public class Tree {
      * @param <E>
      * @return
      */
-    public <E> List<E> toTree(@NotNull List<E> nodes) {
-        if (CollectionUtils.isEmpty(nodes)) {
+    public <E> List<E> toTree(List<E> nodes) {
+        AssertUtil.isNotNull(nodes);
+        if (CollectionUtil.isEmpty(nodes)) {
             return new ArrayList();
         }
 
@@ -146,8 +144,9 @@ public class Tree {
      * @param <E>
      * @return
      */
-    public <E> List<E> toFlat(@NotNull List<E> nodes) {
-        if (CollectionUtils.isEmpty(nodes)) {
+    public <E> List<E> toFlat(List<E> nodes) {
+        AssertUtil.isNotNull(nodes);
+        if (CollectionUtil.isEmpty(nodes)) {
             return new ArrayList();
         }
 
@@ -166,7 +165,8 @@ public class Tree {
      * @param <E>
      * @return
      */
-    private <E> List<E> toTreeByReflect(@NotNull @NotEmpty List<E> nodes) {
+    private <E> List<E> toTreeByReflect(List<E> nodes) {
+        AssertUtil.isNotEmpty(nodes);
         // 检查字段及方法有效
         checkToTreePrecondition();
 
@@ -273,10 +273,10 @@ public class Tree {
         nodes.stream().forEach(p->{
             flatList.add(p);
             try {
-                if (CollectionUtils.isNotEmpty((Collection<?>) getChildren.invoke(p))) {
+                if (CollectionUtil.isNotEmpty((Collection<?>) getChildren.invoke(p))) {
                     addFlatList(p, flatList);
                 }
-                setChildren.invoke(p, Lists.newArrayList());
+                setChildren.invoke(p, CollectionUtil.newArrayList());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -296,16 +296,16 @@ public class Tree {
             ((List<T>)getChildren.invoke(root)).stream().forEach(p->{
                 nodes.add(p);
                 try {
-                    if (CollectionUtils.isNotEmpty((Collection<?>) getChildren.invoke(p))) {
+                    if (CollectionUtil.isNotEmpty((Collection<?>) getChildren.invoke(p))) {
                         addFlatList(p, nodes);
                     }
-                    setChildren.invoke(p, Lists.newArrayList());
+                    setChildren.invoke(p, CollectionUtil.newArrayList());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
 
-            setChildren.invoke(root, Lists.newArrayList());
+            setChildren.invoke(root, CollectionUtil.newArrayList());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

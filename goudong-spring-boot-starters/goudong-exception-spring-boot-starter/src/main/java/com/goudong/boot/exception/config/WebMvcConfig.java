@@ -1,4 +1,4 @@
-package com.goudong.commons.config;
+package com.goudong.boot.exception.config;
 
 import com.goudong.boot.exception.core.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
