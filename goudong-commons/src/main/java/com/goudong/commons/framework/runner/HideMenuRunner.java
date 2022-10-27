@@ -1,6 +1,5 @@
 package com.goudong.commons.framework.runner;
 
-import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
 import com.goudong.commons.framework.core.ResourceAntMatcher;
@@ -8,6 +7,7 @@ import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.HideMenuProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.ResourceUtil;
+import com.goudong.core.lang.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

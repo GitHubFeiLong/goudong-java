@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
  * @Date 2020/10/17 16:29
  * @Version 1.0
  */
-public enum ClientExceptionEnum implements ExceptionEnumInterface {
+public enum ClientExceptionEnum implements ExceptionEnumInterfaceExt {
     /**
      * {@code 400 Bad Request}.
      * <p>1、语义有误，当前请求无法被服务器理解。除非进行修改，否则客户端不应该重复提交这个请求。</p>

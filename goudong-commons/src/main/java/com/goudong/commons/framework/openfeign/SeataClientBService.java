@@ -1,6 +1,6 @@
 package com.goudong.commons.framework.openfeign;
 
-import com.goudong.boot.exception.core.Result;
+import com.goudong.core.lang.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;

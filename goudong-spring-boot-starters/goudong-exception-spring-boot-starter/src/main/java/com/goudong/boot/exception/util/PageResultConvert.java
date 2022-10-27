@@ -1,6 +1,6 @@
 package com.goudong.boot.exception.util;
 
-import com.goudong.boot.exception.core.PageResult;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.CollectionUtil;
 
 /**
@@ -14,6 +14,7 @@ public class PageResultConvert<E> {
 
     /**
      * 使用系统定义的默认转换
+     *
      * @param source 框架原分页结果对象
      * @param tClazz 转换后的结果类型
      * @return
@@ -21,10 +22,10 @@ public class PageResultConvert<E> {
      */
     public static <E> PageResult<E> convert(Object source, Class<E> tClazz) {
         // 如果客户端有集成定义的持久层，那么就取其中一个进行转换
-        if (CollectionUtil.isNotEmpty(ORMTypeEnum.CLIENT_TYPES)) {
-            return ORMTypeEnum.CLIENT_TYPES.get(0).convert(source, tClazz);
+        if (CollectionUtil.isNotEmpty(PageTypeEnum.CLIENT_TYPES)) {
+            return PageTypeEnum.CLIENT_TYPES.get(0).convert(source, tClazz);
         }
-        throw new RuntimeException("持久层没有定义，请更新" + ORMTypeEnum.class);
+        throw new RuntimeException("持久层没有定义，请更新" + PageTypeEnum.class);
     }
 
     /**
@@ -35,7 +36,7 @@ public class PageResultConvert<E> {
      * @return
      * @param <E>
      */
-    public static <E> PageResult<E> convert(Object source, Class<E> tClazz, ORMTypeEnum typeEnum) {
+    public static <E> PageResult<E> convert(Object source, Class<E> tClazz, PageTypeEnum typeEnum) {
         return typeEnum.convert(source, tClazz);
     }
 

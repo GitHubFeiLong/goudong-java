@@ -2,11 +2,10 @@ package com.goudong.gateway.config;
 
 import com.goudong.boot.exception.core.BasicException;
 import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.core.Result;
-import com.goudong.boot.exception.core.ServerException;
 import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.core.lang.Result;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +49,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
     public Mono<Void> handle(ServerWebExchange exchange, Throwable throwable) {
         throwable.printStackTrace();
         LogUtil.error(log, "网关异常全局处理，异常信息：{}", throwable.getMessage());
-        BasicException basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage());
+        BasicException basicException = BasicException.server(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage());
         if (throwable instanceof BasicException) {
             basicException = (BasicException) throwable;
         } else if (throwable instanceof NotFoundException) {
@@ -58,7 +57,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
             // TODO 不知道这个状态码和异常是不是一对一，如果是那么就不需要再判断状态码了
             // 503 网关未找到服务
             if (notFoundException.getStatus() == HttpStatus.SERVICE_UNAVAILABLE) {
-                basicException = ServerException.serverException(ServerExceptionEnum.SERVICE_UNAVAILABLE, notFoundException.getMessage());
+                basicException = BasicException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, notFoundException.getMessage());
             }
         } else if (throwable instanceof ResponseStatusException) {
             ResponseStatusException responseStatusException = (ResponseStatusException)throwable;

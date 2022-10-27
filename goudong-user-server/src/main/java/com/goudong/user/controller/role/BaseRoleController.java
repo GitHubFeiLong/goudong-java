@@ -1,7 +1,7 @@
 package com.goudong.user.controller.role;
 
-import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.core.lang.Result;
 import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;

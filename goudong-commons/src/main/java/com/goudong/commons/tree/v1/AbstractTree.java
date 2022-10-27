@@ -1,7 +1,5 @@
 package com.goudong.commons.tree.v1;
 
-import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -158,7 +156,7 @@ public abstract class AbstractTree<T> implements Tree<T> {
 
         log.error("没有找到您要查找的信息，查找条件：{}", selfValue);
         String clientMessage = StringUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
-        throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage);
+        throw new RuntimeException("clientMessage");
     }
 
 }

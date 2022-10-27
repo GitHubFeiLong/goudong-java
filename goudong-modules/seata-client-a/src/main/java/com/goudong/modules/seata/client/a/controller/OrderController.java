@@ -1,8 +1,8 @@
 package com.goudong.modules.seata.client.a.controller;
 
 import cn.hutool.core.util.IdUtil;
-import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.framework.openfeign.SeataClientBService;
+import com.goudong.core.lang.Result;
 import com.goudong.modules.seata.client.a.po.BaseOrderPO;
 import com.goudong.modules.seata.client.a.repository.OrderRepository;
 import io.seata.spring.annotation.GlobalTransactional;

@@ -12,7 +12,7 @@ import com.goudong.boot.exception.core.ServerException;
  * @Date 2020/10/17 16:29
  * @Version 1.0
  */
-public enum ServerExceptionEnum implements ExceptionEnumInterface {
+public enum ServerExceptionEnum implements ExceptionEnumInterfaceExt {
     /**
      * {@code 500 Internal Server Error}.
      * <p>服务器遇到了不知道如何处理的情况。</p>

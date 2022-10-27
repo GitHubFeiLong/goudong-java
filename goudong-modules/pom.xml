@@ -22,6 +22,8 @@
         <module>rabbitmq-demo</module>
         <module>rabbitmq-spring-boot</module>
         <module>redis-master-slave</module>
+        <module>jpa-spring-boot</module>
+        <module>mongo-spring-boot</module>
     </modules>
     <dependencies>
         <dependency>

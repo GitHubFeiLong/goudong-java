@@ -1,8 +1,6 @@
 package com.goudong.commons.tree.v1;
 
 import com.alibaba.fastjson.JSON;
-import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;

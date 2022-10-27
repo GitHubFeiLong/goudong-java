@@ -1,6 +1,5 @@
 package com.goudong.commons.framework.whitelist;
 
-import com.goudong.boot.exception.core.Result;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.framework.core.ResourceAntMatcher;
@@ -8,6 +7,7 @@ import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.commons.properties.WhitelistProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.ResourceUtil;
+import com.goudong.core.lang.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;

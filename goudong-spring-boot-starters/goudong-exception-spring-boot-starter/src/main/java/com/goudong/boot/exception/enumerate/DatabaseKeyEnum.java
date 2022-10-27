@@ -14,6 +14,7 @@ import java.util.Objects;
  * @Author e-Feilong.Chen
  * @Date 2021/9/24 13:51
  */
+@Deprecated
 public enum DatabaseKeyEnum {
 
     //~ 用户表 base_user

@@ -1,7 +1,6 @@
 package com.goudong.boot.exception.core;
 
-import com.goudong.boot.exception.util.ORMTypeEnum;
-import com.goudong.core.util.CollectionUtil;
+import com.goudong.boot.exception.util.PageTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,25 +22,14 @@ public class BasePage {
     @NotNull(message = "分页查询page参数必传")
     @Min(value = 1, message = "分页参数错误，page必须大于等于1")
     @ApiModelProperty(value = "第几页,从1开始",required = true)
-    private long page;
+    private Integer page;
 
     @NotNull(message = "分页查询size参数必传")
     @Min(value = 1, message = "分页参数错误，size必须大于等于1")
     @ApiModelProperty(value = "一页显示内容长度", required = true)
-    private long size;
+    private Integer size;
 
-    /**
-     * 注意：如果有多个ORM，那么需要注意该方法返回不固定
-     * @return
-     */
-    public long getPage() {
-        if (CollectionUtil.isNotEmpty(ORMTypeEnum.CLIENT_TYPES)) {
-            return ORMTypeEnum.CLIENT_TYPES.get(0).getPage(this.page);
-        }
-        return this.page;
-    }
-
-    public long getSize() {
+    public int getSize() {
         return size;
     }
 
@@ -51,33 +39,19 @@ public class BasePage {
      */
     @ApiModelProperty(hidden = true)
     public int getJPAPage() {
-        return (int)ORMTypeEnum.JPA.getPage(page);
+        return PageTypeEnum.JPA.getPage(page);
     }
 
-    /**
-     * 获取spring-data-jpa 框架的size，
-     * @return
-     */
-    @ApiModelProperty(hidden = true)
-    public int getJPASize() {
-        return (int)(size);
-    }
 
     /**
      * 获取mybatis-plus 框架的页码
      * @return
      */
     @ApiModelProperty(hidden = true)
-    private long getMPPage() {
-        return (int)ORMTypeEnum.MYBATIS_PLUS.getPage(page);
+    public int getMPPage() {
+        return PageTypeEnum.MYBATIS_PLUS.getPage(page);
     }
 
-    /**
-     * 获取mybatis-plus 框架的size
-     * @return
-     */
-    @ApiModelProperty(hidden = true)
-    private long getMPSize() {
-        return size;
-    }
+
+
 }

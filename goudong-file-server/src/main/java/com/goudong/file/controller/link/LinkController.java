@@ -2,12 +2,12 @@ package com.goudong.file.controller.link;
 
 import cn.hutool.core.io.FileUtil;
 import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.core.Result;
 import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.dto.file.FileDTO;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.core.lang.Result;
 import com.goudong.file.po.FilePO;
 import com.goudong.file.repository.FileRepository;
 import io.swagger.annotations.Api;

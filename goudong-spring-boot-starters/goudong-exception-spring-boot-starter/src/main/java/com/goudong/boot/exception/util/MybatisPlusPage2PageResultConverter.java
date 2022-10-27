@@ -3,8 +3,8 @@ package com.goudong.boot.exception.util;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.goudong.boot.exception.core.PageResult;
 import com.goudong.boot.exception.core.PageResultConverter;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.MessageFormatUtil;
 
 import java.util.List;

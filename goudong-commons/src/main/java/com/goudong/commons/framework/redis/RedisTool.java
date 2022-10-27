@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
-import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
 import com.goudong.commons.annotation.aop.SnowSlideHandler;
 import com.goudong.commons.exception.redis.RedisToolException;
 import com.goudong.commons.utils.core.AssertUtil;
@@ -309,7 +308,7 @@ public class RedisTool extends RedisTemplate {
                 return setZSet(redisKey, value, param);
             default:
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
-                throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
+                throw new RedisToolException(serverMessage);
         }
     }
 
@@ -558,7 +557,7 @@ public class RedisTool extends RedisTemplate {
                 return getZSet(redisKey, redisKey.getJavaType(), param);
             default:
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
-                throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
+                throw new RedisToolException(serverMessage);
         }
     }
     /**
@@ -596,7 +595,7 @@ public class RedisTool extends RedisTemplate {
             return BeanUtil.toBean(super.opsForHash().entries(key), clazz);
         }
 
-        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, "类型不正确");
+        throw new RedisToolException("类型不正确");
     }
 
     /**
@@ -616,7 +615,7 @@ public class RedisTool extends RedisTemplate {
             return BeanUtil.copyToList(range, clazz, CopyOptions.create());
         }
 
-        throw new RedisToolException(ServerExceptionEnum.SERVER_ERROR, "类型不正确");
+        throw new RedisToolException("类型不正确");
     }
 
     /**

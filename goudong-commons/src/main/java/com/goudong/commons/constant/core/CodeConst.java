@@ -1,7 +1,7 @@
 package com.goudong.commons.constant.core;
 
 
-import com.goudong.boot.exception.core.Result;
+import com.goudong.core.lang.Result;
 
 /**
  * 类描述：
