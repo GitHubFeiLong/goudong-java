@@ -1,7 +1,7 @@
 package com.goudong.commons.annotation.enable;
 
-import com.goudong.boot.exception.core.ErrorAttributes;
-import com.goudong.boot.exception.core.ErrorController;
+import com.goudong.boot.web.core.ErrorAttributes;
+import com.goudong.boot.web.core.ErrorController;
 import com.goudong.commons.config.WebMvcConfig;
 import org.springframework.context.annotation.Import;
 

@@ -1,8 +1,8 @@
 package com.goudong.file.util;
 
 import cn.hutool.core.io.FileUtil;
-import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.core.ClientException;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
 import com.goudong.commons.exception.file.FileUploadException;

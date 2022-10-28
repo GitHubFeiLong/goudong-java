@@ -1,8 +1,8 @@
 package com.demo.jpa;
 
 import com.goudong.Application;
-import com.goudong.boot.exception.core.PageResult;
-import com.goudong.boot.exception.util.PageResultConvert;
+import com.goudong.boot.web.core.PageResult;
+import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.po.BaseTokenPO;
 import com.goudong.repository.BaseTokenRepository;
 import org.junit.jupiter.api.Test;

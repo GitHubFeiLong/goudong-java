@@ -1,7 +1,7 @@
 package com.goudong.oauth2.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.core.lang.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

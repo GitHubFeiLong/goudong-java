@@ -1,6 +1,6 @@
 package com.goudong.user.exception;
 
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 
 /**
  * 类描述：

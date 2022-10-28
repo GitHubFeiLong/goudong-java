@@ -1,8 +1,8 @@
 package com.goudong.oauth2.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.boot.exception.core.BasicException;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.core.BasicException;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;

@@ -1,7 +1,7 @@
 package com.goudong.file.exception;
 
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
-import com.goudong.boot.exception.enumerate.ServerExceptionEnum;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.enumerate.ServerExceptionEnum;
 
 /**
  * 类描述：

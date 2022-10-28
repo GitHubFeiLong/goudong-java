@@ -1,6 +1,6 @@
 package com.goudong.oauth2.controller;
 
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.core.HttpMethodConst;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;

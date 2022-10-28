@@ -3,7 +3,7 @@ package com.goudong.user.controller.user;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.EasyExcel;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.core.BasePageResult;

@@ -1,8 +1,8 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.core.ClientException;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;

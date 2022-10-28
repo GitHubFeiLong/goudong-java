@@ -1,6 +1,6 @@
 package com.goudong.oauth2.controller.authentication;
 
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.annotation.validator.EnumValidator;

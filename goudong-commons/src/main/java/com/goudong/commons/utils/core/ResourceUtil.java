@@ -1,7 +1,7 @@
 package com.goudong.commons.utils.core;
 
 import com.google.common.collect.Lists;
-import com.goudong.boot.exception.core.ServerException;
+import com.goudong.boot.web.core.ServerException;
 import com.goudong.commons.annotation.core.HideMenu;
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;

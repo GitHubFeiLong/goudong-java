@@ -1,7 +1,7 @@
 package com.goudong.oauth2.config.security;
 
-import com.goudong.boot.exception.core.ClientException;
-import com.goudong.boot.exception.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.core.ClientException;
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseRoleDTO;
 import com.goudong.commons.utils.core.BeanUtil;

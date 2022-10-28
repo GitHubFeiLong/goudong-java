@@ -1,6 +1,6 @@
 package com.goudong.user.dto;
 
-import com.goudong.boot.exception.core.BasePage;
+import com.goudong.boot.web.core.BasePage;
 import com.goudong.commons.constant.core.DateConst;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
