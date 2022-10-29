@@ -1,5 +1,7 @@
 package com.goudong.core.util;
 
+import java.util.List;
+
 /**
  * 类描述：
  * String工具类
@@ -29,5 +31,32 @@ public class StringUtil {
      */
     public static boolean isNotBlank(String str) {
         return !isBlank(str);
+    }
+
+    /**
+     * 切割字符串，以700+-的最近一个'\n'结束
+     * TODO
+     * @param content
+     * @param startIndex
+     * @param result
+     */
+    void split(String content, int startIndex, List<String> result) {
+        // 表明已到截取完成
+        if (startIndex >= content.length() - 1) {
+            return;
+        }
+        int endIndex = content.indexOf("\n", startIndex + 700);
+
+        String sub;
+        if (endIndex == -1) {
+            sub = content.substring(startIndex);
+            result.add(sub);
+            return;
+        }
+
+        sub = content.substring(startIndex, endIndex);
+        result.add(sub);
+        // 左闭右开，换行符不需要
+        split(content, endIndex + 1, result);
     }
 }

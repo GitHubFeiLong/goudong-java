@@ -11,11 +11,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2022/10/24 9:10
  */
 @Data
-@ConfigurationProperties(prefix = "commons.goudong.exception")
+@ConfigurationProperties(prefix = "commons.goudong.web")
 public class ExceptionProperties {
 
     /**
-     * 是启用exception
+     * 是启用
      */
     private boolean enable = true;
+
+
 }

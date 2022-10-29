@@ -3,20 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <artifactId>goudong-dependencies-spring-boot</artifactId>
         <groupId>com.goudong</groupId>
-        <artifactId>goudong-parent-spring-boot</artifactId>
         <version>${revision}</version>
-        <relativePath>../goudong-parent-spring-boot</relativePath>
+        <relativePath>../goudong-dependencies-spring-boot</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>goudong-spring-boot-starters</artifactId>
+    <artifactId>goudong-parent-spring-boot</artifactId>
     <packaging>pom</packaging>
-    <name>Goudong Spring Boot Starters</name>
-    <description>Goudong Spring Boot Starters</description>
+    <name>Goudong Parent Spring Boot</name>
+    <description>Goudong Parent Spring Boot</description>
 
-    <modules>
-        <module>goudong-web-spring-boot-starter</module>
-    </modules>
 
 </project>
