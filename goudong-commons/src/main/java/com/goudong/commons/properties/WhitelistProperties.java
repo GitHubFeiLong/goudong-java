@@ -5,8 +5,8 @@ import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.framework.whitelist.BaseWhitelistDTO;
 import com.goudong.commons.utils.core.ResourceUtil;
 import com.goudong.commons.utils.core.StringUtil;
+import com.goudong.core.util.CollectionUtil;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -80,7 +80,7 @@ public class WhitelistProperties implements InitializingBean {
             }
 
             // 白名单资源参数校验
-            if (CollectionUtils.isNotEmpty(whitelists)) {
+            if (CollectionUtil.isNotEmpty(whitelists)) {
                 Iterator<BaseWhitelistDTO> iterator = whitelists.iterator();
                 int idx = 0;
                 while (iterator.hasNext()) {
