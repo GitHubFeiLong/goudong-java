@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ExceptionProperties {
 
     /**
-     * 是启用
+     * 是否启用
      */
     private boolean enable = true;
 

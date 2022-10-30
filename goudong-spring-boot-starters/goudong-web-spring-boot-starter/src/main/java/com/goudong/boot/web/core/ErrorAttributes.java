@@ -59,7 +59,7 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             return map;
         } else {
             // 其它不确定异常
-            BasicException be = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, error.getMessage());
+            BasicException be = ServerException.server(ServerExceptionEnum.SERVER_ERROR, error.getMessage());
             Result result = Result.ofFail(be);
             Map<String, Object> map = BeanUtil.beanToMap(result);
 
