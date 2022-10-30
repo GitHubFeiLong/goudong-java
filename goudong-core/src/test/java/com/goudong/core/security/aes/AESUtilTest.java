@@ -1,4 +1,5 @@
-package com.goudong.commons.security.aes;
+package com.goudong.core.security.aes;
+
 
 import org.junit.jupiter.api.Test;
 

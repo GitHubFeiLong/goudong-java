@@ -1,6 +1,6 @@
 package com.goudong.gateway.hanlder;
 
-import com.goudong.commons.security.aes.AES;
+import com.goudong.core.security.aes.AES;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;

@@ -1,9 +1,9 @@
 package com.goudong.gateway.filter;
 
+import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;

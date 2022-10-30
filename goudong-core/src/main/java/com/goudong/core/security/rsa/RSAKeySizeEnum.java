@@ -1,7 +1,4 @@
-package com.goudong.commons.enumerate.core;
-
-import com.goudong.commons.exception.security.rsa.RSANotSupportKeySizeException;
-import lombok.Getter;
+package com.goudong.core.security.rsa;
 
 /**
  * 枚举描述：
@@ -10,7 +7,6 @@ import lombok.Getter;
  * @version 1.0
  * @date 2022/2/12 13:09
  */
-@Getter
 public enum RSAKeySizeEnum {
     RSA1024(1024, 117, 128),
     RSA2048(2048, 245, 256)
@@ -51,7 +47,18 @@ public enum RSAKeySizeEnum {
                 return value;
             }
         }
-        throw new RSANotSupportKeySizeException();
+        throw new IllegalArgumentException();
     }
 
+    public int getKeySize() {
+        return keySize;
+    }
+
+    public int getMaxEncryptBlock() {
+        return maxEncryptBlock;
+    }
+
+    public int getMaxDecryptBlock() {
+        return maxDecryptBlock;
+    }
 }

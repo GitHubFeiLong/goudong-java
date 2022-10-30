@@ -2,7 +2,6 @@ package com.goudong.commons.framework.core;
 
 import com.goudong.commons.utils.core.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
@@ -29,7 +28,7 @@ public class LogApplicationStartup {
         String serverPort = env.getProperty("server.port");
         String contextPath = Optional
                 .ofNullable(env.getProperty("server.servlet.context-path"))
-                .filter(StringUtils::isNotBlank)
+                .filter(StringUtil::isNotBlank)
                 .orElse("/");
         String hostAddress = "localhost";
         try {

@@ -1,7 +1,4 @@
-package com.goudong.commons.security.aes;
-
-import com.goudong.commons.enumerate.core.AESKeySizeEnum;
-import com.goudong.commons.exception.security.aes.AESException;
+package com.goudong.core.security.aes;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -49,10 +46,14 @@ public class AES {
      * 生成随机的128密钥
      * @return
      */
-    public AES generateKeypair() {
-        SecretKey secretKey = AESUtil.generateKeypair(this.keySizeEnum);
-        this.secretKey = secretKey;
-        return this;
+    public AES generateKeypair(){
+        try {
+            SecretKey secretKey = AESUtil.generateKeypair(this.keySizeEnum);
+            this.secretKey = secretKey;
+            return this;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -60,9 +61,13 @@ public class AES {
      * @param keySizeEnum
      * @return
      */
-    public AES generateKeypair(AESKeySizeEnum keySizeEnum) {
-        this.secretKey = AESUtil.generateKeypair(keySizeEnum);
-        return this;
+    public AES generateKeypair(AESKeySizeEnum keySizeEnum){
+        try {
+            this.secretKey = AESUtil.generateKeypair(keySizeEnum);
+            return this;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -92,9 +97,13 @@ public class AES {
      */
     public String encrypt(String data) {
         if (this.secretKey == null) {
-            throw new AESException("使用AES加密时，secretKey不能为null");
+            throw new RuntimeException("使用AES加密时，secretKey不能为null");
         }
-        return AESUtil.encrypt(this.secretKey, data);
+        try {
+            return AESUtil.encrypt(this.secretKey, data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -104,7 +113,7 @@ public class AES {
      */
     public String decrypt(String base64) {
         if (this.secretKey == null) {
-            throw new AESException("使用AES解密时，secretKey不能为null");
+            throw new RuntimeException("使用AES解密时，secretKey不能为null");
         }
         return AESUtil.decrypt(this.secretKey, base64);
     }

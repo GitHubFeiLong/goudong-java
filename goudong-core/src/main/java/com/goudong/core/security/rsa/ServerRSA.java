@@ -1,8 +1,5 @@
-package com.goudong.commons.security.rsa;
+package com.goudong.core.security.rsa;
 
-import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
-import lombok.Data;
-import lombok.SneakyThrows;
 import sun.security.rsa.RSAPublicKeyImpl;
 
 import java.io.File;
@@ -23,7 +20,6 @@ import java.util.Base64;
  * @version 1.0
  * @date 2022/2/9 20:42
  */
-@Data
 public class ServerRSA {
     //~fields
     //==================================================================================================================
@@ -85,26 +81,30 @@ public class ServerRSA {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    @SneakyThrows
-    public static ServerRSA getInstance() {
-        if (serverRSAKey == null) {
-            synchronized (RSAKey.class) {
-                if (serverRSAKey == null) {
-                    PublicKey publicKey = getPublicKeyByFile();
-                    PrivateKey privateKey = getPrivateKeyByFile();
-                    String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKey.getEncoded());
-                    String privateKeyBase64 = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+    public static ServerRSA getInstance(){
+        try {
+            if (serverRSAKey == null) {
+                synchronized (RSAKey.class) {
+                    if (serverRSAKey == null) {
+                        PublicKey publicKey = getPublicKeyByFile();
+                        PrivateKey privateKey = getPrivateKeyByFile();
+                        String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+                        String privateKeyBase64 = Base64.getEncoder().encodeToString(privateKey.getEncoded());
 
-                    // 通过反射获取生成RSA的key长度
-                    Field n = RSAPublicKeyImpl.class.getDeclaredField("n");
-                    n.setAccessible(true);
-                    BigInteger bigInteger = (BigInteger)n.get(publicKey);
+                        // 通过反射获取生成RSA的key长度
+                        Field n = RSAPublicKeyImpl.class.getDeclaredField("n");
+                        n.setAccessible(true);
+                        BigInteger bigInteger = (BigInteger)n.get(publicKey);
 
-                    serverRSAKey = new ServerRSA(publicKey, privateKey, publicKeyBase64, privateKeyBase64, bigInteger.bitLength());
+                        serverRSAKey = new ServerRSA(publicKey, privateKey, publicKeyBase64, privateKeyBase64, bigInteger.bitLength());
+                    }
                 }
             }
+            return serverRSAKey;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return serverRSAKey;
+
     }
 
     /**
@@ -114,7 +114,6 @@ public class ServerRSA {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    @SneakyThrows
     private static PublicKey getPublicKeyByFile() {
 
         final String publicKeyBase64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgMMsJimfsZqN//iyRVfC/v2Yec7mf5lUeuFIsrquofl5VFwoUx13UQvV8WI4alHNCXKsnvNuIqQ7ESOznQ3aS4ZEvhpwnjMxDDvjZ9xCXRVU06e7ppI8I8neT2PtSh7IvV3gSRauLxMRkNw5UIhiPQ4hps0kLzfZwsRm17/FE/gBbN1MvNY77JneRgwsbuMIUaxn22Aqq2uZgTOOlLsHaGnthDBXb7QPlngxe/wAQF5cckJg4qzQ2AUtBV9PXrnK07cBT+cUWTYhKrvK2VWDXEgmv8b62WacpPVLuCJE9JWmuVqTgYhzTGfXGBr8l8hjCO8FOBzGPmgZTee3HcAcDQIDAQAB";
@@ -141,7 +140,6 @@ public class ServerRSA {
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
-    @SneakyThrows
     private static PrivateKey getPrivateKeyByFile()  {
         // 公钥文件存储时使用Base64编码后保存d的
         String privateKeyBase64 = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCAwywmKZ+xmo3/+LJFV8L+/Zh5zuZ/mVR64Uiyuq6h+XlUXChTHXdRC9XxYjhqUc0Jcqye824ipDsRI7OdDdpLhkS+GnCeMzEMO+Nn3EJdFVTTp7umkjwjyd5PY+1KHsi9XeBJFq4vExGQ3DlQiGI9DiGmzSQvN9nCxGbXv8UT+AFs3Uy81jvsmd5GDCxu4whRrGfbYCqra5mBM46Uuwdoae2EMFdvtA+WeDF7/ABAXlxyQmDirNDYBS0FX09eucrTtwFP5xRZNiEqu8rZVYNcSCa/xvrZZpyk9Uu4IkT0laa5WpOBiHNMZ9cYGvyXyGMI7wU4HMY+aBlN57cdwBwNAgMBAAECggEAedItjt2KjMmg1zA/2YMypXTgMT4irU4vsyI5WX9tgSk6NSoLrLcQD8mW3A0FOvGxfuLTln7REE045PpWEJzujs21c/Yn3kSoft6aQ8ULtG1eF/F1hB6Ob32pqorsEVgWq7KJZBzlJvxvfhIc16hw6TrZc6paNaItkCuo8S4qEr0M1FbfzfWNpa1BcahqizpAyELoXCBHTaspVPYmCbzMLLaq+9gT1oitbuSb09JKvlkH3CxvWNGb7XX010VpTq4uFX/TqcCReF7LVAr411STRMf3L0NcacXRTVy29tViajj8VaOqKjWi3u9/3Z4NFeDX6G3u1cnwSnVIkwYEYI8RAQKBgQDjAn4SaAhuWw9jjUbksjfLfrIYxgfX1YXSjjpUuqndqa9JjbVvGdFogAaDv1+TUUJogA5g9K5hGpF/oFldoQvs2O6vaicAxkfgJvjUmYZCE3EgRI97FhYe4mGchhCZLcBLXKZ2raaNFN1WKI5WS40TrAAnxeK9+CPfDJzUozeInQKBgQCRNLt2waYrISkTwTw0URYjujTaLV8t/7hU8fOl5NK6bWFxoYwI9V6EC2MVqg5NhQzmCRNE00j7fo4CZICADQUHzA2x5JwcH/fd8hS5bmjEsHVnqL0CGFuX23TulQ8SrwVr8uyxq5HpkTEHrXK+KY8AQCf+YN280MWYE2tjiIHuMQKBgDzLOxYU1EUxj8J6YET40WZm7K0jw4/yt972hfqQ7tLVEYNiNvek82bH+nan9qGOPnmb6b3faR/KLLMAL06axYXNZsaFaCKV90O5TCQrZUAm0sHwenhdJtloiPmREbrj/L5x9oaL5LGdp9TeEZhcrVBaXMRKA3oajQi76PgtKb8lAoGAMxBPSJELJamwr2DKEj/dwEywX3WLPjrqkPzRSSqyLJtgpDxCabgYN+llO+4kv4AlrBPO8eo3hTHZMOA1DFMHzNkmi8OwXnejjCqgvSEluN2xO/XsGfuE4l9rvKcwuMpR5sd0E3sZggDsNB379wHYZycoqV1ZPRhSFIvnvQX5Y1ECgYAlFwc1twrEMJJaqtagk7s7rdNFTbGd9GHen8Mj1bA+zO8hHVVvE2o9xZsTqm0k/yCPvatjjuk1BNLJconQgNxwnK1q07H7rYMSgeyifjCLHoMF8YzA4XIGDM+EFxhlBdA/+M/B6JffFBrx5EjHrCvQHW1COjsLUdBeQHWqxEBk9Q==";
@@ -204,5 +202,53 @@ public class ServerRSA {
      */
     public boolean verify(String srcData, String sign) {
         return RSAUtil.verify(srcData, publicKey, sign);
+    }
+
+    public static ServerRSA getServerRSAKey() {
+        return serverRSAKey;
+    }
+
+    public static void setServerRSAKey(ServerRSA serverRSAKey) {
+        ServerRSA.serverRSAKey = serverRSAKey;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(PublicKey publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(PrivateKey privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public String getPublicKeyBase64() {
+        return publicKeyBase64;
+    }
+
+    public void setPublicKeyBase64(String publicKeyBase64) {
+        this.publicKeyBase64 = publicKeyBase64;
+    }
+
+    public String getPrivateKeyBase64() {
+        return privateKeyBase64;
+    }
+
+    public void setPrivateKeyBase64(String privateKeyBase64) {
+        this.privateKeyBase64 = privateKeyBase64;
+    }
+
+    public int getKeySize() {
+        return keySize;
+    }
+
+    public void setKeySize(int keySize) {
+        this.keySize = keySize;
     }
 }

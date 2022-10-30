@@ -1,6 +1,5 @@
-package com.goudong.commons.security.rsa;
+package com.goudong.core.security.rsa;
 
-import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
 import org.junit.jupiter.api.Test;
 
 import java.security.KeyPair;

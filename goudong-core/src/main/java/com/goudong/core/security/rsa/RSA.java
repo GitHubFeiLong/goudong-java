@@ -1,7 +1,4 @@
-package com.goudong.commons.security.rsa;
-
-import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
-import lombok.Getter;
+package com.goudong.core.security.rsa;
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -14,7 +11,6 @@ import java.security.PublicKey;
  * @version 1.0
  * @date 2022/2/10 21:55
  */
-@Getter
 public class RSA {
 
     //~fields
@@ -88,17 +84,44 @@ public class RSA {
     }
 
     private RSA generateKeypair() {
-        KeyPair keyPair = RSAUtil.generateKeypair(this.keySizeEnum);
-        this.publicKey = keyPair.getPublic();
-        this.privateKey = keyPair.getPrivate();
-        this.publicKeyBase64 = RSAUtil.key2Base64(publicKey);
-        this.privateKeyBase64 = RSAUtil.key2Base64(privateKey);
-        return this;
+        try {
+            KeyPair keyPair = RSAUtil.generateKeypair(this.keySizeEnum);
+            this.publicKey = keyPair.getPublic();
+            this.privateKey = keyPair.getPrivate();
+            this.publicKeyBase64 = RSAUtil.key2Base64(publicKey);
+            this.privateKeyBase64 = RSAUtil.key2Base64(privateKey);
+            return this;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private RSA generateKeypair(RSAKeySizeEnum keySizeEnum) {
         keySize(keySizeEnum);
         generateKeypair();
         return this;
+    }
+
+    //~getter
+    //==================================================================================================================
+
+    public RSAKeySizeEnum getKeySizeEnum() {
+        return keySizeEnum;
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+
+    public String getPublicKeyBase64() {
+        return publicKeyBase64;
+    }
+
+    public String getPrivateKeyBase64() {
+        return privateKeyBase64;
     }
 }

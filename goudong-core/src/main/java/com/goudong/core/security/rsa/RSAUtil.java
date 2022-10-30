@@ -1,7 +1,4 @@
-package com.goudong.commons.security.rsa;
-
-import com.goudong.commons.enumerate.core.RSAKeySizeEnum;
-import lombok.SneakyThrows;
+package com.goudong.core.security.rsa;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
@@ -68,15 +65,18 @@ public class RSAUtil {
      * @param keySizeEnum
      * @return
      */
-    @SneakyThrows
     public static KeyPair generateKeypair(RSAKeySizeEnum keySizeEnum) {
-        // 获取指定算法的密钥对生成器
-        KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM);
-        // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
-        gen.initialize(keySizeEnum.getKeySize(), new SecureRandom());
-        // 随机生成一对密钥（包含公钥和私钥）
-        KeyPair keyPair = gen.generateKeyPair();
-        return keyPair;
+        try {
+            // 获取指定算法的密钥对生成器
+            KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM);
+            // 初始化密钥对生成器（指定密钥长度, 使用默认的安全随机数源）
+            gen.initialize(keySizeEnum.getKeySize(), new SecureRandom());
+            // 随机生成一对密钥（包含公钥和私钥）
+            KeyPair keyPair = gen.generateKeyPair();
+            return keyPair;
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -86,16 +86,19 @@ public class RSAUtil {
      * @param encryptStr 需要加密的字符串
      * @return 双层Base64编码字符串
      */
-    @SneakyThrows
     public static String publicKeyEncrypt(RSAKeySizeEnum keySizeEnum, PublicKey publicKey, String encryptStr) {
-        // 获取指定算法的密码器
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        try {
+            // 获取指定算法的密码器
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
 
-        // 初始化密码器（公钥加密模型）
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            // 初始化密码器（公钥加密模型）
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-        // 分段加密
-        return RSAUtil.sectionEncrypt(encryptStr, cipher, keySizeEnum.getMaxEncryptBlock());
+            // 分段加密
+            return RSAUtil.sectionEncrypt(encryptStr, cipher, keySizeEnum.getMaxEncryptBlock());
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -105,16 +108,19 @@ public class RSAUtil {
      * @param base64Encode Base64编码后的密文
      * @return 加密前的字符串
      */
-    @SneakyThrows
     public static String privateKeyDecrypt(RSAKeySizeEnum keySizeEnum, PrivateKey privateKey, String base64Encode) {
-        // 获取指定算法的密码器
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        try {
+            // 获取指定算法的密码器
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
 
-        // 初始化密码器（公钥加密模型）
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            // 初始化密码器（公钥加密模型）
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
-        // 分段解密
-        return sectionDecrypt(base64Encode, cipher, keySizeEnum.getMaxDecryptBlock());
+            // 分段解密
+            return sectionDecrypt(base64Encode, cipher, keySizeEnum.getMaxDecryptBlock());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -124,12 +130,15 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    @SneakyThrows
     public static String sign(String data, PrivateKey privateKey) {
-        Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-        signature.initSign(privateKey);
-        signature.update(data.getBytes());
-        return Base64.getEncoder().encodeToString(signature.sign());
+        try {
+            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+            signature.initSign(privateKey);
+            signature.update(data.getBytes());
+            return Base64.getEncoder().encodeToString(signature.sign());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -140,12 +149,15 @@ public class RSAUtil {
      * @return
      * @throws Exception
      */
-    @SneakyThrows
     public static boolean verify(String srcData, PublicKey publicKey, String sign){
-        Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-        signature.initVerify(publicKey);
-        signature.update(srcData.getBytes());
-        return signature.verify(Base64.getDecoder().decode(sign));
+        try {
+            Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
+            signature.initVerify(publicKey);
+            signature.update(srcData.getBytes());
+            return signature.verify(Base64.getDecoder().decode(sign));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -154,32 +166,35 @@ public class RSAUtil {
      * @param cipher 密码器
      * @return 加密后的数据
      */
-    @SneakyThrows
     public static String sectionEncrypt(String encryptStr, Cipher cipher, int maxEncryptBlock) {
-        // 直接加密base64的字符串
-        byte[] data = encryptStr.getBytes();
-        int inputLen = data.length;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        // 对数据分段加密
-        while (inputLen - offSet > 0) {
-            if (inputLen - offSet > maxEncryptBlock) {
-                cache = cipher.doFinal(data, offSet, maxEncryptBlock);
-            } else {
-                cache = cipher.doFinal(data, offSet, inputLen - offSet);
+        try {
+            // 直接加密base64的字符串
+            byte[] data = encryptStr.getBytes();
+            int inputLen = data.length;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int offSet = 0;
+            byte[] cache;
+            int i = 0;
+            // 对数据分段加密
+            while (inputLen - offSet > 0) {
+                if (inputLen - offSet > maxEncryptBlock) {
+                    cache = cipher.doFinal(data, offSet, maxEncryptBlock);
+                } else {
+                    cache = cipher.doFinal(data, offSet, inputLen - offSet);
+                }
+                out.write(cache, 0, cache.length);
+                i++;
+                offSet = i * maxEncryptBlock;
             }
-            out.write(cache, 0, cache.length);
-            i++;
-            offSet = i * maxEncryptBlock;
-        }
-        // 加密数据, 返回加密后的密文
-        byte[] encryptedData = out.toByteArray();
-        out.close();
+            // 加密数据, 返回加密后的密文
+            byte[] encryptedData = out.toByteArray();
+            out.close();
 
-        // 加密后将其Base64编码，防止中文乱码
-        return Base64.getEncoder().encodeToString(encryptedData);
+            // 加密后将其Base64编码，防止中文乱码
+            return Base64.getEncoder().encodeToString(encryptedData);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -188,30 +203,33 @@ public class RSAUtil {
      * @param cipher 密码器
      * @return 返回解密后的数据
      */
-    @SneakyThrows
     public static String sectionDecrypt(String base64Encode, Cipher cipher, int maxDecryptBlock) {
-        byte[] data = Base64.getDecoder().decode(base64Encode);
-        int inputLen = data.length;
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int offSet = 0;
-        byte[] cache;
-        int i = 0;
-        // 对数据分段解密
-        while (inputLen - offSet > 0) {
-            if (inputLen - offSet > maxDecryptBlock) {
-                cache = cipher.doFinal(data, offSet, maxDecryptBlock);
-            } else {
-                cache = cipher.doFinal(data, offSet, inputLen - offSet);
+        try {
+            byte[] data = Base64.getDecoder().decode(base64Encode);
+            int inputLen = data.length;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int offSet = 0;
+            byte[] cache;
+            int i = 0;
+            // 对数据分段解密
+            while (inputLen - offSet > 0) {
+                if (inputLen - offSet > maxDecryptBlock) {
+                    cache = cipher.doFinal(data, offSet, maxDecryptBlock);
+                } else {
+                    cache = cipher.doFinal(data, offSet, inputLen - offSet);
+                }
+                out.write(cache, 0, cache.length);
+                i++;
+                offSet = i * maxDecryptBlock;
             }
-            out.write(cache, 0, cache.length);
-            i++;
-            offSet = i * maxDecryptBlock;
-        }
-        byte[] decryptedData = out.toByteArray();
-        out.close();
+            byte[] decryptedData = out.toByteArray();
+            out.close();
 
-        // 加密的字符串是使用Base64编码,所以这里解密后还需要解码才是真实数据
-        return new String(decryptedData);
+            // 加密的字符串是使用Base64编码,所以这里解密后还需要解码才是真实数据
+            return new String(decryptedData);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -229,19 +247,22 @@ public class RSAUtil {
      * @param isPublicKey 是否是解析成公钥
      * @return isPublicKey=true时返回公钥，否则返回私钥
      */
-    @SneakyThrows
     public static Key base642Key(String base64, boolean isPublicKey){
-        // Base64文本进行解码
-        byte[] decode = Base64.getDecoder().decode(base64);
+        try {
+            // Base64文本进行解码
+            byte[] decode = Base64.getDecoder().decode(base64);
 
-        // 公钥
-        if (isPublicKey) {
-            // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
-            return KeyFactory.getInstance(RSAUtil.ALGORITHM).generatePublic(new X509EncodedKeySpec(decode));
+            // 公钥
+            if (isPublicKey) {
+                // 获取指定算法的密钥工厂, 根据 已编码的公钥规格, 生成公钥对象
+                return KeyFactory.getInstance(RSAUtil.ALGORITHM).generatePublic(new X509EncodedKeySpec(decode));
+            }
+
+            // 获取指定算法的密钥工厂, 根据 已编码的私钥规格, 生成私钥对象
+            return KeyFactory.getInstance(RSAUtil.ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decode));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        // 获取指定算法的密钥工厂, 根据 已编码的私钥规格, 生成私钥对象
-        return KeyFactory.getInstance(RSAUtil.ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decode));
     }
 
 }

@@ -1,7 +1,4 @@
-package com.goudong.commons.enumerate.core;
-
-import com.goudong.commons.exception.security.rsa.RSANotSupportKeySizeException;
-import lombok.Getter;
+package com.goudong.core.security.aes;
 
 /**
  * 枚举描述：
@@ -10,7 +7,6 @@ import lombok.Getter;
  * @version 1.0
  * @date 2022/2/12 13:09
  */
-@Getter
 public enum AESKeySizeEnum {
     AES128(128),
     AES192(192),
@@ -41,7 +37,10 @@ public enum AESKeySizeEnum {
                 return value;
             }
         }
-        throw new RSANotSupportKeySizeException();
+        throw new IllegalArgumentException();
     }
 
+    public int getKeySize() {
+        return keySize;
+    }
 }

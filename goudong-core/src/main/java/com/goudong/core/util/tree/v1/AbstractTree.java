@@ -94,22 +94,27 @@ public abstract class AbstractTree<T> implements Tree<T> {
      * @param flatNodes 最终扁平化结构集合
      * @param treeNodes 需要处理的树形结构集合
      */
-    protected void flatTreeNodesRecursion (List<T> flatNodes, List<T> treeNodes) throws NoSuchFieldException, IllegalAccessException {
-        if(CollectionUtil.isEmpty(treeNodes)) {
-            return;
-        }
-        Iterator<T> iterator = treeNodes.iterator();
-        while(iterator.hasNext()) {
-            T node = iterator.next();
-            // 添加结果到集合
-            flatNodes.add(node);
+    protected void flatTreeNodesRecursion (List<T> flatNodes, List<T> treeNodes) {
+        try {
+            if(CollectionUtil.isEmpty(treeNodes)) {
+                return;
+            }
+            Iterator<T> iterator = treeNodes.iterator();
+            while(iterator.hasNext()) {
+                T node = iterator.next();
+                // 添加结果到集合
+                flatNodes.add(node);
 
-            // 节点的子节点，递归进行执行添加
-            Field childrenDeclaredField = node.getClass().getDeclaredField(this.childrenFieldName);
-            childrenDeclaredField.setAccessible(true);
-            List<T> children = Optional.ofNullable((List<T>)childrenDeclaredField.get(node)).orElse(new ArrayList());
-            flatTreeNodesRecursion(flatNodes, children);
+                // 节点的子节点，递归进行执行添加
+                Field childrenDeclaredField = node.getClass().getDeclaredField(this.childrenFieldName);
+                childrenDeclaredField.setAccessible(true);
+                List<T> children = Optional.ofNullable((List<T>)childrenDeclaredField.get(node)).orElse(new ArrayList());
+                flatTreeNodesRecursion(flatNodes, children);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     /**
@@ -118,37 +123,42 @@ public abstract class AbstractTree<T> implements Tree<T> {
      * @param children 指定集合
      * @return  返回找到的node，并且填充node的子元素属性
      */
-    protected T findBySelfValue2T (Object selfValue, List<T> children) throws NoSuchFieldException, IllegalAccessException {
-        if (CollectionUtil.isEmpty(children)) {
-            return null;
-        }
-        Iterator<T> iterator = children.iterator();
-        while (iterator.hasNext()) {
-            T node = iterator.next();
-            Field declaredField = node.getClass().getDeclaredField(this.selfFieldName);
-            declaredField.setAccessible(true);
-            // 为防止类型不匹配导致equals不相等，将其都转成string。
-            String nodeSelfValue = Optional.ofNullable(declaredField.get(node)).orElse("").toString();
-            if (Objects.equals(String.valueOf(selfValue), nodeSelfValue)) {
-                // 匹配本次循环，直接返回
-                return node;
-            }
-            // node对象不是我们想要的对象，那么就进行递归node的子元素集合进行查找
-            Field childrenDeclaredField = node.getClass().getDeclaredField(this.childrenFieldName);
-            childrenDeclaredField.setAccessible(true);
-            List<T> nodeChildren = Optional.ofNullable((List<T>)childrenDeclaredField.get(node)).orElse(new ArrayList<T>());
-
-            T childNode = findBySelfValue2T(selfValue, nodeChildren);
-            if (childNode != null) {
-                return childNode;
-            }
-            // 引用最初的迭代器，防止循环完第一个根后直接返回null。
-            if (!iterator.hasNext()) {
+    protected T findBySelfValue2T (Object selfValue, List<T> children) {
+        try {
+            if (CollectionUtil.isEmpty(children)) {
                 return null;
             }
+            Iterator<T> iterator = children.iterator();
+            while (iterator.hasNext()) {
+                T node = iterator.next();
+                Field declaredField = node.getClass().getDeclaredField(this.selfFieldName);
+                declaredField.setAccessible(true);
+                // 为防止类型不匹配导致equals不相等，将其都转成string。
+                String nodeSelfValue = Optional.ofNullable(declaredField.get(node)).orElse("").toString();
+                if (Objects.equals(String.valueOf(selfValue), nodeSelfValue)) {
+                    // 匹配本次循环，直接返回
+                    return node;
+                }
+                // node对象不是我们想要的对象，那么就进行递归node的子元素集合进行查找
+                Field childrenDeclaredField = node.getClass().getDeclaredField(this.childrenFieldName);
+                childrenDeclaredField.setAccessible(true);
+                List<T> nodeChildren = Optional.ofNullable((List<T>)childrenDeclaredField.get(node)).orElse(new ArrayList<T>());
+
+                T childNode = findBySelfValue2T(selfValue, nodeChildren);
+                if (childNode != null) {
+                    return childNode;
+                }
+                // 引用最初的迭代器，防止循环完第一个根后直接返回null。
+                if (!iterator.hasNext()) {
+                    return null;
+                }
+            }
+            String clientMessage = MessageFormatUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
+            throw new RuntimeException(clientMessage);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        String clientMessage = MessageFormatUtil.format("没有找到您要查找的信息，查找条件：{}", selfValue);
-        throw new RuntimeException(clientMessage);
+
     }
 
     public String getSelfFieldName() {

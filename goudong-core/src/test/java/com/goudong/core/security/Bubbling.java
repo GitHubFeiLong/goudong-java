@@ -1,4 +1,4 @@
-package com.goudong.commons.security;
+package com.goudong.core.security;
 
 import java.util.Arrays;
 import java.util.Scanner;

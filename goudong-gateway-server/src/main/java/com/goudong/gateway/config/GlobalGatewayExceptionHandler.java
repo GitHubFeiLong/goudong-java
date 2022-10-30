@@ -43,7 +43,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
     private List<HttpMessageReader<?>> messageReaders = Collections.emptyList();
     private List<HttpMessageWriter<?>> messageWriters = Collections.emptyList();
     private List<ViewResolver> viewResolvers = Collections.emptyList();
-    private ThreadLocal<BasicException> threadLocal=new ThreadLocal<>();
+    private ThreadLocal<BasicException> threadLocal = new ThreadLocal<>();
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable throwable) {
