@@ -5,20 +5,20 @@ import cn.hutool.core.lang.Assert;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
+import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.core.context.UserContext;
-import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.commons.exception.user.RoleException;
 import com.goudong.commons.framework.redis.RedisTool;
-import com.goudong.commons.tree.v2.Tree;
-import com.goudong.commons.utils.JPAPageResultConvert;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.lang.PageResult;
+import com.goudong.core.util.tree.v2.Tree;
 import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
 import com.goudong.user.dto.ModifyRoleReq;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
+import com.goudong.user.exception.RoleException;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.repository.BaseMenuRepository;
@@ -75,9 +75,9 @@ public class BaseRoleServiceImpl implements BaseRoleService {
      */
     @Override
     @Transactional
-    public BasePageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page) {
+    public PageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page) {
         PageRequest pageRequest = PageRequest.of(page.getJPAPage(),
-                page.getJPASize(),
+                page.getSize(),
                 Sort.sort(BaseRolePO.class).by(BaseRolePO::getCreateTime).descending());
 
         Specification<BaseRolePO> specification = (root, query, criteriaBuilder) -> {
@@ -89,7 +89,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
 
         Page<BaseRolePO> all = baseRoleRepository.findAll(specification, pageRequest);
 
-        BasePageResult<BaseRoleDTO> convert = JPAPageResultConvert.convert(all, BaseRoleDTO.class);
+        PageResult<BaseRoleDTO> convert = PageResultConvert.convert(all, BaseRoleDTO.class);
 
         return convert;
     }

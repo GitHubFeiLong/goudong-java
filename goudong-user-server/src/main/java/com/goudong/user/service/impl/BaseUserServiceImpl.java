@@ -5,19 +5,15 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.core.DateConst;
-import com.goudong.commons.dto.core.BasePageResult;
-import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
-import com.goudong.commons.dto.user.BaseUserDTO;
-import com.goudong.commons.dto.user.SimpleCreateUserReq;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.JPAPageResultConvert;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
-import com.goudong.user.dto.AdminEditUserReq;
-import com.goudong.user.dto.BaseRoleDTO;
+import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
@@ -231,7 +227,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return
      */
     @Override
-    public BasePageResult<BaseUserDTO> pageByField(BaseUser2QueryPageDTO page) {
+    public PageResult<BaseUserDTO> pageByField(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = new Specification<BaseUserPO>() {
             @Override
             public Predicate toPredicate(Root<BaseUserPO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -258,7 +254,7 @@ public class BaseUserServiceImpl implements BaseUserService {
 
         Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
 
-        BasePageResult<BaseUserDTO> convert = JPAPageResultConvert.convert(all, BaseUserDTO.class);
+        PageResult<BaseUserDTO> convert = PageResultConvert.convert(all, BaseUserDTO.class);
 
         // 脱敏
         convert.getContent().forEach(p->{
@@ -275,7 +271,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Transactional
     @Override
-    public BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
+    public PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
             if (StringUtils.isNotBlank(page.getUsername())) {
@@ -308,16 +304,16 @@ public class BaseUserServiceImpl implements BaseUserService {
             return query.orderBy(weightOrder).getRestriction();
         };
 
-        BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = null;
-        if (page.getPage() != 0 && page.getSize() != 0) {
-            PageRequest pageRequest = PageRequest.of(page.getJPAPage(), (int)page.getSize());
+        PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = null;
+        if (page.getJPAPage() != 0 && page.getSize() != 0) {
+            PageRequest pageRequest = PageRequest.of(page.getJPAPage(), page.getSize());
             Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
-            convert = JPAPageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+            convert = PageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
         } else {
             // 导出时
             List<BaseUserPO> all = baseUserRepository.findAll(specification);
             List<com.goudong.commons.dto.oauth2.BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
-            convert = new BasePageResult<>(baseUserDTOS);
+            convert = new PageResult<>(baseUserDTOS);
         }
 
         // 脱敏

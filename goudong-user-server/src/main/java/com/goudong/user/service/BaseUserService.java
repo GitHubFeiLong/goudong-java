@@ -1,10 +1,10 @@
 package com.goudong.user.service;
 
-import com.goudong.commons.dto.core.BasePageResult;
-import com.goudong.commons.dto.user.BaseUser2QueryPageDTO;
-import com.goudong.commons.dto.user.BaseUserDTO;
-import com.goudong.commons.dto.user.SimpleCreateUserReq;
+import com.goudong.core.lang.PageResult;
 import com.goudong.user.dto.AdminEditUserReq;
+import com.goudong.user.dto.BaseUser2QueryPageDTO;
+import com.goudong.user.dto.BaseUserDTO;
+import com.goudong.user.dto.SimpleCreateUserReq;
 import com.goudong.user.po.BaseUserPO;
 
 import java.util.List;
@@ -63,14 +63,14 @@ public interface BaseUserService {
      * @param page
      * @return
      */
-    BasePageResult<BaseUserDTO> pageByField(BaseUser2QueryPageDTO page);
+    PageResult<BaseUserDTO> pageByField(BaseUser2QueryPageDTO page);
 
     /**
      * 用户分页查询
      * @param page
      * @return
      */
-    BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page);
+    PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page);
 
     /**
      * 根据id查询

@@ -3,16 +3,16 @@ package com.goudong.user.controller.user;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.EasyExcel;
+import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.DateConst;
-import com.goudong.commons.dto.core.BasePageResult;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
-import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseUserPO;
@@ -185,7 +185,7 @@ public class BaseUerController {
     public Result getUserByLoginName(@PathVariable("login-name") String loginName){
         List<BaseUserPO> userByLoginName = baseUserService.getUserByLoginName(loginName);
         if (CollectionUtils.isEmpty(userByLoginName)) {
-            throw new UserException(ClientExceptionEnum.NOT_FOUND, "用户不存在");
+            throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在");
         }
         BaseUserDTO baseUserDTO = BeanUtil.copyProperties(userByLoginName.get(0), BaseUserDTO.class, "password");
         return Result.ofSuccess(baseUserDTO);
@@ -234,13 +234,13 @@ public class BaseUerController {
 
     @GetMapping("/page-field")
     @ApiOperation(value = "用户表的下拉分页查询")
-    public Result<BasePageResult<BaseUserDTO>> pageByField (BaseUser2QueryPageDTO page){
+    public Result<PageResult<BaseUserDTO>> pageByField (BaseUser2QueryPageDTO page){
         return Result.ofSuccess(baseUserService.pageByField(page));
     }
 
     @GetMapping("/page")
     @ApiOperation(value = "分页查询")
-    public Result<BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
+    public Result<PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
         return Result.ofSuccess(baseUserService.page(page));
     }
 
@@ -275,7 +275,7 @@ public class BaseUerController {
                         .collect(Collectors.toList());
             } else {
                 BaseUser2QueryPageDTO pageDTO = BeanUtil.copyProperties(req, BaseUser2QueryPageDTO.class);
-                BasePageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page = baseUserService.page(pageDTO);
+                PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page = baseUserService.page(pageDTO);
                 content = page.getContent();
             }
 

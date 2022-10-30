@@ -1,4 +1,4 @@
-package com.goudong.user.exception;
+package com.goudong.oauth2.exception;
 
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;

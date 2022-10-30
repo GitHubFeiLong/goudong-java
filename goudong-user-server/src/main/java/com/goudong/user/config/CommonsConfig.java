@@ -1,5 +1,6 @@
 package com.goudong.user.config;
 
+import com.goudong.boot.web.core.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,6 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 @EnableCommonsWebMvcConfig
-@EnableCommonsGlobalExceptionHandler
 @EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig

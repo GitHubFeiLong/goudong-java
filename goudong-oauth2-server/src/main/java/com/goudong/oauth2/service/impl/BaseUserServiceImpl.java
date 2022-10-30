@@ -1,19 +1,18 @@
 package com.goudong.oauth2.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
-import com.goudong.commons.exception.oauth2.AccessTokenExpiredException;
-import com.goudong.commons.exception.oauth2.AccessTokenInvalidException;
-import com.goudong.commons.exception.user.AccountExpiredException;
-import com.goudong.commons.exception.user.UserException;
 import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
+import com.goudong.oauth2.exception.AccessTokenExpiredException;
+import com.goudong.oauth2.exception.AccessTokenInvalidException;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.TokenExpiresProperties;
 import com.goudong.oauth2.repository.BaseUserRepository;
@@ -23,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -168,7 +168,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                 if (accessExpires.after(new Date())) {
                     // 未过期，将其用户设置到redis中
                     BaseUserPO baseUserPO = baseUserRepository.findById(tokenDTO.getUserId())
-                            .orElseThrow(() -> new UserException(ClientExceptionEnum.UNAUTHORIZED,
+                            .orElseThrow(() -> ClientException.client(ClientExceptionEnum.UNAUTHORIZED,
                                     "请重新登录", "令牌对应的用户id未查找到用户信息"));
 
                     // 账户是否未过期
@@ -182,7 +182,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                     }
 
                     // 账户已过期
-                    throw new AccountExpiredException();
+                    throw new AccountExpiredException("账户已过期");
                 }
 
                 // 访问令牌过期

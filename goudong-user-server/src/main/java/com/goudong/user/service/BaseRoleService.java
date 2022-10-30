@@ -1,6 +1,6 @@
 package com.goudong.user.service;
 
-import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.core.lang.PageResult;
 import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
 import com.goudong.user.dto.BaseRoleDTO;
@@ -30,7 +30,7 @@ public interface BaseRoleService {
      * @param page
      * @return
      */
-    BasePageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page);
+    PageResult<BaseRoleDTO> page(BaseRole2QueryPageDTO page);
 
     /**
      * 根据角色id集合查询角色

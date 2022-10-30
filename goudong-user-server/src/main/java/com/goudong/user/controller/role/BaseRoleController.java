@@ -1,6 +1,6 @@
 package com.goudong.user.controller.role;
 
-import com.goudong.commons.dto.core.BasePageResult;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
@@ -40,7 +40,7 @@ public class BaseRoleController {
     //==================================================================================================================
     @GetMapping("/page")
     @ApiOperation(value = "角色分页查询")
-    public Result<BasePageResult<BaseRoleDTO>> page (BaseRole2QueryPageDTO page){
+    public Result<PageResult<BaseRoleDTO>> page (BaseRole2QueryPageDTO page){
         return Result.ofSuccess(baseRoleService.page(page));
     }
 

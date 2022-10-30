@@ -1,9 +1,9 @@
 package com.goudong.file.service.impl;
 
 import cn.hutool.core.io.FileUtil;
-import com.goudong.commons.dto.file.FileShardUploadDTO;
 import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.file.dto.FileShardUploadDTO;
 import com.goudong.file.enumerate.RedisKeyProviderEnum;
 import com.goudong.file.po.FileShardTaskPO;
 import com.goudong.file.repository.FileShardTaskRepository;

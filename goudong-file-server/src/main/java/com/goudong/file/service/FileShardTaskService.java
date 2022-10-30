@@ -1,10 +1,9 @@
 package com.goudong.file.service;
 
-import com.goudong.commons.dto.file.FileShardUploadDTO;
+import com.goudong.file.dto.FileShardUploadDTO;
 import com.goudong.file.po.FileShardTaskPO;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**

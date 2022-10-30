@@ -1,6 +1,6 @@
 package com.goudong.user.dto;
 
-import com.goudong.commons.dto.core.BasePage;
+import com.goudong.boot.web.core.BasePage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
