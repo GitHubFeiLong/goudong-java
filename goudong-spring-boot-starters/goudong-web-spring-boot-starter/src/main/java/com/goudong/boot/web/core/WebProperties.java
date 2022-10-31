@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Data
 @ConfigurationProperties(prefix = "commons.goudong.web")
-public class ExceptionProperties {
+public class WebProperties {
 
     /**
      * 是否启用

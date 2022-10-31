@@ -15,6 +15,10 @@
     <description>用户服务</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-core</artifactId>
+        </dependency>
         <!--commons-->
         <dependency>
             <groupId>com.goudong</groupId>

@@ -29,7 +29,7 @@ public class BasePage {
     @ApiModelProperty(value = "一页显示内容长度", required = true)
     private Integer size;
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
@@ -38,8 +38,8 @@ public class BasePage {
      * @return
      */
     @ApiModelProperty(hidden = true)
-    public int getJPAPage() {
-        return PageTypeEnum.JPA.getPage(page);
+    public Integer getJPAPage() {
+        return page == null ? null : PageTypeEnum.JPA.getPage(page);
     }
 
 
@@ -48,8 +48,8 @@ public class BasePage {
      * @return
      */
     @ApiModelProperty(hidden = true)
-    public int getMPPage() {
-        return PageTypeEnum.MYBATIS_PLUS.getPage(page);
+    public Integer getMPPage() {
+        return page == null ? null : PageTypeEnum.MYBATIS_PLUS.getPage(page);
     }
 
 

@@ -305,7 +305,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         };
 
         PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = null;
-        if (page.getJPAPage() != 0 && page.getSize() != 0) {
+        if (page.getJPAPage() != null && page.getSize() != null) {
             PageRequest pageRequest = PageRequest.of(page.getJPAPage(), page.getSize());
             Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
             convert = PageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);

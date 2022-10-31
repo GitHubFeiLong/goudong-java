@@ -1,6 +1,7 @@
 package com.goudong.commons.config;
 
 import com.alibaba.fastjson.JSON;
+import com.goudong.boot.web.core.BasicException;
 import com.goudong.commons.constant.core.BasePackageConst;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.core.lang.Result;
@@ -119,9 +120,9 @@ public class FeignConfig {
                     Reader reader = response.body().asReader(StandardCharsets.UTF_8);
                     String body = Util.toString(reader);
                     Result result = JSON.parseObject(body, Result.class);
-                    return new RuntimeException(result.toString());
+                    return BasicException.ofResult(JSON.parseObject(result.getData().toString(), Result.class));
                 } catch (Exception e) {
-                    return new Exception(e.getMessage());
+                    return BasicException.server(e.getMessage());
                 }
             }
         };

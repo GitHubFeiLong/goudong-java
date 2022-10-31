@@ -1,7 +1,7 @@
 package com.goudong.boot.web.config;
 
-import com.goudong.boot.web.core.ExceptionProperties;
 import com.goudong.boot.web.core.GlobalExceptionHandler;
+import com.goudong.boot.web.core.WebProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,10 +19,10 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2022/10/23 21:47
  */
 @Configuration
-@EnableConfigurationProperties(ExceptionProperties.class)
+@EnableConfigurationProperties(WebProperties.class)
 @ConditionalOnWebApplication
-@ConditionalOnProperty(prefix = "commons.goudong.exception", name = "enable", havingValue = "true", matchIfMissing = true)
-public class ExceptionAutoConfiguration {
+@ConditionalOnProperty(prefix = "commons.goudong.web", name = "enable", havingValue = "true", matchIfMissing = true)
+public class WebAutoConfiguration {
     //~fields
     //==================================================================================================================
 
