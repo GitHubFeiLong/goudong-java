@@ -3,6 +3,7 @@ package com.goudong.user.controller.user;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.EasyExcel;
+import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
@@ -23,7 +24,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -243,7 +243,7 @@ public class BaseUerController {
     @ApiOperation(value = "分页查询")
     public Result<PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
         // if (true) throw BasicException.client("error");
-        if (true) throw new DataIntegrityViolationException("cuowua ");
+        if (true) throw BasicException.server("cuowua ");
         return Result.ofSuccess(baseUserService.page(page));
     }
 

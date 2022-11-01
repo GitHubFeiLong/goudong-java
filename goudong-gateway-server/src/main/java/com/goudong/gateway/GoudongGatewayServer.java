@@ -1,6 +1,5 @@
 package com.goudong.gateway;
 
-import com.goudong.boot.web.config.ExceptionHandlerConfiguration;
 import com.goudong.commons.framework.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +17,7 @@ import org.springframework.util.StopWatch;
  * @Date 2021-04-08 14:05
  * @Version 1.0
  */
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, ExceptionHandlerConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableDiscoveryClient
 public class  GoudongGatewayServer {
 
