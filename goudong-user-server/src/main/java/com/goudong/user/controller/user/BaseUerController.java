@@ -23,6 +23,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -241,6 +242,8 @@ public class BaseUerController {
     @GetMapping("/page")
     @ApiOperation(value = "分页查询")
     public Result<PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
+        // if (true) throw BasicException.client("error");
+        if (true) throw new DataIntegrityViolationException("cuowua ");
         return Result.ofSuccess(baseUserService.page(page));
     }
 

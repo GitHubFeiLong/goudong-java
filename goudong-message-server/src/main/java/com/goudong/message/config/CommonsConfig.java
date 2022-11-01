@@ -1,6 +1,6 @@
 package com.goudong.message.config;
 
-import com.goudong.boot.web.core.EnableCommonsWebMvcConfig;
+import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;

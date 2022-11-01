@@ -121,3 +121,6 @@ commons:
     enable: false
   hide-menu:
     enable: true
+  goudong:
+    web:
+      enable: true

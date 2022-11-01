@@ -3,6 +3,7 @@ package com.goudong.boot.web.core;
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
+import com.goudong.core.lang.BasicExceptionInterface;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.MessageFormatUtil;
 import lombok.Data;
@@ -28,7 +29,7 @@ import static com.goudong.boot.web.enumerate.ServerExceptionEnum.SERVER_ERROR;
  * @Version 1.0
  */
 @Data
-public class BasicException extends RuntimeException{
+public class BasicException extends RuntimeException implements BasicExceptionInterface {
 
     public static final Logger log = LoggerFactory.getLogger(BasicException.class);
 

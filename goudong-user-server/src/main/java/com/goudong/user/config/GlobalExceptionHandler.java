@@ -20,7 +20,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +39,7 @@ import java.util.Set;
  * @date 2022/10/23 21:13
  * @version 1.0
  */
-@RestControllerAdvice
+// @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     public static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);

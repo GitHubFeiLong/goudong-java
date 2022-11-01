@@ -1,7 +1,7 @@
 package com.goudong.oauth2.config;
 
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
-import com.goudong.boot.web.util.ResultUtil;
+import com.goudong.boot.web.handler.BasicExceptionHandler;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.config.security.AccessDeniedHandlerImpl;
 import com.goudong.oauth2.exception.AccountExpiredException;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends com.goudong.boot.web.core.GlobalExceptionHandler{
+public class GlobalExceptionHandler extends BasicExceptionHandler {
     //~fields
     //==================================================================================================================
 
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler extends com.goudong.boot.web.core.GlobalExce
         // 堆栈跟踪
         super.printErrorMessage("exception", exception);
 
-        return ResultUtil.ofFail(exception);
+        return Result.ofFail(exception);
     }
 
     /**

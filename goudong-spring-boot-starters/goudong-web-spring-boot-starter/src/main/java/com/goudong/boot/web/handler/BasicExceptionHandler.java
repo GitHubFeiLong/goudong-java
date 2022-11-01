@@ -1,15 +1,15 @@
-package com.goudong.boot.web.core;
+package com.goudong.boot.web.handler;
 
-import com.goudong.boot.web.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.core.BasicException;
+import com.goudong.boot.web.core.ServerException;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.MessageFormatUtil;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -25,10 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.UnexpectedTypeException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 类描述：
@@ -37,10 +35,11 @@ import java.util.Set;
  * @date 2022/10/23 21:13
  * @version 1.0
  */
+@Order
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class BasicExceptionHandler {
 
-    public static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    public static final Logger log = LoggerFactory.getLogger(BasicExceptionHandler.class);
 
     /**
      * 错误日志模板
@@ -57,7 +56,7 @@ public class GlobalExceptionHandler {
      */
     public final HttpServletResponse response;
 
-    public GlobalExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
+    public BasicExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
     }
@@ -67,7 +66,7 @@ public class GlobalExceptionHandler {
      * @param exceptionHandlerMethod 异常处理的方法
      * @param exception 异常对象
      */
-    protected void printErrorMessage(String exceptionHandlerMethod, Throwable exception) {
+    public static void printErrorMessage(String exceptionHandlerMethod, Throwable exception) {
         // 开启debug就打印堆栈
         if (log.isDebugEnabled()) {
             exception.printStackTrace();
@@ -76,6 +75,8 @@ public class GlobalExceptionHandler {
         }
     }
 
+    //~ 常见异常
+    //==================================================================================================================
     /**
      * 全局处理自定义异常
      * @param exception
@@ -89,118 +90,13 @@ public class GlobalExceptionHandler {
         //     response.setHeader(Header.WWW_AUTHENTICATE.getValue(), "Basic realm=\"\"");
         // }
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage(), exception.getDataMap());
+        log.error(BasicExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage(), exception.getDataMap());
         // 堆栈跟踪
         printErrorMessage("basicExceptionDispose", exception);
 
         return Result.ofFail(exception);
     }
 
-    /**
-     * 数据库相关报错
-     * ps 最好自己捕获抛出详细信息给前端,但是都用400
-     * @param exception
-     * @return
-     */
-    // @ExceptionHandler(value = DataIntegrityViolationException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
-    // public Result<BasicException> dataIntegrityViolationExceptionDispose(DataIntegrityViolationException exception) {
-    //     BasicException basicException = BasicException.generateByServer(exception);
-    //     String message = exception.getRootCause().getMessage();
-    //
-    //     if (exception.getCause() instanceof DataException) {
-    //         DataException dataException = (DataException)exception.getCause();
-    //         /*
-    //             var1示例:
-    //             1. Data truncation: Data too long for column 'name' at row 1
-    //          */
-    //         String serverMessage = dataException.getCause().getMessage();
-    //         if (serverMessage.contains("Data truncation: Data too long for column")) {
-    //             String column = serverMessage.substring(serverMessage.indexOf("'") + 1, serverMessage.lastIndexOf("'"));
-    //             String clientMessage = MessageFormatUtil.format("参数{}太长", column);
-    //             // String clientMessage = MessageFormatUtil.format("参数{}太长", column);
-    //             basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
-    //         }
-    //     } else if (exception.getCause() instanceof org.hibernate.exception.ConstraintViolationException) { // 外键约束 || 唯一索引约束 || 非空约束
-    //         org.hibernate.exception.ConstraintViolationException constraintViolationException = (org.hibernate.exception.ConstraintViolationException)exception.getCause();
-    //         // 约束索引名，非空约束时值为null
-    //         String constraintName = constraintViolationException.getConstraintName();
-    //         String clientMessage = Optional.ofNullable(
-    //                 DatabaseKeyEnum.getClientMessage(constraintName)
-    //         ).orElse(message);
-    //         String serverMessage = constraintViolationException.getCause().getMessage();
-    //         basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
-    //         System.out.println(123);
-    //     } else {
-    //         if (message.startsWith("Cannot add or update a child row: a foreign key constraint fails") && message.endsWith("ON DELETE RESTRICT ON UPDATE RESTRICT)")) {
-    //             // 数据库更新或删除表的数据，外键值不正确
-    //             // e.getRootCause().getMessage() => Cannot add or update a child row: a foreign key constraint fails (`icc`.`base_role_menu`, CONSTRAINT `fk_base_role_menu__base_menu_id` FOREIGN KEY (`base_menu_id`) REFERENCES `base_menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT)
-    //             String clientMessage = MessageFormatUtil.format("参数错误");
-    //             String serverMessage = message;
-    //             basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, serverMessage);
-    //         }
-    //     }
-    //
-    //
-    //     // 修改数据库表非空报错
-    //     if (message.startsWith("Column") && message.endsWith("cannot be null")) {
-    //         String serverMessage = MessageFormatUtil.format("{}. \n {}", message, exception.getMessage());
-    //         basicException = ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
-    //     }
-    //
-    //     log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
-    //     // 堆栈跟踪
-    //     printErrorMessage("dataIntegrityViolationExceptionDispose", exception);
-    //     return Result.ofFail(basicException);
-    // }
-
-    /**
-     * 事务异常
-     * 1. 数据库字段长度限制(实体类上加上Validation相关注解,比如@Size)
-     * @param exception
-     * @return
-     */
-    @ExceptionHandler(value = TransactionSystemException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result<BasicException> transactionSystemExceptionDispose(TransactionSystemException exception) throws NoSuchFieldException {
-        BasicException basicException = BasicException.generateByServer(exception);
-
-        // 数据库的一些校验异常(比如字段长度等)
-        if (exception.getCause().getCause() instanceof ConstraintViolationException) {
-            ConstraintViolationException constraintViolationException = (ConstraintViolationException) exception.getCause().getCause();
-            Set<ConstraintViolation<?>> constraintViolations = constraintViolationException.getConstraintViolations();
-            if (constraintViolations != null && !constraintViolations.isEmpty()) {
-                List<ConstraintViolation<?>> list = new ArrayList(constraintViolations);
-                // clientMessage 只取第一条
-                ConstraintViolationImpl constraintViolation = (ConstraintViolationImpl) list.get(0);
-                // 报错字段
-                String fieldName = constraintViolation.getPropertyPath().toString();
-                // 字段的注解
-                Annotation[] annotations = constraintViolation.getRootBeanClass().getDeclaredField(fieldName).getAnnotations();
-                String paramName = fieldName;
-                for (int i = 0; i < annotations.length; i++) {
-                    // 找到 swagger的 注解 ApiModelProperty,使用其value值作为错误提示
-                    // if (annotations[i] instanceof ApiModelProperty) {
-                    //     paramName = ((ApiModelProperty)(annotations[i])).value();
-                    // }
-                }
-                /*
-                    示例:
-                    个数必须在0和16之间
-                 */
-                String validationMessage = constraintViolation.getMessage();
-
-                String clientMessage = MessageFormatUtil.format("参数{}的值{}", paramName, validationMessage);
-                basicException = ClientException.client(ClientExceptionEnum.BAD_REQUEST, clientMessage, constraintViolationException.getMessage());
-            }
-
-        }
-
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
-        // 堆栈跟踪
-        printErrorMessage("transactionSystemExceptionDispose", exception);
-        return Result.ofFail(basicException);
-    }
 
     /**
      * 运行时异常，其它框架抛出的异常未封装（openfeign调用服务时）
@@ -215,7 +111,7 @@ public class GlobalExceptionHandler {
         // 设置响应码
         response.setStatus(basicException.getStatus());
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
+        log.error(BasicExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
         // 堆栈跟踪
         printErrorMessage("runtimeExceptionDispose", exception);
 
@@ -232,17 +128,15 @@ public class GlobalExceptionHandler {
         BasicException serverException = new ServerException(ServerExceptionEnum.SERVER_ERROR);
         this.response.setStatus(serverException.status);
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage(), null);
+        log.error(BasicExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage(), null);
         // 堆栈跟踪
-        printErrorMessage("runtimeExceptionDispose", exception);
+        printErrorMessage("otherErrorDispose", exception);
         serverException.setServerMessage(exception.getMessage());
         return Result.ofFail(serverException);
     }
 
-    /*==========================================================================
-        常见自定义异常
-    ==========================================================================*/
-
+    //~ web常见异常
+    //==================================================================================================================
     /**
      * 400 Bad Request
      * 因发送的请求语法错误,服务器无法正常读取.
@@ -275,14 +169,14 @@ public class GlobalExceptionHandler {
         } else if (exception instanceof IllegalArgumentException) {
             messages.add(exception.getMessage());
         } else if (exception instanceof UnexpectedTypeException) { // 参数校验注解写错了（比如Integer写了@NotBlank）
-            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "参数校验注解写错了", exception.getMessage());
+            throw ServerException.server(ServerExceptionEnum.SERVER_ERROR, "参数校验注解写错了", exception.getMessage());
         } else  {
             messages.add(((MethodArgumentNotValidException)exception).getBindingResult().getFieldError().getDefaultMessage());
         }
 
         String message = String.join(",", messages);
         // 打印错误日志
-        log.error(GlobalExceptionHandler.LOG_ERROR_INFO, HttpStatus.BAD_REQUEST.value(), "VALIDATION", message, exception.getMessage());
+        log.error(BasicExceptionHandler.LOG_ERROR_INFO, HttpStatus.BAD_REQUEST.value(), "VALIDATION", message, exception.getMessage());
         // 堆栈跟踪
         printErrorMessage("ValidExceptionDispose", exception);
 

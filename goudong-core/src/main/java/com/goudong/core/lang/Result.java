@@ -162,6 +162,14 @@ public class Result<T> implements Serializable {
     }
 
     /**
+     * 使用 BasicExceptionInterface 转换成响应对象
+     * @return
+     */
+    public static <T> Result<T> ofFail(BasicExceptionInterface basicException) {
+        return new Result(basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage());
+    }
+
+    /**
      * 只返回失败信息，不抛额异常
      * @return
      */

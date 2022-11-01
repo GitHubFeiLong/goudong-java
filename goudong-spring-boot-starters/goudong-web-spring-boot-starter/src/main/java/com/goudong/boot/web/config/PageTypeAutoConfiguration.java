@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * 类描述：
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0
  * @date 2022/10/26 14:55
  */
-@Configuration
 public class PageTypeAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(PageTypeAutoConfiguration.class);

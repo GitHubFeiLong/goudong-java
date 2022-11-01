@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.goudong.boot.web.config.WebAutoConfiguration,\
   com.goudong.boot.web.config.PageTypeAutoConfiguration
