@@ -242,8 +242,8 @@ public class BaseUerController {
     @GetMapping("/page")
     @ApiOperation(value = "分页查询")
     public Result<PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
-        // if (true) throw BasicException.client("error");
-        if (true) throw BasicException.server("cuowua ");
+        if (true) throw BasicException.client("error");
+        // if (page.getJPAPage()== 2) throw BasicException.server("cuowua ");
         return Result.ofSuccess(baseUserService.page(page));
     }
 

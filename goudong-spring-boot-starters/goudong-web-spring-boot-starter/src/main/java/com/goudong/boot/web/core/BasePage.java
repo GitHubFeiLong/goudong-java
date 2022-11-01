@@ -29,6 +29,10 @@ public class BasePage {
     @ApiModelProperty(value = "一页显示内容长度", required = true)
     private Integer size;
 
+    public Integer getPage() {
+        return page;
+    }
+
     public Integer getSize() {
         return size;
     }
@@ -51,7 +55,4 @@ public class BasePage {
     public Integer getMPPage() {
         return page == null ? null : PageTypeEnum.MYBATIS_PLUS.getPage(page);
     }
-
-
-
 }
