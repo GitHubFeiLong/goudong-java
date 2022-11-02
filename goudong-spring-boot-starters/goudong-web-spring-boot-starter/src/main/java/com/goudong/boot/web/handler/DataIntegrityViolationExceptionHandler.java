@@ -12,7 +12,6 @@ import org.hibernate.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ import java.util.Optional;
  * @version 1.0
  * @date 2022/11/1 16:43
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(10)
 @RestControllerAdvice
 public class DataIntegrityViolationExceptionHandler implements HandlerInterface{
 

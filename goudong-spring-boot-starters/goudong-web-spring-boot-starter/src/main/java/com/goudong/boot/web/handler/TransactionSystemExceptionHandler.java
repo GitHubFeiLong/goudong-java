@@ -8,7 +8,6 @@ import com.goudong.core.util.MessageFormatUtil;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.TransactionSystemException;
@@ -29,7 +28,7 @@ import java.util.Set;
  * @version 1.0
  * @date 2022/11/1 17:29
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(10)
 @RestControllerAdvice
 public class TransactionSystemExceptionHandler implements HandlerInterface{
 

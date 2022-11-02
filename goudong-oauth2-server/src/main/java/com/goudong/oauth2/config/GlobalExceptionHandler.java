@@ -1,70 +1,54 @@
 package com.goudong.oauth2.config;
 
-import com.goudong.boot.web.enumerate.ClientExceptionEnum;
-import com.goudong.boot.web.handler.BasicExceptionHandler;
+import com.goudong.boot.web.handler.HandlerInterface;
 import com.goudong.core.lang.Result;
-import com.goudong.oauth2.config.security.AccessDeniedHandlerImpl;
 import com.goudong.oauth2.exception.AccountExpiredException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 类描述：
- * 扩充全局异常
+ * 认证权限全局异常补充
  * @author msi
  * @version 1.0
  * @date 2022/1/15 15:25
  */
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
-public class GlobalExceptionHandler extends BasicExceptionHandler {
+public class GlobalExceptionHandler implements HandlerInterface {
     //~fields
     //==================================================================================================================
 
     //~methods
     //==================================================================================================================
-
-    public GlobalExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);
-    }
-
     /**
-     * 全局处理自定义异常
+     * 账号失效
      * @param exception
      * @return
      */
     @ExceptionHandler(AccountExpiredException.class)
-    public Result<AuthenticationException> authenticationException(AccountExpiredException exception){
-        // 设置响应码
-        response.setStatus(401);
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result<AuthenticationException> accountExpiredExceptionDispose(AccountExpiredException exception){
+        // 打印错误日志
+        log.error(LOG_ERROR_INFO,
+                exception.getStatus(),
+                exception.getCode(),
+                exception.getClientMessage(),
+                exception.getServerMessage(),
+                exception.getMessage());
+
         // 堆栈跟踪
-        super.printErrorMessage("exception", exception);
+        printErrorMessage(log, "accountExpiredExceptionDispose", exception);
 
         return Result.ofFail(exception);
     }
 
-    /**
-     * 自定义403异常
-     * 使用自定义的AccessDeniedHandler时，当方法加注解没权限时不起作用，所以使用全局异常
-     * @see AccessDeniedHandlerImpl
-     * @param exception
-     * @return
-     */
-    @ExceptionHandler(AccessDeniedException.class)
-    public Result accessDeniedException(AccessDeniedException exception) {
-        ClientExceptionEnum notAuthorization = ClientExceptionEnum.FORBIDDEN;
-        // 设置响应码
-        response.setStatus(notAuthorization.getStatus());
-        // 堆栈跟踪
-        super.printErrorMessage("accessDeniedException", exception);
-
-        return Result.ofFailByForBidden("权限不足", exception.getMessage());
-    }
 
 }

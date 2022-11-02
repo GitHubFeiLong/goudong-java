@@ -68,7 +68,7 @@ public class BasicExceptionHandler implements HandlerInterface{
         //     response.setHeader(Header.WWW_AUTHENTICATE.getValue(), "Basic realm=\"\"");
         // }
         // 打印错误日志
-        log.error(BasicExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage(), exception.getDataMap());
+        log.error(LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage(), exception.getDataMap());
         // 堆栈跟踪
         printErrorMessage(log, "basicExceptionDispose", exception);
 
@@ -89,7 +89,7 @@ public class BasicExceptionHandler implements HandlerInterface{
         // 设置响应码
         response.setStatus(basicException.getStatus());
         // 打印错误日志
-        log.error(BasicExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
+        log.error(LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
         // 堆栈跟踪
         printErrorMessage(log, "runtimeExceptionDispose", exception);
 
@@ -102,13 +102,13 @@ public class BasicExceptionHandler implements HandlerInterface{
      * @return
      */
     @ExceptionHandler(Throwable.class)
-    public Result<Throwable> otherErrorDispose(Throwable exception){
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result<Throwable> throwableDispose(Throwable exception){
         BasicException serverException = new ServerException(ServerExceptionEnum.SERVER_ERROR);
-        this.response.setStatus(serverException.status);
         // 打印错误日志
-        log.error(BasicExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage(), null);
+        log.error(LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage(), null);
         // 堆栈跟踪
-        printErrorMessage(log, "otherErrorDispose", exception);
+        printErrorMessage(log, "throwableDispose", exception);
         serverException.setServerMessage(exception.getMessage());
         return Result.ofFail(serverException);
     }
@@ -145,7 +145,7 @@ public class BasicExceptionHandler implements HandlerInterface{
 
         String message = String.join(",", messages);
         // 打印错误日志
-        log.error(BasicExceptionHandler.LOG_ERROR_INFO, HttpStatus.BAD_REQUEST.value(), "VALIDATION", message, exception.getMessage());
+        log.error(LOG_ERROR_INFO, HttpStatus.BAD_REQUEST.value(), "VALIDATION", message, exception.getMessage());
         // 堆栈跟踪
         printErrorMessage(log, "ValidExceptionDispose", exception);
 
@@ -159,9 +159,9 @@ public class BasicExceptionHandler implements HandlerInterface{
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Result notFound(Exception exception) {
+    public Result noHandlerFoundExceptionDispose(NoHandlerFoundException exception) {
         // 堆栈跟踪
-        printErrorMessage(log, "notFound", exception);
+        printErrorMessage(log, "noHandlerFoundExceptionDispose", exception);
         return Result.ofFailByNotFound(request.getRequestURL().toString());
     }
 
@@ -174,9 +174,9 @@ public class BasicExceptionHandler implements HandlerInterface{
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    public Result methodNotAllowed(HttpRequestMethodNotSupportedException exception) {
+    public Result httpRequestMethodNotSupportedExceptionDispose(HttpRequestMethodNotSupportedException exception) {
         // 堆栈跟踪
-        printErrorMessage(log, "methodNotAllowed", exception);
+        printErrorMessage(log, "httpRequestMethodNotSupportedExceptionDispose", exception);
         return Result.ofFailByMethodNotAllowed(request.getRequestURL().toString());
     }
 
@@ -187,9 +187,9 @@ public class BasicExceptionHandler implements HandlerInterface{
      */
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    public Result notAcceptable(Exception exception) {
+    public Result httpMediaTypeNotSupportedExceptionDispose(HttpMediaTypeNotSupportedException exception) {
         // 堆栈跟踪
-        printErrorMessage(log, "notAcceptable", exception);
+        printErrorMessage(log, "httpMediaTypeNotSupportedExceptionDispose", exception);
         final String contentType = "Content-Type";
         final String header = request.getHeader(contentType);
         String message = MessageFormatUtil.format("{} 资源不支持{}:{} 方式", request.getRequestURL().toString(), contentType, header);

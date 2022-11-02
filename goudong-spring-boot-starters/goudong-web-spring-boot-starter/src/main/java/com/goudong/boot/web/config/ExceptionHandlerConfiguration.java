@@ -1,9 +1,6 @@
 package com.goudong.boot.web.config;
 
-import com.goudong.boot.web.handler.BasicExceptionHandler;
-import com.goudong.boot.web.handler.DataIntegrityViolationExceptionHandler;
-import com.goudong.boot.web.handler.JavaxValidationExceptionHandler;
-import com.goudong.boot.web.handler.TransactionSystemExceptionHandler;
+import com.goudong.boot.web.handler.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -63,7 +60,7 @@ public class ExceptionHandlerConfiguration {
     }
 
     /**
-     * javax.validation相关的异常处理
+     * javax.validation.ValidationException 相关的异常处理
      *
      * @return
      */
@@ -73,4 +70,14 @@ public class ExceptionHandlerConfiguration {
         return new JavaxValidationExceptionHandler();
     }
 
+    /**
+     * org.springframework.security.access.AccessDeniedException 异常处理
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnClass(name = {"org.springframework.security.access.AccessDeniedException"})
+    public AccessDeniedExceptionHandler accessDeniedExceptionHandler() {
+        return new AccessDeniedExceptionHandler();
+    }
 }

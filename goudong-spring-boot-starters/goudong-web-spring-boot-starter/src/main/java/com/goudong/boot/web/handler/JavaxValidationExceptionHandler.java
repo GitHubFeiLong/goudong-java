@@ -8,7 +8,6 @@ import com.goudong.core.lang.Result;
 import com.goudong.core.util.MessageFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +27,7 @@ import java.util.List;
  * @version 1.0
  * @date 2022/11/2 16:37
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(10)
 @RestControllerAdvice
 public class JavaxValidationExceptionHandler implements HandlerInterface {
 
