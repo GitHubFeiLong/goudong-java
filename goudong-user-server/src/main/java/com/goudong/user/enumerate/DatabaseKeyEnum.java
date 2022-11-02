@@ -1,4 +1,4 @@
-package com.goudong.boot.web.enumerate;
+package com.goudong.user.enumerate;
 
 import com.goudong.core.util.StringUtil;
 import org.slf4j.Logger;
@@ -14,7 +14,6 @@ import java.util.Objects;
  * @Author e-Feilong.Chen
  * @Date 2021/9/24 13:51
  */
-@Deprecated
 public enum DatabaseKeyEnum {
 
     //~ 用户表 base_user

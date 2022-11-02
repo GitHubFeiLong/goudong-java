@@ -3,7 +3,6 @@ package com.goudong.user.controller.user;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.EasyExcel;
-import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
@@ -148,7 +147,7 @@ public class BaseUerController {
      */
     @PostMapping("/simple-create-user")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "创建普通账号", notes = "后台手动创建单个用户")
+    @ApiOperation(value = "admin创建普通账号", notes = "后台手动创建单个用户")
     public Result<BaseUserDTO> simpleCreateUser(@RequestBody @Validated SimpleCreateUserReq createDTO) {
         BaseUserDTO baseUserDTO = baseUserService.simpleCreateUser(createDTO);
         return Result.ofSuccess(baseUserDTO);
@@ -161,7 +160,7 @@ public class BaseUerController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "创建普通账号", notes = "后台手动创建用户")
+    @ApiOperation(value = "ui创建普通账号", notes = "后台手动创建用户")
     @Whitelist("创建普通账号")
     public Result<BaseUserDTO> createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
         AssertUtil.isPhone(createDTO.getPhone(), "手机号格式错误");
@@ -242,8 +241,6 @@ public class BaseUerController {
     @GetMapping("/page")
     @ApiOperation(value = "分页查询")
     public Result<PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
-        if (true) throw BasicException.client("error");
-        // if (page.getJPAPage()== 2) throw BasicException.server("cuowua ");
         return Result.ofSuccess(baseUserService.page(page));
     }
 

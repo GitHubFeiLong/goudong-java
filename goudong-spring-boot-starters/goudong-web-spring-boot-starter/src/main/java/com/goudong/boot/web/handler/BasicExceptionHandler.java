@@ -22,9 +22,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.UnexpectedTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +34,9 @@ import java.util.List;
  */
 @Order
 @RestControllerAdvice
-public class BasicExceptionHandler {
+public class BasicExceptionHandler implements HandlerInterface{
 
     public static final Logger log = LoggerFactory.getLogger(BasicExceptionHandler.class);
-
-    /**
-     * 错误日志模板
-     */
-    public static final String LOG_ERROR_INFO = "http响应码：{}，错误代码：{}，客户端错误信息：{}，服务端错误信息：{}，扩展信息：{}";
 
     /**
      * 请求对象
@@ -59,20 +51,6 @@ public class BasicExceptionHandler {
     public BasicExceptionHandler(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-    }
-
-    /**
-     * 打印日志
-     * @param exceptionHandlerMethod 异常处理的方法
-     * @param exception 异常对象
-     */
-    public static void printErrorMessage(String exceptionHandlerMethod, Throwable exception) {
-        // 开启debug就打印堆栈
-        if (log.isDebugEnabled()) {
-            exception.printStackTrace();
-        } else {
-            log.error("程序捕获全局异常的方法-{}，错误信息：{}", exceptionHandlerMethod,exception);
-        }
     }
 
     //~ 常见异常
@@ -92,7 +70,7 @@ public class BasicExceptionHandler {
         // 打印错误日志
         log.error(BasicExceptionHandler.LOG_ERROR_INFO, exception.getStatus(), exception.getCode(), exception.getClientMessage(), exception.getServerMessage(), exception.getDataMap());
         // 堆栈跟踪
-        printErrorMessage("basicExceptionDispose", exception);
+        printErrorMessage(log, "basicExceptionDispose", exception);
 
         return Result.ofFail(exception);
     }
@@ -113,7 +91,7 @@ public class BasicExceptionHandler {
         // 打印错误日志
         log.error(BasicExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
         // 堆栈跟踪
-        printErrorMessage("runtimeExceptionDispose", exception);
+        printErrorMessage(log, "runtimeExceptionDispose", exception);
 
         return Result.ofFail(basicException);
     }
@@ -130,7 +108,7 @@ public class BasicExceptionHandler {
         // 打印错误日志
         log.error(BasicExceptionHandler.LOG_ERROR_INFO, serverException.status, serverException.code, serverException.clientMessage, exception.getMessage(), null);
         // 堆栈跟踪
-        printErrorMessage("otherErrorDispose", exception);
+        printErrorMessage(log, "otherErrorDispose", exception);
         serverException.setServerMessage(exception.getMessage());
         return Result.ofFail(serverException);
     }
@@ -145,8 +123,6 @@ public class BasicExceptionHandler {
      */
     @ExceptionHandler(value = {
             BindException.class,
-            UnexpectedTypeException.class,
-            ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class,
             IllegalArgumentException.class
@@ -159,17 +135,10 @@ public class BasicExceptionHandler {
             for (ObjectError item : list) {
                 messages.add(item.getDefaultMessage());
             }
-        } else if (exception instanceof ConstraintViolationException) { // 属性校验失败，不满足注解
-            for (ConstraintViolation<?> constraintViolation : ((ConstraintViolationException)exception).getConstraintViolations()) {
-                String full = MessageFormatUtil.format("参数{} {}",constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
-                messages.add(full);
-            }
         } else if (exception instanceof HttpMessageNotReadableException) {
             messages.add("请求参数丢失");
         } else if (exception instanceof IllegalArgumentException) {
             messages.add(exception.getMessage());
-        } else if (exception instanceof UnexpectedTypeException) { // 参数校验注解写错了（比如Integer写了@NotBlank）
-            throw ServerException.server(ServerExceptionEnum.SERVER_ERROR, "参数校验注解写错了", exception.getMessage());
         } else  {
             messages.add(((MethodArgumentNotValidException)exception).getBindingResult().getFieldError().getDefaultMessage());
         }
@@ -178,7 +147,7 @@ public class BasicExceptionHandler {
         // 打印错误日志
         log.error(BasicExceptionHandler.LOG_ERROR_INFO, HttpStatus.BAD_REQUEST.value(), "VALIDATION", message, exception.getMessage());
         // 堆栈跟踪
-        printErrorMessage("ValidExceptionDispose", exception);
+        printErrorMessage(log, "ValidExceptionDispose", exception);
 
         return Result.ofFailByBadRequest(message, exception.getMessage());
     }
@@ -192,7 +161,7 @@ public class BasicExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result notFound(Exception exception) {
         // 堆栈跟踪
-        printErrorMessage("notFound", exception);
+        printErrorMessage(log, "notFound", exception);
         return Result.ofFailByNotFound(request.getRequestURL().toString());
     }
 
@@ -207,7 +176,7 @@ public class BasicExceptionHandler {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public Result methodNotAllowed(HttpRequestMethodNotSupportedException exception) {
         // 堆栈跟踪
-        printErrorMessage("methodNotAllowed", exception);
+        printErrorMessage(log, "methodNotAllowed", exception);
         return Result.ofFailByMethodNotAllowed(request.getRequestURL().toString());
     }
 
@@ -220,7 +189,7 @@ public class BasicExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public Result notAcceptable(Exception exception) {
         // 堆栈跟踪
-        printErrorMessage("notAcceptable", exception);
+        printErrorMessage(log, "notAcceptable", exception);
         final String contentType = "Content-Type";
         final String header = request.getHeader(contentType);
         String message = MessageFormatUtil.format("{} 资源不支持{}:{} 方式", request.getRequestURL().toString(), contentType, header);

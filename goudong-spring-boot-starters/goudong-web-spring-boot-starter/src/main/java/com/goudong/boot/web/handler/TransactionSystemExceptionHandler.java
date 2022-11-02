@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,9 +31,10 @@ import java.util.Set;
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
-public class TransactionSystemExceptionHandler {
+public class TransactionSystemExceptionHandler implements HandlerInterface{
 
     public static final Logger log = LoggerFactory.getLogger(TransactionSystemExceptionHandler.class);
+
     /**
      * 事务异常
      * 1. 数据库字段长度限制(实体类上加上Validation相关注解,比如@Size)
@@ -56,15 +56,7 @@ public class TransactionSystemExceptionHandler {
                 ConstraintViolationImpl constraintViolation = (ConstraintViolationImpl) list.get(0);
                 // 报错字段
                 String fieldName = constraintViolation.getPropertyPath().toString();
-                // 字段的注解
-                Annotation[] annotations = constraintViolation.getRootBeanClass().getDeclaredField(fieldName).getAnnotations();
                 String paramName = fieldName;
-                for (int i = 0; i < annotations.length; i++) {
-                    // 找到 swagger的 注解 ApiModelProperty,使用其value值作为错误提示
-                    // if (annotations[i] instanceof ApiModelProperty) {
-                    //     paramName = ((ApiModelProperty)(annotations[i])).value();
-                    // }
-                }
                 /*
                     示例:
                     个数必须在0和16之间
@@ -77,9 +69,17 @@ public class TransactionSystemExceptionHandler {
 
         }
 
-        log.error(BasicExceptionHandler.LOG_ERROR_INFO, basicException.getStatus(), basicException.getCode(), basicException.getClientMessage(), basicException.getServerMessage(), basicException.getDataMap());
+        // 打印错误日志
+        log.error(LOG_ERROR_INFO,
+                basicException.getStatus(),
+                basicException.getCode(),
+                basicException.getClientMessage(),
+                basicException.getServerMessage(),
+                exception.getMessage());
+
         // 堆栈跟踪
-        BasicExceptionHandler.printErrorMessage("transactionSystemExceptionDispose", exception);
+        printErrorMessage(log, "transactionSystemExceptionDispose", exception);
+
         return Result.ofFail(basicException);
     }
 }

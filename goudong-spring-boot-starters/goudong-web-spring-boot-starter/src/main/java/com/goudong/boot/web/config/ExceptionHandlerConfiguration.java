@@ -2,6 +2,7 @@ package com.goudong.boot.web.config;
 
 import com.goudong.boot.web.handler.BasicExceptionHandler;
 import com.goudong.boot.web.handler.DataIntegrityViolationExceptionHandler;
+import com.goudong.boot.web.handler.JavaxValidationExceptionHandler;
 import com.goudong.boot.web.handler.TransactionSystemExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -29,6 +30,7 @@ public class ExceptionHandlerConfiguration {
 
     /**
      * 通用得异常处理
+     *
      * @param request
      * @param response
      * @return
@@ -40,6 +42,7 @@ public class ExceptionHandlerConfiguration {
 
     /**
      * 违反数据库约束得相关异常处理
+     *
      * @return
      */
     @Bean
@@ -50,6 +53,7 @@ public class ExceptionHandlerConfiguration {
 
     /**
      * 违反数据库约束得相关异常处理
+     *
      * @return
      */
     @Bean
@@ -57,4 +61,16 @@ public class ExceptionHandlerConfiguration {
     public TransactionSystemExceptionHandler transactionSystemExceptionHandler() {
         return new TransactionSystemExceptionHandler();
     }
+
+    /**
+     * javax.validation相关的异常处理
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnClass(name = {"javax.validation.ValidationException"})
+    public JavaxValidationExceptionHandler javaxValidationExceptionHandler() {
+        return new JavaxValidationExceptionHandler();
+    }
+
 }
