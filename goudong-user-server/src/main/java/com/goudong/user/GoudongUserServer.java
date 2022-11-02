@@ -27,6 +27,7 @@ import org.springframework.util.StopWatch;
 public class GoudongUserServer {
 
     public static void main(String[] args) {
+
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongUserServer.class)
