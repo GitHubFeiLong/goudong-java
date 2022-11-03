@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.StringUtil;
 import com.goudong.oauth2.core.OtherUserInfoBean;
 import lombok.Data;
@@ -111,7 +110,7 @@ public class RedirectPageProperties {
                 if (value instanceof Collection) {
                     sb.append(String.join(",", (Collection) value));
                 } else if (value.getClass().isArray()) {
-                    LogUtil.error(log, "属性是数组类型，这里需要进行修改");
+                    log.error("属性是数组类型，这里需要进行修改");
                 } else if (value instanceof Date) {
                     sb.append(((Date) value).getTime());
                 } else {

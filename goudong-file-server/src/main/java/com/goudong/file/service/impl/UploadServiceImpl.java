@@ -283,7 +283,7 @@ public class UploadServiceImpl implements UploadService {
             LogUtil.info(log, "文件上传成功");
             return BeanUtil.copyProperties(filePO, FileDTO.class);
         } catch (IOException e) {
-            LogUtil.error(log, "文件上传失败:{}", e);
+            log.error("文件上传失败:{}", e);
             throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败", e.getMessage());
         }
     }
@@ -391,7 +391,7 @@ public class UploadServiceImpl implements UploadService {
             LogUtil.debug(log, "上传分片({})成功", shardUploadDTO.getShardIndex());
         } catch (IOException e) {
             fileShardTaskPO.setSuccessful(false);
-            LogUtil.error(log, "上传分片({})失败：{}", shardUploadDTO.getShardIndex(), e.getMessage());
+            log.error("上传分片({})失败：{}", shardUploadDTO.getShardIndex(), e.getMessage());
             // 原封不动跑出去
             throw e;
         } finally {

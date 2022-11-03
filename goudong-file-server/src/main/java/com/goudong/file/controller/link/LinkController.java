@@ -5,7 +5,6 @@ import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.utils.core.BeanUtil;
-import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
 import com.goudong.file.dto.FileDTO;
 import com.goudong.file.po.FilePO;
@@ -122,7 +121,7 @@ public class LinkController {
 
         File file = new File(filePO.getFilePath());
         if (!file.exists()) {
-            LogUtil.error(log, "{}不存在", filePO.getFilePath());
+            log.error("{}不存在", filePO.getFilePath());
             throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "文件已失效", "文件路径不存在文件信息");
         }
         String originalFilename = filePO.getOriginalFilename();

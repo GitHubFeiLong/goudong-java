@@ -1,7 +1,6 @@
 package com.goudong.message.properties;
 
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
-import com.goudong.commons.utils.core.LogUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +49,7 @@ public class AlibabaMessageProperties {
                 && StringUtils.isBlank(signName)
                 && StringUtils.isBlank(templateCode);
         if (boo) {
-            LogUtil.error(log, "");
+            log.error("");
             throw new ApplicationBootFailedException("goudong-message-server启动失败",
                     "message.alibaba.message的4个属性都需要配置正确格式",
                     "请配置正确的阿里云短信");

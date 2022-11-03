@@ -101,7 +101,7 @@ public class WhitelistInitialize implements ApplicationRunner {
                             if (i < failureRetryNum - 1) {
                                 LogUtil.warn(log, "调用服务保存白名单失败，原因：{}", e.getMessage());
                             } else {
-                                LogUtil.error(log, "调用服务保存白名单失败：原因：{}", e.getMessage());
+                                log.error("调用服务保存白名单失败：原因：{}", e.getMessage());
                             }
                             // 睡眠会
                             try {
@@ -115,7 +115,7 @@ public class WhitelistInitialize implements ApplicationRunner {
 
                 return;
             } catch (RuntimeException e) {
-                LogUtil.error(log, "认证服务接口调用失败：{}", e.getMessage());
+                log.error("认证服务接口调用失败：{}", e.getMessage());
             }
         } else {
             LogUtil.info(log, "没有白名单需要保存");

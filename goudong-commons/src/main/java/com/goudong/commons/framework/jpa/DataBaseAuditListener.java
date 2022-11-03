@@ -2,7 +2,6 @@ package com.goudong.commons.framework.jpa;
 
 import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.PostPersist;
@@ -54,7 +53,7 @@ public class DataBaseAuditListener {
             // 填充删除状态
             addDeleted(object, aClass, DELETED);
         } catch (Exception e) {
-            LogUtil.error(log, "jpa 新增时自动填充属性时出现错误：{}", e.getMessage());
+            log.error("jpa 新增时自动填充属性时出现错误：{}", e.getMessage());
         }
     }
 
@@ -71,7 +70,7 @@ public class DataBaseAuditListener {
             // 填充更新时间
             fillUpdateTime(object, aClass, UPDATE_TIME);
         } catch (Exception e) {
-            LogUtil.error(log, "jpa 更新时自动填充属性时出现错误：{}", e.getMessage());
+            log.error("jpa 更新时自动填充属性时出现错误：{}", e.getMessage());
         }
     }
 

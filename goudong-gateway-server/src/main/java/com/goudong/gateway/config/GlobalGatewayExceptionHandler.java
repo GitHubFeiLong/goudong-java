@@ -4,7 +4,6 @@ import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
-import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,7 +47,7 @@ public class GlobalGatewayExceptionHandler implements ErrorWebExceptionHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable throwable) {
         throwable.printStackTrace();
-        LogUtil.error(log, "网关异常全局处理，异常信息：{}", throwable.getMessage());
+        log.error("网关异常全局处理，异常信息：{}", throwable.getMessage());
         BasicException basicException = BasicException.server(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage());
         if (throwable instanceof BasicException) {
             basicException = (BasicException) throwable;

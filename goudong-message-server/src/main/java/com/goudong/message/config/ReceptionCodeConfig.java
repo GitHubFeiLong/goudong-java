@@ -59,7 +59,7 @@ public class ReceptionCodeConfig {
             // 告诉服务器收到这条消息 已经被我消费了 可以在队列删掉 这样以后就不会再发了 否则消息服务器以为这条消息没处理掉 后续还会在发
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
         } catch (IOException e) {
-            LogUtil.error(log, "{} 队列消费消息失败。内容是：{}",CodeDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, email);
+            log.error("{} 队列消费消息失败。内容是：{}",CodeDirectRabbitConfig.EMAIL_CODE_DIRECT_QUEUE, email);
             e.printStackTrace();
             //丢弃这条消息
             channel.basicNack(message.getMessageProperties().getDeliveryTag(), false,false);
@@ -120,12 +120,12 @@ public class ReceptionCodeConfig {
             javaMailSender.send(mimeMessage);
         } catch (MailAuthenticationException e) {
             // 邮箱登录失败
-            LogUtil.error(log, "邮箱登录账号失败");
+            log.error("邮箱登录账号失败");
             e.printStackTrace();
             // 删除redis中的key
             redisTool.deleteKey(RedisKeyProviderEnum.EMAIL_CODE, email);
         } catch (MailSendException e) {
-            LogUtil.error(log, "发送邮件失败: {}", email);
+            log.error("发送邮件失败: {}", email);
             // 删除redis中的key
             redisTool.deleteKey(RedisKeyProviderEnum.EMAIL_CODE, email);
             e.printStackTrace();

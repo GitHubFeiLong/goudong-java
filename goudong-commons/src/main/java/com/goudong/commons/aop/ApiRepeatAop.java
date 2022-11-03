@@ -118,7 +118,7 @@ public class ApiRepeatAop {
 			用户sessionId获取失败
 		 */
 		ret = pjp.proceed();
-		LogUtil.error(log, "获取请求会话id失败，用户无效或会话id无效");
+		log.error("获取请求会话id失败，用户无效或会话id无效");
 
 		// 停止执行
 		return ret;

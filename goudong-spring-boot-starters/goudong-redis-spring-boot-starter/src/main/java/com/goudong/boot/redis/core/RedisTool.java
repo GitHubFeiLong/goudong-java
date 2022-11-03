@@ -1,24 +1,23 @@
-package com.goudong.commons.framework.redis;
+package com.goudong.boot.redis.core;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.RandomUtil;
-import com.alibaba.fastjson.JSON;
-import com.goudong.commons.annotation.aop.SnowSlideHandler;
-import com.goudong.commons.exception.redis.RedisToolException;
-import com.goudong.commons.utils.core.AssertUtil;
-import com.goudong.commons.utils.core.LogUtil;
-import com.goudong.commons.utils.core.PrimitiveTypeUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.boot.redis.aop.SnowSlideHandler;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.PrimitiveTypeUtil;
+import com.sun.istack.internal.NotNull;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -29,16 +28,17 @@ import java.util.concurrent.TimeUnit;
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
  */
-@Slf4j
 @Validated
 public class RedisTool extends RedisTemplate {
+
+    private static final Logger log = LoggerFactory.getLogger(RedisTool.class);
 
     /**
      * 使用ThreadLocal变量，在其它方法执行时，做其它操作。
      * 方法内判断是否有开启失效时间增加随机秒，然后进行处理
      * 使用ThreadLocal，让某些数据对准时性要求不高时，在给过期时间时，加上一点随机数，避免缓存雪崩的问题。
      *
-     * @see com.goudong.commons.aop.SnowSlideHandlerAop 进行清理ThreadLocal
+     * @see com.goudong.boot.redis.aop.SnowSlideHandlerAop 进行清理ThreadLocal
      */
     private static final ThreadLocal<Entry> ENTRY_THREAD_LOCAL = new ThreadLocal<>();
 
@@ -125,9 +125,11 @@ public class RedisTool extends RedisTemplate {
         // key 不存在时，删除失败，返回false
         boolean delete = super.delete(key);
         if (delete) {
-            LogUtil.debug(log, "redis-key:【{}】已被删除", key);
+            if (log.isDebugEnabled()) {
+                log.debug("redis-key:【{}】已被删除", key);
+            }
         } else {
-            LogUtil.warn(log, "redis-key:【{}】删除失败", key);
+            log.warn("redis-key:【{}】删除失败", key);
         }
 
         return delete;
@@ -141,8 +143,8 @@ public class RedisTool extends RedisTemplate {
      * @param params 替换模板的参数
      */
     public void deleteKeys(List<? extends RedisKeyProvider> redisKeys, Object[][] params) {
-        AssertUtil.notEmpty(redisKeys, "删除key时,redisKeys不能为空");
-        AssertUtil.notEmpty(params, "删除key时,params数组不能为空");
+        AssertUtil.isNotEmpty(redisKeys, "删除key时,redisKeys不能为空");
+        AssertUtil.isNotEmpty(params, "删除key时,params数组不能为空");
 
         AssertUtil.isTrue(redisKeys.size() == params.length,
                 String.format("删除redis-key时,参数长度不一致:redisKeys.size:%s,params.length:%s",
@@ -161,7 +163,8 @@ public class RedisTool extends RedisTemplate {
                     delKes.add(getKey(redisKeys.get(i), params[i]));
                 }
                 operations.delete(delKes);
-                return true;
+
+                return operations.exec();
             }
         });
     }
@@ -174,8 +177,8 @@ public class RedisTool extends RedisTemplate {
      * @param params 替换模板的参数
      */
     public void deleteKeys(List<? extends RedisKeyProvider> redisKeys, List<List<Object>> params) {
-        AssertUtil.notEmpty(redisKeys, "删除key时,redisKeys不能为空");
-        AssertUtil.notEmpty(params, "删除key时,params集合不能为空");
+        AssertUtil.isNotEmpty(redisKeys, "删除key时,redisKeys不能为空");
+        AssertUtil.isNotEmpty(params, "删除key时,params集合不能为空");
 
         AssertUtil.isTrue(redisKeys.size() == params.size(),
                 String.format("删除redis-key时,参数长度不一致:redisKeys.size:%s,params.size():%s",
@@ -215,11 +218,14 @@ public class RedisTool extends RedisTemplate {
      * @param param 替换模板的参数
      * @return
      */
-    public boolean existKey(@Valid RedisKeyProvider redisKey, Object... param) {
+    public boolean existKey(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
         String key = getKey(redisKey, param);
         boolean hasKey = super.hasKey(key);
-        LogUtil.debug(log, "redis-key:【{}】【{}】", key, hasKey ? "存在" : "不存在");
+        if(log.isDebugEnabled()) {
+            log.debug("redis-key:【{}】【{}】", key, hasKey ? "存在" : "不存在");
+        }
+
         return hasKey;
     }
 
@@ -256,7 +262,10 @@ public class RedisTool extends RedisTemplate {
             return false;
         }
 
-        LogUtil.debug(log, "刷新redis-key:【{}】过期时间成功, ttl:{}s", key, timeUnit.toSeconds(time));
+        if (log.isDebugEnabled()) {
+            log.debug("刷新redis-key:【{}】过期时间成功, ttl:{}s", key, timeUnit.toSeconds(time));
+        }
+
         return true;
     }
 
@@ -275,11 +284,19 @@ public class RedisTool extends RedisTemplate {
         String key = getKey(redisKey, param);
         long ttl = super.opsForValue().getOperations().getExpire(key);
         if (ttl >= 0) {
-            LogUtil.debug(log,"redis-key:{} ttl:{}", key, ttl);
+            if (log.isDebugEnabled()) {
+                log.debug("redis-key:{} ttl:{}", key, ttl);
+            }
+
         } else if (ttl == -1) {
-            LogUtil.debug(log,"redis-key:{} ttl:{},该key未设置过期时长", key, ttl);
+            if (log.isDebugEnabled()) {
+                log.debug("redis-key:{} ttl:{},该key未设置过期时长", key, ttl);
+            }
+
         } else if (ttl == -2) {
-            LogUtil.warn(log,"redis-key:{} ttl:{},该key不存在", key, ttl);
+            if (log.isWarnEnabled()) {
+                log.warn("redis-key:{} ttl:{},该key不存在", key, ttl);
+            }
         }
         return ttl;
     }
@@ -293,7 +310,7 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     @SnowSlideHandler
-    public boolean set(@Valid RedisKeyProvider redisKey, Object value, Object... param){
+    public boolean set(RedisKeyProvider redisKey, Object value, Object... param){
         DataType dataType = redisKey.getRedisType();
         switch (dataType) {
             case STRING:
@@ -308,7 +325,7 @@ public class RedisTool extends RedisTemplate {
                 return setZSet(redisKey, value, param);
             default:
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
-                throw new RedisToolException(serverMessage);
+                throw new IllegalArgumentException(serverMessage);
         }
     }
 
@@ -325,7 +342,13 @@ public class RedisTool extends RedisTemplate {
 
         // 非基本类型需要额外处理成json字符串
         if (!PrimitiveTypeUtil.isBasicType(value)) {
-            value = JSON.toJSONString(value);
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                value = mapper.writeValueAsString(value);
+            } catch (JsonProcessingException e) {
+                log.error("对象转换json字符串异常：{}", e.getMessage());
+                throw new RuntimeException(e);
+            }
         }
 
         // 获取过期时间单位秒
@@ -352,7 +375,7 @@ public class RedisTool extends RedisTemplate {
         // 需要将为空的过滤掉
         Map<String, Object> stringObjectMap = BeanUtil.beanToMap(value, false, true);
         if (stringObjectMap == null) {
-            LogUtil.warn(log, "设置Hash到redis中失败, value为空");
+            log.warn("设置Hash到redis中失败, value为空");
             return false;
         }
         // 获取过期时间单位秒
@@ -377,11 +400,14 @@ public class RedisTool extends RedisTemplate {
         });
 
         if (redisKey.getJavaType().isInstance(value)) {
-            LogUtil.debug(log, "设置Hash到redis中成功, redisType与javaType匹配！");
+            if (log.isDebugEnabled()) {
+                log.debug("设置Hash到redis中成功, redisType与javaType匹配！");
+            }
+            
             return true;
         }
-
-        LogUtil.warn(log, "设置Hash到redis中成功, redisType与javaType不匹配！");
+        
+        log.warn("设置Hash到redis中成功, redisType与javaType不匹配！");
         return false;
     }
 
@@ -398,7 +424,7 @@ public class RedisTool extends RedisTemplate {
         List list = (List)value;
 
         // Values must not be 'null' or empty.当value为空集合时添加会报错,所以这里判断下
-        if (CollectionUtils.isNotEmpty(list)) {
+        if (CollectionUtil.isNotEmpty(list)) {
             // 获取完整的 key
             String key = getKey(redisKey, param);
             // 获取过期时间单位秒
@@ -425,15 +451,21 @@ public class RedisTool extends RedisTemplate {
 
             // 类型比较
             if (redisKey.getJavaType().isInstance(list.get(0))) {
-                LogUtil.debug(log, "设置List到redis中成功, redisType与javaType匹配！");
+                if (log.isDebugEnabled()) {
+                    log.debug("设置List到redis中成功, redisType与javaType匹配！");
+                }
+                
             } else {
-                LogUtil.warn(log, "设置List到redis中成功, redisType与javaType不匹配！");
+                if (log.isWarnEnabled()) {
+                    log.warn("设置List到redis中成功, redisType与javaType不匹配！");
+                }
             }
 
             return true;
         }
 
         log.error("设置List到redis中失败, Values must not be 'null' or empty！");
+        
         return false;
     }
 
@@ -478,13 +510,15 @@ public class RedisTool extends RedisTemplate {
             }
         });
 
-        if (CollectionUtils.isNotEmpty(set)) {
+        if (CollectionUtil.isNotEmpty(set)) {
             Object obj = set.stream().findFirst().get();
             // 类型比较
             if (redisKey.getJavaType().isInstance(obj)) {
-                LogUtil.debug(log, "设置Set到redis中成功, redisType与javaType匹配！");
+                if (log.isDebugEnabled()) {
+                    log.debug("设置Set到redis中成功, redisType与javaType匹配！");
+                }
             } else {
-                LogUtil.warn(log, "设置Set到redis中失败, redisType与javaType不匹配！");
+                log.warn("设置Set到redis中失败, redisType与javaType不匹配！");
             }
         }
 
@@ -540,7 +574,7 @@ public class RedisTool extends RedisTemplate {
      * @param param 模板字符串的参数，用于替换{@link RedisKeyProvider#getKey()}的模板参数
      * @return
      */
-    public Object get(@Valid RedisKeyProvider redisKey, Object... param){
+    public Object get( RedisKeyProvider redisKey, Object... param){
         DataType dataType = redisKey.getRedisType();
         Class javaType = redisKey.getJavaType();
         String key = getKey(redisKey, param);
@@ -557,7 +591,7 @@ public class RedisTool extends RedisTemplate {
                 return getZSet(redisKey, redisKey.getJavaType(), param);
             default:
                 String serverMessage = String.format("暂不支持redis设置【%s】类型的数据", dataType);
-                throw new RedisToolException(serverMessage);
+                throw new IllegalArgumentException(serverMessage);
         }
     }
     /**
@@ -595,7 +629,7 @@ public class RedisTool extends RedisTemplate {
             return BeanUtil.toBean(super.opsForHash().entries(key), clazz);
         }
 
-        throw new RedisToolException("类型不正确");
+        throw new IllegalArgumentException("类型不正确");
     }
 
     /**
@@ -615,7 +649,7 @@ public class RedisTool extends RedisTemplate {
             return BeanUtil.copyToList(range, clazz, CopyOptions.create());
         }
 
-        throw new RedisToolException("类型不正确");
+        throw new IllegalArgumentException("类型不正确");
     }
 
     /**

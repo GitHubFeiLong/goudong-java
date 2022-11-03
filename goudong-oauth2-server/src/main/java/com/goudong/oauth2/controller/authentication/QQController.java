@@ -112,7 +112,7 @@ public class QQController {
         long tokenExpireIn = 0L;
         // login()方法请求和回调必须是同一个服务处理，不然会进入if，导致失败
         if (StringUtils.isEmpty(accessTokenObj.getAccessToken())) {
-            LogUtil.error(log, "没有获取到响应参数：{}", accessTokenObj.getAccessToken());
+            log.error("没有获取到响应参数：{}", accessTokenObj.getAccessToken());
         }else{
             accessToken = accessTokenObj.getAccessToken();
             tokenExpireIn = accessTokenObj.getExpireIn();

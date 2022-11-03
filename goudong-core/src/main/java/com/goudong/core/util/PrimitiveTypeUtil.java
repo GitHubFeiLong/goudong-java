@@ -1,4 +1,4 @@
-package com.goudong.commons.utils.core;
+package com.goudong.core.util;
 
 /**
  * 类描述：

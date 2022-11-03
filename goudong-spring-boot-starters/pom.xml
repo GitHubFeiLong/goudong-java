@@ -17,6 +17,7 @@
 
     <modules>
         <module>goudong-web-spring-boot-starter</module>
+        <module>goudong-redis-spring-boot-starter</module>
     </modules>
 
 </project>

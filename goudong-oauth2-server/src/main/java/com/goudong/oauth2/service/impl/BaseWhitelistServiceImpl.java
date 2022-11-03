@@ -7,7 +7,6 @@ import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
 import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
-import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.mapper.BaseWhitelistMapper;
 import com.goudong.oauth2.po.BaseWhitelistPO;
@@ -117,7 +116,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
         boolean succeed = redisTool.set(RedisKeyProviderEnum.WHITELIST, redisValues);
 
         if (!succeed) {
-            LogUtil.error(log, "更新redis中白名单失败");
+            log.error("更新redis中白名单失败");
         }
     }
 
