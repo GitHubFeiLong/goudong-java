@@ -21,7 +21,7 @@ public class PageTypeAutoConfiguration {
     @ConditionalOnClass(name = {"org.springframework.data.jpa.repository.JpaRepository"})
     public void springData() {
         if (log.isDebugEnabled()) {
-           log.debug("CLIENT_TYPES add jpa");
+           log.debug("CLIENT_TYPES add JPA");
         }
         PageTypeEnum.CLIENT_TYPES.add(PageTypeEnum.JPA);
     }
@@ -30,7 +30,7 @@ public class PageTypeAutoConfiguration {
     @ConditionalOnClass(name = {"com.baomidou.mybatisplus.extension.plugins.pagination.Page"})
     public void mybatisPlus() {
         if (log.isDebugEnabled()) {
-            log.debug("CLIENT_TYPES add mybatis plus");
+            log.debug("CLIENT_TYPES add MYBATIS_PLUS");
         }
         PageTypeEnum.CLIENT_TYPES.add(PageTypeEnum.MYBATIS_PLUS);
     }

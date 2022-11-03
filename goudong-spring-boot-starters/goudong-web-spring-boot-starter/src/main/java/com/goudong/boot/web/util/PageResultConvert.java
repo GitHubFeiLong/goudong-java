@@ -2,6 +2,8 @@ package com.goudong.boot.web.util;
 
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.CollectionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 类描述：
@@ -11,6 +13,8 @@ import com.goudong.core.util.CollectionUtil;
  * @date 2022/10/26 17:11
  */
 public class PageResultConvert<E> {
+
+    private static final Logger log = LoggerFactory.getLogger(PageResultConvert.class);
 
     /**
      * 使用系统定义的默认转换
@@ -23,8 +27,21 @@ public class PageResultConvert<E> {
     public static <E> PageResult<E> convert(Object source, Class<E> tClazz) {
         // 如果客户端有集成定义的持久层，那么就取其中一个进行转换
         if (CollectionUtil.isNotEmpty(PageTypeEnum.CLIENT_TYPES)) {
-            return PageTypeEnum.CLIENT_TYPES.get(0).convert(source, tClazz);
+            for (int i = 0, size = PageTypeEnum.CLIENT_TYPES.size(); i < size; i++) {
+                PageTypeEnum pageTypeEnum = PageTypeEnum.CLIENT_TYPES.get(i);
+                try {
+                    return pageTypeEnum.convert(source, tClazz);
+                } catch (IllegalArgumentException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("{} 转换分页结果异常", pageTypeEnum.name());
+                    }
+                }
+            }
+
+            // 当 source 不是 PageTypeEnum 内定义的类型，会转换失败。
+            throw new IllegalArgumentException("未定义类型的分页对象：" + source);
         }
+
         throw new RuntimeException("持久层没有定义，请更新" + PageTypeEnum.class);
     }
 

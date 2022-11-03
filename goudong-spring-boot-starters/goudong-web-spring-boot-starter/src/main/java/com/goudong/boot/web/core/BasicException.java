@@ -23,10 +23,15 @@ import static com.goudong.boot.web.enumerate.ServerExceptionEnum.SERVER_ERROR;
 /**
  * 类描述：
  * 自定义异常的基类，其它模块的异常继承进行扩展
- * @ClassName BaseicException
- * @Author msi
- * @Date 2020/6/10 19:41
- * @Version 1.0
+ *
+ * @see ClientException
+ * @see ServerException
+ * @see Result
+ * @see ClientExceptionEnum
+ * @see ServerExceptionEnum
+ * @author cfl
+ * @date 2022/11/3 17:23
+ * @version 1.0
  */
 @Data
 public class BasicException extends RuntimeException implements BasicExceptionInterface {
