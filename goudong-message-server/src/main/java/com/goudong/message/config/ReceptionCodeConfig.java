@@ -1,6 +1,6 @@
 package com.goudong.message.config;
 
-import com.goudong.commons.framework.redis.RedisTool;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.message.enumerate.RedisKeyProviderEnum;

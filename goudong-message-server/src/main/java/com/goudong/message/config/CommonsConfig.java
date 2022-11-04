@@ -1,5 +1,6 @@
 package com.goudong.message.config;
 
+import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
@@ -17,6 +18,7 @@ import org.springframework.core.env.Environment;
  * @date 2022/1/23 11:20
  */
 @Configuration
+@EnableCommonsRedisConfig
 @EnableCommonsWebMvcConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJacksonConfig
@@ -37,15 +39,5 @@ public class CommonsConfig {
     public LoggingAop loggingAop(Environment environment) {
         return new LoggingAop(environment);
     }
-
-    /**
-     * 防止重复请求
-     * @return
-     */
-    // @Bean
-    // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    //public ApiRepeatAop repeatAop() {
-    //    return new ApiRepeatAop();
-    //}
 
 }

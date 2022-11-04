@@ -1,5 +1,6 @@
 package com.goudong.file.config;
 
+import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2021/12/11 17:42
  */
 @Configuration
+@EnableCommonsRedisConfig
 @EnableCommonsWebMvcConfig
 @EnableCommonsJpaConfig
 @EnableCommonsJacksonConfig

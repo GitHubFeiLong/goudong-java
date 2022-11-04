@@ -1,6 +1,7 @@
 package com.goudong.file.enumerate;
 
-import com.goudong.commons.framework.redis.RedisKeyProvider;
+import com.goudong.boot.redis.core.RedisKeyProvider;
+import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
 import com.goudong.file.po.FileShardTaskPO;
 import org.springframework.data.redis.connection.DataType;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * 类描述：
  * 文件服务的redis key配置
  *
- * @see com.goudong.commons.framework.redis.RedisKeyTemplateProviderEnum
+ * @see RedisKeyTemplateProviderEnum
  * @author msi
  * @date 2022/1/26 16:46
  * @version 1.0

@@ -1,7 +1,7 @@
 package com.goudong.file.service.impl;
 
 import cn.hutool.core.io.FileUtil;
-import com.goudong.commons.framework.redis.RedisTool;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.dto.FileShardUploadDTO;
 import com.goudong.file.enumerate.RedisKeyProviderEnum;
@@ -123,7 +123,7 @@ public class FileShardTaskServiceImpl implements FileShardTaskService {
     @Override
     public FileShardTaskPO save(FileShardTaskPO fileShardTaskPO, List<FileShardTaskPO> taskPOS) {
         // 保存到redis中
-        String key = redisTool.getKey(RedisKeyProviderEnum.FILE_SHARD_UPLOAD_TASK, fileShardTaskPO.getFileMd5());
+        String key = RedisKeyProviderEnum.FILE_SHARD_UPLOAD_TASK.getFullKey(fileShardTaskPO.getFileMd5());
         int index = taskPOS.indexOf(fileShardTaskPO);
         redisTool.opsForList().set(key, index, fileShardTaskPO);
 

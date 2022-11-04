@@ -1,7 +1,7 @@
 package com.goudong.message.controller;
 
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.core.lang.Result;
 import com.goudong.message.config.CodeDirectRabbitConfig;

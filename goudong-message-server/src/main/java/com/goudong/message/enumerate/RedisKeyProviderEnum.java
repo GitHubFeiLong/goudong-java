@@ -1,6 +1,7 @@
 package com.goudong.message.enumerate;
 
-import com.goudong.commons.framework.redis.RedisKeyProvider;
+import com.goudong.boot.redis.core.RedisKeyProvider;
+import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * 用户服务的redis key，及 过期时间，及时间的单位
  * 参数使用`${}`进行包裹，例如"user:${user-id}",RedisTool会动态设置参数值
  *
- * @see com.goudong.commons.framework.redis.RedisKeyTemplateProviderEnum
+ * @see RedisKeyTemplateProviderEnum
  * @author msi
  * @date 2022/1/26 16:46
  * @version 1.0
