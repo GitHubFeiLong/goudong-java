@@ -1,6 +1,6 @@
 package com.goudong.commons.framework.jpa;
 
-import com.goudong.commons.core.context.UserContext;
+import com.goudong.boot.redis.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -108,7 +108,7 @@ public class DataBaseAuditListener {
         Object userIdValue = createUserId.get(object);
         if (userIdValue == null) {
             // 获取userId值
-            BaseUserDTO baseUserDTO = UserContext.get();
+            BaseUserDTO baseUserDTO = (BaseUserDTO)UserContext.get();
             if (baseUserDTO != null && baseUserDTO.getId() != null) {
                 createUserId.set(object, baseUserDTO.getId());
             } else {
@@ -136,7 +136,7 @@ public class DataBaseAuditListener {
         Object userIdValue = updateUserId.get(object);
         if (userIdValue == null) {
             // 获取userId值
-            BaseUserDTO baseUserDTO = UserContext.get();
+            BaseUserDTO baseUserDTO = (BaseUserDTO)UserContext.get();
             if (baseUserDTO != null && baseUserDTO.getId() != null) {
                 // 在此处使用当前用户id或默认用户id
                 updateUserId.set(object, baseUserDTO.getId());

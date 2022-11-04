@@ -2,11 +2,11 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.IdUtil;
+import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
-import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.user.dto.InitMenuReq;

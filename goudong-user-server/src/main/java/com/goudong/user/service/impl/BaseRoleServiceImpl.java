@@ -2,14 +2,15 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.Assert;
+import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
 import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.user.RoleConst;
-import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.tree.v2.Tree;
@@ -166,7 +167,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
                 .orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
 
         // 当前用户所拥有的菜单权限，不能越级设置权限
-        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = UserContext.get().getRoles();
+        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = ((BaseUserDTO)(UserContext.get())).getRoles();
         List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
         List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
 
@@ -198,7 +199,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
 
         // 校验数据
-        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = UserContext.get().getRoles();
+        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = ((BaseUserDTO)(UserContext.get())).getRoles();
         List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
         List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
         List<Long> hasMenuIds = permissions.stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
