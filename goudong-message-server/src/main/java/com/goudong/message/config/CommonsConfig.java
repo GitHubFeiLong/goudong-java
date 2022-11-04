@@ -3,7 +3,6 @@ package com.goudong.message.config;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsUserContextFilter;
 import com.goudong.commons.aop.LoggingAop;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ import org.springframework.core.env.Environment;
  */
 @Configuration
 @EnableCommonsWebMvcConfig
-@EnableCommonsRedisConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJacksonConfig
 @EnableCommonsUserContextFilter

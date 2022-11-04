@@ -2,9 +2,9 @@ package com.goudong.oauth2.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
-import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.exception.AccessTokenExpiredException;

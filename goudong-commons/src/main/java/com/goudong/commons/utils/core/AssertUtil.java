@@ -51,7 +51,7 @@ public class AssertUtil extends Assert{
         if (exceptionEnumInterface instanceof ClientExceptionEnum) {
             throw ClientException.client((ClientExceptionEnum) exceptionEnumInterface);
         } else if (exceptionEnumInterface instanceof ServerExceptionEnum) {
-            throw ServerException.serverException((ServerExceptionEnum) exceptionEnumInterface);
+            throw ServerException.server((ServerExceptionEnum) exceptionEnumInterface);
         }
     }
 

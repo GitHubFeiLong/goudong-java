@@ -1,5 +1,6 @@
 package com.goudong.commons.framework.redis;
 
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import org.junit.jupiter.api.Test;
 

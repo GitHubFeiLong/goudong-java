@@ -1,8 +1,9 @@
 package com.goudong.oauth2.enumerate;
 
+import com.goudong.boot.redis.core.RedisKeyProvider;
+import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
-import com.goudong.commons.framework.redis.RedisKeyProvider;
 import com.goudong.oauth2.dto.BaseMenuDTO2Redis;
 import org.springframework.data.redis.connection.DataType;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * oauth2服务的redis key
  * 参数使用`${}`进行包裹，例如"user:${user-id}",RedisTool会动态设置参数值
  *
- * @see com.goudong.commons.framework.redis.RedisKeyTemplateProviderEnum
+ * @see RedisKeyTemplateProviderEnum
  * @author msi
  * @date 2022/1/20 19:51
  * @version 1.0

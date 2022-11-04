@@ -1,12 +1,12 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
-import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.dto.BaseMenuDTO2Redis;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;

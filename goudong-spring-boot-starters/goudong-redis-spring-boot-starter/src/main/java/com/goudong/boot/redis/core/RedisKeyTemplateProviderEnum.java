@@ -1,6 +1,5 @@
 package com.goudong.boot.redis.core;
 
-import com.sun.istack.internal.NotNull;
 import org.springframework.data.redis.connection.DataType;
 
 import java.util.Optional;
@@ -40,7 +39,6 @@ public enum RedisKeyTemplateProviderEnum implements RedisKeyProvider{
      *
      * @see DataType
      */
-    @NotNull
     public DataType redisType;
 
     /**
@@ -49,7 +47,6 @@ public enum RedisKeyTemplateProviderEnum implements RedisKeyProvider{
      * redisType=list
      * javaType=用户对象
      */
-    @NotNull
     public Class javaType;
 
     /**

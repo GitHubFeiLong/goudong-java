@@ -1,10 +1,10 @@
 package com.goudong.oauth2.config;
 
+import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
-import com.goudong.commons.annotation.enable.EnableCommonsRedisConfig;
 import com.goudong.commons.aop.LoggingAop;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,8 @@ import org.springframework.core.env.Environment;
  * @date 2022/1/23 11:20
  */
 @Configuration
-@EnableCommonsWebMvcConfig
 @EnableCommonsRedisConfig
+@EnableCommonsWebMvcConfig
 @EnableCommonsFeignConfig
 @EnableCommonsJpaConfig
 @EnableCommonsJacksonConfig
@@ -39,15 +39,5 @@ public class CommonsConfig {
     public LoggingAop loggingAop(Environment environment) {
         return new LoggingAop(environment);
     }
-
-    /**
-     * 防止重复请求
-     * @return
-     */
-    // @Bean
-    // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    // public RepeatAop repeatAop() {
-    //     return new RepeatAop();
-    // }
 
 }

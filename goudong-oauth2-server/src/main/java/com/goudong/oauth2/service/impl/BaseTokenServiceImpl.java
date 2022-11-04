@@ -2,10 +2,10 @@ package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import com.google.common.collect.Lists;
+import com.goudong.boot.redis.core.RedisKeyProvider;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
-import com.goudong.commons.framework.redis.RedisKeyProvider;
-import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;

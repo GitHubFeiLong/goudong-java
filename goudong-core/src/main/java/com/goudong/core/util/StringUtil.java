@@ -1,5 +1,6 @@
 package com.goudong.core.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,21 +34,61 @@ public class StringUtil {
         return !isBlank(str);
     }
 
+
     /**
-     * 切割字符串，以700+-的最近一个'\n'结束
-     * TODO
-     * @param content
-     * @param startIndex
-     * @param result
+     * 将{@code str}中满足{@code regex}的字符串替换成{@code args[i] // i 递增}
+     * @param str 需要格式化的字符串
+     * @param regex 正则表达式
+     * @param args 需要{@code regex}的值
+     * @return
      */
-    void split(String content, int startIndex, List<String> result) {
+    public static String formatByRegex(String str, String regex, Object... args) {
+        AssertUtil.isNotNull(regex, () -> new IllegalArgumentException("regex不能为null"));
+
+        if (args != null && args.length > 0 && StringUtil.isNotBlank(str)) {
+            for (int i = 0; i < args.length; i++) {
+                str = str.replaceFirst(regex, String.valueOf(args[i]));
+            }
+
+            return str;
+        }
+
+        return str;
+    }
+
+    /**
+     * 将{@code content} 从0开始，指定步长{@code step}查找下次{@code split}进行切割，最后将结果放在@{code result}中
+     * @param split 切割的字符
+     * @param content 被切割的内容
+     * @param step 步长，
+     * @return result
+     */
+    public static List<String> split(char split, String content, int step) {
+        if (content == null || content.length() == 0 || step <= 0) {
+            return new ArrayList<>(0);
+        }
+        List<String> result = new ArrayList<>();
+        split(split, content, 0, step, result);
+        return result;
+    }
+    /**
+     * 将{@code content} 从{@code startIndex}开始，指定步长{@code step}查找下次{@code split}进行切割，将每次分割后的结果放在@{code result}中
+     * @param split 切割字符
+     * @param content 文本内容
+     * @param startIndex 开始的下标 0
+     * @param step 下一次
+     * @param result 切割后的结果集
+     */
+    private static void split(char split, String content, int startIndex, int step , List<String> result) {
         // 表明已到截取完成
         if (startIndex >= content.length() - 1) {
             return;
         }
-        int endIndex = content.indexOf("\n", startIndex + 700);
+        int endIndex = content.indexOf(split, startIndex + step);
 
         String sub;
+
+        // 切割到最后了，直接返回
         if (endIndex == -1) {
             sub = content.substring(startIndex);
             result.add(sub);
@@ -57,6 +98,40 @@ public class StringUtil {
         sub = content.substring(startIndex, endIndex);
         result.add(sub);
         // 左闭右开，换行符不需要
-        split(content, endIndex + 1, result);
+        split(split, content, endIndex + 1, step, result);
+    }
+
+    /**
+     * 切割字符串，每个子串最大都只有 step字符
+     * @param content
+     * @param step
+     * @return
+     */
+    public static List<String> split(String content, int step) {
+        if (content == null || content.length() == 0 || step <= 0) {
+            return new ArrayList<>(0);
+        }
+        int length = content.length();
+        int start = 0, end = 0, maxEndIndex = length - 1;
+
+        List<String> result = new ArrayList<>(length / step + 1);
+        while (end < maxEndIndex) {
+            // 加上步长
+            end += step;
+            end = end > maxEndIndex ? maxEndIndex : end;
+            String substring;
+            if(end > maxEndIndex) {
+                // 截取到末尾
+                substring = content.substring(start);
+            } else {
+                substring = content.substring(start, end);
+            }
+
+            result.add(substring);
+
+            start = end;
+        }
+
+        return result;
     }
 }

@@ -28,12 +28,18 @@
             <artifactId>goudong-web-spring-boot-starter</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-redis-spring-boot-starter</artifactId>
+        </dependency>
         <!--第三方模块-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>provided</scope>
         </dependency>
+
+
         <!--spring boot starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -68,13 +74,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <optional>true</optional>
-            <scope>provided</scope>
-        </dependency>
-        <!--redis-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>

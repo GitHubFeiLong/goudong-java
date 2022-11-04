@@ -58,7 +58,7 @@ public class StringUtil {
             }
             return result.toString();
         } catch (StringIndexOutOfBoundsException e) {
-            throw ServerException.serverException("错误" + e.getMessage());
+            throw ServerException.server("错误" + e.getMessage());
         }
     }
 
@@ -101,7 +101,7 @@ public class StringUtil {
             // 格式化返回字符串结果
             return String.format(String.valueOf(result), params);
         } catch (StringIndexOutOfBoundsException e) {
-            throw ServerException.serverException("错误" + e.getMessage());
+            throw ServerException.server("错误" + e.getMessage());
         }
     }
 

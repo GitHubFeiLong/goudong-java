@@ -1,7 +1,7 @@
 package com.goudong.redis.lua;
 
 import com.google.common.collect.Lists;
-import com.goudong.commons.framework.redis.RedisTool;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.user.GoudongUserServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;

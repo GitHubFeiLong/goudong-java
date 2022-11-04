@@ -10,8 +10,12 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.goudong.boot.redis.aop.ApiRepeatAop;
 import com.goudong.boot.redis.aop.SnowSlideHandlerAop;
 import com.goudong.boot.redis.core.RedisTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -31,6 +35,8 @@ import java.time.format.DateTimeFormatter;
  */
 @Configuration
 public class RedisConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(RedisConfig.class);
     /**
      * 配置RedisTemplate
      * @param connectionFactory
@@ -62,7 +68,6 @@ public class RedisConfig {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.registerModule(timeModule);
 
-
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         ///mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         serializer.setObjectMapper(mapper);
@@ -93,7 +98,6 @@ public class RedisConfig {
 
         //忽略value为null时key的输出
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
 
         //LocalDatetime序列化
         JavaTimeModule timeModule = new JavaTimeModule();
@@ -130,6 +134,22 @@ public class RedisConfig {
      */
     @Bean
     public SnowSlideHandlerAop snowSlideHandleAop(RedisTool redisTool) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入SnowSlideHandlerAop");
+        }
         return new SnowSlideHandlerAop(redisTool);
+    }
+
+    /**
+     * ApiRepeatAop
+     * @return
+     */
+    @Bean
+    @ConditionalOnClass(name = {"org.redisson.api.RedissonClient"})
+    public ApiRepeatAop apiRepeatAop() {
+        if (log.isDebugEnabled()) {
+            log.debug("注入ApiRepeatAop");
+        }
+        return new ApiRepeatAop();
     }
 }

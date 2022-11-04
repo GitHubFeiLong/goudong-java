@@ -105,6 +105,11 @@
                 <artifactId>goudong-web-spring-boot-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.goudong</groupId>
+                <artifactId>goudong-redis-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!--增强swagger-->
             <dependency>

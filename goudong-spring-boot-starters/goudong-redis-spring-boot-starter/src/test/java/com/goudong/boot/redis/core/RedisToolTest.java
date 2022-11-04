@@ -1,14 +1,10 @@
-package com.goudong.commons.framework.redis;
+package com.goudong.boot.redis.core;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.goudong.commons.po.core.BasePO;
-import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.core.util.CollectionUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,22 +45,12 @@ class RedisToolTest {
     @Resource
     private RedisTool redisTool;
 
-    @BeforeEach
-    void setUp() {
-        LogUtil.info(log, "setUp");
-    }
-
-    @AfterEach
-    void tearDown() {
-        LogUtil.info(log, "tearDown");
-    }
-
 
     @Test
     void deleteKey() {
         boolean boo1 = redisTool.deleteKey(DELETE_KEY);
         Assert.isTrue(!boo1, "删除的key不存在时，应该返回false");
-        String key = GenerateRedisKeyUtil.generateByClever(DELETE_KEY);
+        String key = DELETE_KEY.getFullKey();
         redisTool.opsForValue().set(key, 123456, 30, TimeUnit.SECONDS);
         boolean boo = redisTool.deleteKey(DELETE_KEY);
         Boolean hasKey = redisTool.hasKey(key);
@@ -114,7 +100,7 @@ class RedisToolTest {
     @Test
     void getExpire() {
         Object[] param = {1};
-        String key = GenerateRedisKeyUtil.generateByClever(GET_EXPIRE1.getKey(), param);
+        String key = GET_EXPIRE1.getFullKey(param);
         BasePO basePO = new BasePO();
         basePO.setId(0L);
         basePO.setDeleted(false);
@@ -133,7 +119,7 @@ class RedisToolTest {
         long expire1 = redisTool.getExpire(GET_EXPIRE2, param);
         Assert.isTrue(expire1 == -2, "该key不存在");
 
-        String key2 = GenerateRedisKeyUtil.generateByClever(GET_EXPIRE3, param);
+        String key2 = GET_EXPIRE3.getFullKey(param);
         redisTool.opsForHash().putAll(key2, BeanUtil.beanToMap(basePO));
         long expire2 = redisTool.getExpire(GET_EXPIRE3, param);
 
@@ -221,12 +207,12 @@ class RedisToolTest {
         // 设置Set
         boolean boo1 = redisTool.set(
                 new SimpleRedisKey("goudong:goudong-user-server:test:set1", DataType.SET, String.class),
-                Sets.newHashSet(1, 2, 3, 4));
+                CollectionUtil.newHashSet(1, 2, 3, 4));
         Assert.isTrue(boo1, "设置 null 到 Set失败");
 
         boolean boo2 = redisTool.set(
                 new SimpleRedisKey("goudong:goudong-user-server:test:set2", DataType.SET, String.class),
-                Sets.newHashSet("1", "2", "3", "4"));
+                CollectionUtil.newHashSet("1", "2", "3", "4"));
         Assert.isTrue(boo2, "设置 空集合 到 Set失败");
 
         HashSet<Object> hashSet = new HashSet<>();

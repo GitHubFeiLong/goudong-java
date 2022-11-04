@@ -1,7 +1,7 @@
 package com.goudong;
 
-import com.goudong.commons.framework.redis.RedisKeyTemplateProviderEnum;
-import com.goudong.commons.framework.redis.RedisTool;
+import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.user.GoudongUserServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;

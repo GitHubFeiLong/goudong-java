@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 @EnableCommonsJpaConfig
 @EnableCommonsJacksonConfig
 @EnableCommonsFeignConfig
-@EnableCommonsRedisConfig
 @EnableCommonsSpringBeanToolConfig
 @EnableCommonsUserContextFilter
 public class CommonsConfig {

@@ -284,7 +284,7 @@ public class UploadServiceImpl implements UploadService {
             return BeanUtil.copyProperties(filePO, FileDTO.class);
         } catch (IOException e) {
             log.error("文件上传失败:{}", e);
-            throw ServerException.serverException(ServerExceptionEnum.SERVER_ERROR, "创建失败", e.getMessage());
+            throw ServerException.server(ServerExceptionEnum.SERVER_ERROR, "创建失败", e.getMessage());
         }
     }
 

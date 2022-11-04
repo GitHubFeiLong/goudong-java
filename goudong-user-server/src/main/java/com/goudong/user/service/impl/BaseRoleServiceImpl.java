@@ -2,6 +2,7 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.Assert;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
@@ -9,7 +10,6 @@ import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.core.context.UserContext;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.tree.v2.Tree;

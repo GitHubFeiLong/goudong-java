@@ -1,54 +1,53 @@
-package com.goudong.commons.aop;
+package com.goudong.boot.redis.aop;
 
-import com.goudong.boot.web.core.ClientException;
-import com.goudong.boot.web.enumerate.ClientExceptionEnum;
-import com.goudong.commons.core.context.UserContext;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.framework.redis.GenerateRedisKeyUtil;
-import com.goudong.commons.framework.redis.RedisTool;
-import com.goudong.commons.framework.redis.SimpleRedisKey;
-import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.boot.redis.context.User;
+import com.goudong.boot.redis.context.UserContext;
+import com.goudong.boot.redis.core.RedisTool;
+import com.goudong.boot.redis.core.SimpleRedisKey;
+import com.goudong.core.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * 类描述：
  * 使用AOP防止用户重复提交表单，用户将参数进行修改后再次提交不会锁住
  *
- * @see com.goudong.commons.annotation.aop.ApiRepeat
+ * @see ApiRepeat
  * @Author msi
  * @Date 2020/6/10 19:17
  * @Version 1.0
  */
 @Slf4j
 @Aspect
-@ConditionalOnClass(value = {RedisTool.class, RedissonClient.class})
 public class ApiRepeatAop {
 
-	private final HttpServletRequest request;
+	@Resource
+	private HttpServletRequest request;
 
-	private final RedisTool redisTool;
+	@Resource
+	private RedisTool redisTool;
 
-	private final RedissonClient redissonClient;
-	public ApiRepeatAop(HttpServletRequest request, RedisTool redisTool, RedissonClient redissonClient) {
-		this.request = request;
-		this.redisTool = redisTool;
-		this.redissonClient = redissonClient;
-	}
+	@Resource
+	private RedissonClient redissonClient;
+
+	// public ApiRepeatAop(HttpServletRequest request, RedisTool redisTool, RedissonClient redissonClient) {
+	// 	this.request = request;
+	// 	this.redisTool = redisTool;
+	// 	this.redissonClient = redissonClient;
+	// }
 
 	/**
 	 * 定义切点
 	 */
-	@Pointcut(value = "@annotation(com.goudong.commons.annotation.aop.ApiRepeat)")
+	@Pointcut(value = "@annotation(com.goudong.boot.redis.aop.ApiRepeat)")
 	public void apiRepeat() {
 		// aop 切点，避免代码检测报错问题
 	}
@@ -63,10 +62,11 @@ public class ApiRepeatAop {
 	public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
 		// 被切方法的返回值
 		Object ret = null;
-		BaseUserDTO baseUserDTO = UserContext.get();
+
+		User user = UserContext.get();
 		String sessionId;
 		// 用户对象必须有值（只要进入网关的请求，都会有值,如果连用户都分不开就没有必要做限流了 对吧）
-		if (baseUserDTO != null && StringUtils.isNotBlank(sessionId = baseUserDTO.getSessionId())) {
+		if (user != null && StringUtil.isNotBlank(sessionId = user.getSessionId())) {
 			// 当前请求url
 
 			// 接口参数
@@ -85,7 +85,7 @@ public class ApiRepeatAop {
 					.append(methodParameter);
 
 			// 因为功能只是进行控制访问频率，所以以用户和请求路径为key
-			String redisKey = GenerateRedisKeyUtil.generateByClever(SimpleRedisKey.API_REPEAT_KEY, sessionId, requestData);
+			String redisKey = SimpleRedisKey.API_REPEAT_KEY.getFullKey(sessionId, requestData);
 
 
 			// 获取注解的参数
@@ -110,8 +110,11 @@ public class ApiRepeatAop {
 			}
 
 			// 获取锁失败
-			LogUtil.debug(log, "sessionId:{}, api:{}, 重复请求已被阻止", sessionId, request.getRequestURI());
-			throw ClientException.client(ClientExceptionEnum.TOO_MANY_REQUESTS);
+			if (log.isDebugEnabled()) {
+				log.debug("sessionId:{}, api:{}, 重复请求已被阻止", sessionId, request.getRequestURI());
+			}
+
+			throw new RuntimeException("429 Too Many Requests");
 		}
 
 		/*

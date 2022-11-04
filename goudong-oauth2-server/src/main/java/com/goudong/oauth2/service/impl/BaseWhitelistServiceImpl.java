@@ -2,10 +2,10 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.copier.CopyOptions;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
-import com.goudong.commons.framework.redis.RedisTool;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.mapper.BaseWhitelistMapper;

@@ -1,8 +1,6 @@
 package com.goudong.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * 类描述：
@@ -47,5 +45,18 @@ public class CollectionUtil {
         ArrayList<E> list = new ArrayList<>(elements.length);
         Collections.addAll(list, elements);
         return list;
+    }
+
+    /**
+     * 初始化一个ArrayList
+     * @param elements
+     * @return
+     * @param <E>
+     */
+    public static <E> Set<E> newHashSet(E... elements) {
+        AssertUtil.isNotEmpty(elements);
+        Set<E> set = new HashSet<>(elements.length);
+        Collections.addAll(set, elements);
+        return set;
     }
 }

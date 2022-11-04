@@ -9,14 +9,12 @@ import com.goudong.boot.redis.aop.SnowSlideHandler;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.PrimitiveTypeUtil;
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.*;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  * @Author e-Feilong.Chen
  * @Date 2022/1/10 15:16
  */
-@Validated
 public class RedisTool extends RedisTemplate {
 
     private static final Logger log = LoggerFactory.getLogger(RedisTool.class);
@@ -83,17 +80,6 @@ public class RedisTool extends RedisTemplate {
     }
 
     /**
-     * 获取redis的key
-     * @param redisKey
-     * @param param
-     * @return
-     */
-    public String getKey(RedisKeyProvider redisKey, Object... param) {
-        // 获取完整的 key
-        return GenerateRedisKeyUtil.generateByClever(redisKey, param);
-    }
-
-    /**
      * 根据key，使用scan获取匹配的所有key，使用scan避免阻塞
      *
      * @return 返回获取到的keys
@@ -120,7 +106,7 @@ public class RedisTool extends RedisTemplate {
      */
     public boolean deleteKey(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         // String key = StringUtil.format(redisKey.getKey(), param);
         // key 不存在时，删除失败，返回false
         boolean delete = super.delete(key);
@@ -160,7 +146,7 @@ public class RedisTool extends RedisTemplate {
                 Set<String> delKes = new HashSet<>();
                 // 循环删除key
                 for (int i = 0; i < redisKeys.size(); i++) {
-                    delKes.add(getKey(redisKeys.get(i), params[i]));
+                    delKes.add(redisKeys.get(i).getFullKey(params[i]));
                 }
                 operations.delete(delKes);
 
@@ -194,7 +180,8 @@ public class RedisTool extends RedisTemplate {
                 Set<String> delKes = new HashSet<>();
                 // 循环删除key
                 for (int i = 0; i < redisKeys.size(); i++) {
-                    delKes.add(getKey(redisKeys.get(i), params.get(i).toArray(new Object[params.get(i).size()])));
+                    String fullKey = redisKeys.get(i).getFullKey(params.get(i).toArray(new Object[params.get(i).size()]));
+                    delKes.add(fullKey);
                 }
 
                 operations.delete(delKes);
@@ -220,7 +207,7 @@ public class RedisTool extends RedisTemplate {
      */
     public boolean existKey(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         boolean hasKey = super.hasKey(key);
         if(log.isDebugEnabled()) {
             log.debug("redis-key:【{}】【{}】", key, hasKey ? "存在" : "不存在");
@@ -247,9 +234,13 @@ public class RedisTool extends RedisTemplate {
      * @param timeUnit 过期时长单位
      * @param param 替换参数，避免调用父类的方法
      */
-    public boolean expireByCustom(RedisKeyProvider redisKey, long time, @NotNull TimeUnit timeUnit, Object... param) {
+    public boolean expireByCustom(RedisKeyProvider redisKey, long time, TimeUnit timeUnit, Object... param) {
 
-        String key = getKey(redisKey, param);
+        AssertUtil.isNotNull(redisKey, () -> new IllegalArgumentException("redisKey 不能为null"));
+        AssertUtil.isTrue(time > 0, () -> new IllegalArgumentException("time 必须大于0"));
+        AssertUtil.isNotNull(timeUnit, () -> new IllegalArgumentException("timeUnit 不能为null"));
+
+        String key = redisKey.getFullKey(param);
 
         boolean result = super.expire(key, time, timeUnit);
 
@@ -281,7 +272,7 @@ public class RedisTool extends RedisTemplate {
      */
     public long getExpire(RedisKeyProvider redisKey, Object... param) {
         //此方法返回单位为秒过期时长
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         long ttl = super.opsForValue().getOperations().getExpire(key);
         if (ttl >= 0) {
             if (log.isDebugEnabled()) {
@@ -338,7 +329,7 @@ public class RedisTool extends RedisTemplate {
      * @return
      */
     private boolean setString(RedisKeyProvider redisKey, Object value, Object... param) {
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
 
         // 非基本类型需要额外处理成json字符串
         if (!PrimitiveTypeUtil.isBasicType(value)) {
@@ -371,7 +362,7 @@ public class RedisTool extends RedisTemplate {
      */
     private boolean setHash(RedisKeyProvider redisKey, Object value, Object... param){
         // 获取完整的 key
-        final String key = getKey(redisKey, param);
+        final String key = redisKey.getFullKey(param);
         // 需要将为空的过滤掉
         Map<String, Object> stringObjectMap = BeanUtil.beanToMap(value, false, true);
         if (stringObjectMap == null) {
@@ -403,10 +394,10 @@ public class RedisTool extends RedisTemplate {
             if (log.isDebugEnabled()) {
                 log.debug("设置Hash到redis中成功, redisType与javaType匹配！");
             }
-            
+
             return true;
         }
-        
+
         log.warn("设置Hash到redis中成功, redisType与javaType不匹配！");
         return false;
     }
@@ -426,7 +417,7 @@ public class RedisTool extends RedisTemplate {
         // Values must not be 'null' or empty.当value为空集合时添加会报错,所以这里判断下
         if (CollectionUtil.isNotEmpty(list)) {
             // 获取完整的 key
-            String key = getKey(redisKey, param);
+            String key = redisKey.getFullKey(param);
             // 获取过期时间单位秒
             long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
 
@@ -454,7 +445,7 @@ public class RedisTool extends RedisTemplate {
                 if (log.isDebugEnabled()) {
                     log.debug("设置List到redis中成功, redisType与javaType匹配！");
                 }
-                
+
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn("设置List到redis中成功, redisType与javaType不匹配！");
@@ -465,7 +456,7 @@ public class RedisTool extends RedisTemplate {
         }
 
         log.error("设置List到redis中失败, Values must not be 'null' or empty！");
-        
+
         return false;
     }
 
@@ -488,7 +479,7 @@ public class RedisTool extends RedisTemplate {
         }
 
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         // 获取过期时间单位秒
         long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
         super.execute(new SessionCallback<Boolean>() {
@@ -543,7 +534,7 @@ public class RedisTool extends RedisTemplate {
         }
 
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         // 获取过期时间单位秒
         long second = redisKey.getTime2Second(ENTRY_THREAD_LOCAL.get());
         super.execute(new SessionCallback<Boolean>() {
@@ -577,7 +568,7 @@ public class RedisTool extends RedisTemplate {
     public Object get( RedisKeyProvider redisKey, Object... param){
         DataType dataType = redisKey.getRedisType();
         Class javaType = redisKey.getJavaType();
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         switch (dataType) {
             case STRING:
                 return getString(redisKey, param);
@@ -603,7 +594,7 @@ public class RedisTool extends RedisTemplate {
      */
     public String getString(RedisKeyProvider redisKey, Object... param) {
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
 
         return (String) super.opsForValue().get(key);
     }
@@ -620,7 +611,7 @@ public class RedisTool extends RedisTemplate {
     public <T> T getHash(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         if (Objects.equals(clazz, redisKey.getJavaType())) {
             // 获取完整的 key
-            String key = getKey(redisKey, param);
+            String key = redisKey.getFullKey(param);
             // 将Map转为Bean
             Map map = super.opsForHash().entries(key);
             if (map == null || map.isEmpty()) {
@@ -642,7 +633,7 @@ public class RedisTool extends RedisTemplate {
     public <T> List<T> getList(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         if (Objects.equals(clazz, redisKey.getJavaType())) {
             // 获取完整的 key
-            String key = getKey(redisKey, param);
+            String key = redisKey.getFullKey(param);
             // 获取list（此时元素是LinkedHashMap）
             List range = super.opsForList().range(key, 0, -1);
 
@@ -661,7 +652,7 @@ public class RedisTool extends RedisTemplate {
      */
     public <T> Set<T> getSet(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         return super.opsForSet().members(key);
     }
 
@@ -674,7 +665,7 @@ public class RedisTool extends RedisTemplate {
      */
     public <T> Set<T> getZSet(RedisKeyProvider redisKey, Class<T> clazz, Object... param) {
         // 获取完整的 key
-        String key = getKey(redisKey, param);
+        String key = redisKey.getFullKey(param);
         Set<T> set = new HashSet();
         super.opsForZSet().rangeWithScores(key, 0, -1).forEach(v->{
             set.add((T)v);

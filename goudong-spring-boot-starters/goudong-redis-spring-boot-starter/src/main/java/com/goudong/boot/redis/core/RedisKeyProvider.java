@@ -1,5 +1,8 @@
 package com.goudong.boot.redis.core;
 
+import com.goudong.core.lang.RegexConst;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.StringUtil;
 import org.springframework.data.redis.connection.DataType;
 
 import java.io.Serializable;
@@ -69,5 +72,11 @@ public interface RedisKeyProvider extends Serializable {
         }
 
         return getTimeUnit().toSeconds(time);
+    }
+
+    default String getFullKey (Object... params) {
+        AssertUtil.isNotNull(this.getKey());
+        // 获取完整的 key
+        return StringUtil.formatByRegex(this.getKey(), RegexConst.PLACEHOLDER_2, params);
     }
 }

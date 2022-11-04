@@ -1,6 +1,6 @@
 package com.goudong.core.util;
 
-import com.goudong.core.enumerate.MessageFormatEnum;
+import com.goudong.core.lang.RegexConst;
 
 /**
  * 类描述：
@@ -51,26 +51,40 @@ public final class MessageFormatUtil {
     }
 
     /**
-     * 消息转换
-     * @param regex 指定正则
-     * @param messagePattern
-     * @param args
-     * @return
+     * 枚举描述：
+     * 信息格式化的枚举
+     * @see MessageFormatUtil
+     * @author cfl
+     * @version 1.0
+     * @date 2022/9/22 16:37
      */
-    public static String formatByRegex(String regex, String messagePattern, Object... args) {
-        if (regex == null) {
-            throw new IllegalArgumentException();
+    public enum MessageFormatEnum {
+
+        //~fields
+        //==================================================================================================================
+        /**
+         * 日志格式,模板格式：{@code {}}
+         */
+        LOG_FORMAT(RegexConst.PLACEHOLDER_1),
+
+        /**
+         * 占位符，模板格式：{@code ${}}
+         */
+        PLACEHOLDER_FORMAT(RegexConst.PLACEHOLDER_2),
+        ;
+
+        //~methods
+        //==================================================================================================================
+        private String formatRegex;
+
+        MessageFormatEnum(String formatRegex) {
+            this.formatRegex = formatRegex;
         }
 
-        if (args != null && args.length > 0 && StringUtil.isNotBlank(messagePattern)) {
-            for (int i = 0; i < args.length; i++) {
-                messagePattern = messagePattern.replaceFirst(regex, String.valueOf(args[i]));
-            }
-
-            return messagePattern;
+        //~getter
+        //==================================================================================================================
+        public String getFormatRegex() {
+            return formatRegex;
         }
-
-        return messagePattern;
     }
-
 }
