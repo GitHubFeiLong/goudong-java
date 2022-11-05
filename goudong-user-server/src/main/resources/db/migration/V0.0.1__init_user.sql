@@ -19,10 +19,10 @@ CREATE TABLE `base_user` (
      KEY `idx_base_user_email` (`email`),
      KEY `idx_base_user_phone` (`phone`),
      KEY `idx_base_user_qq_open_id` (`qq_open_id`),
-     UNIQUE KEY `uq_base_user_username` (`username`,`deleted`) USING BTREE COMMENT '用户,用户名唯一键',
-     UNIQUE KEY `uq_base_user_phone` (`phone`,`deleted`) USING BTREE COMMENT '用户，手机号唯一键',
-     UNIQUE KEY `uq_base_user_email` (`email`,`deleted`) USING BTREE COMMENT '用户，邮箱唯一键',
-     UNIQUE KEY `uq_base_user_qq_open_id` (`qq_open_id`,`deleted`) USING BTREE COMMENT '用户，qq_open_id唯一键'
+     UNIQUE KEY `uk_base_user_username` (`username`,`deleted`) USING BTREE COMMENT '用户,用户名唯一键',
+     UNIQUE KEY `uk_base_user_phone` (`phone`,`deleted`) USING BTREE COMMENT '用户，手机号唯一键',
+     UNIQUE KEY `uk_base_user_email` (`email`,`deleted`) USING BTREE COMMENT '用户，邮箱唯一键',
+     UNIQUE KEY `uk_base_user_qq_open_id` (`qq_open_id`,`deleted`) USING BTREE COMMENT '用户，qq_open_id唯一键'
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户基本信息表';
 INSERT INTO `base_user`
 VALUES (1, 'admin', '$2a$10$DI2GDONVUKrDKcV4C2iAq.8OJ70J5qvOqbm1nA8EF6pQfikbnPdLu', '@admin', 'admin_phone', '超级管理员', '系统预置超级管理员',
@@ -45,7 +45,7 @@ CREATE TABLE `base_role` (
      `update_user_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '更新人id',
      PRIMARY KEY (`id`) USING BTREE,
      KEY `idx_base_role_role_name` (`role_name`),
-     UNIQUE KEY `uq_role_role_name` (`role_name`,`deleted`) USING BTREE COMMENT '角色索引'
+     UNIQUE KEY `uk_role_role_name` (`role_name`,`deleted`) USING BTREE COMMENT '角色索引'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色表';
 INSERT INTO `base_role`
 VALUES

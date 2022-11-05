@@ -13,8 +13,8 @@ CREATE TABLE `base_token` (
           `create_user_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '创建人id',
           `update_user_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '更新人id',
           PRIMARY KEY (`id`),
-          UNIQUE KEY `uq_base_token_access_token` (`access_token`) USING BTREE COMMENT '访问令牌唯一',
-          UNIQUE KEY `uq_base_token_refresh_token` (`refresh_token`) COMMENT '刷新令牌唯一',
+          UNIQUE KEY `uk_base_token_access_token` (`access_token`) USING BTREE COMMENT '访问令牌唯一',
+          UNIQUE KEY `uk_base_token_refresh_token` (`refresh_token`) COMMENT '刷新令牌唯一',
           KEY `idx_base_token_access_token` (`access_token`) USING BTREE COMMENT '访问令牌索引',
           KEY `idx_base_token_refresh_token` (`refresh_token`) USING BTREE COMMENT '刷新令牌索引',
           KEY `idx_base_token_user_id_client_type` (`user_id`,`client_type`) USING BTREE COMMENT 'user_id,client_type联合索引'

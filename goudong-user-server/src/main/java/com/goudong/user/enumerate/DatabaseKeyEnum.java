@@ -21,19 +21,19 @@ public enum DatabaseKeyEnum {
     /**
      * 用户表 邮箱唯一索引
      */
-    UQ_BASE_USER_EMAIL("保存用户失败，邮箱已存在"),
+    UK_BASE_USER_EMAIL("保存用户失败，邮箱已存在"),
     /**
      * 用户表 用户名唯一索引
      */
-    UQ_BASE_USER_USERNAME("保存用户失败，用户名已存在"),
+    UK_BASE_USER_USERNAME("保存用户失败，用户名已存在"),
     /**
      * 用户表手机唯一索引
      */
-    UQ_BASE_USER_PHONE("保存用户失败，手机号已存在"),
+    UK_BASE_USER_PHONE("保存用户失败，手机号已存在"),
 
     //~ 角色表 base_role
     //==================================================================================================================
-    UQ_ROLE_ROLE_NAME("保存失败，角色已存在"),
+    UK_ROLE_ROLE_NAME("保存失败，角色已存在"),
 
     /**
      * 用户角色表用户id和角色id唯一索引
@@ -47,7 +47,7 @@ public enum DatabaseKeyEnum {
     /**
      * api接口资源表的唯一索引
      */
-    UQ_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("保存api_resource失败，数据已存在"),
+    UK_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("保存api_resource失败，数据已存在"),
 
     //~ 菜单表 base_menu
     //==================================================================================================================

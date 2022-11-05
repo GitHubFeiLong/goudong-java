@@ -11,7 +11,7 @@ CREATE TABLE `base_whitelist` (
     `create_user_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '创建人id',
     `update_user_id` bigint(20) NOT NULL DEFAULT '1' COMMENT '更新人id',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `uq_base_whitelist_pattern_deleted` (`pattern`,`deleted`) USING BTREE COMMENT 'pattern唯一'
+    UNIQUE KEY `uk_base_whitelist_pattern_deleted` (`pattern`,`deleted`) USING BTREE COMMENT 'pattern唯一'
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='不需要授权就能访问的资源';
 
 INSERT INTO `base_whitelist` (`id`, `pattern`, `methods`, `remark`, `is_system`)
