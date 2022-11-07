@@ -9,6 +9,7 @@ import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
@@ -18,7 +19,6 @@ import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseMenuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.redis.core.Cursor;
@@ -55,17 +55,17 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     public List<BaseMenuDTO> findAll() {
         // 查询redis是否存在，不存在再加锁查询数据库
         List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class);
-        if (CollectionUtils.isNotEmpty(menuDTOS)) {
+        if (CollectionUtil.isNotEmpty(menuDTOS)) {
             return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
         }
         synchronized (this) {
             menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class);
-            if (CollectionUtils.isNotEmpty(menuDTOS)) {
+            if (CollectionUtil.isNotEmpty(menuDTOS)) {
                 return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
             }
             // 查询数据库
             List<BaseMenuPO> menus = baseMenuRepository.findAll();
-            if (CollectionUtils.isNotEmpty(menus)) {
+            if (CollectionUtil.isNotEmpty(menus)) {
                 menuDTOS = BeanUtil.copyToList(menus, BaseMenuDTO.class, CopyOptions.create());
                 redisTool.set(RedisKeyProviderEnum.MENU_ALL, menuDTOS);
 
@@ -143,7 +143,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 查询admin拥有的角色
         BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(()-> ClientException.client(ClientExceptionEnum.NOT_FOUND, "管理员角色不存在"));
         // 修改角色
-        List<BaseMenuPO> addMenus = CollectionUtils.subtract(pos, baseRolePO.getMenus()).stream().collect(Collectors.toList());
+        List<BaseMenuPO> addMenus = CollectionUtil.subtract(pos, baseRolePO.getMenus()).stream().collect(Collectors.toList());
         baseRolePO.setMenus(addMenus);
 
         // 删除redis中的所有菜单，和redis中角色的菜单权限。
@@ -159,12 +159,12 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         }
         // 查询redis是否存在，不存在再加锁查询数据库
         List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, role);
-        if (CollectionUtils.isNotEmpty(menuDTOS)) {
+        if (CollectionUtil.isNotEmpty(menuDTOS)) {
             return menuDTOS;
         }
         synchronized (this) {
             menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, role);
-            if (CollectionUtils.isNotEmpty(menuDTOS)) {
+            if (CollectionUtil.isNotEmpty(menuDTOS)) {
                 return menuDTOS;
             }
             // 查询数据库
@@ -172,7 +172,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
                     .orElseThrow(() -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
             List<BaseMenuPO> menus = baseRolePO.getMenus();
 
-            if (CollectionUtils.isNotEmpty(menus)) {
+            if (CollectionUtil.isNotEmpty(menus)) {
                 menuDTOS = BeanUtil.copyToList(menus, BaseMenuDTO.class, CopyOptions.create());
 
                 redisTool.set(RedisKeyProviderEnum.MENU_ROLE, menuDTOS, role);
@@ -247,7 +247,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 添加到集合
         pos.add(po);
 
-        if (CollectionUtils.isNotEmpty(req.getChildren())) {
+        if (CollectionUtil.isNotEmpty(req.getChildren())) {
             req.getChildren().stream().forEach(p->{
                 // 递归添加
                 convert(p, po.getId(), map, pos);

@@ -1,4 +1,4 @@
-package com.goudong.file.po;
+package com.goudong.file.po.file;
 
 import com.goudong.commons.framework.jpa.BasePO;
 import io.swagger.annotations.ApiModel;
@@ -18,7 +18,7 @@ import java.util.Date;
 
 /**
  * file_shard_task
- * @author 
+ * @author
  */
 @Entity
 @Data

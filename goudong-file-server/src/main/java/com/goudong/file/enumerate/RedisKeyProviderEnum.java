@@ -2,7 +2,7 @@ package com.goudong.file.enumerate;
 
 import com.goudong.boot.redis.core.RedisKeyProvider;
 import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
-import com.goudong.file.po.FileShardTaskPO;
+import com.goudong.file.po.file.FileShardTaskPO;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;

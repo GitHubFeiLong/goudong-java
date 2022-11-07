@@ -12,7 +12,7 @@ import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
 import com.goudong.file.exception.FileUploadException;
-import com.goudong.file.po.FilePO;
+import com.goudong.file.po.file.FilePO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;

@@ -1,4 +1,4 @@
-package com.goudong.file.po;
+package com.goudong.file.po.file;
 
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;

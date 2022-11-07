@@ -16,6 +16,9 @@ public class CollectionUtil {
     //~methods
     //==================================================================================================================
 
+    //~判断
+    //==================================================================================================================
+
     /**
      * 判断集合是否是空集合
      * @param coll
@@ -33,6 +36,9 @@ public class CollectionUtil {
     public static boolean isNotEmpty(Collection coll) {
         return !CollectionUtil.isEmpty(coll);
     }
+
+    //~创建集合
+    //==================================================================================================================
 
     /**
      * 初始化一个ArrayList
@@ -58,5 +64,15 @@ public class CollectionUtil {
         Set<E> set = new HashSet<>(elements.length);
         Collections.addAll(set, elements);
         return set;
+    }
+
+    //~集合操作
+    //==================================================================================================================
+    public static <O>Collection<O> subtract(final Collection<O> a, final Collection<O> b) {
+        ArrayList list = new ArrayList(a);
+        for (Iterator it = b.iterator(); it.hasNext();) {
+            list.remove(it.next());
+        }
+        return list;
     }
 }

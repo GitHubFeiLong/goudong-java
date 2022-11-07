@@ -32,10 +32,27 @@ spring:
       max-request-size: -1
       max-file-size: -1
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
-    username: ${MYSQL_USERNAME}
-    password: "${MYSQL_PASSWORD}"
+    file:
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+      username: ${MYSQL_USERNAME}
+      password: "${MYSQL_PASSWORD}"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initialSize: 5
+      maxActive: 50
+      minIdle: 0
+      maxWait: 60000
+      useUnfairLock: true # 禁用公平锁
+    user:
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+      username: ${MYSQL_USERNAME}
+      password: "${MYSQL_PASSWORD}"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      initialSize: 5
+      maxActive: 50
+      minIdle: 0
+      maxWait: 60000
+      useUnfairLock: true # 禁用公平锁
+
   jpa:
     hibernate:
       ddl-auto: none

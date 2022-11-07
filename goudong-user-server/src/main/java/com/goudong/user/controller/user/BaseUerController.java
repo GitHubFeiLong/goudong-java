@@ -14,6 +14,7 @@ import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
@@ -22,7 +23,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -184,7 +184,7 @@ public class BaseUerController {
     @Whitelist("根据账户名查询基本信息")
     public Result getUserByLoginName(@PathVariable("login-name") String loginName){
         List<BaseUserPO> userByLoginName = baseUserService.getUserByLoginName(loginName);
-        if (CollectionUtils.isEmpty(userByLoginName)) {
+        if (CollectionUtil.isEmpty(userByLoginName)) {
             throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在");
         }
         BaseUserDTO baseUserDTO = BeanUtil.copyProperties(userByLoginName.get(0), BaseUserDTO.class, "password");
@@ -269,7 +269,7 @@ public class BaseUerController {
         try {
             //获取数据
             List<com.goudong.commons.dto.oauth2.BaseUserDTO> content;
-            if (CollectionUtils.isNotEmpty(req.getIds())) {
+            if (CollectionUtil.isNotEmpty(req.getIds())) {
                 content = baseUserService.findAllById(req.getIds()).stream()
                         .sorted(Comparator.comparing(com.goudong.commons.dto.oauth2.BaseUserDTO::getCreateTime).reversed())
                         .collect(Collectors.toList());

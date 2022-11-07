@@ -13,6 +13,7 @@ import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
@@ -20,7 +21,6 @@ import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseRoleService;
 import com.goudong.user.service.BaseUserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -123,7 +123,7 @@ public class BaseUserServiceImpl implements BaseUserService {
             case BLANK:
                 // 查询填写的基本信息是否已存在
                 List<BaseUserPO> baseUserPOS = ListUsersByLoginName(baseUserDTO.getUsername(), baseUserDTO.getPhone(), baseUserDTO.getEmail());
-                if (CollectionUtils.isNotEmpty(baseUserPOS)) {
+                if (CollectionUtil.isNotEmpty(baseUserPOS)) {
                     throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在");
                 }
                 return createBaseUser(userPO);
@@ -297,7 +297,7 @@ public class BaseUserServiceImpl implements BaseUserService {
 
             // 分页
             Order weightOrder = criteriaBuilder.desc(root.get("createTime"));
-            if (CollectionUtils.isNotEmpty(and)) {
+            if (CollectionUtil.isNotEmpty(and)) {
                 return query.where(and.toArray(new Predicate[and.size()])).orderBy(weightOrder).getRestriction();
             }
 
@@ -351,7 +351,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 有角色不存在
         if (baseRoleDTOS.size() != createDTO.getRoleIds().size()) {
             List<Long> dbRoleIds = baseRoleDTOS.stream().map(BaseRoleDTO::getId).collect(Collectors.toList());
-            Collection<Long> subtract = CollectionUtils.subtract(dbRoleIds, createDTO.getRoleIds());
+            Collection<Long> subtract = CollectionUtil.subtract(dbRoleIds, createDTO.getRoleIds());
             throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "角色无效：" + subtract);
         }
 
