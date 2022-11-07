@@ -6,11 +6,14 @@ import com.alibaba.excel.EasyExcel;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.utils.core.BeanUtil;
-import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.CollectionUtil;
+import com.goudong.file.dto.BaseUser2QueryPageDTO;
+import com.goudong.file.dto.BaseUserExportDTO;
 import com.goudong.file.dto.BaseUserExportReq;
+import com.goudong.file.service.BaseUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +41,10 @@ import java.util.stream.Collectors;
 @Validated
 @RestController
 @RequestMapping("/user/export")
+@RequiredArgsConstructor
 public class UserExportController {
+
+    private final BaseUserService userService;
 
     @GetMapping(value = "/export")
     @ApiOperation(value = "导出用户", notes = "参数跟分页参数基本一致，只是不需要加分页参数")
@@ -47,13 +53,12 @@ public class UserExportController {
             //获取数据
             List<BaseUserDTO> content;
             if (CollectionUtil.isNotEmpty(req.getIds())) {
-                content = baseUserService.findAllById(req.getIds()).stream()
+                content = userService.findAllById(req.getIds()).stream()
                         .sorted(Comparator.comparing(com.goudong.commons.dto.oauth2.BaseUserDTO::getCreateTime).reversed())
                         .collect(Collectors.toList());
             } else {
                 BaseUser2QueryPageDTO pageDTO = BeanUtil.copyProperties(req, BaseUser2QueryPageDTO.class);
-                PageResult<BaseUserDTO> page = baseUserService.page(pageDTO);
-                content = page.getContent();
+                content = userService.export(pageDTO);
             }
 
             List<BaseUserExportDTO> data = BeanUtil.copyToList(content, BaseUserExportDTO.class, CopyOptions.create());

@@ -1,12 +1,8 @@
 package com.goudong.user.controller.user;
 
-import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.date.DateUtil;
-import com.alibaba.excel.EasyExcel;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
@@ -28,16 +24,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Min;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -263,41 +252,41 @@ public class BaseUerController {
         return Result.ofSuccess(userDTO);
     }
 
-    @GetMapping(value = "/export")
-    @ApiOperation(value = "导出用户", notes = "参数跟分页参数基本一致，只是不需要加分页参数")
-    public void exportExcel(BaseUserExportReq req, HttpServletResponse response) throws IOException {
-        try {
-            //获取数据
-            List<com.goudong.commons.dto.oauth2.BaseUserDTO> content;
-            if (CollectionUtil.isNotEmpty(req.getIds())) {
-                content = baseUserService.findAllById(req.getIds()).stream()
-                        .sorted(Comparator.comparing(com.goudong.commons.dto.oauth2.BaseUserDTO::getCreateTime).reversed())
-                        .collect(Collectors.toList());
-            } else {
-                BaseUser2QueryPageDTO pageDTO = BeanUtil.copyProperties(req, BaseUser2QueryPageDTO.class);
-                PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page = baseUserService.page(pageDTO);
-                content = page.getContent();
-            }
-
-            List<BaseUserExportDTO> data = BeanUtil.copyToList(content, BaseUserExportDTO.class, CopyOptions.create());
-            AtomicLong atomicLong = new AtomicLong(1);
-            data.stream().forEach(p->{
-                p.setSerialNumber(atomicLong.getAndIncrement());
-                String collect = p.getRoles().stream().map(m -> m.getRoleNameCn()).collect(Collectors.joining(","));
-                p.setRoleNameCn(collect);
-            });
-            //attachment指定独立文件下载  不指定则回浏览器中直接打开
-            String fileName = "用户导出" + DateUtil.format(new Date(), DateConst.DATE_TIME_FORMATTER_SHORT) + ".xlsx";
-            response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-            //导出excel
-            EasyExcel.write(response.getOutputStream(), BaseUserExportDTO.class).sheet("用户").doWrite(data);
-        } finally {
-            try {
-                response.flushBuffer();
-            } catch (IOException e) {
-                log.error("用户导出输出流关闭失败: {}", e);
-            }
-        }
-    }
+    // @GetMapping(value = "/export")
+    // @ApiOperation(value = "导出用户", notes = "参数跟分页参数基本一致，只是不需要加分页参数")
+    // public void exportExcel(BaseUserExportReq req, HttpServletResponse response) throws IOException {
+    //     try {
+    //         //获取数据
+    //         List<com.goudong.commons.dto.oauth2.BaseUserDTO> content;
+    //         if (CollectionUtil.isNotEmpty(req.getIds())) {
+    //             content = baseUserService.findAllById(req.getIds()).stream()
+    //                     .sorted(Comparator.comparing(com.goudong.commons.dto.oauth2.BaseUserDTO::getCreateTime).reversed())
+    //                     .collect(Collectors.toList());
+    //         } else {
+    //             BaseUser2QueryPageDTO pageDTO = BeanUtil.copyProperties(req, BaseUser2QueryPageDTO.class);
+    //             PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page = baseUserService.page(pageDTO);
+    //             content = page.getContent();
+    //         }
+    //
+    //         List<BaseUserExportDTO> data = BeanUtil.copyToList(content, BaseUserExportDTO.class, CopyOptions.create());
+    //         AtomicLong atomicLong = new AtomicLong(1);
+    //         data.stream().forEach(p->{
+    //             p.setSerialNumber(atomicLong.getAndIncrement());
+    //             String collect = p.getRoles().stream().map(m -> m.getRoleNameCn()).collect(Collectors.joining(","));
+    //             p.setRoleNameCn(collect);
+    //         });
+    //         //attachment指定独立文件下载  不指定则回浏览器中直接打开
+    //         String fileName = "用户导出" + DateUtil.format(new Date(), DateConst.DATE_TIME_FORMATTER_SHORT) + ".xlsx";
+    //         response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+    //         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+    //         //导出excel
+    //         EasyExcel.write(response.getOutputStream(), BaseUserExportDTO.class).sheet("用户").doWrite(data);
+    //     } finally {
+    //         try {
+    //             response.flushBuffer();
+    //         } catch (IOException e) {
+    //             log.error("用户导出输出流关闭失败: {}", e);
+    //         }
+    //     }
+    // }
 }

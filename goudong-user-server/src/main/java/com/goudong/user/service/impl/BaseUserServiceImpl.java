@@ -60,14 +60,6 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     private final EntityManager entityManager;
 
-    //public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
-    //                           BaseRoleService baseRoleService,
-    //                           GoudongMessageServerService goudongMessageServerService) {
-    //    this.baseUserRepository = baseUserRepository;
-    //    this.baseRoleService = baseRoleService;
-    //    this.goudongMessageServerService = goudongMessageServerService;
-    //}
-
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
      * 当返回结果为空集合时，表示账号可以使用

@@ -45,7 +45,6 @@ public class Swagger3Config {
                 .groupName("download")
                 .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
-
     }
 
     @Bean
@@ -68,7 +67,6 @@ public class Swagger3Config {
                 .groupName("link")
                 .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
-
     }
 
     @Bean
@@ -91,7 +89,28 @@ public class Swagger3Config {
                 .groupName("upload")
                 .globalRequestParameters(SwaggerUtil.getRequestParameters())
                 ;
+    }
 
+    @Bean
+    public Docket export() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("导出")
+                .description("导出")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.file.controller.export"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("export")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
+                ;
     }
 
 }

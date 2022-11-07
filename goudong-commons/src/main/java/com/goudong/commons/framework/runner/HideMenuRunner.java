@@ -8,9 +8,9 @@ import com.goudong.commons.properties.HideMenuProperties;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.ResourceUtil;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -54,7 +54,7 @@ public class HideMenuRunner implements ApplicationRunner {
         });
 
         // 使用feign，保存到指定库中
-        if (CollectionUtils.isNotEmpty(hideMenu2CreateDTOS)) {
+        if (CollectionUtil.isNotEmpty(hideMenu2CreateDTOS)) {
             try {
                 /*
                     这里需要进行延时调用，因为存在 goudong-oauth2-server 服务还未注册到注册中心去(goudong-oauth2-server自己调用自己的方式)
