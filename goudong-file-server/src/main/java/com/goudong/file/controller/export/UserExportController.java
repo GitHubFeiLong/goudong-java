@@ -46,8 +46,8 @@ public class UserExportController {
 
     private final BaseUserService userService;
 
-    @GetMapping(value = "/export-user")
-    @ApiOperation(value = "导出用户", notes = "参数跟分页参数基本一致，只是不需要加分页参数")
+    @GetMapping(value = "/user")
+    @ApiOperation(value = "导出用户", notes = "参数跟分页参数基本一致")
     public void exportExcel(BaseUserExportReq req, HttpServletResponse response) throws IOException {
         try {
             //获取数据
