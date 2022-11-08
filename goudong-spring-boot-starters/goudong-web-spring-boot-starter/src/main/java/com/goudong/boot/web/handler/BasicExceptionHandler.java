@@ -18,6 +18,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -124,6 +125,7 @@ public class BasicExceptionHandler implements HandlerInterface{
     @ExceptionHandler(value = {
             BindException.class,
             MethodArgumentNotValidException.class,
+            MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class,
             IllegalArgumentException.class
     })
@@ -135,6 +137,8 @@ public class BasicExceptionHandler implements HandlerInterface{
             for (ObjectError item : list) {
                 messages.add(item.getDefaultMessage());
             }
+        } else if (exception instanceof MethodArgumentTypeMismatchException) {
+            messages.add("路径参数错误，或请求资源不存在");
         } else if (exception instanceof HttpMessageNotReadableException) {
             messages.add("请求参数丢失");
         } else if (exception instanceof IllegalArgumentException) {

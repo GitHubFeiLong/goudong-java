@@ -72,10 +72,6 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         // 默认500异常
         BasicException basicException = ServerException.server(ServerExceptionEnum.SERVER_ERROR);
 
-        if (throwable instanceof RuntimeException) {
-            return ServerException.server(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage(), "RuntimeException " + throwable.getMessage());
-        }
-
         // 空指针
         if (throwable instanceof NullPointerException) {
             return ServerException.server(ServerExceptionEnum.SERVER_ERROR, "空指针异常", "NullPointerException null");
@@ -89,14 +85,14 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         if (throwable instanceof IndexOutOfBoundsException ) {
             return ServerException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, "");
         }
+
+        if (throwable instanceof RuntimeException) {
+            return ServerException.server(ServerExceptionEnum.SERVER_ERROR, throwable.getMessage(), "RuntimeException " + throwable.getMessage());
+        }
+
         String message = throwable.getMessage();
         if (message == null) {
             return basicException;
-        }
-
-        // openFeign调用远程服务，服务还未注册到nacos中
-        if (message.startsWith("com.netflix.client.ClientException")) {
-            return ServerException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, message);
         }
 
         return basicException;
