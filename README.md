@@ -5,14 +5,22 @@
 
 ## 模块
 
-1. 公用包：goudong-commons
-2. 商品服务：goudong-commodity-server
-3. 网关服务：goudong-gateway-server(端口号：10000)
-4. 消息服务：goudong-message-server(端口号：10002)
-5. 认证服务：goudong-oauth2-server(端口号：10003)
-6. 用户服务：goudong-user-server(端口号：10001)
-7. 文件服务：goudong-file-server(端口号：10004)
-8. bpm服务：goudong-bpm-server(端口号：10005)
+| 模块                              |      | 作用描述                                                     | 端口  |
+| --------------------------------- | ---- | ------------------------------------------------------------ | ----- |
+| goudong-dependencies-spring-boot  |      | 统一管理所有依赖版本                                         |       |
+| goudong-parent-spring-boot        |      | 自定义spring boot 启动器的父模块                             |       |
+| goudong-core                      |      | 使用JDK的库编写常用代码，仅引入了SLFJ，不依赖其它第三方工具包 |       |
+| goudong-redis-spring-boot-starter |      | 封装spring-boot-starter-data-redis，使用自定义key模板,接口限流等 |       |
+| goudong-web-spring-boot-starter   |      | 封装spring-boot-starter-web，全局异常，定义分页，分页结果转换器 |       |
+| goudong-commons                   |      | 微服务模块统一的代码                                         |       |
+| goudong-gateway-server            |      | 网关服务，微服务入口，加解密，鉴权等                         | 10000 |
+| goudong-user-server               |      | 用户服务，用户相关的操作                                     | 10001 |
+| goudong-oauth2-server             |      | 权限服务，权限，白名单等                                     | 10002 |
+| goudong-message-server            |      | 消息服务，发送短信，邮件                                     | 10003 |
+| goudong-file-server               |      | 文件服务，文件的上传，下载，导入导出等                       | 10004 |
+| goudong-bpm-server                |      | 流程服务                                                     | 10005 |
+| goudong-commodity-server          |      | 商品服务                                                     |       |
+| goudong-modules                   |      | 模块，学习一些常用组件的代码笔记                             |       |
 
 
 

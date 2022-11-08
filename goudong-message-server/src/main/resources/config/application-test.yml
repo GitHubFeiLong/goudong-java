@@ -5,7 +5,7 @@ logging:
     com.goudong: DEBUG
 
 server:
-  port: 10002
+  port: 10003
   servlet:
     context-path: /api/message # 访问应用统一前缀
 spring:
