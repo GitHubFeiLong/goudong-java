@@ -68,6 +68,18 @@ public class CollectionUtil {
 
     //~集合操作
     //==================================================================================================================
+
+    /**
+     * 计算集合{@code a}和集合{@code b}的差集，并返回差集{@code list} <br>
+     * 例如:
+     * <pre>
+     *       subtract([1,2,3,4],[2,3,4,5]) -》 [1]
+     * </pre>
+     * @param a 目标集合
+     * @param b 与之计算差集的集合
+     * @return 返回差集{@code list}
+     * @param <O>
+     */
     public static <O>Collection<O> subtract(final Collection<O> a, final Collection<O> b) {
         ArrayList list = new ArrayList(a);
         for (Iterator it = b.iterator(); it.hasNext();) {
