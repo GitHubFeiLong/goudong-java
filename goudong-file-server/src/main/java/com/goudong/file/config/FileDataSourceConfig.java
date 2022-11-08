@@ -1,6 +1,7 @@
 package com.goudong.file.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -34,7 +35,8 @@ import java.util.Map;
 )
 public class FileDataSourceConfig {
     @Autowired
-    private DataSource primaryDataSource;
+    @Qualifier("fileDataSource")
+    private DataSource fileDataSource;
 
     @Autowired
     private JpaProperties jpaProperties;
@@ -46,7 +48,7 @@ public class FileDataSourceConfig {
     }
 
     @Primary
-    @Bean(name = "entityManagerPrimary")
+    @Bean(name = "entityManagerFile")
     public EntityManager entityManager(EntityManagerFactoryBuilder builder) {
         return entityManagerFactoryPrimary(builder).getObject().createEntityManager();
     }
@@ -54,7 +56,7 @@ public class FileDataSourceConfig {
     @Primary
     @Bean(name = "entityManagerFactoryFile")
     public LocalContainerEntityManagerFactoryBean entityManagerFactoryPrimary (EntityManagerFactoryBuilder builder) {
-        return builder.dataSource(primaryDataSource)
+        return builder.dataSource(fileDataSource)
                 .packages("com.goudong.file.po.file") //设置实体类所在位置
                 .persistenceUnit("filePersistenceUnit")
                 .properties(getVendorProperties())

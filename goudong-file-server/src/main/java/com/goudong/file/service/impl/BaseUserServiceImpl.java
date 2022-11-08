@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.file.dto.BaseUser2QueryPageDTO;
 import com.goudong.file.po.user.BaseUserPO;
@@ -16,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -36,11 +34,6 @@ public class BaseUserServiceImpl implements BaseUserService {
      * 用户持久层接口
      */
     private final BaseUserRepository baseUserRepository;
-
-    private final GoudongMessageServerService goudongMessageServerService;
-
-    private final EntityManager entityManager;
-
 
     /**
      * 用户分页查询

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
@@ -65,7 +64,7 @@ public class UploadController {
     @PostMapping("/upload")
     @Transactional
     @Whitelist
-    public Result<FileDTO> upload(@NotNull RequestUploadDTO requestUploadDTO) throws IOException {
+    public Result<FileDTO> upload(@Validated RequestUploadDTO requestUploadDTO) throws IOException {
         // 检查
         uploadService.checkSimpleUpload(Lists.newArrayList(requestUploadDTO.getFile()));
         // 上传

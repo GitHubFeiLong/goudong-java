@@ -1,6 +1,7 @@
 package com.goudong.file.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -33,6 +34,7 @@ import java.util.Map;
 public class UserDataSourceConfig {
 
     @Autowired
+    @Qualifier("userDataSource")
     private DataSource userDataSource;
 
     @Autowired
@@ -44,7 +46,7 @@ public class UserDataSourceConfig {
         return hibernateProperties.determineHibernateProperties(jpaProperties.getProperties(), new HibernateSettings());
     }
 
-    @Bean(name = "entityManagerSecondary")
+    @Bean(name = "entityManagerUser")
     public EntityManager entityManager(EntityManagerFactoryBuilder builder) {
         return entityManagerFactorySecondary(builder).getObject().createEntityManager();
     }

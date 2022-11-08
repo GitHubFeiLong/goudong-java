@@ -85,7 +85,7 @@ public class BaseUserPO extends BasePO {
     @Column(name = "qq_open_id")
     private String qqOpenId;
 
-    @ManyToMany(targetEntity= BaseRolePO.class)
+    @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
     private List<BaseRolePO> roles = new ArrayList<>();

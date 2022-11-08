@@ -20,8 +20,6 @@ import org.springframework.util.StopWatch;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-// @EntityScan("com.goudong.file.po")
-// @EnableJpaRepositories(basePackages = {"com.goudong.file.repository"})
 public class GoudongFileServer {
 
     public static void main(String[] args) {

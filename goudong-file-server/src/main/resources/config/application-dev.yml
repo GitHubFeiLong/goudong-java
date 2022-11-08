@@ -52,7 +52,6 @@ spring:
       minIdle: 0
       maxWait: 60000
       useUnfairLock: true # 禁用公平锁
-
   jpa:
     hibernate:
       ddl-auto: none
@@ -60,6 +59,7 @@ spring:
     open-in-view: false
     properties:
       hibernate:
+        format_sql: true
         jdbc:
           time_zone: GMT+8
   redis:

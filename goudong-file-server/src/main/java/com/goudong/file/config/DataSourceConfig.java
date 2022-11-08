@@ -21,7 +21,7 @@ public class DataSourceConfig {
     @Primary
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.file")
-    public DataSource primaryDataSource() {
+    public DataSource fileDataSource() {
         return DataSourceBuilder.create().build();
     }
 
