@@ -13,6 +13,7 @@ import java.util.List;
  * @Date 2021-05-11 13:46
  * @Version 1.0
  */
+@Deprecated
 public class BeanUtil {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

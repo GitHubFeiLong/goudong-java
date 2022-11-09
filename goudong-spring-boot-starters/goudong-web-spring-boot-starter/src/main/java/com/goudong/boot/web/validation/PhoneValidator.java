@@ -1,7 +1,7 @@
 package com.goudong.boot.web.validation;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.goudong.boot.web.enumerate.PhoneValidatorComplexEnum;
+import com.goudong.core.util.StringUtil;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -68,7 +68,7 @@ public @interface PhoneValidator {
         @Override
         @SuppressWarnings(value = "all")
         public boolean isValid(String value, ConstraintValidatorContext context) {
-            if (StringUtils.isBlank(value)) {
+            if (StringUtil.isBlank(value)) {
                 //禁用默认的message的值
                 context.disableDefaultConstraintViolation();
                 //重新添加错误提示语句

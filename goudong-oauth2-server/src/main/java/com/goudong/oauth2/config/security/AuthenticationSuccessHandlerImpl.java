@@ -93,7 +93,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
                 (String)httpServletRequest.getAttribute("principal"),
                 true,
-                AuthenticationLogTypeEnum.SYSTEM.name().toLowerCase(),
+                AuthenticationLogTypeEnum.SYSTEM.name(),
                 "认证成功");
         baseAuthenticationLogService.create(baseAuthenticationLogDTO);
 

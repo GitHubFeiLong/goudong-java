@@ -163,7 +163,7 @@ public class QQController {
             BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
                     openID,
                     true,
-                    AuthenticationLogTypeEnum.QQ.name().toLowerCase(),
+                    AuthenticationLogTypeEnum.QQ.name(),
                     "认证成功");
             baseAuthenticationLogService.create(baseAuthenticationLogDTO);
         }

@@ -63,7 +63,7 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
         BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
                 (String)httpServletRequest.getAttribute("principal"),
                 false,
-                AuthenticationLogTypeEnum.SYSTEM.name().toLowerCase(),
+                AuthenticationLogTypeEnum.SYSTEM.name(),
                 result.getClientMessage());
         baseAuthenticationLogService.create(baseAuthenticationLogDTO);
 
