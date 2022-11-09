@@ -39,4 +39,9 @@ public class BaseMenuController {
         return Result.ofSuccess(baseMenuService.init(req));
     }
 
+    // @GetMapping("/page")
+    // @ApiOperation(value = "分页查询")
+    // public PageResult<BaseMenuDTO> page(@Validated BaseMenuPageReq req) {
+    //
+    // }
 }
