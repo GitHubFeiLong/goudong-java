@@ -1,17 +1,17 @@
 package com.goudong.user.controller.menu;
 
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
+import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.service.BaseMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,9 +39,9 @@ public class BaseMenuController {
         return Result.ofSuccess(baseMenuService.init(req));
     }
 
-    // @GetMapping("/page")
-    // @ApiOperation(value = "分页查询")
-    // public PageResult<BaseMenuDTO> page(@Validated BaseMenuPageReq req) {
-    //
-    // }
+    @GetMapping("/page")
+    @ApiOperation(value = "分页查询")
+    public PageResult<BaseMenuDTO> page(@Validated BaseMenuPageReq req) {
+        return baseMenuService.page(req);
+    }
 }

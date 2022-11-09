@@ -14,6 +14,7 @@ import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.StringUtil;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseRolePO;
 import com.goudong.user.po.BaseUserPO;
@@ -21,7 +22,6 @@ import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseRoleService;
 import com.goudong.user.service.BaseUserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -224,16 +224,16 @@ public class BaseUserServiceImpl implements BaseUserService {
             @Override
             public Predicate toPredicate(Root<BaseUserPO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
                 Predicate predicate = null;
-                if (StringUtils.isNotBlank(page.getUsername())) {
+                if (StringUtil.isNotBlank(page.getUsername())) {
                     Path<String> username = root.get("username");
                     predicate = criteriaBuilder.like(username, page.getUsername() + "%");
-                } else if (StringUtils.isNotBlank(page.getPhone())) {
+                } else if (StringUtil.isNotBlank(page.getPhone())) {
                     Path<String> phone = root.get("phone");
                     predicate = criteriaBuilder.like(phone, page.getPhone() + "%");
-                } else if (StringUtils.isNotBlank(page.getEmail())) {
+                } else if (StringUtil.isNotBlank(page.getEmail())) {
                     Path<String> email = root.get("email");
                     predicate = criteriaBuilder.like(email, page.getEmail() + "%");
-                } else if (StringUtils.isNotBlank(page.getNickname())) {
+                } else if (StringUtil.isNotBlank(page.getNickname())) {
                     Path<String> nickname = root.get("nickname");
                     predicate = criteriaBuilder.like(nickname, page.getNickname() + "%");
                 }
@@ -266,16 +266,16 @@ public class BaseUserServiceImpl implements BaseUserService {
     public PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
-            if (StringUtils.isNotBlank(page.getUsername())) {
+            if (StringUtil.isNotBlank(page.getUsername())) {
                 and.add(criteriaBuilder.like(root.get("username"), page.getUsername() + "%"));
             }
-            if (StringUtils.isNotBlank(page.getPhone())) {
+            if (StringUtil.isNotBlank(page.getPhone())) {
                 and.add(criteriaBuilder.like(root.get("phone"), page.getPhone() + "%"));
             }
-            if (StringUtils.isNotBlank(page.getEmail())) {
+            if (StringUtil.isNotBlank(page.getEmail())) {
                 and.add(criteriaBuilder.like(root.get("email"), page.getEmail() + "%"));
             }
-            if (StringUtils.isNotBlank(page.getNickname())) {
+            if (StringUtil.isNotBlank(page.getNickname())) {
                 and.add(criteriaBuilder.like(root.get("nickname"), page.getNickname() + "%"));
             }
             if (page.getStartValidTime() != null && page.getEndValidTime() != null) {

@@ -1,6 +1,8 @@
 package com.goudong.user.service;
 
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.core.lang.PageResult;
+import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
 
 import java.util.List;
@@ -38,4 +40,11 @@ public interface BaseMenuService {
      * @return
      */
     List<BaseMenuDTO> findAllByRoleNames(List<String> roleNames);
+
+    /**
+     * 分页查询菜单
+     * @param req
+     * @return
+     */
+    PageResult<BaseMenuDTO> page(BaseMenuPageReq req);
 }

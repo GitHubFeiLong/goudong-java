@@ -6,10 +6,13 @@ import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
+import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.CollectionUtil;
+import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
@@ -21,12 +24,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -214,6 +222,24 @@ public class BaseMenuServiceImpl implements BaseMenuService {
                 .collect(Collectors.toList());
 
         return values;
+    }
+
+    /**
+     * 分页查询菜单
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public PageResult<BaseMenuDTO> page(BaseMenuPageReq req) {
+        Specification<BaseMenuPO> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> and = new ArrayList<>();
+            Order weightOrder = criteriaBuilder.asc(root.get("createTime"));
+            return query.orderBy(weightOrder).getRestriction();
+        };
+        PageRequest pageRequest = PageRequest.of(req.getJPAPage(), req.getSize());
+        Page<BaseMenuPO> all = baseMenuRepository.findAll(specification, pageRequest);
+        return PageResultConvert.convert(all, BaseMenuDTO.class);
     }
 
     /**

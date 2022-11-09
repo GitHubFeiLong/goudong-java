@@ -1,4 +1,4 @@
-package com.goudong.oauth2.dto;
+package com.goudong.user.dto;
 
 import com.goudong.boot.web.core.BasePage;
 import lombok.Data;
@@ -12,4 +12,5 @@ import lombok.Data;
  */
 @Data
 public class BaseMenuPageReq extends BasePage {
+
 }
