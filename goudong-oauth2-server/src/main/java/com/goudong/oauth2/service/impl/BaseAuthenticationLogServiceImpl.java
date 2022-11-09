@@ -1,8 +1,8 @@
 package com.goudong.oauth2.service.impl;
 
-import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.IpUtil;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
 import com.goudong.oauth2.po.BaseAuthenticationLogPO;

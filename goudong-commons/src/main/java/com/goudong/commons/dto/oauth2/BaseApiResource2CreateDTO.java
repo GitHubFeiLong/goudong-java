@@ -1,6 +1,6 @@
 package com.goudong.commons.dto.oauth2;
 
-import com.goudong.commons.annotation.validator.EnumIgnoreCaseValidator;
+import com.goudong.boot.web.validation.EnumIgnoreCaseValidator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

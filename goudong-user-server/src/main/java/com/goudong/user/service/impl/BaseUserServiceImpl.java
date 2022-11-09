@@ -9,10 +9,10 @@ import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseRolePO;
@@ -69,7 +69,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     public List<String> generateUserName(String username) {
-        AssertUtil.hasText(username, "根据用户名查询用户时，用户名不能为空");
+        AssertUtil.isNotBlank(username, "根据用户名查询用户时，用户名不能为空");
         List<String> result = new ArrayList<>();
 
         // 查询用户名是否存在

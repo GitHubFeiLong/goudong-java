@@ -3,7 +3,8 @@ package com.goudong.message.util;
 import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.teaopenapi.models.Config;
-import com.goudong.commons.utils.core.AssertUtil;
+import com.goudong.core.lang.RegexConst;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.message.properties.AlibabaMessageProperties;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -40,8 +41,9 @@ public class SendSms {
      * @throws Exception
      */
     public void sendCode(String phone, String code) throws Exception {
-        AssertUtil.isPhone(phone, "手机号格式错误");
-        AssertUtil.hasLength(code, "验证码错误");
+        AssertUtil.isNotBlank(phone, "手机号格式错误");
+        AssertUtil.isTrue(phone.matches(RegexConst.PHONE_LOOSE), "手机号格式错误");
+        AssertUtil.isNotBlank(code, "验证码错误");
         Client client = createClient();
         SendSmsRequest sendSmsRequest = new SendSmsRequest()
                 .setPhoneNumbers(phone)

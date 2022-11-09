@@ -1,6 +1,7 @@
 package com.goudong.core.util;
 
 import com.goudong.core.function.StringSupplier;
+import com.goudong.core.lang.RegexConst;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -249,6 +250,49 @@ public class AssertUtil {
         }
     }
 
+
+    /**
+     * 断言{@code str}是一个正确的邮箱
+     * @param str
+     * @throws IllegalArgumentException
+     */
+    public static void isEmail(String str) {
+        isNotNull(str);
+        isTrue(str.matches(RegexConst.EMAIL));
+    }
+
+    /**
+     * 断言{@code str}是一个正确的邮箱
+     * @param str
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEmail(String str, String errMsg) {
+        isNotNull(str, errMsg);
+        isTrue(str.matches(RegexConst.EMAIL), errMsg);
+    }
+
+    /**
+     * 断言{@code str}是一个正确的邮箱
+     * @param str
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEmail(String str, StringSupplier supplier) {
+        isNotNull(str, supplier);
+        isTrue(str.matches(RegexConst.EMAIL), supplier);
+    }
+
+    /**
+     * 断言{@code str}是一个正确的邮箱
+     * @param str
+     * supplier 自定义异常
+     */
+    public static void isEmail(String str, Supplier<RuntimeException> supplier) {
+        isNotNull(str, supplier);
+        isTrue(str.matches(RegexConst.EMAIL), supplier);
+    }
+
     /**
      * 断言{@code collection=null || collection.isEmpty()=true}
      * @param collection
@@ -433,4 +477,66 @@ public class AssertUtil {
             throw supplier.get();
         }
     }
+
+    /**
+     * 断言{@code name}是枚举{@code clazz}的成员
+     * @param name 成员名称
+     * @param clazz 枚举class对象
+     */
+    public static void isEnum (String name, Class<? extends Enum> clazz) {
+        isNotBlank(name);
+        isNotNull(clazz);
+        Enum.valueOf(clazz, name);
+    }
+
+    /**
+     * 断言{@code name}是枚举{@code clazz}的成员
+     * @param name 成员名称
+     * @param clazz 枚举class对象
+     * @param errMsg 自定义异常描述
+     */
+    public static void isEnum (String name, Class<? extends Enum> clazz, String errMsg) {
+        isNotBlank(name, errMsg);
+        isNotNull(clazz, errMsg);
+        try {
+            Enum.valueOf(clazz, name);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code name}是枚举{@code clazz}的成员
+     * @param name 成员名称
+     * @param clazz 枚举class对象
+     * @param supplier 自定义异常描述
+     */
+    public static void isEnum (String name, Class<? extends Enum> clazz, StringSupplier supplier) {
+        isNotBlank(name, supplier);
+        isNotNull(clazz, supplier);
+        try {
+            Enum.valueOf(clazz, name);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code name}是枚举{@code clazz}的成员
+     * @param name 成员名称
+     * @param clazz 枚举class对象
+     * @param supplier – 自定义异常
+     */
+    public static void isEnum (String name, Class<? extends Enum> clazz, Supplier<RuntimeException> supplier) {
+        isNotBlank(name, supplier);
+        isNotNull(clazz, supplier);
+        try {
+            Enum.valueOf(clazz, name);
+        } catch (IllegalArgumentException e) {
+            throw supplier.get();
+        }
+    }
+
+
+
 }

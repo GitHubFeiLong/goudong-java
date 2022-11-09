@@ -1,9 +1,8 @@
-package com.goudong.commons.utils.core;
+package com.goudong.core.util;
 
-import com.goudong.commons.enumerate.core.MessageFormatEnum;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MessageFormatUtilTest {
 
@@ -27,15 +26,15 @@ class MessageFormatUtilTest {
 
     @Test
     void testFormat() {
-        assertEquals(MessageFormatUtil.format(MessageFormatEnum.PLACEHOLDER_FORMAT,"${}-${}-${}", "1", "2", "3"),
+        assertEquals(MessageFormatUtil.format(MessageFormatUtil.MessageFormatEnum.PLACEHOLDER_FORMAT,"${}-${}-${}", "1", "2", "3"),
                 "1-2-3");
-        assertEquals(MessageFormatUtil.format(MessageFormatEnum.PLACEHOLDER_FORMAT,"${}${}${}", "1", "2", "3"),
+        assertEquals(MessageFormatUtil.format(MessageFormatUtil.MessageFormatEnum.PLACEHOLDER_FORMAT,"${}${}${}", "1", "2", "3"),
                 "123");
 
-        assertEquals(MessageFormatUtil.format(MessageFormatEnum.PLACEHOLDER_FORMAT,"${一}${二}${三}", "1", "2", "3"),
+        assertEquals(MessageFormatUtil.format(MessageFormatUtil.MessageFormatEnum.PLACEHOLDER_FORMAT,"${一}${二}${三}", "1", "2", "3"),
                 "123");
 
-        assertEquals(MessageFormatUtil.format(MessageFormatEnum.PLACEHOLDER_FORMAT,"${一}${二|，\n}${三}}", "1", "2", "3"),
+        assertEquals(MessageFormatUtil.format(MessageFormatUtil.MessageFormatEnum.PLACEHOLDER_FORMAT,"${一}${二|，\n}${三}}", "1", "2", "3"),
                 "123}");
     }
 

@@ -30,4 +30,13 @@ public class ArrayUtil {
     public static boolean isNotEmpty(Object[] arr) {
         return !ArrayUtil.isEmpty(arr);
     }
+
+    /**
+     * 创建一个数组对象
+     * @param elements
+     * @return
+     */
+    public static Object[] create(Object... elements) {
+        return elements;
+    }
 }

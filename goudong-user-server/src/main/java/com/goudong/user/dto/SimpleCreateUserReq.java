@@ -1,6 +1,6 @@
 package com.goudong.user.dto;
 
-import com.goudong.commons.annotation.validator.PhoneValidator;
+import com.goudong.boot.web.validation.PhoneValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

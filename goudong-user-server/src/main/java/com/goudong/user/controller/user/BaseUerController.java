@@ -6,10 +6,11 @@ import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
+import com.goudong.core.lang.RegexConst;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseUserPO;
@@ -81,7 +82,7 @@ public class BaseUerController {
     @ApiImplicitParam(name = "phone", value = "手机号")
     @Whitelist("根据手机号获取账号")
     public Result<Boolean> checkPhone(@PathVariable String phone) {
-        AssertUtil.isPhone(phone, "手机号码格式不正确");
+        AssertUtil.isTrue(phone.matches(RegexConst.PHONE_LOOSE), "手机号码格式不正确");
         BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
         Result<Boolean> booleanResult = Result.ofSuccess(baseUserPO == null);
         // 返回附加信息，用户基本信息
@@ -152,7 +153,7 @@ public class BaseUerController {
     @ApiOperation(value = "ui创建普通账号", notes = "后台手动创建用户")
     @Whitelist("创建普通账号")
     public Result<BaseUserDTO> createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
-        AssertUtil.isPhone(createDTO.getPhone(), "手机号格式错误");
+        AssertUtil.isTrue(createDTO.getPhone().matches(RegexConst.PHONE_LOOSE), "手机号格式错误");
         AssertUtil.isEmail(createDTO.getEmail(), "邮箱格式不正确");
         AssertUtil.isEnum(createDTO.getAccountRadio(), AccountRadioEnum.class);
 

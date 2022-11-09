@@ -5,4 +5,4 @@
  * @date 2022/2/11 17:08
  * @version 1.0
  */
-package com.goudong.commons.annotation.validator;
+package com.goudong.boot.web.validation;

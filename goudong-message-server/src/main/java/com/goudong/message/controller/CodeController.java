@@ -2,8 +2,9 @@ package com.goudong.message.controller;
 
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.annotation.core.Whitelist;
-import com.goudong.commons.utils.core.AssertUtil;
+import com.goudong.core.lang.RegexConst;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.message.config.CodeDirectRabbitConfig;
 import com.goudong.message.enumerate.RedisKeyProviderEnum;
 import io.swagger.annotations.Api;
@@ -50,7 +51,7 @@ public class CodeController {
     @ApiImplicitParam(name = "email", value = "邮箱", required = true)
     @Whitelist("发送邮箱验证码")
     public Result sendEmailCode (@PathVariable("email") @Email(message = "") String email) {
-        AssertUtil.isEmail(email, "邮箱格式错误：" + email);
+        AssertUtil.isEmail(email, () -> "邮箱格式错误：" + email);
         rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.EMAIL_CODE_ROUTING_KEY, email);
         return Result.ofSuccess().clientMessage("发送成功");
     }
@@ -64,7 +65,7 @@ public class CodeController {
     @ApiImplicitParam(name = "phone", value = "手机号码", required = true)
     @Whitelist("发送短信验证码")
     public Result sendPhoneCode (@PathVariable("phone") String phone) {
-        AssertUtil.isPhone(phone, "手机号格式错误：" + phone);
+        AssertUtil.isTrue(phone.matches(RegexConst.PHONE_LOOSE), () -> "手机号格式错误：" + phone);
         rabbitTemplate.convertAndSend(CodeDirectRabbitConfig.CODE_DIRECT_EXCHANGE, CodeDirectRabbitConfig.PHONE_CODE_ROUTING_KEY, phone);
         return Result.ofSuccess().clientMessage("发送成功");
     }

@@ -1,8 +1,9 @@
 package com.goudong.message.config;
 
 import com.goudong.boot.redis.core.RedisTool;
-import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.core.lang.RegexConst;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.message.enumerate.RedisKeyProviderEnum;
 import com.goudong.message.util.SendSms;
 import com.rabbitmq.client.Channel;
@@ -81,7 +82,8 @@ public class ReceptionCodeConfig {
     public void phoneCode(@Payload String phone, Channel channel, Message message) throws Exception {
         LogUtil.debug(log, "{} 队列收到消息。内容是：{}", CodeDirectRabbitConfig.PHONE_CODE_DIRECT_QUEUE, phone);
         try {
-            AssertUtil.isPhone(phone, "消费消息，手机号格式错误");
+            AssertUtil.isNotBlank(phone, "消费消息，手机号格式错误");
+            AssertUtil.isTrue(phone.matches(RegexConst.PHONE_LOOSE), "消费消息，手机号格式错误");
             // 验证码
             String code = RandomStringUtils.randomNumeric(6);
             LogUtil.debug(log, "phone:{}, code:{}", phone, code);

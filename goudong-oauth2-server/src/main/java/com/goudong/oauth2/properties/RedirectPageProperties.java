@@ -3,8 +3,8 @@ package com.goudong.oauth2.properties;
 import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.pojo.Transition;
-import com.goudong.commons.utils.core.AssertUtil;
 import com.goudong.commons.utils.core.StringUtil;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.core.OtherUserInfoBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -96,8 +96,8 @@ public class RedirectPageProperties {
      * @return
      */
     public String getTransitionPageUrl(Transition transition){
-        AssertUtil.notNull(transition, "过渡参数对象不能为空");
-        AssertUtil.notNull(transition.getRedirectUrl(), "过渡参数对象的重定向地址属性不能为空");
+        AssertUtil.isNotNull(transition, "过渡参数对象不能为空");
+        AssertUtil.isNotNull(transition.getRedirectUrl(), "过渡参数对象的重定向地址属性不能为空");
 
         // 转map，拼接
         Map<String, Object> map = BeanUtil.beanToMap(transition);

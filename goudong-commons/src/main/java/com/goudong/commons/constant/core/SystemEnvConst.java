@@ -1,7 +1,5 @@
 package com.goudong.commons.constant.core;
 
-import com.goudong.commons.utils.core.AssertUtil;
-
 import java.io.File;
 
 /**
@@ -51,17 +49,4 @@ public class SystemEnvConst {
 
     }
 
-    public static void main(String[] args) {
-        // System.out.println("File.separator = " + File.separator);
-        // Properties properties = System.getProperties();
-        // properties.list(System.out);
-        // // File.listRoots();
-        // System.out.println("===================");
-        // Map<String, String> getenv = System.getenv();
-        // getenv.forEach((k,v)->{
-        //     System.out.println(k + " = " + v);
-        // });
-
-        AssertUtil.isDiskPath("C:\\", "");
-    }
 }

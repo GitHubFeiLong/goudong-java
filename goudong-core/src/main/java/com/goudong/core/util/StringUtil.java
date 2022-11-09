@@ -1,7 +1,9 @@
 package com.goudong.core.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 类描述：
@@ -13,6 +15,18 @@ import java.util.List;
 public class StringUtil {
     //~fields
     //==================================================================================================================
+    /**
+     * 定义SpringBuilder的初始容量
+     * @since 1.0
+     */
+    public static final int STRING_BUILDER_SIZE = 256;
+
+    /**
+     * The empty String {@code ""}.
+     * @since 1.0
+     */
+    public static final String EMPTY = "";
+
 
     //~methods
     //==================================================================================================================
@@ -133,5 +147,51 @@ public class StringUtil {
         }
 
         return result;
+    }
+
+    /**
+     * 将{@code iterable}使用分隔符{@code separator}进行拼接
+     * @param iterable
+     * @param separator
+     * @return
+     */
+    public static String join(Iterable iterable, final String separator) {
+        return join(iterable.iterator(), separator);
+    }
+    /**
+     * 将{@code iterator}使用分隔符{@code separator}进行拼接
+     * @param iterator
+     * @param separator
+     * @return
+     */
+    public static String join(Iterator iterator, final String separator) {
+        // handle null, zero and one elements before building a buffer
+        if (iterator == null) {
+            return null;
+        }
+        if (!iterator.hasNext()) {
+            return EMPTY;
+        }
+        final Object first = iterator.next();
+        if (!iterator.hasNext()) {
+            return Objects.toString(first, "");
+        }
+
+        // two or more elements
+        final StringBuilder buf = new StringBuilder(STRING_BUILDER_SIZE); // Java default is 16, probably too small
+        if (first != null) {
+            buf.append(first);
+        }
+
+        while (iterator.hasNext()) {
+            if (separator != null) {
+                buf.append(separator);
+            }
+            final Object obj = iterator.next();
+            if (obj != null) {
+                buf.append(obj);
+            }
+        }
+        return buf.toString();
     }
 }

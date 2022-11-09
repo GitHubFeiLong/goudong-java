@@ -1,6 +1,6 @@
 package com.goudong.file.dto;
 
-import com.goudong.commons.annotation.validator.EnumValidator;
+import com.goudong.boot.web.validation.EnumValidator;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

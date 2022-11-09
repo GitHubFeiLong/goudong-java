@@ -44,7 +44,7 @@ public class StringUtil {
      * @return
      */
     public static String replacePathVariable2Asterisk (String uri){
-        AssertUtil.notNull(uri, "参数 uri 不能为空");
+        com.goudong.core.util.AssertUtil.isNotNull(uri, "参数 uri 不能为空");
         StringBuilder result = new StringBuilder(uri);
         try {
             int indexStr = -1;
