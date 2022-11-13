@@ -14,22 +14,22 @@ import java.util.stream.Collectors;
  * @Author e-Feiong.Chen
  * @Date 2022/4/14 9:10
  */
-public interface TreeInterface {
+public interface TreeInterface<ID, PID, T> {
 
-    Object getId();
+    ID getId();
 
-    Object getParentId();
+    PID getParentId();
 
-    List getChildren();
+    List<T> getChildren();
 
-    void setChildren(List children);
+    void setChildren(List<T> children);
 
     /**
      * 转成Tree
      * @param nodes 所有树
      * @return
      */
-    static List<TreeInterface> toTreeByInterface(List<TreeInterface> nodes) {
+    static List toTreeByInterface(List<? extends TreeInterface> nodes) {
         AssertUtil.isNotEmpty(nodes);
         return nodes.stream()
                 // 获取父节点
@@ -46,7 +46,7 @@ public interface TreeInterface {
      * @param nodes
      * @return
      */
-    static List<TreeInterface> getChildrenByInterface(TreeInterface root, List<TreeInterface> nodes){
+    static List<TreeInterface> getChildrenByInterface(TreeInterface root, List<? extends TreeInterface> nodes){
         List<TreeInterface> children = nodes.stream().filter(f -> Objects.equals(root.getId(), f.getParentId()))
                 .map(m -> {
                     m.setChildren(getChildrenByInterface(m, nodes));

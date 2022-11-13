@@ -13,7 +13,7 @@ import java.util.List;
  * @Date 2021/8/12 15:23
  */
 @Data
-public class BaseMenuDTO implements TreeInterface {
+public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
     private static final long serialVersionUID = -4844654607239619613L;
     /**
      * 主键id

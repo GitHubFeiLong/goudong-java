@@ -1,7 +1,6 @@
 package com.goudong.user.controller.menu;
 
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
@@ -39,9 +38,9 @@ public class BaseMenuController {
         return Result.ofSuccess(baseMenuService.init(req));
     }
 
-    @GetMapping("/page")
-    @ApiOperation(value = "分页查询")
-    public PageResult<BaseMenuDTO> page(@Validated BaseMenuPageReq req) {
-        return baseMenuService.page(req);
+    @GetMapping("/tree")
+    @ApiOperation(value = "查询所有菜单")
+    public Result<List<BaseMenuDTO>> listByTree(@Validated BaseMenuPageReq req) {
+        return Result.ofSuccess(baseMenuService.listByTree(req));
     }
 }

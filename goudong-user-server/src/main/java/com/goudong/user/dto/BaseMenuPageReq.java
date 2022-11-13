@@ -1,6 +1,5 @@
 package com.goudong.user.dto;
 
-import com.goudong.boot.web.core.BasePage;
 import lombok.Data;
 
 /**
@@ -11,6 +10,6 @@ import lombok.Data;
  * @date 2022/11/9 16:47
  */
 @Data
-public class BaseMenuPageReq extends BasePage {
+public class BaseMenuPageReq {
 
 }
