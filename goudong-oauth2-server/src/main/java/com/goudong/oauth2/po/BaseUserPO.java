@@ -101,6 +101,12 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     @Column(name = "avatar", nullable = false)
     private String avatar;
 
+    /**
+     * 激活状态（true：激活；false：未激活）
+     */
+    @Column(name = "enabled")
+    private Boolean enabled;
+
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
@@ -194,7 +200,7 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     @Override
     @JsonIgnore
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 
     /**

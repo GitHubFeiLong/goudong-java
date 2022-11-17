@@ -5,6 +5,7 @@ import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseRoleDTO;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseAuthenticationLogService;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -100,9 +102,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         UserDetails userInfo = baseUserService.loadUserByUsername(username);
 
         // 用户不存在
-        if (userInfo == null) {
-            throw new UsernameNotFoundException("用户不存在");
-        }
+        AssertUtil.isNotNull(userInfo, () -> new UsernameNotFoundException("用户不存在"));
 
         boolean passwordMatches = false;
         if (BCRYPT_PATTERN.matcher(password).matches()) {
@@ -112,15 +112,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             passwordMatches = BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
 
         }
-        // 密码不正确，抛出异常
-        if (!passwordMatches) {
-            throw new BadCredentialsException("用户密码错误");
-        }
-
-        // 账户已过期
-        if (!userInfo.isAccountNonExpired()) {
-            throw new AccountExpiredException("账户已过期");
-        }
+        AssertUtil.isTrue(passwordMatches, () -> new BadCredentialsException("用户密码错误"));
+        AssertUtil.isTrue(userInfo.isEnabled(), () -> new DisabledException("用户未激活"));
+        AssertUtil.isTrue(userInfo.isAccountNonExpired(), () -> new AccountExpiredException("账户已过期"));
 
         // 验证通过，返回用户信息
         BaseUserPO baseUserPO = BeanUtil.copyProperties(userInfo, BaseUserPO.class);

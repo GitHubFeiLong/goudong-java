@@ -83,4 +83,9 @@ public class BaseUserDTO extends BasePO implements User {
      * 头像地址
      */
     private String avatar;
+
+    /**
+     * 激活状态（true：激活；false：未激活）
+     */
+    private Boolean enabled;
 }

@@ -34,6 +34,10 @@ public class SimpleCreateUserReq implements Serializable {
     @ApiModelProperty(value="手机号", required = true)
     private String phone;
 
+    @NotBlank(message = "登录密码不能为空")
+    @ApiModelProperty(value="登录密码", required = true)
+    private String password;
+
     @NotEmpty(message = "角色不能为空")
     @ApiModelProperty(value = "用户绑定的角色", required = true)
     private List<Long> roleIds;

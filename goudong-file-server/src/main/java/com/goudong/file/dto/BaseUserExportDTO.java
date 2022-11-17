@@ -78,6 +78,11 @@ public class BaseUserExportDTO {
 
     @ExcelIgnore
     private List<BaseRoleDTO> roles;
+
+    /**
+     * 激活状态（true：激活；false：未激活）
+     */
+    // private Boolean enabled;
     //~methods
     //==================================================================================================================
 }

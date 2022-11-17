@@ -1,0 +1,1 @@
+update `base_user` set `enabled`=true;

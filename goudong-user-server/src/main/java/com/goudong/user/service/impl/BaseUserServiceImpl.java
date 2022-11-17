@@ -348,7 +348,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         BaseUserPO baseUserPO = BeanUtil.copyProperties(createDTO, BaseUserPO.class);
-        baseUserPO.setPassword(BCrypt.hashpw("123456", BCrypt.gensalt()));
+        baseUserPO.setPassword(BCrypt.hashpw(createDTO.getPassword(), BCrypt.gensalt()));
         baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
         baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
         baseUserRepository.save(baseUserPO);
@@ -404,6 +404,32 @@ public class BaseUserServiceImpl implements BaseUserService {
         BaseUserPO user = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
         baseUserRepository.delete(user);
         return BeanUtil.copyProperties(user, BaseUserDTO.class);
+    }
+
+    /**
+     * 重置用户密码
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean resetPassword(Long id) {
+        BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
+        userPO.setPassword(BCrypt.hashpw("123456", BCrypt.gensalt()));
+        return true;
+    }
+
+    /**
+     * 修改用户激活状态
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean changeEnabled(Long id) {
+        BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
+        userPO.setEnabled(!userPO.getEnabled());
+        return true;
     }
 
     /**

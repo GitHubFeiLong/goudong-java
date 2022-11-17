@@ -6,6 +6,7 @@ import com.goudong.user.dto.BaseUser2QueryPageDTO;
 import com.goudong.user.dto.BaseUserDTO;
 import com.goudong.user.dto.SimpleCreateUserReq;
 import com.goudong.user.po.BaseUserPO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -106,4 +107,20 @@ public interface BaseUserService {
      * @return
      */
     BaseUserDTO deleteUserById(Long id);
+
+    /**
+     * 重置用户密码
+     * @param id
+     * @return
+     */
+    @Transactional
+    boolean resetPassword(Long id);
+
+    /**
+     * 修改用户激活状态
+     * @param id
+     * @return
+     */
+    @Transactional
+    boolean changeEnabled(Long id);
 }
