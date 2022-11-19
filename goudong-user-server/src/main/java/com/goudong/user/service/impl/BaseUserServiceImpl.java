@@ -111,6 +111,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     public BaseUserDTO createUser(BaseUserDTO baseUserDTO) {
         AccountRadioEnum accountRadioEnum = AccountRadioEnum.valueOf(baseUserDTO.getAccountRadio());
         BaseUserPO userPO = BeanUtil.copyProperties(baseUserDTO, BaseUserPO.class);
+        userPO.setEnabled(true);
         switch (accountRadioEnum) {
             case BLANK:
                 // 查询填写的基本信息是否已存在
@@ -146,6 +147,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 设置角色
         BaseRolePO roleUser = baseRoleService.findByRoleUser();
         userPO.getRoles().add(roleUser);
+        userPO.setEnabled(true);
         baseUserRepository.save(userPO);
 
         return BeanUtil.copyProperties(userPO, BaseUserDTO.class);
@@ -351,6 +353,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         baseUserPO.setPassword(BCrypt.hashpw(createDTO.getPassword(), BCrypt.gensalt()));
         baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
         baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
+        baseUserPO.setEnabled(true);
         baseUserRepository.save(baseUserPO);
         return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
     }
@@ -429,6 +432,18 @@ public class BaseUserServiceImpl implements BaseUserService {
     public boolean changeEnabled(Long id) {
         BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
         userPO.setEnabled(!userPO.getEnabled());
+        return true;
+    }
+
+    /**
+     * 批量删除用户
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    public boolean deleteUserByIds(List<Long> ids) {
+        baseUserRepository.deleteByIdIn(ids);
         return true;
     }
 

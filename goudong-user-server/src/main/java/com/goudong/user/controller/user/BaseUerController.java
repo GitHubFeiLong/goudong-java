@@ -26,8 +26,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -252,6 +255,15 @@ public class BaseUerController {
     public Result<BaseUserDTO> deleteUserById (@PathVariable @Min(value = 100) Long id){
         BaseUserDTO userDTO = baseUserService.deleteUserById(id);
         return Result.ofSuccess(userDTO);
+    }
+
+    @DeleteMapping("/ids")
+    @ApiOperation(value = "批量删除用户")
+    @ApiImplicitParam(name = "id", value = "user id", required = true)
+    public Result<Boolean> deleteUserById (@RequestParam(name = "ids")@NotNull @NotEmpty List<Long> ids){
+        // 参数校验，预置用户不能删除
+        List<Long> deleteIds = ids.stream().filter(f -> f > 100).collect(Collectors.toList());
+        return Result.ofSuccess(baseUserService.deleteUserByIds(deleteIds));
     }
 
     @PutMapping("/reset-password/{id}")

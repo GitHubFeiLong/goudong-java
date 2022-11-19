@@ -54,4 +54,5 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      */
     BaseUserPO findByQqOpenId(String qqOpenId);
 
+    int deleteByIdIn(List<Long> ids);
 }

@@ -123,4 +123,12 @@ public interface BaseUserService {
      */
     @Transactional
     boolean changeEnabled(Long id);
+
+    /**
+     * 批量删除用户
+     * @param ids
+     * @return
+     */
+    @Transactional
+    boolean deleteUserByIds(List<Long> ids);
 }
