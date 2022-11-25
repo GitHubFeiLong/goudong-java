@@ -47,11 +47,18 @@ public class CollectionUtil {
      * @param <E>
      */
     public static <E> ArrayList<E> newArrayList(E... elements) {
-        AssertUtil.isNotEmpty(elements);
-        ArrayList<E> list = new ArrayList<>(elements.length);
-        Collections.addAll(list, elements);
-        return list;
+        return ListUtil.newArrayList(elements);
     }
+    /**
+     * 初始化一个ArrayList，内容是[start, end] 之间的所有整数
+     * @param start 起始值
+     * @param end 结束值
+     * @return
+     */
+    public static List<Integer> newArrayListByRange(int start, int end) {
+        return ListUtil.newArrayListByRange(start, end);
+    }
+
 
     /**
      * 初始化一个ArrayList

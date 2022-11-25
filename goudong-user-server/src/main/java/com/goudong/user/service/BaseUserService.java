@@ -131,4 +131,13 @@ public interface BaseUserService {
      */
     @Transactional
     boolean deleteUserByIds(List<Long> ids);
+
+
+    /**
+     * 修改用户锁定状态
+     * @param id
+     * @return
+     */
+    @Transactional
+    boolean changeLocked(Long id);
 }

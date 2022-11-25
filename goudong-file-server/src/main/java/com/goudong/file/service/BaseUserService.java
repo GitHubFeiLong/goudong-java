@@ -2,6 +2,7 @@ package com.goudong.file.service;
 
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.file.dto.BaseUser2QueryPageDTO;
+import com.goudong.file.po.user.BaseUserPO;
 
 import java.util.List;
 
@@ -25,4 +26,10 @@ public interface BaseUserService {
      * @return
      */
     List<com.goudong.commons.dto.oauth2.BaseUserDTO> findAllById(List<Long> ids);
+
+    /**
+     * 批量保存用户
+     * @param userPOS
+     */
+    void saveAll(List<BaseUserPO> userPOS);
 }

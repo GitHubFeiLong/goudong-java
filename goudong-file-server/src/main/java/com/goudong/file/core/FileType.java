@@ -1,9 +1,14 @@
 package com.goudong.file.core;
 
+import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.enumerate.file.FileLengthUnit;
 import com.goudong.commons.enumerate.file.FileTypeEnum;
+import com.goudong.file.exception.FileUploadException;
+import com.goudong.file.util.FileUtils;
 import lombok.Data;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -70,5 +75,33 @@ public class FileType {
     @Override
     public int hashCode() {
         return Objects.hash(type);
+    }
+
+    /**
+     * 检查指定{@code file}是否满足上传配置
+     * @param file
+     */
+    public void checkFileSize(MultipartFile file) {
+        checkFileSize(file.getSize());
+    }
+
+    /**
+     * 检查指定{@code fileSize}是否满足上传配置
+     * @param fileSize
+     */
+    public void checkFileSize(long fileSize) {
+        // 计算用户配置该类型文件允许上传的字节大小
+        long bytes = this.fileLengthUnit.toBytes(this.length);
+        if (bytes < fileSize) {
+            ImmutablePair<Long, FileLengthUnit> var1 = FileUtils.adaptiveSize(fileSize);
+            String message = String.format("文件(类型:%s,size:%s%s)超过配置(%s%s)",
+                    this.type.name(),
+                    var1.getLeft(),
+                    var1.getRight(),
+                    this.length,
+                    this.fileLengthUnit);
+
+            throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, message);
+        }
     }
 }

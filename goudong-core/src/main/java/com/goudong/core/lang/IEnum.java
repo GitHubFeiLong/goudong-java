@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * @version 1.0
  * @date 2022/11/9 10:13
  */
-public interface IEnum<T extends IEnum, ID> {
+public interface IEnum<ID, T extends IEnum> {
 
     /**
      * 获取枚举成员的唯一标识

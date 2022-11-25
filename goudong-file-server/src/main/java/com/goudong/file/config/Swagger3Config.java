@@ -142,4 +142,25 @@ public class Swagger3Config {
                 ;
     }
 
+    @Bean
+    public Docket template() {
+        ApiInfo apiInfo =  new ApiInfoBuilder()
+                .title("模板")
+                .description("模板")
+                .version("1.0")
+                .contact(new Contact("Evan", "http://www.baidu.com", "123456@qq.com"))
+                .build();
+        return new Docket(DocumentationType.OAS_30)
+                .enable(true)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.file.controller.template"))
+                .paths(PathSelectors.any())
+                .build()
+                // 支持的通讯协议集合
+                .protocols(new LinkedHashSet<>(Arrays.asList("http", "https")))
+                .groupName("template")
+                .globalRequestParameters(SwaggerUtil.getRequestParameters())
+                ;
+    }
 }

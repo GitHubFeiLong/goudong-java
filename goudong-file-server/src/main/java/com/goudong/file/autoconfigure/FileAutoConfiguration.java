@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.goudong.commons.constant.core.SystemEnvConst;
 import com.goudong.commons.exception.core.ApplicationBootFailedException;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.file.core.FileImports;
 import com.goudong.file.core.FileType;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.properties.FileProperties;
@@ -51,7 +52,7 @@ public class FileAutoConfiguration {
     }
 
     /**
-     * 注入
+     * 注入 {@code FileUpload}
      * @return
      */
     @Bean
@@ -109,6 +110,46 @@ public class FileAutoConfiguration {
         LogUtil.info(log, "\n应用中文件上传的磁盘目录为:\"{}\",支持上传的文件类型及最大限制如下:\n{}", rootDir,
                 body.toString());
         return upload;
+    }
+
+    /**
+     * 注入 {@code FileImports}
+     * @return
+     */
+    @Bean
+    public FileImports fileImports() {
+        FileImports imports = Optional.ofNullable(fileProperties.getImports()).orElse(new FileImports());
+        /*
+            配置的类型及限制
+         */
+        List<FileType> fileTypeList = new ArrayList<>();
+        Arrays.stream(imports.getClass().getDeclaredFields())
+                // 筛选FileType 类型属性
+                .filter(f -> Objects.equals(f.getType().getName(), FileType.class.getName()))
+                // 只要字段名
+                .map(Field::getName)
+                // 根据对象和其字段名获取值，并加入到集合
+                .forEach(f->{
+                    fileTypeList.add(BeanUtil.getProperty(imports, f));
+                });
+
+        // 将其设置到属性中，避免后面额外去取值
+        imports.setFileTypes(fileTypeList);
+
+        StringBuilder body = new StringBuilder();
+
+        final String template = "%-8s%-8s%-8s\n";
+        String title = String.format(template, "NUMBER", "TYPE", "MAX");
+        body.append(title);
+        AtomicInteger number = new AtomicInteger(1);
+        fileTypeList.stream().forEach(p->{
+            String row = String.format(template, number.getAndIncrement(), p.getType().toString(), String.valueOf(p.getLength()) + p.getFileLengthUnit());
+            body.append(row);
+        });
+
+        LogUtil.info(log, "\n应用中文件上传的磁盘目录为:\"{}\",支持上传的文件类型及最大限制如下:\n{}", rootDir,
+                body.toString());
+        return imports;
     }
 
     /**

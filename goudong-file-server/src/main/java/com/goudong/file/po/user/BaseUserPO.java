@@ -3,6 +3,7 @@ package com.goudong.file.po.user;
 import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "base_user")
 @SQLDelete(sql = "update base_user set deleted=null where id=?")
@@ -90,6 +92,18 @@ public class BaseUserPO extends BasePO {
      */
     @Column(name = "enabled")
     private Boolean enabled;
+
+    /**
+     * 锁定状态（true：已锁定；false：未锁定）
+     */
+    @Column(name = "locked", nullable = false)
+    private Boolean locked;
+
+    /**
+     * 性别（0：未知；1：男；2：女）
+     */
+    @Column(name = "sex", nullable = false)
+    private Integer sex;
 
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},

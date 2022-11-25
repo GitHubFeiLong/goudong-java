@@ -40,7 +40,7 @@ public class BaseRolePO extends BasePO {
     @Column(name = "remark")
     private String remark;
 
-    @ManyToMany(targetEntity=BaseUserPO.class)
+    @ManyToMany(targetEntity=BaseUserPO.class, fetch = FetchType.LAZY)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "role_id")},
             inverseJoinColumns={@JoinColumn(name = "user_id")})
     private List<BaseUserPO> users = new ArrayList<>();

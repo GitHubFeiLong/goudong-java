@@ -15,10 +15,7 @@ import com.goudong.oauth2.service.BaseUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -114,6 +111,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         }
         AssertUtil.isTrue(passwordMatches, () -> new BadCredentialsException("用户密码错误"));
         AssertUtil.isTrue(userInfo.isEnabled(), () -> new DisabledException("用户未激活"));
+        AssertUtil.isTrue(userInfo.isAccountNonLocked(), () -> new LockedException("用户以锁定"));
         AssertUtil.isTrue(userInfo.isAccountNonExpired(), () -> new AccountExpiredException("账户已过期"));
 
         // 验证通过，返回用户信息

@@ -99,4 +99,15 @@ public class BaseUserServiceImpl implements BaseUserService {
         List<BaseUserPO> allById = baseUserRepository.findAllById(ids);
         return BeanUtil.copyToList(allById, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
     }
+
+    /**
+     * 批量保存用户
+     *
+     * @param userPOS
+     */
+    @Override
+    @Transactional
+    public void saveAll(List<BaseUserPO> userPOS) {
+        baseUserRepository.saveAll(userPOS);
+    }
 }

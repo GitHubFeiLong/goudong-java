@@ -66,6 +66,12 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     private String phone;
 
     /**
+     * 性别（0：未知；1：男；2：女）
+     */
+    @Column(name = "sex", nullable = false)
+    private Integer sex;
+
+    /**
      * 昵称
      */
     @Column(name = "nickname")
@@ -106,6 +112,12 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
      */
     @Column(name = "enabled")
     private Boolean enabled;
+
+    /**
+     * 锁定状态（true：已锁定；false：未锁定）
+     */
+    @Column(name = "locked", nullable = false)
+    private Boolean locked;
 
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
@@ -180,7 +192,7 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     @Override
     @JsonIgnore
     public boolean isAccountNonLocked() {
-        return true;
+        return !this.locked;
     }
 
     /**

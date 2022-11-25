@@ -94,4 +94,13 @@ public class BaseUserDTO extends BasePO {
      * 激活状态（true：激活；false：未激活）
      */
     private Boolean enabled;
+
+    /**
+     * 性别（0：未知；1：男；2：女）
+     */
+    private Integer sex;
+    /**
+     * 锁定状态（true：已锁定；false：未锁定）
+     */
+    private Boolean locked;
 }

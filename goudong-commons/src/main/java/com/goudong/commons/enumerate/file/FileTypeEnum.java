@@ -1,6 +1,7 @@
 package com.goudong.commons.enumerate.file;
 
 
+import com.goudong.core.lang.IEnum;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
  * @version 1.0
  * @date 2021/12/5 18:41
  */
-public enum FileTypeEnum {
+public enum FileTypeEnum implements IEnum<String, FileTypeEnum> {
     //~常见图片
     //==================================================================================================================
     JPG,
@@ -83,4 +84,27 @@ public enum FileTypeEnum {
     public String lowerName() {
         return this.name().toLowerCase();
     }
+
+    /**
+     * 获取枚举成员的唯一标识
+     *
+     * @return
+     */
+    @Override
+    public String getId() {
+        return this.name();
+    }
+
+    /**
+     * 根据{@code id} 找到对应的枚举成员并返回<br>
+     *
+     * @param s 待找的枚举成员id
+     * @return
+     */
+    @Override
+    public FileTypeEnum getById(String s) {
+        return IEnum.super.getById(s);
+    }
+
+
 }

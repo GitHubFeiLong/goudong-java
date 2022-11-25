@@ -4,6 +4,7 @@ import com.goudong.core.function.StringSupplier;
 import com.goudong.core.lang.RegexConst;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -108,6 +109,926 @@ public class AssertUtil {
      */
     public static void isFalse(boolean boo, Supplier<RuntimeException> supplier) {
         if (boo) {
+            throw supplier.get();
+        }
+    }
+
+    //~ equals and not equals
+    //==================================================================================================================
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(byte expected, byte actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(byte expected, byte actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(byte expected, byte actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(byte expected, byte actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(byte expected, byte actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(byte expected, byte actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(byte expected, byte actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(byte expected, byte actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(char expected, char actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(char expected, char actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(char expected, char actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(char expected, char actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(char expected, char actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(char expected, char actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(char expected, char actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(char expected, char actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(short expected, short actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(short expected, short actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(short expected, short actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(short expected, short actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}不相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(short expected, short actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(short expected, short actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(short expected, short actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(short expected, short actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(int expected, int actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(int expected, int actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(int expected, int actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(int expected, int actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(int expected, int actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(int expected, int actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(int expected, int actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(int expected, int actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(long expected, long actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(long expected, long actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(long expected, long actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(long expected, long actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(long expected, long actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(long expected, long actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(long expected, long actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(long expected, long actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(float expected, float actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(float expected, float actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(float expected, float actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(float expected, float actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(float expected, float actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(float expected, float actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(float expected, float actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(float expected, float actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(double expected, double actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(double expected, double actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(double expected, double actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(double expected, double actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(double expected, double actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(double expected, double actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(double expected, double actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(double expected, double actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(boolean expected, boolean actual) {
+        if (expected != actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(boolean expected, boolean actual, String errMsg) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(boolean expected, boolean actual, StringSupplier supplier) {
+        if (expected != actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(boolean expected, boolean actual, Supplier<RuntimeException> supplier) {
+        if (expected != actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(boolean expected, boolean actual) {
+        if (expected == actual) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(boolean expected, boolean actual, String errMsg) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(boolean expected, boolean actual, StringSupplier supplier) {
+        if (expected == actual) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(boolean expected, boolean actual, Supplier<RuntimeException> supplier) {
+        if (expected == actual) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(Object expected, Object actual) {
+        if (!Objects.equals(expected, actual)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(Object expected, Object actual, String errMsg) {
+        if (!Objects.equals(expected, actual)) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(Object expected, Object actual, StringSupplier supplier) {
+        if (!Objects.equals(expected, actual)) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isEquals(Object expected, Object actual, Supplier<RuntimeException> supplier) {
+        if (!Objects.equals(expected, actual)) {
+            throw supplier.get();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(Object expected, Object actual) {
+        if (Objects.equals(expected, actual)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param errMsg 自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(Object expected, Object actual, String errMsg) {
+        if (Objects.equals(expected, actual)) {
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 延迟执行自定义异常描述
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(Object expected, Object actual, StringSupplier supplier) {
+        if (Objects.equals(expected, actual)) {
+            throw new IllegalArgumentException(supplier.get());
+        }
+    }
+
+    /**
+     * 断言{@code expected} 与 {@code actual}相等
+     * @param expected 预期值
+     * @param actual 实际值
+     * @param supplier 自定义异常
+     * @throws IllegalArgumentException
+     */
+    public static void isNotEquals(Object expected, Object actual, Supplier<RuntimeException> supplier) {
+        if (Objects.equals(expected, actual)) {
             throw supplier.get();
         }
     }

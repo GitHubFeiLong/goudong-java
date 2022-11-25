@@ -279,4 +279,11 @@ public class BaseUerController {
     public Result<Boolean> changeEnabled(@PathVariable @Min(value = 100) Long id) {
         return Result.ofSuccess(baseUserService.changeEnabled(id));
     }
+
+    @PutMapping("/change-locked/{id}")
+    @ApiOperation("修改锁定状态")
+    @ApiImplicitParam(name = "id", value = "user id", required = true)
+    public Result<Boolean> changeLocked(@PathVariable @Min(value = 100) Long id) {
+        return Result.ofSuccess(baseUserService.changeLocked(id));
+    }
 }

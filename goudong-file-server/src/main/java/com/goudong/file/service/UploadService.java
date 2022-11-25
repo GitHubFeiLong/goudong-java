@@ -38,6 +38,11 @@ public interface UploadService {
     void checkShardUpload(FileShardUploadDTO shardUploadDTO);
 
     /**
+     * 检查文件导入是否符合配置的文件上传和导入的属性
+     * @param file
+     */
+    void checkImportUpload(MultipartFile file);
+    /**
      * 简单上传
      * @param requestUploadDTO
      * @return fileDto 上传后的对象

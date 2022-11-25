@@ -26,6 +26,7 @@
         <module>redis-master-slave</module>
         <module>jpa-spring-boot</module>
         <module>mongo-spring-boot</module>
+        <module>easyexcel-demo</module>
     </modules>
     <dependencies>
         <dependency>

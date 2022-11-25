@@ -15,7 +15,6 @@ import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
 import com.goudong.file.dto.*;
-import com.goudong.file.exception.FileUploadException;
 import com.goudong.file.po.file.FilePO;
 import com.goudong.file.po.file.FileShardTaskPO;
 import com.goudong.file.repository.file.FileRepository;
@@ -116,10 +115,11 @@ public class UploadServiceImpl implements UploadService {
      * 当文件未上传，初始化分片任务。
      * @param parameterDTO
      */
+    @SuppressWarnings("all")
     @Override
     public ShardPrefixCheckReturnDTO shardPrefixCheck(ShardPrefixCheckParameterDTO parameterDTO) {
-        // 检查上传
-        FileUtils.checkSatisfyUploadConfigurationConditions(fileUpload, parameterDTO.getFileType(), parameterDTO.getFileSize());
+        // 检查是否激活文件上传功能、检查文件类型、检查文件大小
+        fileUpload.check(parameterDTO.getFileType(), parameterDTO.getFileSize());
 
         // 判断文件是否存在
         FilePO firstByFileMd5 = fileRepository.findFirstByFileMd5(parameterDTO.getFileMd5());
@@ -186,22 +186,12 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void checkSimpleUpload(List<MultipartFile> files) {
+
         // 类型及大小判断
         Iterator<MultipartFile> iterator = files.iterator();
         while (iterator.hasNext()) {
             MultipartFile file = iterator.next();
-            // 比较类型及大小是否符合配置
-            String originalFilename = file.getOriginalFilename();
-            int pos = originalFilename.lastIndexOf(".");
-            if (pos != -1) {
-                // 存在后缀，就比较后缀是否通过
-                String suffix = originalFilename.substring(pos + 1);
-                // 检查类型
-                FileUtils.checkSatisfyUploadConfigurationConditions(fileUpload, suffix, file.getSize());
-            } else {
-                // 没有后缀的文件，暂不允许上传
-                throw new FileUploadException(ClientExceptionEnum.BAD_REQUEST, "没有后缀的文件，暂不允许上传");
-            }
+            fileUpload.check(file);// 检查文件类型,检查文件大小
         }
     }
 
@@ -211,8 +201,19 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void checkShardUpload(FileShardUploadDTO shardUploadDTO) {
-        // 检查类型
-        FileUtils.checkSatisfyUploadConfigurationConditions(fileUpload, shardUploadDTO.getFileType(), shardUploadDTO.getFileSize());
+        // 类型及大小判断
+        fileUpload.check(shardUploadDTO.getFileType(), shardUploadDTO.getFileSize());
+    }
+
+    /**
+     * 检查文件导入是否符合配置的文件上传和导入的属性
+     *
+     * @param file
+     */
+    @Override
+    public void checkImportUpload(MultipartFile file) {
+        // 比较类型及大小是否符合配置
+        fileUpload.check(file);
     }
 
     /**

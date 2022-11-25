@@ -448,6 +448,19 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
+     * 修改用户锁定状态
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean changeLocked(Long id) {
+        BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
+        userPO.setLocked(!userPO.getLocked());
+        return true;
+    }
+
+    /**
      * 绑定opendId
      *
      * @param userDTO
