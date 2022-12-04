@@ -186,7 +186,6 @@ public class UploadServiceImpl implements UploadService {
      */
     @Override
     public void checkSimpleUpload(List<MultipartFile> files) {
-
         // 类型及大小判断
         Iterator<MultipartFile> iterator = files.iterator();
         while (iterator.hasNext()) {

@@ -147,7 +147,7 @@ public class FileAutoConfiguration {
             body.append(row);
         });
 
-        LogUtil.info(log, "\n应用中文件上传的磁盘目录为:\"{}\",支持上传的文件类型及最大限制如下:\n{}", rootDir,
+        LogUtil.info(log, "\n支持导入的文件类型，异步导入的限制如下:\n{}",
                 body.toString());
         return imports;
     }

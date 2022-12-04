@@ -13,7 +13,7 @@ public final class MessageFormatUtil {
 
     //~fields
     //==================================================================================================================
-
+    public static final String REPLACE_STRING = "--CUSTOMER-STRING--";
     //~methods
     //==================================================================================================================
 
@@ -41,10 +41,15 @@ public final class MessageFormatUtil {
         }
         if (args != null && args.length > 0 && StringUtil.isNotBlank(messagePattern)) {
             for (int i = 0; i < args.length; i++) {
-                messagePattern = messagePattern.replaceFirst(formatterEnum.getFormatRegex(), String.valueOf(args[i]));
+                /*
+                   防止 替换的字符串中有$导致方法执行报错 {@code java.lang.IllegalArgumentException: Illegal group reference}
+                    先将$替换成一个固定字符串，最后再将结果替换回来
+                 */
+                String after = String.valueOf(args[i]).replaceAll("\\$", REPLACE_STRING);
+                messagePattern = messagePattern.replaceFirst(formatterEnum.getFormatRegex(), after);
             }
 
-            return messagePattern;
+            return messagePattern.replaceAll(REPLACE_STRING, "\\$");
         }
 
         return messagePattern;
