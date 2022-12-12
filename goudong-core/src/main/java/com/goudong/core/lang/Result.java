@@ -20,44 +20,48 @@ public class Result<T> implements Serializable {
     /**
      * 成功
      */
-    public static final String SUCCESS = "0";
+    private static final String SUCCESS = "0";
     /**
      * 失败
      */
-    public static final String FAIL = "1";
+    private static final String FAIL = "1";
 
     /**
      * http状态码
      */
-    public int status = 200;
+    private int status = 200;
     /**
-     * 状态码
+     * 状态码,“0”代表成功，非“0”代表失败
+     * <pre>
+     *     {@code code = 0}     成功
+     *     {@code code != 0}    失败
+     * </pre>
      */
-    public String code = "200";
+    private String code = "0";
     /**
      * 客户端状态码对应信息
      */
-    public String clientMessage;
+    private String clientMessage;
 
     /**
      * 服务器状态码对应信息
      */
-    public String serverMessage;
+    private String serverMessage;
 
     /**
      * 数据
      */
-    public T data;
+    private T data;
 
     /**
-     * 数据
+     * 额外数据
      */
-    public Map dataMap = new HashMap();
+    private Map dataMap;
 
     /**
      * 时间戳
      */
-    public Date timestamp = new Date();
+    private Date timestamp = new Date();
 
     public Result() {
     }
@@ -256,11 +260,17 @@ public class Result<T> implements Serializable {
     }
 
     public Result dataMapPut(Map dataMap) {
+        if (this.dataMap == null) {
+            this.dataMap = new HashMap();
+        }
         this.dataMap.putAll(dataMap);
         return this;
     }
 
     public Result dataMapPut(String key, Object value) {
+        if (this.dataMap == null) {
+            this.dataMap = new HashMap();
+        }
         this.dataMap.put(key, value);
         return this;
     }
@@ -269,6 +279,10 @@ public class Result<T> implements Serializable {
         // 不是偶数位
         if (kv.length < 2 && kv.length % 2 != 0) {
             throw new IllegalArgumentException("参数kv数组不正确，要是2的倍数，其中奇数是key偶数是value");
+        }
+
+        if (this.dataMap == null) {
+            this.dataMap = new HashMap();
         }
 
         // 步长为2
