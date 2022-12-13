@@ -1,10 +1,7 @@
 package com.goudong.core.lang;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 类描述：
@@ -260,18 +257,20 @@ public class Result<T> implements Serializable {
     }
 
     public Result dataMapPut(Map dataMap) {
-        if (this.dataMap == null) {
-            this.dataMap = new HashMap();
-        }
-        this.dataMap.putAll(dataMap);
+        Map map = Optional.ofNullable(this.dataMap).orElseGet(() -> {
+            this.dataMap = new HashMap<>();
+            return this.dataMap;
+        });
+        map.putAll(dataMap);
         return this;
     }
 
     public Result dataMapPut(String key, Object value) {
-        if (this.dataMap == null) {
-            this.dataMap = new HashMap();
-        }
-        this.dataMap.put(key, value);
+        Map map = Optional.ofNullable(this.dataMap).orElseGet(() -> {
+            this.dataMap = new HashMap<>();
+            return this.dataMap;
+        });
+        map.put(key, value);
         return this;
     }
 
@@ -281,15 +280,31 @@ public class Result<T> implements Serializable {
             throw new IllegalArgumentException("参数kv数组不正确，要是2的倍数，其中奇数是key偶数是value");
         }
 
-        if (this.dataMap == null) {
-            this.dataMap = new HashMap();
-        }
+        Map map = Optional.ofNullable(this.dataMap).orElseGet(() -> {
+            this.dataMap = new HashMap<>(kv.length / 2);
+            return this.dataMap;
+        });
 
         // 步长为2
         for (int i = 0, length = kv.length; i < length; i+=2) {
             String key = kv[i];
             String value = kv[i+1];
-            this.dataMap.put(key, value);
+            map.put(key, value);
+        }
+
+        return this;
+    }
+
+    public Result dataMapPutKeys(String... keys) {
+        Map map = Optional.ofNullable(this.dataMap).orElseGet(() -> {
+            this.dataMap = new HashMap<>(keys.length);
+            return this.dataMap;
+        });
+
+        if (keys.length > 0) {
+            for (int i = 0; i < keys.length; i++) {
+                map.put(keys[i], null);
+            }
         }
 
         return this;
