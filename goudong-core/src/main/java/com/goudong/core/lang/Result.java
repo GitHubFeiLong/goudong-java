@@ -56,6 +56,11 @@ public class Result<T> implements Serializable {
     private Map dataMap;
 
     /**
+     * 属性，用于额外操作
+     */
+    private List<String> properties;
+
+    /**
      * 时间戳
      */
     private Date timestamp = new Date();
@@ -310,6 +315,34 @@ public class Result<T> implements Serializable {
         return this;
     }
 
+    public Result properties(List<String> properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    public Result properties(String property) {
+        Optional.ofNullable(this.properties).orElseGet(() -> {
+            this.properties = new ArrayList<>();
+            return this.properties;
+        });
+        this.properties.add(property);
+        return this;
+    }
+
+    public Result properties(String... properties) {
+        Optional.ofNullable(this.properties).orElseGet(() -> {
+            this.properties = new ArrayList<>(properties.length);
+            return this.properties;
+        });
+
+        for (int i = 0; i < properties.length; i++) {
+            this.properties.add(properties[i]);
+        }
+
+        return this;
+    }
+
+
     public Result timestamp(Date timestamp) {
         this.timestamp = timestamp;
         return this;
@@ -363,6 +396,14 @@ public class Result<T> implements Serializable {
         this.dataMap = dataMap;
     }
 
+    public List<String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<String> properties) {
+        this.properties = properties;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }
@@ -376,12 +417,12 @@ public class Result<T> implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Result<?> result = (Result<?>) o;
-        return status == result.status && Objects.equals(code, result.code) && Objects.equals(clientMessage, result.clientMessage) && Objects.equals(serverMessage, result.serverMessage) && Objects.equals(data, result.data) && Objects.equals(dataMap, result.dataMap) && Objects.equals(timestamp, result.timestamp);
+        return status == result.status && Objects.equals(code, result.code) && Objects.equals(clientMessage, result.clientMessage) && Objects.equals(serverMessage, result.serverMessage) && Objects.equals(data, result.data) && Objects.equals(dataMap, result.dataMap) && Objects.equals(properties, result.properties) && Objects.equals(timestamp, result.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, code, clientMessage, serverMessage, data, dataMap, timestamp);
+        return Objects.hash(status, code, clientMessage, serverMessage, data, dataMap, properties, timestamp);
     }
 
     @Override
@@ -393,6 +434,7 @@ public class Result<T> implements Serializable {
                 ", serverMessage='" + serverMessage + '\'' +
                 ", data=" + data +
                 ", dataMap=" + dataMap +
+                ", properties=" + properties +
                 ", timestamp=" + timestamp +
                 '}';
     }
