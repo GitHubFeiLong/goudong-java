@@ -19,12 +19,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 类描述：
@@ -58,6 +64,29 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
         // 非post请求直接放行
         if (request.getMethod() != HttpMethod.POST) {
             return chain.filter(exchange);
+        }
+        if (true) {
+            // 查看请求头是否自定义的请求头(X-Aes-Key)
+            String aesKeyEncrypt = exchange.getRequest().getHeaders().getFirst(HttpHeaderConst.X_AES_KEY);
+            if(StringUtil.isNotBlank(aesKeyEncrypt)){
+                // 使用RSA私钥解密密文的AES密钥
+                String aesKey = ServerRSA.getInstance().privateKeyDecrypt(aesKeyEncrypt);
+                AES aes = AES.build().secretKey(aesKey);
+                MultiValueMap<String, String> v = new LinkedMultiValueMap();
+                request.getQueryParams().keySet().forEach(k -> {
+                    String s = request.getQueryParams().get(k).get(0);
+                    v.put(k, Collections.singletonList(aes.decrypt(s)));
+                });
+
+                return chain.filter((ServerWebExchange) exchange.mutate().request(new ServerHttpRequestDecorator(exchange.getRequest()){
+                    @Override
+                    public MultiValueMap<String, String> getQueryParams() {
+                        return v;
+                    }
+                }));
+            }
+
+
         }
         // post请求处理
         return operationExchange(exchange, chain);
