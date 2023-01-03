@@ -65,29 +65,29 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
         if (request.getMethod() != HttpMethod.POST) {
             return chain.filter(exchange);
         }
-        if (true) {
-            // 查看请求头是否自定义的请求头(X-Aes-Key)
-            String aesKeyEncrypt = exchange.getRequest().getHeaders().getFirst(HttpHeaderConst.X_AES_KEY);
-            if(StringUtil.isNotBlank(aesKeyEncrypt)){
-                // 使用RSA私钥解密密文的AES密钥
-                String aesKey = ServerRSA.getInstance().privateKeyDecrypt(aesKeyEncrypt);
-                AES aes = AES.build().secretKey(aesKey);
-                MultiValueMap<String, String> v = new LinkedMultiValueMap();
-                request.getQueryParams().keySet().forEach(k -> {
-                    String s = request.getQueryParams().get(k).get(0);
-                    v.put(k, Collections.singletonList(aes.decrypt(s)));
-                });
-
-                return chain.filter((ServerWebExchange) exchange.mutate().request(new ServerHttpRequestDecorator(exchange.getRequest()){
-                    @Override
-                    public MultiValueMap<String, String> getQueryParams() {
-                        return v;
-                    }
-                }));
-            }
-
-
-        }
+        // if (true) {
+        //     // 查看请求头是否自定义的请求头(X-Aes-Key)
+        //     String aesKeyEncrypt = exchange.getRequest().getHeaders().getFirst(HttpHeaderConst.X_AES_KEY);
+        //     if(StringUtil.isNotBlank(aesKeyEncrypt)){
+        //         // 使用RSA私钥解密密文的AES密钥
+        //         String aesKey = ServerRSA.getInstance().privateKeyDecrypt(aesKeyEncrypt);
+        //         AES aes = AES.build().secretKey(aesKey);
+        //         MultiValueMap<String, String> v = new LinkedMultiValueMap();
+        //         request.getQueryParams().keySet().forEach(k -> {
+        //             String s = request.getQueryParams().get(k).get(0);
+        //             v.put(k, Collections.singletonList(aes.decrypt(s)));
+        //         });
+        //
+        //         return chain.filter((ServerWebExchange) exchange.mutate().request(new ServerHttpRequestDecorator(exchange.getRequest()){
+        //             @Override
+        //             public MultiValueMap<String, String> getQueryParams() {
+        //                 return v;
+        //             }
+        //         }));
+        //     }
+        //
+        //
+        // }
         // post请求处理
         return operationExchange(exchange, chain);
     }

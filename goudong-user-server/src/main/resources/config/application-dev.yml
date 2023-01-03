@@ -3,6 +3,7 @@ logging:
   level:
     ROOT: INFO
     com.goudong: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
 
 server:
   port: 10001
