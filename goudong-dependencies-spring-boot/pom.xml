@@ -58,6 +58,7 @@
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <lombok.version>1.18.24</lombok.version>
         <swagger-annotations.version>1.5.22</swagger-annotations.version>
+        <spring-cloud-starter-zipkin.version>2.2.8.RELEASE</spring-cloud-starter-zipkin.version>
     </properties>
 
     <!--统一版本管控-->
@@ -328,6 +329,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-zipkin</artifactId>
+                <version>${spring-cloud-starter-zipkin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
