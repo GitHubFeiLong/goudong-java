@@ -20,7 +20,6 @@ public class ServerException extends BasicException {
      */
     public static final ServerExceptionEnum DEFAULT_EXCEPTION = ServerExceptionEnum.SERVER_ERROR;
 
-
     public ServerException() {
         super(ServerException.DEFAULT_EXCEPTION);
     }
@@ -28,16 +27,37 @@ public class ServerException extends BasicException {
     public ServerException(String serverMessage) {
         super(ServerException.DEFAULT_EXCEPTION, serverMessage);
     }
+
+    public ServerException(Throwable cause) {
+        super(DEFAULT_EXCEPTION, cause);
+    }
+
+    public ServerException(String serverMessage, Throwable cause) {
+        super(DEFAULT_EXCEPTION, serverMessage, cause);
+    }
+
     public ServerException(ServerExceptionEnum serverExceptionEnum) {
         super(serverExceptionEnum);
+    }
+
+    public ServerException(ServerExceptionEnum serverExceptionEnum, Throwable cause) {
+        super(serverExceptionEnum, cause);
     }
 
     public ServerException(ServerExceptionEnum serverExceptionEnum, String serverMessage) {
         super(serverExceptionEnum, serverMessage);
     }
 
+    public ServerException(ServerExceptionEnum serverExceptionEnum, String serverMessage, Throwable cause) {
+        super(serverExceptionEnum, serverMessage, cause);
+    }
+
     public ServerException(ServerExceptionEnum serverExceptionEnum, String clientMessage, String serverMessage) {
         super(serverExceptionEnum, clientMessage, serverMessage);
+    }
+
+    public ServerException(ServerExceptionEnum serverExceptionEnum, String clientMessage, String serverMessage, Throwable cause) {
+        super(serverExceptionEnum, clientMessage, serverMessage, cause);
     }
 
 }

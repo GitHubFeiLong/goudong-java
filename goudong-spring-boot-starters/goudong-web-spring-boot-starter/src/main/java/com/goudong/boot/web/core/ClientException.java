@@ -60,15 +60,35 @@ public class ClientException extends BasicException {
         super(DEFAULT_EXCEPTION, clientMessage);
     }
 
+    public ClientException(Throwable cause) {
+        super(DEFAULT_EXCEPTION, cause);
+    }
+
+    public ClientException(String clientMessage, Throwable cause) {
+        super(DEFAULT_EXCEPTION, clientMessage, cause);
+    }
+
     public ClientException(ClientExceptionEnum clientExceptionEnum) {
         super(clientExceptionEnum);
+    }
+
+    public ClientException(ClientExceptionEnum clientExceptionEnum, Throwable cause) {
+        super(clientExceptionEnum, cause);
     }
 
     public ClientException(ClientExceptionEnum clientExceptionEnum, String clientMessage) {
         super(clientExceptionEnum, clientMessage);
     }
 
+    public ClientException(ClientExceptionEnum clientExceptionEnum, String clientMessage, Throwable cause) {
+        super(clientExceptionEnum, clientMessage, cause);
+    }
+
     public ClientException(ClientExceptionEnum clientExceptionEnum, String clientMessage, String serverMessage) {
         super(clientExceptionEnum, clientMessage, serverMessage);
+    }
+
+    public ClientException(ClientExceptionEnum clientExceptionEnum, String clientMessage, String serverMessage, Throwable cause) {
+        super(clientExceptionEnum, clientMessage, serverMessage, cause);
     }
 }

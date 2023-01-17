@@ -83,7 +83,7 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         }
 
         if (throwable instanceof IndexOutOfBoundsException ) {
-            return ServerException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, "");
+            return ServerException.server(ServerExceptionEnum.SERVICE_UNAVAILABLE, "下标越界", "IndexOutOfBoundsException");
         }
 
         if (throwable instanceof RuntimeException) {
@@ -1000,12 +1000,29 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         this(BAD_REQUEST, message);
     }
 
+    public BasicException(Throwable cause) {
+        super(cause);
+    }
+
+    public BasicException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     /**
      * 客户端误操作造成异常
      * @param exceptionEnum
      */
     public BasicException(ClientExceptionEnum exceptionEnum) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage());
+    }
+
+    /**
+     * 客户端误操作造成异常
+     * @param exceptionEnum
+     * @param cause
+     */
+    public BasicException(ClientExceptionEnum exceptionEnum, Throwable cause) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage(), cause);
     }
 
     /**
@@ -1021,9 +1038,29 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      * 客户端误操作造成异常
      * @param exceptionEnum
      * @param clientMessage 自定义客户端提示信息
+     * @param cause
+     */
+    public BasicException(ClientExceptionEnum exceptionEnum, String clientMessage, Throwable cause) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, exceptionEnum.getServerMessage(), cause);
+    }
+
+    /**
+     * 客户端误操作造成异常
+     * @param exceptionEnum
+     * @param clientMessage 自定义客户端提示信息
      */
     public BasicException(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, serverMessage);
+    }
+
+    /**
+     * 客户端误操作造成异常
+     * @param exceptionEnum
+     * @param clientMessage 自定义客户端提示信息
+     * @param cause
+     */
+    public BasicException(ClientExceptionEnum exceptionEnum, String clientMessage, String serverMessage, Throwable cause) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, serverMessage, cause);
     }
 
     /**
@@ -1037,10 +1074,29 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
     /**
      * 服务端异常
      * @param exceptionEnum
+     * @param cause
+     */
+    public BasicException(ServerExceptionEnum exceptionEnum, Throwable cause) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage(), cause);
+    }
+
+    /**
+     * 服务端异常
+     * @param exceptionEnum
      * @param serverMessage 服务端错误信息
      */
     public BasicException(ServerExceptionEnum exceptionEnum, String serverMessage) {
         this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), serverMessage);
+    }
+
+    /**
+     * 服务端异常
+     * @param exceptionEnum
+     * @param serverMessage 服务端错误信息
+     * @param cause
+     */
+    public BasicException(ServerExceptionEnum exceptionEnum, String serverMessage, Throwable cause) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), serverMessage, cause);
     }
 
     /**
@@ -1055,6 +1111,18 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
     }
 
     /**
+     * 服务端异常
+     * @param exceptionEnum 状态码相关
+     * @param clientMessage 客户端提示
+     * @param serverMessage 服务端提示
+     * @param serverMessage 服务端错误信息
+     * @param cause
+     */
+    public BasicException(ServerExceptionEnum exceptionEnum, String clientMessage, String serverMessage, Throwable cause) {
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, serverMessage, cause);
+    }
+
+    /**
      * 构造方法
      * @param status http状态码
      * @param code 自定义状态码
@@ -1063,6 +1131,22 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      */
     public BasicException(int status, String code, String clientMessage, String serverMessage) {
         super(clientMessage+"\t"+serverMessage);
+        this.status = status;
+        this.code = code;
+        this.clientMessage = clientMessage;
+        this.serverMessage = serverMessage;
+    }
+
+    /**
+     * 构造方法
+     * @param status http状态码
+     * @param code 自定义状态码
+     * @param clientMessage 客户端显示信息
+     * @param serverMessage 服务端日志显示信息
+     * @param cause 异常对象
+     */
+    public BasicException(int status, String code, String clientMessage, String serverMessage, Throwable cause) {
+        super(clientMessage+"\t"+serverMessage, cause);
         this.status = status;
         this.code = code;
         this.clientMessage = clientMessage;
