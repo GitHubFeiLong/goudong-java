@@ -1,0 +1,31 @@
+server:
+  port: 10001
+  servlet:
+    context-path: /api/wx/central-control
+spring:
+  main:
+    allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false #工程中的资源文件建立映射
+  application:
+    name: goudong-wx-central-control-server #微服务名
+
+
+# 配置commons
+########################################################################################################################
+commons:
+  # 配置白名单
+  whitelist:
+    enable: false
+    sleep: 15
+    failure-retry-num: 5
+  # 配置api资源
+  api-resource:
+    enable: false
+  hide-menu:
+    enable: true
+  goudong:
+    web:
+      enable: true

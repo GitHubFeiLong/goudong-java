@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.goudong</groupId>
+        <artifactId>goudong-dependencies-spring-boot</artifactId>
+        <version>${revision}</version>
+        <relativePath>../goudong-dependencies-spring-boot</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <name>Goudong Wx Central Control Server</name>
+    <artifactId>goudong-wx-central-control-server</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-web-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>
