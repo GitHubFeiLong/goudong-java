@@ -133,6 +133,7 @@ public class RedisConfig {
      * @return
      */
     @Bean
+    @ConditionalOnClass(name = {"org.aspectj.lang.JoinPoint"})
     public SnowSlideHandlerAop snowSlideHandleAop(RedisTool redisTool) {
         if (log.isDebugEnabled()) {
             log.debug("注入SnowSlideHandlerAop");
