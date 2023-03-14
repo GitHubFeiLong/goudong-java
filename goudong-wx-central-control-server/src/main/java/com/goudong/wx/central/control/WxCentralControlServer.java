@@ -1,12 +1,14 @@
 package com.goudong.wx.central.control;
 
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
+import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.framework.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
@@ -20,8 +22,10 @@ import org.springframework.util.StopWatch;
  * @date 2023/3/14 11:55
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@ConfigurationPropertiesScan(value = {"com.goudong.wx.central.control.properties"})
 @EnableCommonsRedisConfig
 @EnableCommonsJacksonConfig
+@EnableCommonsWebMvcConfig
 public class WxCentralControlServer {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();

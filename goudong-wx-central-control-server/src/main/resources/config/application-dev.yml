@@ -18,6 +18,23 @@ spring:
     port: 6379
     password: ${REDIS_PASSWORD}
     timeout: 3000
+
+knife4j:
+  enable: true         # 是否开启Knife4j增强模式，默认值为false
+  production: false    # 生产环境开启
+  basic:
+    enable: true       # BasicHttp功能，默认为false
+    username: knife4j  # 用户名
+    password: knife4j  # 密码
+  setting:             # 前端Ui的个性化配置属性
+    enableDebug: true  # 启用调试，默认为true 无效
+# 配置wx
+########################################################################################################################
+wx:
+  app:
+    testAppId: wx1948fa77ad11a423
+    testAppSecret: 410d996604e66d6278d1e5a4d0f49e9c
+
 # 配置commons
 ########################################################################################################################
 commons:
