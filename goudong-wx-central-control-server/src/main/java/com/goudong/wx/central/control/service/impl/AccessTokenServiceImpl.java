@@ -1,11 +1,14 @@
 package com.goudong.wx.central.control.service.impl;
 
+import com.goudong.boot.web.core.BasicException;
 import com.goudong.wx.central.control.properties.WxAppProperties;
 import com.goudong.wx.central.control.service.AccessTokenService;
+import com.goudong.wx.central.control.util.WxRequestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -34,6 +37,8 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     @Override
     public Object getAccessToken(String appId) {
         log.info("{}", wxAppProperties);
+        String appSecret = Optional.ofNullable(wxAppProperties.getAppMap().get(appId)).orElseThrow(() -> BasicException.client("appId无效"));
+        String accessToken = WxRequestUtil.getAccessToken(appId, appSecret);
         return null;
     }
 }
