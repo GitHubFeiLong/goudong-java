@@ -51,6 +51,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     @Override
     public AccessTokenDTO getAccessToken(String appId) {
         log.info("{}", wxAppProperties);
+        log.debug("{}", wxAppProperties);
         String appSecret = Optional.ofNullable(wxAppProperties.getAppMap().get(appId)).orElseThrow(() -> BasicException.client("appId无效"));
         AccessTokenDTO dto = null;
         // 查询redis是否存在数据

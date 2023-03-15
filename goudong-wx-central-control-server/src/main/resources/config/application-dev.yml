@@ -2,6 +2,12 @@ server:
   port: 10001
   servlet:
     context-path: /api/wx/central-control
+
+logging:
+  level:
+    ROOT: INFO
+    com.goudong.wx: DEBUG # 包路径: 日志级别
+
 spring:
   main:
     allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
