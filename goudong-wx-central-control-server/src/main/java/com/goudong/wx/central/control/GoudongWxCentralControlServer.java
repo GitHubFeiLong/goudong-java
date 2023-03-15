@@ -26,11 +26,11 @@ import org.springframework.util.StopWatch;
 @EnableCommonsRedisConfig
 @EnableCommonsJacksonConfig
 @EnableCommonsWebMvcConfig
-public class WxCentralControlServer {
+public class GoudongWxCentralControlServer {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(WxCentralControlServer.class)
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(GoudongWxCentralControlServer.class)
                 .logStartupInfo(false)
                 .main(SpringVersion.class)
                 .bannerMode(Banner.Mode.CONSOLE)

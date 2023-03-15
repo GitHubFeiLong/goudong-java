@@ -1,5 +1,7 @@
 package com.goudong.wx.central.control.service;
 
+import com.goudong.wx.central.control.dto.AccessTokenDTO;
+
 /**
  * 接口描述：
  * 获取Access Token的服务层接口
@@ -16,5 +18,5 @@ public interface AccessTokenService {
      * @param appId
      * @return
      */
-    Object getAccessToken(String appId);
+    AccessTokenDTO getAccessToken(String appId);
 }

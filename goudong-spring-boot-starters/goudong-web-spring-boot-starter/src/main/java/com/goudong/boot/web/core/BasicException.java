@@ -210,6 +210,15 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
     }
 
     /**
+     * 将e加入异常堆栈，并返回默认异常
+     * @param e 异常
+     * @return
+     */
+    public static BasicException client(Throwable e) {
+        return new ClientException(e);
+    }
+
+    /**
      * 返回默认异常,自定义clientMessage
      * @see ClientException#DEFAULT_EXCEPTION
      * @param clientMessage 客户端提示信息
@@ -217,6 +226,17 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      */
     public static BasicException client(String clientMessage) {
         return new ClientException(clientMessage);
+    }
+
+    /**
+     * 将e加入异常堆栈，返回默认异常,自定义clientMessage
+     * @see ClientException#DEFAULT_EXCEPTION
+     * @param clientMessage 客户端提示信息
+     * @param e 异常
+     * @return
+     */
+    public static BasicException client(String clientMessage, Throwable e) {
+        return new ClientException(clientMessage, e);
     }
 
     /**
@@ -828,11 +848,38 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
     // =================================================================================================================
     /**
      * 返回默认异常,自定义serverMessage
+     * @return
+     */
+    public static BasicException server() {
+        return new ServerException(ServerExceptionEnum.SERVER_ERROR);
+    }
+
+    /**
+     * 将e加入异常堆栈，返回默认异常,自定义serverMessage
+     * @param e 异常
+     * @return
+     */
+    public static BasicException server(Throwable e) {
+        return new ServerException(ServerExceptionEnum.SERVER_ERROR, e);
+    }
+
+    /**
+     * 返回默认异常,自定义serverMessage
      * @param serverMessage 自定义服务端提示信息
      * @return
      */
     public static BasicException server(String serverMessage) {
         return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
+    }
+
+    /**
+     * 将e加入异常堆栈，返回默认异常,自定义serverMessage
+     * @param serverMessage 自定义服务端提示信息
+     *  @param e 异常
+     * @return
+     */
+    public static BasicException server(String serverMessage, Throwable e) {
+        return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage, e);
     }
 
     /**
@@ -1022,7 +1069,7 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      * @param cause
      */
     public BasicException(ClientExceptionEnum exceptionEnum, Throwable cause) {
-        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage(), cause);
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), Optional.ofNullable(cause.getMessage()).orElseGet(()->exceptionEnum.getServerMessage()), cause);
     }
 
     /**
@@ -1041,7 +1088,7 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      * @param cause
      */
     public BasicException(ClientExceptionEnum exceptionEnum, String clientMessage, Throwable cause) {
-        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, exceptionEnum.getServerMessage(), cause);
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), clientMessage, Optional.ofNullable(cause.getMessage()).orElseGet(()->exceptionEnum.getServerMessage()), cause);
     }
 
     /**
@@ -1077,7 +1124,7 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      * @param cause
      */
     public BasicException(ServerExceptionEnum exceptionEnum, Throwable cause) {
-        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), exceptionEnum.getServerMessage(), cause);
+        this(exceptionEnum.getStatus(), exceptionEnum.getCode(), exceptionEnum.getClientMessage(), Optional.ofNullable(cause.getMessage()).orElseGet(()->exceptionEnum.getServerMessage()), cause);
     }
 
     /**

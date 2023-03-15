@@ -146,7 +146,7 @@ public class RedisConfig {
      * @return
      */
     @Bean
-    @ConditionalOnClass(name = {"org.redisson.api.RedissonClient"})
+    @ConditionalOnClass(name = {"org.redisson.api.RedissonClient", "org.aspectj.lang.JoinPoint"})
     public ApiRepeatAop apiRepeatAop() {
         if (log.isDebugEnabled()) {
             log.debug("注入ApiRepeatAop");
