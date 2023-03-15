@@ -5,45 +5,42 @@
 
     <!--定义属性-->
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
-    <property name="CONSOLE_LOG_PATTERN" value="%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %clr(%p) %clr([traceId-%X{traceId}]) %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %clr(%-6.6p) %blue([traceId-%X{traceId}]) %m%n"/>
     <!-- 日志在工程中的输出位置 -->
     <property name="LOG_FILE" value="${BUILD_FOLDER:-logs}/${springAppName}/"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-        </encoder>
+        <springProfile name="dev | test | prod">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </springProfile>
     </appender>
 
     <!-- appender to log to file -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--有两个与RollingFileAppender交互的重要子组件。 第一个RollingFileAppender子组件，即RollingPolicy:负责执行翻转所需的操作。
-         RollingFileAppender的第二个子组件，即TriggeringPolicy:将确定是否以及何时发生翻转。 因此，RollingPolicy负责什么和TriggeringPolicy负责什么时候.
-        作为任何用途，RollingFileAppender必须同时设置RollingPolicy和TriggeringPolicy,但是，如果其RollingPolicy也实现了TriggeringPolicy接口，则只需要显式指定前者。-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- 日志文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
-            <!-- 注意：SizeAndTimeBasedRollingPolicy中 ％i和％d令牌都是强制性的，必须存在，要不会报错 -->
-            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
-            <!-- 每产生一个日志文件，该日志文件的保存期限为30天, ps:maxHistory的单位是根据fileNamePattern中的翻转策略自动推算出来的,例如上面选用了yyyy-MM-dd,则单位为天
-            如果上面选用了yyyy-MM,则单位为月,另外上面的单位默认为yyyy-MM-dd-->
-            <maxHistory>30</maxHistory>
-            <!-- 每个日志文件到 maxFileSize 的时候开始切分，最多保留30天，但最大到20GB，哪怕没到30天也要删除多余的日志 -->
-            <totalSizeCap>20GB</totalSizeCap>
-            <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成5KB看效果 -->
-            <maxFileSize>20MB</maxFileSize>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
+        <springProfile name="dev | test | prod">
+            <!--有两个与RollingFileAppender交互的重要子组件。 第一个RollingFileAppender子组件，即RollingPolicy:负责执行翻转所需的操作。
+        RollingFileAppender的第二个子组件，即TriggeringPolicy:将确定是否以及何时发生翻转。 因此，RollingPolicy负责什么和TriggeringPolicy负责什么时候.
+       作为任何用途，RollingFileAppender必须同时设置RollingPolicy和TriggeringPolicy,但是，如果其RollingPolicy也实现了TriggeringPolicy接口，则只需要显式指定前者。-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <!-- 日志文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 注意：SizeAndTimeBasedRollingPolicy中 ％i和％d令牌都是强制性的，必须存在，要不会报错 -->
+                <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天, ps:maxHistory的单位是根据fileNamePattern中的翻转策略自动推算出来的,例如上面选用了yyyy-MM-dd,则单位为天
+                如果上面选用了yyyy-MM,则单位为月,另外上面的单位默认为yyyy-MM-dd-->
+                <maxHistory>30</maxHistory>
+                <!-- 每个日志文件到 maxFileSize 的时候开始切分，最多保留30天，但最大到20GB，哪怕没到30天也要删除多余的日志 -->
+                <totalSizeCap>20GB</totalSizeCap>
+                <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成5KB看效果 -->
+                <maxFileSize>20MB</maxFileSize>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </springProfile>
     </appender>
-
-    <!--<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${LOG_PATH}/myApp.log</file>
-        <encoder>
-            <pattern>%msg%n</pattern>
-        </encoder>
-    </appender>-->
 
     <root level="debug">
         <appender-ref ref="CONSOLE" />

@@ -6,7 +6,7 @@ server:
 logging:
   level:
     ROOT: INFO
-    com.goudong.wx: DEBUG # 包路径: 日志级别
+    com.goudong: DEBUG # 包路径: 日志级别
 
 spring:
   main:
