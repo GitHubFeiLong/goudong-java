@@ -53,4 +53,9 @@ class RSAUtilTest {
         boolean verify = ServerRSA.getInstance().verify(data, sign);
         System.out.println("verify = " + verify);
     }
+
+    @Test
+    void testGetInstance() {
+        ServerRSA instance = ServerRSA.getInstance();
+    }
 }

@@ -1,16 +1,14 @@
 package com.goudong.core.security.rsa;
 
-import sun.security.rsa.RSAPublicKeyImpl;
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.math.BigInteger;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 
 /**
@@ -91,12 +89,19 @@ public class ServerRSA {
                         String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKey.getEncoded());
                         String privateKeyBase64 = Base64.getEncoder().encodeToString(privateKey.getEncoded());
 
-                        // 通过反射获取生成RSA的key长度
-                        Field n = RSAPublicKeyImpl.class.getDeclaredField("n");
-                        n.setAccessible(true);
-                        BigInteger bigInteger = (BigInteger)n.get(publicKey);
+                        // 通过反射获取生成RSA的key长度(这是过期的)
+                        // Field n = RSAPublicKeyImpl.class.getDeclaredField("n");
+                        // n.setAccessible(true);
+                        // BigInteger bigInteger = (BigInteger)n.get(publicKey);
+                        // int keySize = bigInteger.bitLength();
 
-                        serverRSAKey = new ServerRSA(publicKey, privateKey, publicKeyBase64, privateKeyBase64, bigInteger.bitLength());
+                        int keySize = KeyFactory.getInstance(RSAUtil.ALGORITHM)
+                                .getKeySpec(publicKey, RSAPublicKeySpec.class)
+                                .getModulus()
+                                .toString(2)
+                                .length();
+
+                        serverRSAKey = new ServerRSA(publicKey, privateKey, publicKeyBase64, privateKeyBase64, keySize);
                     }
                 }
             }
