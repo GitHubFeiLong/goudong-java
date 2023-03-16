@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.MessageFormatUtil;
+import com.goudong.wx.central.control.dto.req.GetStableAccessTokenReq;
 import com.goudong.wx.central.control.dto.resp.AccessTokenResp;
 import com.goudong.wx.central.control.dto.resp.BaseResp;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.goudong.wx.central.control.constant.WxApiUrlConst.GET_STABLE_ACCESS_TOKEN;
 import static com.goudong.wx.central.control.constant.WxApiUrlConst.GET_TOKEN_TEMPLATE;
 
 /**
@@ -33,6 +35,10 @@ public class WxRequestUtil {
     //==================================================================================================================
     static {
         // 设置属性命名策略
+        /*
+            java 驼峰 > 转 a_b 格式
+            json中的a_b 转 aB格式
+         */
         OBJECT_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
     }
     /**
@@ -46,15 +52,43 @@ public class WxRequestUtil {
         String body = HttpUtil.createGet(url).execute().body();
 
         try {
-            AccessTokenResp accessTokenResp = OBJECT_MAPPER.readValue(body, AccessTokenResp.class);
-            AssertUtil.isTrue(accessTokenResp.getErrcode() == 0,
+            AccessTokenResp resp = OBJECT_MAPPER.readValue(body, AccessTokenResp.class);
+            AssertUtil.isTrue(resp.getErrcode() == 0,
                     () -> BasicException.server("获取AccessToken失败")
-                            .dataMap(getDataMapByError(accessTokenResp))
+                            .dataMap(getDataMapByError(resp))
             );
             // 设置到期时间,时间提前5分钟。（注意单位）
-            accessTokenResp.setExpiresIn(accessTokenResp.getExpiresIn() - 300);
-            accessTokenResp.setExpiresTime(System.currentTimeMillis() + accessTokenResp.getExpiresIn() * 1000);
-            return accessTokenResp;
+            resp.setExpiresIn(resp.getExpiresIn() - 300);
+            resp.setExpiresTime(System.currentTimeMillis() + resp.getExpiresIn() * 1000);
+            return resp;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取稳定版接口调用凭据
+     * @param req
+     * @return
+     */
+    public static AccessTokenResp getStableAccessToken(GetStableAccessTokenReq req) {
+        String url = GET_STABLE_ACCESS_TOKEN;
+        try {
+            String reqBody = OBJECT_MAPPER.writeValueAsString(req);
+            String respBody =HttpUtil.createPost(url)
+                    .body(reqBody)
+                    .execute()
+                    .body();
+            AccessTokenResp resp = OBJECT_MAPPER.readValue(respBody, AccessTokenResp.class);
+
+            AssertUtil.isTrue(resp.getErrcode() == 0,
+                    () -> BasicException.server("获取AccessToken失败")
+                            .dataMap(getDataMapByError(resp))
+            );
+            // 设置到期时间,时间提前5分钟。（注意单位）
+            resp.setExpiresIn(resp.getExpiresIn() - 300);
+            resp.setExpiresTime(System.currentTimeMillis() + resp.getExpiresIn() * 1000);
+            return resp;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

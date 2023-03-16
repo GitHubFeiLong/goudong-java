@@ -5,6 +5,7 @@ import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.wx.central.control.constant.LockKeyConst;
 import com.goudong.wx.central.control.dto.AccessTokenDTO;
+import com.goudong.wx.central.control.dto.req.GetStableAccessTokenReq;
 import com.goudong.wx.central.control.dto.resp.AccessTokenResp;
 import com.goudong.wx.central.control.enumerate.RedisKeyProviderEnum;
 import com.goudong.wx.central.control.properties.WxAppProperties;
@@ -50,16 +51,14 @@ public class AccessTokenServiceImpl implements AccessTokenService {
      */
     @Override
     public AccessTokenDTO getAccessToken(String appId) {
-        log.info("{}", wxAppProperties);
-        log.debug("{}", wxAppProperties);
-        String appSecret = Optional.ofNullable(wxAppProperties.getAppMap().get(appId)).orElseThrow(() -> BasicException.client("appId无效"));
+        String appSecret = getAppSecretByAppId(appId);
         AccessTokenDTO dto = null;
         // 查询redis是否存在数据
         boolean existKey = redisTool.existKey(RedisKeyProviderEnum.ACCESS_TOKEN, appId);
         if (existKey) {
             dto = (AccessTokenDTO)redisTool.get(RedisKeyProviderEnum.ACCESS_TOKEN, appId);
             // redis存在，token还处于有效期
-            if (dto != null && dto.getExpiresTime() > System.currentTimeMillis()) {
+            if (dto != null && dto.getExpiresTime() != null && dto.getExpiresTime() > System.currentTimeMillis()) {
                 return dto;
             }
         }
@@ -70,6 +69,14 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         RLock lock = redissonClient.getLock(LockKeyConst.getKey(LockKeyConst.LOCK_GET_ACCESS_TOKEN, appId));
         try {
             lock.lock();
+            existKey = redisTool.existKey(RedisKeyProviderEnum.ACCESS_TOKEN, appId);
+            if (existKey) {
+                dto = (AccessTokenDTO)redisTool.get(RedisKeyProviderEnum.ACCESS_TOKEN, appId);
+                // redis存在，token还处于有效期
+                if (dto != null && dto.getExpiresTime() != null && dto.getExpiresTime() > System.currentTimeMillis()) {
+                    return dto;
+                }
+            }
             // 调用微信api，获取token
             AccessTokenResp accessToken = WxRequestUtil.getAccessToken(appId, appSecret);
             dto = BeanUtil.copyProperties(accessToken, AccessTokenDTO.class);
@@ -78,5 +85,41 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * 根据appId 刷新 Access Token
+     *
+     * @param appId
+     * @return
+     */
+    @Override
+    public AccessTokenDTO refreshAccessToken(String appId) {
+        String appSecret = getAppSecretByAppId(appId);
+        AccessTokenDTO dto = null;
+        /*
+            分布式锁
+         */
+        RLock lock = redissonClient.getLock(LockKeyConst.getKey(LockKeyConst.LOCK_GET_ACCESS_TOKEN, appId));
+        try {
+            lock.lock();
+            // 调用微信api，刷新并获取新的token
+            GetStableAccessTokenReq req = new GetStableAccessTokenReq(appId, appSecret, true);
+            AccessTokenResp accessToken = WxRequestUtil.getStableAccessToken(req);
+            dto = BeanUtil.copyProperties(accessToken, AccessTokenDTO.class);
+            redisTool.set(RedisKeyProviderEnum.ACCESS_TOKEN, dto, appId);
+            return dto;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 根据appId获取appSecret
+     * @param appId
+     * @return
+     */
+    private String getAppSecretByAppId(String appId) {
+        return Optional.ofNullable(wxAppProperties.getAppMap().get(appId)).orElseThrow(() -> BasicException.client("appId无效"));
     }
 }

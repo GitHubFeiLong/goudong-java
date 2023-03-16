@@ -9,13 +9,18 @@ package com.goudong.wx.central.control.constant;
  */
 public interface WxApiUrlConst {
     /**
-     * <pre>
-     *     获取 Access token接口地址模板
-     *     APPID        应用id
-     *     APPSECRET    应用密钥
-     * </pre>
+     *
+     * <p>获取 Access token接口地址模板</p>
+     * <p>APPID        应用id</p>
+     * <p>APPSECRET    应用密钥</p>
+     *
      */
     String GET_TOKEN_TEMPLATE = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRET}";
+
+    /**
+     * 获取稳定版接口调用凭据
+     */
+    String GET_STABLE_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/stable_token";
     //~methods
     //==================================================================================================================
 }

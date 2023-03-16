@@ -32,4 +32,9 @@ public class AccessTokenController {
         return Result.ofSuccess(accessTokenService.getAccessToken(appId));
     }
 
+    @GetMapping("/refresh")
+    @ApiOperation("刷新Access Token")
+    public Result refreshAccessToken(@RequestParam("appId") String appId) {
+        return Result.ofSuccess(accessTokenService.refreshAccessToken(appId));
+    }
 }

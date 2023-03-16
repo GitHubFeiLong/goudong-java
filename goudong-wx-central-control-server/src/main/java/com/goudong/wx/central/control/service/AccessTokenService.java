@@ -19,4 +19,11 @@ public interface AccessTokenService {
      * @return
      */
     AccessTokenDTO getAccessToken(String appId);
+
+    /**
+     * 根据appId 刷新 Access Token
+     * @param appId
+     * @return
+     */
+    AccessTokenDTO refreshAccessToken(String appId);
 }
