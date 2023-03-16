@@ -78,8 +78,15 @@ public class AccessTokenServiceImpl implements AccessTokenService {
                 }
             }
             // 调用微信api，获取token
-            AccessTokenResp accessToken = WxRequestUtil.getAccessToken(appId, appSecret);
-            dto = BeanUtil.copyProperties(accessToken, AccessTokenDTO.class);
+            AccessTokenResp resp = WxRequestUtil.getAccessToken(appId, appSecret);
+
+            // 判断当前获取的token有效期是否有4000s剩余时间（时间太短了就重新获取新的token）
+            if (resp.getExpiresIn() < 4000) {
+                // 强制刷新
+                resp = WxRequestUtil.getStableAccessToken(new GetStableAccessTokenReq(appId, appSecret, true));
+            }
+
+            dto = BeanUtil.copyProperties(resp, AccessTokenDTO.class);
             redisTool.set(RedisKeyProviderEnum.ACCESS_TOKEN, dto, appId);
             return dto;
         } finally {

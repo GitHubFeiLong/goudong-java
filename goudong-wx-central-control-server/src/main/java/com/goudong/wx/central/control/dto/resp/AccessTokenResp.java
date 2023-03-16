@@ -27,4 +27,12 @@ public class AccessTokenResp extends BaseResp{
      */
     private Long expiresTime;
 
+    /**
+     * 处理 expiresIn和expiresTime
+     */
+    public void disposeExpires() {
+        // 设置到期时间,时间提前5分钟。（注意单位）
+        this.setExpiresIn(this.getExpiresIn() - 300);
+        this.setExpiresTime(System.currentTimeMillis() + this.getExpiresIn() * 1000);
+    }
 }

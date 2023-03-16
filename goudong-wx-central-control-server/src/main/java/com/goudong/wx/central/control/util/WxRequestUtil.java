@@ -57,9 +57,8 @@ public class WxRequestUtil {
                     () -> BasicException.server("获取AccessToken失败")
                             .dataMap(getDataMapByError(resp))
             );
-            // 设置到期时间,时间提前5分钟。（注意单位）
-            resp.setExpiresIn(resp.getExpiresIn() - 300);
-            resp.setExpiresTime(System.currentTimeMillis() + resp.getExpiresIn() * 1000);
+
+            resp.disposeExpires();
             return resp;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -85,9 +84,7 @@ public class WxRequestUtil {
                     () -> BasicException.server("获取AccessToken失败")
                             .dataMap(getDataMapByError(resp))
             );
-            // 设置到期时间,时间提前5分钟。（注意单位）
-            resp.setExpiresIn(resp.getExpiresIn() - 300);
-            resp.setExpiresTime(System.currentTimeMillis() + resp.getExpiresIn() * 1000);
+            resp.disposeExpires();
             return resp;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
