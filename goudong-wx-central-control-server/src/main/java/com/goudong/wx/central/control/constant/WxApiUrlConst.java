@@ -10,7 +10,7 @@ package com.goudong.wx.central.control.constant;
 public interface WxApiUrlConst {
     /**
      *
-     * <p>获取 Access token接口地址模板</p>
+     * <p>获取 Access token接口地址模板-GET</p>
      * <p>APPID        应用id</p>
      * <p>APPSECRET    应用密钥</p>
      *
@@ -18,9 +18,14 @@ public interface WxApiUrlConst {
     String GET_TOKEN_TEMPLATE = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRET}";
 
     /**
-     * 获取稳定版接口调用凭据
+     * 获取稳定版接口调用凭据-POST
      */
     String GET_STABLE_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/stable_token";
+
+    /**
+     * 创建菜单接口-POST
+     */
+    String POST_CREATE_MENU = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={ACCESS_TOKEN}";
     //~methods
     //==================================================================================================================
 }
