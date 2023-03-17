@@ -4,11 +4,16 @@ import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
 import com.goudong.core.lang.BasicExceptionInterface;
+import com.goudong.core.lang.ExceptionEnumInterface;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.ArrayUtil;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.MessageFormatUtil;
+import com.goudong.core.util.StringUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartException;
 
 import java.util.HashMap;
@@ -1037,6 +1042,25 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         throw server(SERVER_ERROR, clientMessageTemplate, clientMessageParams, serverMessageTemplate, serverMessageParams);
     }
 
+    // ~ builder创建
+    // =================================================================================================================
+
+    /**
+     * 创建构建者
+     * @return
+     */
+    public static BasicExceptionBuilder builder() {
+        return new BasicExceptionBuilder();
+    }
+
+    /**
+     * 创建构建者
+     * @return
+     */
+    public static BasicExceptionBuilder builder(ExceptionEnumInterface exceptionEnum) {
+        return new BasicExceptionBuilder(exceptionEnum);
+    }
+
     // ~ 常用构造方法
     // =================================================================================================================
     public BasicException() {
@@ -1314,5 +1338,250 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         }
 
         return this;
+    }
+
+    /**
+     * 类描述：
+     * 创建BasicException的构建对象
+     * @author cfl
+     * @date 2023/3/17 19:34
+     * @version 1.0
+     */
+    public static class BasicExceptionBuilder {
+
+        /**
+         * http 响应码
+         */
+        private int status;
+
+        /**
+         * 错误代码
+         */
+        private String code;
+
+        /**
+         * 客户端状态码对应信息
+         */
+        private String clientMessage;
+
+        /**
+         * 客户端模板
+         */
+        private String clientMessageTemplate;
+
+        /**
+         * 客户端模板参数
+         */
+        private Object[] clientMessageParams;
+
+        /**
+         * 服务器状态码对应信息
+         */
+        private String serverMessage;
+
+        /**
+         * 服务端模板
+         */
+        private String serverMessageTemplate;
+
+        /**
+         * 服务端模板参数
+         */
+        private Object[] serverMessageParams;
+
+        /**
+         * 额外信息
+         */
+        private Map dataMap = new HashMap();
+
+        /**
+         * 异常信息
+         */
+        private Throwable cause;
+
+        /**
+         * 异常类型
+         */
+        private ExceptionEnumInterface exceptionEnum;
+
+        /**
+         * 无参构造
+         */
+        public BasicExceptionBuilder() {
+        }
+
+        /**
+         * 有参构造，根据异常枚举对象，给属性设置默认值
+         * @param exceptionEnum
+         */
+        public BasicExceptionBuilder(ExceptionEnumInterface exceptionEnum) {
+            this.exceptionEnum = exceptionEnum;
+            this.status = exceptionEnum.getStatus();
+            this.code = exceptionEnum.getCode();
+            this.clientMessage = exceptionEnum.getClientMessage();
+            this.serverMessage = exceptionEnum.getServerMessage();
+        }
+
+        /**
+         * 设置Http状态码，值必须是正确的4xx或5xx状态码
+         * @param status
+         * @return
+         */
+        public BasicExceptionBuilder status(int status) {
+            AssertUtil.isTrue(HttpStatus.valueOf(status).isError(), () -> ServerException.server("状态码设置错误"));
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * 设置code
+         * @param code
+         * @return
+         */
+        public BasicExceptionBuilder code(String code) {
+            this.code = code;
+            return this;
+        }
+
+        /**
+         * 设置clientMessage</br>
+         * <pre>
+         * 注意：
+         * 1. 该方法应该避免与{@code clientMessageTemplate}、{@code clientMessageParams}方法一起使用
+         * 2. 如果一起使用:
+         *  2.1 {@code clientMessage} 在前面，那么{@code clientMessageTemplate}、{@code clientMessageParams}会生效
+         *  2.2 {@code clientMessage} 在后面，那么{@code clientMessage}会生效
+         * </pre>
+         * @param clientMessage
+         * @return
+         */
+        public BasicExceptionBuilder clientMessage(String clientMessage) {
+            this.clientMessage = clientMessage;
+            this.clientMessageTemplate = null;
+            this.clientMessageParams = null;
+            return this;
+        }
+
+        /**
+         * 设置clientMessageTemplate</br>
+         * 通常该方法和{@code clientMessageParams}一起使用，这样可以有效避免字符串拼接问题
+         * @param clientMessageTemplate
+         * @return
+         */
+        public BasicExceptionBuilder clientMessageTemplate(String clientMessageTemplate) {
+            this.clientMessageTemplate = clientMessageTemplate;
+            return this;
+        }
+
+        /**
+         * 设置clientMessageParams</br>
+         * 通常该方法和{@code clientMessageTemplate}一起使用，这样可以有效避免字符串拼接问题
+         * @param clientMessageParams
+         * @return
+         */
+        public BasicExceptionBuilder clientMessageParams(Object... clientMessageParams) {
+            this.clientMessageParams = clientMessageParams;
+            return this;
+        }
+
+        /**
+         * 设置serverMessage
+         * <pre>
+         * 注意：
+         * 1. 该方法应该避免与{@code serverMessageTemplate}、{@code serverMessageParams}方法一起使用
+         * 2. 如果一起使用:
+         *  2.1 {@code serverMessage} 在前面，那么{@code serverMessageTemplate}、{@code serverMessageParams}会生效
+         *  2.2 {@code serverMessage} 在后面，那么{@code serverMessage}会生效
+         * </pre>
+         * @param serverMessage
+         * @return
+         */
+        public BasicExceptionBuilder serverMessage(String serverMessage) {
+            this.serverMessage = serverMessage;
+            this.serverMessageTemplate = null;
+            this.serverMessageParams = null;
+            return this;
+        }
+
+        /**
+         * 设置serverMessageTemplate</br>
+         * 通常该方法和{@code serverMessageParams}一起使用，这样可以有效避免字符串拼接问题
+         * @param serverMessageTemplate
+         * @return
+         */
+        public BasicExceptionBuilder serverMessageTemplate(String serverMessageTemplate) {
+            this.serverMessageTemplate = serverMessageTemplate;
+            return this;
+        }
+
+        /**
+         * 设置serverMessageParams</br>
+         * 通常该方法和{@code serverMessageTemplate}一起使用，这样可以有效避免字符串拼接问题
+         * @param serverMessageParams
+         * @return
+         */
+        public BasicExceptionBuilder serverMessageParams(Object... serverMessageParams) {
+            this.serverMessageParams = serverMessageParams;
+            return this;
+        }
+
+        /**
+         * 设置dataMap
+         * @param dataMap
+         * @return
+         */
+        public BasicExceptionBuilder dataMap(Map dataMap) {
+            this.dataMap = dataMap;
+            return this;
+        }
+
+        /**
+         * 设置异常对象
+         * @param cause
+         * @return
+         */
+        public BasicExceptionBuilder cause(Throwable cause) {
+            this.cause = cause;
+            return this;
+        }
+
+        /**
+         * 设置exceptionEnum，并使用exceptionEnum给其它成员设置默认值
+         * @param exceptionEnum
+         * @return
+         */
+        public BasicExceptionBuilder exceptionEnum(ExceptionEnumInterface exceptionEnum) {
+            this.exceptionEnum = exceptionEnum;
+            this.status = exceptionEnum.getStatus();
+            this.code = exceptionEnum.getCode();
+            this.clientMessage = exceptionEnum.getClientMessage();
+            this.serverMessage = exceptionEnum.getServerMessage();
+            return this;
+        }
+
+        /**
+         * 根据成员变量，创建BasicException对象
+         * @return BasicException
+         */
+        public BasicException build() {
+            // 优先使用 clientMessageTemplate + clientMessageParams 的组合方式设置 clientMessage
+            if (StringUtil.isNotBlank(clientMessageTemplate)) {
+                clientMessage = clientMessageTemplate;
+                if (ArrayUtil.isNotEmpty(clientMessageParams)) {
+                    clientMessage = MessageFormatUtil.format(clientMessageTemplate, clientMessageParams);
+                }
+            }
+
+            // 优先使用 serverMessageTemplate + serverMessageParams 的组合方式设置 serverMessage
+            if (StringUtil.isNotBlank(serverMessageTemplate)) {
+                serverMessage = serverMessageTemplate;
+                if (ArrayUtil.isNotEmpty(serverMessageParams)) {
+                    serverMessage = MessageFormatUtil.format(serverMessageTemplate, serverMessageParams);
+                }
+            }
+
+            // 创建 BasicException 对象
+            return new BasicException(status, code, clientMessage, serverMessage, cause);
+        }
     }
 }
