@@ -1408,6 +1408,10 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
          * 无参构造
          */
         public BasicExceptionBuilder() {
+            // 默认设置500状态码
+            this.status = SERVER_ERROR.getStatus();
+            // 默认设置成失败
+            this.code = Result.FAIL;
         }
 
         /**

@@ -17,11 +17,11 @@ public class Result<T> implements Serializable {
     /**
      * 成功
      */
-    private static final String SUCCESS = "0";
+    public static final String SUCCESS = "0";
     /**
      * 失败
      */
-    private static final String FAIL = "1";
+    public static final String FAIL = "1";
 
     /**
      * http状态码
