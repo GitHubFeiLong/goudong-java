@@ -21,4 +21,20 @@ public class BaseResp {
      * 错误信息
      */
     private String errmsg;
+
+    /**
+     * 是否时成功的响应
+     * @return
+     */
+    public boolean isSuccessful() {
+        return errcode == 0;
+    }
+
+    /**
+     * 是否时失败的响应
+     * @return
+     */
+    public boolean isUnsuccessful() {
+        return errcode != 0;
+    }
 }

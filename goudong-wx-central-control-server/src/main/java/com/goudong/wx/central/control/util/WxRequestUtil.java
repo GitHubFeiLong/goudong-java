@@ -88,7 +88,7 @@ public class WxRequestUtil {
             logResp(respBody);
             AccessTokenResp resp = OBJECT_MAPPER.readValue(respBody, AccessTokenResp.class);
 
-            AssertUtil.isTrue(resp.getErrcode() == 0,
+            AssertUtil.isTrue(resp.isSuccessful(),
                     () -> BasicException.server("获取AccessToken失败")
                             .dataMap(getDataMapByError(resp))
             );
@@ -118,7 +118,7 @@ public class WxRequestUtil {
             BaseResp baseResp = OBJECT_MAPPER.readValue(respBody, BaseResp.class);
             logResp(respBody);
 
-            AssertUtil.isTrue(baseResp.getErrcode() == 0,
+            AssertUtil.isTrue(baseResp.isSuccessful(),
                     () -> BasicException.server("创建菜单失败")
                             .dataMap(getDataMapByError(baseResp))
             );
