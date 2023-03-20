@@ -1352,57 +1352,57 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         /**
          * http 响应码
          */
-        private int status;
+        protected int status;
 
         /**
          * 错误代码
          */
-        private String code;
+        protected String code;
 
         /**
          * 客户端状态码对应信息
          */
-        private String clientMessage;
+        protected String clientMessage;
 
         /**
          * 客户端模板
          */
-        private String clientMessageTemplate;
+        protected String clientMessageTemplate;
 
         /**
          * 客户端模板参数
          */
-        private Object[] clientMessageParams;
+        protected Object[] clientMessageParams;
 
         /**
          * 服务器状态码对应信息
          */
-        private String serverMessage;
+        protected String serverMessage;
 
         /**
          * 服务端模板
          */
-        private String serverMessageTemplate;
+        protected String serverMessageTemplate;
 
         /**
          * 服务端模板参数
          */
-        private Object[] serverMessageParams;
+        protected Object[] serverMessageParams;
 
         /**
          * 额外信息
          */
-        private Map dataMap = new HashMap();
+        protected Map dataMap = new HashMap();
 
         /**
          * 异常信息
          */
-        private Throwable cause;
+        protected Throwable cause;
 
         /**
          * 异常类型
          */
-        private ExceptionEnumInterface exceptionEnum;
+        protected ExceptionEnumInterface exceptionEnum;
 
         /**
          * 无参构造
