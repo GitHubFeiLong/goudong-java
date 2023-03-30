@@ -49,7 +49,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE");
+                .allowedHeaders("*")
+                .allowedMethods("*");
     }
 
     /**
@@ -63,6 +64,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /**
      * 跨域
+     * @see WebMvcConfig#addCorsMappings(CorsRegistry)
      * @return
      */
     // @Bean
