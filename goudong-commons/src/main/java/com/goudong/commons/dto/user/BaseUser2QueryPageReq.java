@@ -1,11 +1,11 @@
-package com.goudong.user.dto;
+package com.goudong.commons.dto.user;
 
-import com.goudong.boot.web.core.BasePage;
-import com.goudong.commons.constant.core.DateConst;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,15 +14,23 @@ import java.util.List;
  * 类描述：
  * 用户分页查询的条件
  * @author cfl
- * @date 2022/8/20 8:22
+ * @date 2023/3/31 10:20
  * @version 1.0
  */
 @Data
-public class BaseUser2QueryPageDTO extends BasePage implements Serializable {
+public class BaseUser2QueryPageReq implements Serializable {
 
-    private static final long serialVersionUID = -2290257073855491469L;
+    @NotNull(message = "分页查询page参数必传")
+    @Min(value = 1, message = "分页参数错误，page必须大于等于1")
+    @ApiModelProperty(value = "第几页,从1开始",required = true)
+    private Integer page = 1;
 
-    @ApiModelProperty(value = "勾选的用户id")
+    @NotNull(message = "分页查询size参数必传")
+    @Min(value = 1, message = "分页参数错误，size必须大于等于1")
+    @ApiModelProperty(value = "一页显示内容长度", required = true)
+    private Integer size = 20;
+
+    @ApiModelProperty("勾选的用户id")
     private List<Long> ids;
 
     @ApiModelProperty("用户名")

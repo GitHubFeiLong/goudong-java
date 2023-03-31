@@ -268,6 +268,12 @@ public class BaseUserServiceImpl implements BaseUserService {
     public PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
+            if (CollectionUtil.isNotEmpty(page.getIds())) {
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("id"));
+                page.getIds().stream().forEach(p -> in.value(p));
+                and.add(in);
+            }
+
             if (StringUtil.isNotBlank(page.getUsername())) {
                 and.add(criteriaBuilder.like(root.get("username"), page.getUsername() + "%"));
             }

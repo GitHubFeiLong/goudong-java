@@ -2,8 +2,7 @@ package com.goudong.file.enumerate;
 
 import com.goudong.boot.redis.core.RedisKeyProvider;
 import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
-import com.goudong.file.po.file.FileShardTaskPO;
-import com.goudong.file.po.user.BaseRolePO;
+import com.goudong.file.po.FileShardTaskPO;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -28,10 +27,6 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      */
     FILE_SHARD_UPLOAD_TASK("goudong-file-server:shard-upload:task:${fileMd5}", DataType.LIST, FileShardTaskPO.class, 30, TimeUnit.MINUTES),
 
-    /**
-     * 将角色保存到redis
-     */
-    ROLE("goudong-file-server:role:ALL", DataType.LIST, BaseRolePO.class, 1, TimeUnit.DAYS)
     ;
     //~fields
     //==================================================================================================================

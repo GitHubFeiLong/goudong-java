@@ -1,4 +1,4 @@
-package com.goudong.file.po.file;
+package com.goudong.file.po;
 
 import com.goudong.commons.framework.jpa.BasePO;
 import io.swagger.annotations.ApiModel;

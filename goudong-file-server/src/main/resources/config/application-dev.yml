@@ -32,26 +32,15 @@ spring:
       max-request-size: -1
       max-file-size: -1
   datasource:
-    file:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
-      username: ${MYSQL_USERNAME}
-      password: "${MYSQL_PASSWORD}"
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      initialSize: 5
-      maxActive: 50
-      minIdle: 0
-      maxWait: 60000
-      useUnfairLock: true # 禁用公平锁
-    user:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/goudong_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
-      username: ${MYSQL_USERNAME}
-      password: "${MYSQL_PASSWORD}"
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      initialSize: 5
-      maxActive: 50
-      minIdle: 0
-      maxWait: 60000
-      useUnfairLock: true # 禁用公平锁
+    url: jdbc:mysql://127.0.0.1:3306/goudong_file?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    username: ${MYSQL_USERNAME}
+    password: "${MYSQL_PASSWORD}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    initialSize: 5
+    maxActive: 50
+    minIdle: 0
+    maxWait: 60000
+    useUnfairLock: true # 禁用公平锁
   jpa:
     hibernate:
       ddl-auto: none
@@ -83,6 +72,7 @@ ribbon:
   ReadTimeout: 5000 #建立连接所用时间（避免超时）
   ConnectTimeout: 5000 #连接后接口调用时间（避免超时）
 
+
 knife4j:
   enable: true         # 是否开启Knife4j增强模式，默认值为false
   production: false    # 生产环境开启
@@ -110,3 +100,9 @@ file:
     avi:
       length: 1
       file-length-unit: mb
+feign:
+  httpclient:
+    enabled: true
+#  compression:
+#    request:
+#      min-request-size: 4096

@@ -1,6 +1,6 @@
-package com.goudong.file.repository.file;
+package com.goudong.file.repository;
 
-import com.goudong.file.po.file.FileShardTaskPO;
+import com.goudong.file.po.FileShardTaskPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

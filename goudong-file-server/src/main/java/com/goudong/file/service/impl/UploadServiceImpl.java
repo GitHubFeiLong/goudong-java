@@ -15,10 +15,10 @@ import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.file.core.FileUpload;
 import com.goudong.file.core.Filename;
 import com.goudong.file.dto.*;
-import com.goudong.file.po.file.FilePO;
-import com.goudong.file.po.file.FileShardTaskPO;
-import com.goudong.file.repository.file.FileRepository;
-import com.goudong.file.repository.file.FileShardTaskRepository;
+import com.goudong.file.po.FilePO;
+import com.goudong.file.po.FileShardTaskPO;
+import com.goudong.file.repository.FileRepository;
+import com.goudong.file.repository.FileShardTaskRepository;
 import com.goudong.file.service.FileShardTaskService;
 import com.goudong.file.service.UploadService;
 import com.goudong.file.util.FileUtils;
@@ -38,10 +38,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -232,7 +229,9 @@ public class UploadServiceImpl implements UploadService {
         if (firstByFileMd5 != null) {
             LogUtil.info(log, "上传文件的md5值：{}，与数据库中id={}的md5相同，触发秒传。", md5Hex, firstByFileMd5.getId());
             FilePO filePO = BeanUtil.copyProperties(firstByFileMd5, FilePO.class, CommonConst.BASE_PO_FIELDS);
-            originalFilename = StringUtils.isNotBlank(customerFilename) ? customerFilename : originalFilename;
+            originalFilename = StringUtils.isNotBlank(customerFilename)
+                    ? new StringBuilder(customerFilename).append(".").append(firstByFileMd5.getFileType().toLowerCase()).toString()
+                    : originalFilename;
             filePO.setOriginalFilename(originalFilename);
 
             fileRepository.save(filePO);

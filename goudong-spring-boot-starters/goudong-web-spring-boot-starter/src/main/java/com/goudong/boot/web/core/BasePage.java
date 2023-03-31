@@ -22,12 +22,12 @@ public class BasePage {
     @NotNull(message = "分页查询page参数必传")
     @Min(value = 1, message = "分页参数错误，page必须大于等于1")
     @ApiModelProperty(value = "第几页,从1开始",required = true)
-    private Integer page;
+    private Integer page = 1;
 
     @NotNull(message = "分页查询size参数必传")
     @Min(value = 1, message = "分页参数错误，size必须大于等于1")
     @ApiModelProperty(value = "一页显示内容长度", required = true)
-    private Integer size;
+    private Integer size = 20;
 
     public Integer getPage() {
         return page;

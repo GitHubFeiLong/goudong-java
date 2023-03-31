@@ -1,10 +1,9 @@
 package com.goudong.file.service;
 
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.file.dto.BaseUser2QueryPageDTO;
-import com.goudong.file.po.user.BaseUserPO;
+import com.goudong.commons.dto.user.BaseUser2QueryPageReq;
 
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 接口描述：
@@ -15,21 +14,9 @@ import java.util.List;
 public interface BaseUserService {
 
     /**
-     * 分页查询
-     * @param page
-     * @return
+     * 导出用户
+     * @param req       导出条件
+     * @param response  响应对象
      */
-    List<BaseUserDTO> export(BaseUser2QueryPageDTO page);
-    /**
-     * 根据id查询所有数据
-     * @param ids
-     * @return
-     */
-    List<com.goudong.commons.dto.oauth2.BaseUserDTO> findAllById(List<Long> ids);
-
-    /**
-     * 批量保存用户
-     * @param userPOS
-     */
-    void saveAll(List<BaseUserPO> userPOS);
+    void userExportExcel(BaseUser2QueryPageReq req, HttpServletResponse response) throws UnsupportedEncodingException;
 }

@@ -1,10 +1,6 @@
 package com.goudong.file.controller.imports;
 
-import com.alibaba.excel.EasyExcel;
 import com.goudong.core.util.ListUtil;
-import com.goudong.file.dto.UserExcelTemplateDTO;
-import com.goudong.file.listener.excel.UserExcelTemplateReadListener;
-import com.goudong.file.service.BaseRoleService;
 import com.goudong.file.service.BaseUserService;
 import com.goudong.file.service.UploadService;
 import io.swagger.annotations.Api;
@@ -37,7 +33,6 @@ public class UserImportController {
     //==================================================================================================================
     private final BaseUserService baseUserService;
 
-    private final BaseRoleService baseRoleService;
     private final UploadService uploadService;
 
     //~methods
@@ -53,9 +48,9 @@ public class UserImportController {
 
 
 
-        EasyExcel.read(file.getInputStream(),
-                        UserExcelTemplateDTO.class,
-                        new UserExcelTemplateReadListener(baseUserService, baseRoleService))
-                .sheet().doRead();
+        // EasyExcel.read(file.getInputStream(),
+        //                 UserExcelTemplateDTO.class,
+        //                 new UserExcelTemplateReadListener(baseUserService, baseRoleService))
+        //         .sheet().doRead();
     }
 }

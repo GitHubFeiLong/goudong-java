@@ -1,6 +1,6 @@
-package com.goudong.file.repository.file;
+package com.goudong.file.repository;
 
-import com.goudong.file.po.file.FilePO;
+import com.goudong.file.po.FilePO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

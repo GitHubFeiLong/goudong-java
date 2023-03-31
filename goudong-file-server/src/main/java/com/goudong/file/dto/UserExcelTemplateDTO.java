@@ -5,7 +5,6 @@ import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.goudong.file.annotation.excel.ExcelComment;
 import com.goudong.file.annotation.excel.ExcelDataValidation;
 import com.goudong.file.annotation.excel.ExcelRequired;
-import com.goudong.file.service.impl.BaseRoleServiceImpl;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -74,7 +73,7 @@ public class UserExcelTemplateDTO implements Serializable {
      */
     @ExcelProperty(value = "角色")
     @ExcelComment("设置用户角色，不同角色对应着不同的权限")
-    @ExcelDataValidation(source = BaseRoleServiceImpl.class)
+    // @ExcelDataValidation(source = BaseRoleServiceImpl.class)
     @ColumnWidth(30)
     @ExcelRequired
     private String roleNameCn;

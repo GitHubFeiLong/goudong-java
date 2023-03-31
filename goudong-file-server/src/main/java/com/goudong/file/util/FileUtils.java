@@ -7,7 +7,7 @@ import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.commons.utils.core.SpringBeanTool;
 import com.goudong.file.constant.FileConst;
 import com.goudong.file.core.Filename;
-import com.goudong.file.po.file.FilePO;
+import com.goudong.file.po.FilePO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;

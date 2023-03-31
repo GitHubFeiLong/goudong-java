@@ -17,6 +17,7 @@ import java.util.List;
  * @version 1.0
  */
 @Data
+@Deprecated
 public class BaseUserExportReq implements Serializable {
 
     private static final long serialVersionUID = -2290257073855491469L;
