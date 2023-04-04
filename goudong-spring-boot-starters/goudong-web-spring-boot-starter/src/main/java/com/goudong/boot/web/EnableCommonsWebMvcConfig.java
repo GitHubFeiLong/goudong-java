@@ -1,5 +1,6 @@
 package com.goudong.boot.web;
 
+import com.goudong.boot.web.config.ApiLogAspectConfig;
 import com.goudong.boot.web.config.ExceptionHandlerConfiguration;
 import com.goudong.boot.web.config.WebMvcConfig;
 import com.goudong.boot.web.core.ErrorAttributes;
@@ -18,6 +19,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({ExceptionHandlerConfiguration.class, WebMvcConfig.class, ErrorAttributes.class, ErrorController.class})
+@Import({ExceptionHandlerConfiguration.class, WebMvcConfig.class, ErrorAttributes.class, ErrorController.class, ApiLogAspectConfig.class})
 public @interface EnableCommonsWebMvcConfig {
 }

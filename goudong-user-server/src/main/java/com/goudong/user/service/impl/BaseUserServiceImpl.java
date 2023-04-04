@@ -360,6 +360,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
         baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
         baseUserPO.setEnabled(true);
+        baseUserPO.setLocked(false);
         baseUserRepository.save(baseUserPO);
         return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
     }
