@@ -4,6 +4,7 @@ import com.goudong.boot.web.bean.ApiLogAspectJExpressionPointcut;
 import com.goudong.boot.web.bean.ApiLogInterceptor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApiLogAspectConfig {
 
-    @Value("${goudong.web.api-log.pointcut.expression:execution(public * com.goudong.user.controller..*.*(..))}")
+    @Value("${goudong.web.api-log.pointcut.expression:execution(public * com.goudong.*.controller..*.*(..))}")
     private String apiLogExpression;
 
     public ApiLogInterceptor getApiLogInterceptor() {
@@ -40,7 +41,8 @@ public class ApiLogAspectConfig {
      * @return
      */
     @Bean
-    public DefaultPointcutAdvisor defaultPointcutAdvisor() {
+    @ConditionalOnClass(name = {"org.aspectj.lang.JoinPoint"})
+    public DefaultPointcutAdvisor ApiLogAspectDefaultPointcutAdvisor() {
         DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor();
         defaultPointcutAdvisor.setPointcut(getApiLogAspectJExpressionPointcut());
         defaultPointcutAdvisor.setAdvice(getApiLogInterceptor());

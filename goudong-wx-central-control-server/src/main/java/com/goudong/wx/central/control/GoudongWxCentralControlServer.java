@@ -3,6 +3,7 @@ package com.goudong.wx.central.control;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
+import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.framework.core.LogApplicationStartup;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StopWatch;
@@ -40,5 +42,10 @@ public class GoudongWxCentralControlServer {
         Environment environment = context.getBean(Environment.class);
         stopWatch.stop();
         LogApplicationStartup.logApplicationStartup(environment, (int)stopWatch.getTotalTimeSeconds());
+    }
+
+    @Bean
+    LoggingAop loggingAop(Environment environment) {
+        return new LoggingAop(environment);
     }
 }
