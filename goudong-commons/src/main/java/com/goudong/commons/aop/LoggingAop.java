@@ -1,6 +1,7 @@
 package com.goudong.commons.aop;
 
 import com.goudong.commons.constant.core.SpringProfileConst;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -22,12 +23,16 @@ import java.util.Arrays;
  * @date 2021/8/25 20:13
  * @version 1.0
  */
+@Slf4j
 @Aspect
 public class LoggingAop {
 
     private final Environment env;
 
     public LoggingAop(Environment env) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入loggingAop");
+        }
         this.env = env;
     }
 

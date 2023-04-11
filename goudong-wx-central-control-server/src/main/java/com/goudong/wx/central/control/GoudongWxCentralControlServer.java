@@ -2,9 +2,11 @@ package com.goudong.wx.central.control;
 
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
+import com.goudong.boot.web.config.ApiLogAop;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.framework.core.LogApplicationStartup;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -23,6 +25,7 @@ import org.springframework.util.StopWatch;
  * @version 1.0
  * @date 2023/3/14 11:55
  */
+@Slf4j
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @ConfigurationPropertiesScan(value = {"com.goudong.wx.central.control.properties"})
 @EnableCommonsRedisConfig
@@ -47,5 +50,15 @@ public class GoudongWxCentralControlServer {
     @Bean
     LoggingAop loggingAop(Environment environment) {
         return new LoggingAop(environment);
+    }
+
+    /**
+     * 接口日志切面
+     * @param environment
+     * @return
+     */
+    @Bean
+    public ApiLogAop apiLogAop(Environment environment) {
+        return new ApiLogAop(environment);
     }
 }

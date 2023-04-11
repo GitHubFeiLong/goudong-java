@@ -37,4 +37,5 @@ public class AccessTokenController {
     public Result refreshAccessToken(@RequestParam("appId") String appId) {
         return Result.ofSuccess(accessTokenService.refreshAccessToken(appId));
     }
+
 }

@@ -40,9 +40,6 @@ public class CommonsConfig {
      */
     @Bean
     public LoggingAop loggingAop(Environment environment) {
-        if (log.isDebugEnabled()) {
-            log.debug("注入loggingAop");
-        }
         return new LoggingAop(environment);
     }
 

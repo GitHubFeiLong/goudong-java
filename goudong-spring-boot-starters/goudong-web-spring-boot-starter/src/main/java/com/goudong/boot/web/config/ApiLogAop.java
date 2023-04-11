@@ -11,7 +11,6 @@ import org.apache.catalina.connector.RequestFacade;
 import org.apache.catalina.connector.ResponseFacade;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -24,7 +23,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +43,9 @@ public class ApiLogAop {
     private final Environment env;
 
     public ApiLogAop(Environment env) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入apiLogAop");
+        }
         this.env = env;
     }
 
@@ -79,23 +80,6 @@ public class ApiLogAop {
     }
 
     /**
-     * 方法发生异常打印日志
-     *
-     * @param joinPoint join point for advice.
-     * @param e exception.
-     */
-    @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
-    public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        logger(joinPoint)
-                .error(
-                        "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
-                        joinPoint.getSignature().getName(),
-                        e.getCause() != null ? e.getCause() : "NULL",
-                        e.getMessage()
-                );
-    }
-
-    /**
      * 方法进入和退出时打印日志
      * @param joinPoint join point for advice.
      * @return result.
@@ -112,10 +96,6 @@ public class ApiLogAop {
          */
         log.debug("URI: {}; Method：{}； HeadParams：{}", requestURI, method, requestHead);
 
-        // 过滤掉部分参数
-
-        List<Object> args = getArgs(joinPoint);
-
         StringBuffer sb = new StringBuffer();
         sb.append("\n-------------------------------------------------------------\n");
         sb.append("URI       : ").append(requestURI).append("\n");
@@ -131,16 +111,38 @@ public class ApiLogAop {
             String params = objectMapper.writeValueAsString(request.getParameterMap());
             sb.append("Params    : ").append(params).append("\n");
         } else {
+            // 过滤掉部分参数
+            List<Object> args = getArgs(joinPoint);
             String params = objectMapper.writeValueAsString(args);
             sb.append("Params    : ").append(params).append("\n");
         }
 
-        Object result;
+        Object result = null;
+        // 创建计时器
+        StopWatch stopWatch = new StopWatch();
         try {
-            // 创建计时器
-            StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             result = joinPoint.proceed();
+        } catch (BasicException e) {
+            result = e;
+            logger(joinPoint).error(
+                                "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
+                                joinPoint.getSignature().getName(),
+                                e.getCause() != null ? e.getCause() : "NULL",
+                                e.getMessage()
+                        );
+
+            throw e;
+        } catch (Exception ex) {
+            result = ex;
+            logger(joinPoint).error(
+                    "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
+                    joinPoint.getSignature().getName(),
+                    ex.getCause() != null ? ex.getCause() : "NULL",
+                    ex.getMessage()
+            );
+            throw ex;
+        } finally {
             // 停止
             stopWatch.stop();
             // 忽略本次打印响应对象（默认不忽略）
@@ -156,16 +158,6 @@ public class ApiLogAop {
 
             sb.append("-------------------------------------------------------------\n");
             log.info(sb.toString());
-        } catch (BasicException e) {
-            log.info(sb.toString());
-            throw e;
-        } catch (InvocationTargetException ite) {
-            Throwable targetException = ite.getTargetException();
-            log.error(targetException.toString());
-            throw targetException;
-        } catch (Exception ex) {
-            log.info(sb.toString());
-            throw ex;
         }
 
         return result;
