@@ -2,8 +2,10 @@ package com.goudong.user.config;
 
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
+import com.goudong.boot.web.config.ApiLogAop;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -15,6 +17,7 @@ import org.springframework.core.env.Environment;
  * @version 1.0
  * @date 2022/1/23 11:20
  */
+@Slf4j
 @Configuration
 @EnableCommonsWebMvcConfig
 @EnableCommonsRedisConfig
@@ -37,16 +40,22 @@ public class CommonsConfig {
      */
     @Bean
     public LoggingAop loggingAop(Environment environment) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入loggingAop");
+        }
         return new LoggingAop(environment);
     }
 
     /**
-     * 防止重复请求
+     * 接口日志切面
+     * @param environment
      * @return
      */
-    // @Bean
-    // @ConditionalOnClass(value = {RedisOperationsUtil.class, AuthorityUserUtil.class})
-    //public ApiRepeatAop repeatAop() {
-    //    return new ApiRepeatAop();
-    //}
+    @Bean
+    public ApiLogAop apiLogAop(Environment environment) {
+        if (log.isDebugEnabled()) {
+            log.debug("注入apiLogAop");
+        }
+        return new ApiLogAop(environment);
+    }
 }

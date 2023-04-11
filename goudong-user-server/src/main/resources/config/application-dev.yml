@@ -82,11 +82,3 @@ commons:
   goudong:
     web:
       enable: true
-
-# 配置goudong-web
-########################################################################################################################
-goudong:
-  web:
-    api-log:
-      pointcut:
-        expression: "execution(public * com.goudong..*.controller..*.*(..))"
