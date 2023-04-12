@@ -113,7 +113,13 @@ public class ApiLogAop {
         } else {
             // 过滤掉部分参数
             List<Object> args = getArgs(joinPoint);
-            String params = objectMapper.writeValueAsString(args);
+            String params;
+            try {
+                params = objectMapper.writeValueAsString(args);
+            } catch (Exception e) {
+                log.warn("接口参数序列化json失败：{}", e);
+                params = args.toString();
+            }
             sb.append("Params    : ").append(params).append("\n");
         }
 
@@ -145,10 +151,16 @@ public class ApiLogAop {
         } finally {
             // 停止
             stopWatch.stop();
-            // 忽略本次打印响应对象（默认不忽略）
-            String s = objectMapper.writeValueAsString(result);
-            if (s.length() <= 700) {
-                sb.append("Results   : ").append(s).append("\n");
+            String resultStr;
+            try {
+                resultStr = objectMapper.writeValueAsString(result);
+            } catch (Exception e) {
+                log.warn("接口响应序列化json失败：{}", e);
+                resultStr = result.toString();
+            }
+
+            if (resultStr.length() <= 700) {
+                sb.append("Results   : ").append(resultStr).append("\n");
             }
             if (stopWatch.getTotalTimeSeconds() < 1) {
                 sb.append("Time      : ").append(stopWatch.getTotalTimeMillis()).append("ms").append("\n");
