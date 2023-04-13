@@ -2,7 +2,7 @@ package com.goudong.wx.central.control;
 
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
-import com.goudong.boot.web.config.ApiLogAop;
+import com.goudong.boot.web.aop.ApiLogAop;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.aop.LoggingAop;
 import com.goudong.commons.framework.core.LogApplicationStartup;

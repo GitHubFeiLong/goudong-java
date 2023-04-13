@@ -1,4 +1,4 @@
-package com.goudong.boot.web.config;
+package com.goudong.boot.web.aop;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

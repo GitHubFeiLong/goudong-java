@@ -2,7 +2,7 @@ package com.goudong.user.config;
 
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
-import com.goudong.boot.web.config.ApiLogAop;
+import com.goudong.boot.web.aop.ApiLogAop;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import lombok.extern.slf4j.Slf4j;
