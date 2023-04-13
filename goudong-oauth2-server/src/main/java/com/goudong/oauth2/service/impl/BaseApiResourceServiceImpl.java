@@ -4,11 +4,11 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.goudong.commons.dto.oauth2.BaseApiResource2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseApiResourceDTO;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.po.BaseApiResourcePO;
 import com.goudong.oauth2.repository.BaseApiResourceRepository;
 import com.goudong.oauth2.service.BaseApiResourceService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -50,13 +50,13 @@ public class BaseApiResourceServiceImpl implements BaseApiResourceService {
 
         existsApiResourcePOS.get(0).equals(saveApiResourcePOS.get(0));
         // 数据库不存在数据，直接保存
-        if (CollectionUtils.isEmpty(existsApiResourcePOS)) {
+        if (CollectionUtil.isEmpty(existsApiResourcePOS)) {
             baseApiResourceRepository.saveAll(saveApiResourcePOS);
             return BeanUtil.copyToList(saveApiResourcePOS, BaseApiResourceDTO.class, CopyOptions.create());
         }
 
         // 需要新增的部分
-        Collection<BaseApiResourcePO> needSaveApiResourcePOS = CollectionUtils.subtract(saveApiResourcePOS, existsApiResourcePOS);
+        Collection<BaseApiResourcePO> needSaveApiResourcePOS = CollectionUtil.subtract(saveApiResourcePOS, existsApiResourcePOS);
 
         existsApiResourcePOS.stream().forEach(p1->{
 
@@ -69,7 +69,7 @@ public class BaseApiResourceServiceImpl implements BaseApiResourceService {
         });
 
         // 其次保存新增的数据
-        if (CollectionUtils.isNotEmpty(needSaveApiResourcePOS)) {
+        if (CollectionUtil.isNotEmpty(needSaveApiResourcePOS)) {
             baseApiResourceRepository.saveAll(needSaveApiResourcePOS);
         }
 

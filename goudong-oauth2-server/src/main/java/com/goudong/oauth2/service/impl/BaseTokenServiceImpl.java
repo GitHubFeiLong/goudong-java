@@ -7,6 +7,7 @@ import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
@@ -18,7 +19,6 @@ import com.goudong.oauth2.properties.TokenExpiresProperties;
 import com.goudong.oauth2.repository.BaseTokenRepository;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +107,7 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         // 根据用户id,和客户端类型 查询数据
         if (tokenExpiresProperties.isDisableRepeatLogin()) {
             List<BaseTokenPO> baseTokenPOS = baseTokenRepository.findAllByUserIdAndClientType(userId, clientSideEnum.getLowerName());
-            if (CollectionUtils.isNotEmpty(baseTokenPOS)) {
+            if (CollectionUtil.isNotEmpty(baseTokenPOS)) {
                 // 删除MySQL中的数据
                 baseTokenRepository.deleteAll(baseTokenPOS);
 

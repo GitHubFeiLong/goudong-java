@@ -7,13 +7,13 @@ import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
 import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.mapper.BaseWhitelistMapper;
 import com.goudong.oauth2.po.BaseWhitelistPO;
 import com.goudong.oauth2.repository.BaseWhitelistRepository;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,7 +94,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
                 .filter(f -> !pattern.contains(f.getPattern()))
                 .collect(Collectors.toList());
 
-        if (CollectionUtils.isNotEmpty(saveBaseWhitelistPOList)) {
+        if (CollectionUtil.isNotEmpty(saveBaseWhitelistPOList)) {
             baseWhitelistRepository.saveAll(saveBaseWhitelistPOList);
         }
 
@@ -131,7 +131,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
             redis存在数据直接返回。
          */
         List<BaseWhitelistDTO2Redis> whitelistDTOS = redisTool.getList(RedisKeyProviderEnum.WHITELIST, BaseWhitelistDTO2Redis.class);
-        if (CollectionUtils.isNotEmpty(whitelistDTOS)) {
+        if (CollectionUtil.isNotEmpty(whitelistDTOS)) {
             return BeanUtil.copyToList(whitelistDTOS, BaseWhitelistDTO.class, CopyOptions.create());
         }
 
@@ -140,7 +140,7 @@ public class BaseWhitelistServiceImpl implements BaseWhitelistService {
 
             // 再次判断缓存是否有值
             whitelistDTOS = redisTool.getList(RedisKeyProviderEnum.WHITELIST, BaseWhitelistDTO2Redis.class);
-            if (CollectionUtils.isNotEmpty(whitelistDTOS)) {
+            if (CollectionUtil.isNotEmpty(whitelistDTOS)) {
                 return BeanUtil.copyToList(whitelistDTOS, BaseWhitelistDTO.class, CopyOptions.create());
             }
 

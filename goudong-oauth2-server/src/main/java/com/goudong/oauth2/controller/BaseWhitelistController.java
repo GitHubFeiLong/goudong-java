@@ -6,12 +6,12 @@ import com.goudong.commons.dto.oauth2.BaseWhitelist2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.exception.WhitelistException;
 import com.goudong.oauth2.service.BaseWhitelistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -56,7 +56,7 @@ public class BaseWhitelistController {
         /*
             参数校验
          */
-        if (CollectionUtils.isEmpty(createDTOS)) {
+        if (CollectionUtil.isEmpty(createDTOS)) {
             LogUtil.warn(log, "添加白名单接口，参数为空：{}", createDTOS);
             return Result.ofSuccess(new ArrayList<>());
         }

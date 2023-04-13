@@ -11,6 +11,7 @@ import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
 import com.goudong.oauth2.exception.Oauth2Exception;
 import com.goudong.oauth2.po.BaseUserPO;
@@ -24,7 +25,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.Authentication;
@@ -156,7 +156,7 @@ public class AuthenticationController {
                 .filter(f -> antPathMatcher.match(f.getPattern(), uri) && f.getMethods().contains(method))
                 .collect(Collectors.toList());
         // 请求是白名单或者是内部接口时（集合中所有元素的isInner都是true时）
-        if (CollectionUtils.isNotEmpty(whitelistDTOS)) {
+        if (CollectionUtil.isNotEmpty(whitelistDTOS)) {
             // 是否是内部接口
             boolean isInner = whitelistDTOS.stream().filter(f -> f.getIsInner()).count() == whitelistDTOS.size();
             if (isInner) {

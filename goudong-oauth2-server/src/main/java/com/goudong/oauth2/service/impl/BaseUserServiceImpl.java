@@ -1,6 +1,7 @@
 package com.goudong.oauth2.service.impl;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
@@ -67,15 +68,20 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     private final HttpServletRequest httpServletRequest;
 
+    private final ObjectMapper objectMapper;
+
     public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
                                RedisTool redisTool,
                                @Lazy BaseTokenService baseTokenService,
-                               TokenExpiresProperties tokenExpiresProperties, HttpServletRequest httpServletRequest) {
+                               TokenExpiresProperties tokenExpiresProperties,
+                               HttpServletRequest httpServletRequest,
+                               ObjectMapper objectMapper) {
         this.baseUserRepository = baseUserRepository;
         this.redisTool = redisTool;
         this.baseTokenService = baseTokenService;
         this.tokenExpiresProperties = tokenExpiresProperties;
         this.httpServletRequest = httpServletRequest;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -142,7 +148,12 @@ public class BaseUserServiceImpl implements BaseUserService {
             String json = redisTool.getString(RedisKeyProviderEnum.AUTHENTICATION, clientSideLowerName, accessToken);
             if (StringUtils.isNotBlank(json)) {
                 // 解析成对象
-                BaseUserPO baseUserPO = JSON.parseObject(json, BaseUserPO.class);
+                BaseUserPO baseUserPO = null;
+                try {
+                    baseUserPO = objectMapper.readValue(json, BaseUserPO.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
 
                 // 判断用户是否过期，未过期直接返回 TODO 后期有锁定等其它状态直接追加判断
                 if (baseUserPO.isAccountNonExpired()) {

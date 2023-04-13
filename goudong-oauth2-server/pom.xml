@@ -15,47 +15,46 @@
     <description>权限认证服务</description>
 
     <dependencies>
+        <!--core-->
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-core</artifactId>
+        </dependency>
+        <!--commons-->
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>goudong-commons</artifactId>
         </dependency>
+        <!--web-->
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>goudong-web-spring-boot-starter</artifactId>
         </dependency>
+        <!--redis-->
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>goudong-redis-spring-boot-starter</artifactId>
         </dependency>
+        <!--集成依赖，解决配置lettuce连接池报错问题-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <!--knife4j-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
         </dependency>
-        <!--spring boot starter-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <optional>true</optional>
-            <!-- 排除springboot默认的logback日志框架，这样 log4j才能起作用 -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <optional>true</optional>
             <scope>test</scope>
         </dependency>
         <!--spring cloud Alibaba nacos-->
@@ -76,29 +75,7 @@
             <artifactId>spring-cloud-starter-oauth2</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--zipkin-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zipkin</artifactId>
-        </dependency>
-        <!--jwt deprecated-->
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!--web-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!--集成依赖，解决配置lettuce连接池报错问题-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <optional>true</optional>
-        </dependency>
+        <!--actuator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -138,28 +115,10 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--日志-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!--hutool-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-        </dependency>
-        <!--apache 通用工具包-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- commons-collections4 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <optional>true</optional>
         </dependency>
         <!--flyway-->
         <dependency>
@@ -182,10 +141,6 @@
         <dependency>
             <groupId>net.gplatform</groupId>
             <artifactId>Sdk4J</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
         </dependency>
     </dependencies>
 

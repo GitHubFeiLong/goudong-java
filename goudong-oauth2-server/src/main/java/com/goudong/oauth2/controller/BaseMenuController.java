@@ -7,12 +7,12 @@ import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.service.BaseMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,7 +53,7 @@ public class BaseMenuController {
         /*
             参数校验
          */
-        if (CollectionUtils.isEmpty(createDTOS)) {
+        if (CollectionUtil.isEmpty(createDTOS)) {
             LogUtil.warn(log, "保存隐藏菜单，参数为空：{}", createDTOS);
             return Result.ofSuccess(new ArrayList<>());
         }

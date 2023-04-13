@@ -6,11 +6,11 @@ import com.goudong.commons.dto.oauth2.BaseApiResource2CreateDTO;
 import com.goudong.commons.dto.oauth2.BaseApiResourceDTO;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.service.BaseApiResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +57,7 @@ public class BaseApiResourceController {
         /*
             参数校验
          */
-        if (CollectionUtils.isEmpty(createDTOS)) {
+        if (CollectionUtil.isEmpty(createDTOS)) {
             LogUtil.warn(log, "添加api资源，参数为空：{}", createDTOS);
             return Result.ofSuccess(new ArrayList<>());
         }
