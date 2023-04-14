@@ -63,6 +63,14 @@ public class SwaggerUtil {
                 .in(ParameterType.HEADER)
                 .build());
 
+        // 接口日志打印返回值得长度限制
+        requestParameters.add(new RequestParameterBuilder()
+                .name(HttpHeaderConst.X_INNER)
+                .description("标明本次请求是否属于内部接口之间调用")
+                .required(false)
+                .in(ParameterType.HEADER)
+                .build());
+
         return requestParameters;
     }
 }

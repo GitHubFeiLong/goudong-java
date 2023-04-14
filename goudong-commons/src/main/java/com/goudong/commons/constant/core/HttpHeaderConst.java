@@ -35,6 +35,11 @@ public class HttpHeaderConst {
      */
     public static final String X_INNER = "X-Inner";
 
+    /**
+     * 日志打印接口返回值长度限制
+     */
+    public static final String X_API_RESULT_LENGTH = "X-Api-Result-Length";
+
     //~methods
     //==================================================================================================================
 

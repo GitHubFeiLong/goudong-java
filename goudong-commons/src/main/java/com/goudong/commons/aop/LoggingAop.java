@@ -97,10 +97,7 @@ public class LoggingAop {
      */
     @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        if (
-                env.acceptsProfiles(Profiles.of(SpringProfileConst.DEVELOPMENT)) ||
-                env.acceptsProfiles(Profiles.of(SpringProfileConst.TEST))
-        ) {
+        if (env.acceptsProfiles(Profiles.of(SpringProfileConst.DEVELOPMENT, SpringProfileConst.TEST))) {
             logger(joinPoint)
                 .error(
                     "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
@@ -127,32 +124,37 @@ public class LoggingAop {
      */
     @Around("springBeanPointcut() && applicationPackagePointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        Logger log = logger(joinPoint);
 
-        // 过滤掉部分参数
-        List<Object> args = getArgs(joinPoint);
-        String params;
-        try {
-            params = objectMapper.writeValueAsString(args);
-        } catch (Exception e) {
-            log.warn("对象序列化json失败：{}", e);
-            params = args.toString();
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Enter: {}() with argument[s] = {}", joinPoint.getSignature().getName(), params);
-        }
         Object result = joinPoint.proceed();
-        String resultStr;
-        try {
-            resultStr = objectMapper.writeValueAsString(result);
-        } catch (Exception e) {
-            log.warn("对象序列化json失败：{}", e);
-            resultStr = args.toString();
-        }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: {}() with result = {}", joinPoint.getSignature().getName(), resultStr);
+        if (env.acceptsProfiles(Profiles.of(SpringProfileConst.DEVELOPMENT, SpringProfileConst.TEST))) {
+            Logger log = logger(joinPoint);
+
+            // 过滤掉部分参数
+            List<Object> args = getArgs(joinPoint);
+            String params;
+            try {
+                params = objectMapper.writeValueAsString(args);
+            } catch (Exception e) {
+                log.warn("对象序列化json失败：{}", e);
+                params = args.toString();
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("Enter: {}() with argument[s] = {}", joinPoint.getSignature().getName(), params);
+            }
+
+            String resultStr;
+            try {
+                resultStr = objectMapper.writeValueAsString(result);
+            } catch (Exception e) {
+                log.warn("对象序列化json失败：{}", e);
+                resultStr = args.toString();
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: {}() with result = {}", joinPoint.getSignature().getName(), resultStr);
+            }
         }
         return result;
     }

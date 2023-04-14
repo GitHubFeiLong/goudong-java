@@ -50,9 +50,6 @@ public class CommonsConfig {
      */
     @Bean
     public ApiLogAop apiLogAop(Environment environment) {
-        if (log.isDebugEnabled()) {
-            log.debug("注入apiLogAop");
-        }
         return new ApiLogAop(environment);
     }
 }

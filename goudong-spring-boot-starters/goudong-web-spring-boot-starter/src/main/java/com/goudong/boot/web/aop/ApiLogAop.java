@@ -42,11 +42,19 @@ public class ApiLogAop {
 
     private final Environment env;
 
+    private final ObjectMapper objectMapper;
+
     public ApiLogAop(Environment env) {
         if (log.isDebugEnabled()) {
             log.debug("注入apiLogAop");
         }
         this.env = env;
+        this.objectMapper = new ObjectMapper();
+        // transient 忽略属性
+        objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
+        // 修改时间格式
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     }
 
     /**
@@ -101,12 +109,7 @@ public class ApiLogAop {
         sb.append("URI       : ").append(requestURI).append("\n");
         sb.append("Method    : ").append(method).append("\n");
         sb.append("HeadParams: ").append(requestHead).append("\n");
-        ObjectMapper objectMapper = new ObjectMapper();
-        // transient 忽略属性
-        objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
-        // 修改时间格式
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
         if (Objects.equals("GET", method)) {
             String params = objectMapper.writeValueAsString(request.getParameterMap());
             sb.append("Params    : ").append(params).append("\n");
@@ -123,12 +126,13 @@ public class ApiLogAop {
             sb.append("Params    : ").append(params).append("\n");
         }
 
-        Object result = null;
-        // 创建计时器
-        StopWatch stopWatch = new StopWatch();
+        Object result = null;                   // 接口返回值
+        boolean isSuccess = false;              // 是否执行成功
+        StopWatch stopWatch = new StopWatch();  // 创建计时器
         try {
-            stopWatch.start();
-            result = joinPoint.proceed();
+            stopWatch.start();                  // 计时器开始
+            result = joinPoint.proceed();       // 执行方法
+            isSuccess = true;                   // 设置本次执行成功
         } catch (BasicException e) {
             result = e;
             logger(joinPoint).error(
@@ -137,7 +141,6 @@ public class ApiLogAop {
                                 e.getCause() != null ? e.getCause() : "NULL",
                                 e.getMessage()
                         );
-
             throw e;
         } catch (Exception ex) {
             result = ex;
@@ -149,9 +152,8 @@ public class ApiLogAop {
             );
             throw ex;
         } finally {
-            // 停止
-            stopWatch.stop();
-            String resultStr;
+            stopWatch.stop();           // 停止
+            String resultStr;           // 打印接口返回值
             try {
                 resultStr = objectMapper.writeValueAsString(result);
             } catch (Exception e) {
@@ -159,9 +161,13 @@ public class ApiLogAop {
                 resultStr = result.toString();
             }
 
-            if (resultStr.length() <= 700) {
-                sb.append("Results   : ").append(resultStr).append("\n");
-            }
+            // 获取需要打印得长度限制
+            int maxResultStrLength = requestHead.containsKey("x-api-result-length") && requestHead.get("x-api-result-length") != null ?
+                    request.getIntHeader("x-api-result-length") : 700;
+            // 获取最终需要打印得返回值
+            resultStr = resultStr.length() > maxResultStrLength ? resultStr.substring(0, maxResultStrLength) : resultStr;
+            sb.append("Results   : ").append(resultStr).append("\n");
+            sb.append("successful: ").append(isSuccess).append("\n");
             if (stopWatch.getTotalTimeSeconds() < 1) {
                 sb.append("Time      : ").append(stopWatch.getTotalTimeMillis()).append("ms").append("\n");
             } else {
@@ -233,7 +239,7 @@ public class ApiLogAop {
         Enumeration<String> headerNames = request.getHeaderNames();
         Map<String, String> data = new HashMap<>();
         while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
+            String name = headerNames.nextElement().toLowerCase();
             if(name.indexOf("x-")!=-1) {
                 String value = request.getHeader(name);
                 data.put(name, value);
