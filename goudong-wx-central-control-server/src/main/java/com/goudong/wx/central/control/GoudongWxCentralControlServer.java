@@ -1,5 +1,6 @@
 package com.goudong.wx.central.control;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.boot.web.aop.ApiLogAop;
@@ -48,8 +49,8 @@ public class GoudongWxCentralControlServer {
     }
 
     @Bean
-    LoggingAop loggingAop(Environment environment) {
-        return new LoggingAop(environment);
+    LoggingAop loggingAop(Environment environment, ObjectMapper objectMapper) {
+        return new LoggingAop(environment, objectMapper);
     }
 
     /**
@@ -58,7 +59,7 @@ public class GoudongWxCentralControlServer {
      * @return
      */
     @Bean
-    public ApiLogAop apiLogAop(Environment environment) {
-        return new ApiLogAop(environment);
+    public ApiLogAop apiLogAop(Environment environment, ObjectMapper objectMapper) {
+        return new ApiLogAop(environment, objectMapper);
     }
 }

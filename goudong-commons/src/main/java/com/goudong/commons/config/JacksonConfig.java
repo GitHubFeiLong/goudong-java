@@ -2,6 +2,7 @@ package com.goudong.commons.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
@@ -46,20 +47,20 @@ public class JacksonConfig {
 
     //~methods
     //==================================================================================================================
-
     @Bean
-    public MappingJackson2HttpMessageConverter getMappingJackson2HttpMessageConverter() {
-        MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-
+    public ObjectMapper objectMap() {
         ObjectMapper objectMapper = new ObjectMapper();
+        // 使用transient修饰的字段忽略序列化和反序列化
+        objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
 
         // 反序列化设置 关闭反序列化时Jackson发现无法找到对应的对象字段，便会抛出UnrecognizedPropertyException: Unrecognized field xxx异常
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         // 序列化设置 关闭日志输出为时间戳的设置
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         // 反序列化，不存在属性时反序列化不让它报错（@JsonIgnoreProperties(ignoreUnknown = true)）
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 请求接口对象没有成员时不报错
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         //忽略value为null时key的输出
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -81,6 +82,15 @@ public class JacksonConfig {
 
         // 自动查找并注册Java 8相关模块
         objectMapper.findAndRegisterModules();
+
+        return objectMapper;
+    }
+
+    @Bean
+    public MappingJackson2HttpMessageConverter getMappingJackson2HttpMessageConverter(ObjectMapper objectMapper) {
+        MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+
+
 
         mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
         //设置中文编码格式

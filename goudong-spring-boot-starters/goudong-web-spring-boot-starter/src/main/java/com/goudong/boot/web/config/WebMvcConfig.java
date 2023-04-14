@@ -67,7 +67,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * @see WebMvcConfig#addCorsMappings(CorsRegistry)
      * @return
      */
-    // @Bean
+    @Bean
     public CorsFilter corsFilter() {
         //1.添加CORS配置信息
         CorsConfiguration config = new CorsConfiguration();

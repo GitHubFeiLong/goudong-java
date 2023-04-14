@@ -1,5 +1,6 @@
 package com.goudong.gateway.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.aop.LoggingAop;
@@ -30,7 +31,7 @@ public class CommonsConfig {
      * @return
      */
     @Bean
-    public LoggingAop loggingAop(Environment environment) {
-        return new LoggingAop(environment);
+    public LoggingAop loggingAop(Environment environment, ObjectMapper objectMapper) {
+        return new LoggingAop(environment, objectMapper);
     }
 }

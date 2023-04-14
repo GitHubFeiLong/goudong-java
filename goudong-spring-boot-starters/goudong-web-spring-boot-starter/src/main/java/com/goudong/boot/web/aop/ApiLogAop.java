@@ -1,8 +1,6 @@
 package com.goudong.boot.web.aop;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.core.util.ListUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,17 +41,12 @@ public class ApiLogAop {
 
     private final ObjectMapper objectMapper;
 
-    public ApiLogAop(Environment env) {
+    public ApiLogAop(Environment env, ObjectMapper objectMapper) {
         if (log.isDebugEnabled()) {
             log.debug("注入apiLogAop");
         }
         this.env = env;
-        this.objectMapper = new ObjectMapper();
-        // transient 忽略属性
-        objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
-        // 修改时间格式
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        this.objectMapper = objectMapper;
     }
 
     /**

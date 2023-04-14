@@ -1,5 +1,6 @@
 package com.goudong.oauth2.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
@@ -36,8 +37,8 @@ public class CommonsConfig {
      * @return
      */
     @Bean
-    public LoggingAop loggingAop(Environment environment) {
-        return new LoggingAop(environment);
+    public LoggingAop loggingAop(Environment environment, ObjectMapper objectMapper) {
+        return new LoggingAop(environment, objectMapper);
     }
 
 }

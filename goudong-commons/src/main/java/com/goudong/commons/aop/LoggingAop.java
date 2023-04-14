@@ -1,8 +1,6 @@
 package com.goudong.commons.aop;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.goudong.commons.constant.core.SpringProfileConst;
 import com.goudong.core.util.ListUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,24 +34,16 @@ import java.util.stream.Stream;
 @Aspect
 public class LoggingAop {
 
-    private static ObjectMapper objectMapper;
-
-    static {
-        objectMapper = new ObjectMapper();
-        // transient 忽略属性
-        objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
-        // 修改时间格式
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-    }
+    private final ObjectMapper objectMapper;
 
     private final Environment env;
 
-    public LoggingAop(Environment env) {
+    public LoggingAop(Environment env, ObjectMapper objectMapper) {
         if (log.isDebugEnabled()) {
             log.debug("注入loggingAop");
         }
         this.env = env;
+        this.objectMapper = objectMapper;
     }
 
     /**

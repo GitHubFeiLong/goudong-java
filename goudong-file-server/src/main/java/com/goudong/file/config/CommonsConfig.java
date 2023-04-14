@@ -1,5 +1,6 @@
 package com.goudong.file.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.commons.annotation.enable.*;
@@ -44,8 +45,8 @@ public class CommonsConfig {
      * @return
      */
     @Bean
-    public LoggingAop loggingAop(Environment environment) {
-        return new LoggingAop(environment);
+    public LoggingAop loggingAop(Environment environment, ObjectMapper objectMapper) {
+        return new LoggingAop(environment, objectMapper);
     }
 
     /**
