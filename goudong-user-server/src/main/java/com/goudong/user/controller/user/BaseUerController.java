@@ -286,4 +286,12 @@ public class BaseUerController {
     public Result<Boolean> changeLocked(@PathVariable @Min(value = 100) Long id) {
         return Result.ofSuccess(baseUserService.changeLocked(id));
     }
+
+
+    @GetMapping("/demo")
+    @ApiOperation(value = "测试请求")
+    @Whitelist("测试请求")
+    public Result demo(@RequestParam String name, @RequestParam String password){
+        return Result.ofSuccess(name+password);
+    }
 }

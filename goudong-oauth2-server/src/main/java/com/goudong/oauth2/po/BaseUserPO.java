@@ -111,13 +111,13 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
      * 激活状态（true：激活；false：未激活）
      */
     @Column(name = "enabled")
-    private Boolean enabled;
+    private Boolean enabled = true;
 
     /**
      * 锁定状态（true：已锁定；false：未锁定）
      */
     @Column(name = "locked", nullable = false)
-    private Boolean locked;
+    private Boolean locked = false;
 
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
