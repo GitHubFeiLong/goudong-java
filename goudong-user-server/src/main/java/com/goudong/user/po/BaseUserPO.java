@@ -94,13 +94,13 @@ public class BaseUserPO extends BasePO {
     /**
      * 激活状态（true：激活；false：未激活）
      */
-    @Column(name = "enabled", nullable = false)
+    @Column(name = "enabled", nullable = true)
     private Boolean enabled;
 
     /**
      * 锁定状态（true：已锁定；false：未锁定）
      */
-    @Column(name = "locked", nullable = false)
+    @Column(name = "locked", nullable = true)
     private Boolean locked;
 
     @ManyToMany(targetEntity=BaseRolePO.class)

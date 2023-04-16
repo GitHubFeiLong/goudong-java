@@ -81,3 +81,10 @@ commons:
   goudong:
     web:
       enable: true
+
+goudong:
+  web:
+    api-log:
+      print-log-limit:
+        head-params:
+          Authorization: true

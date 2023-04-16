@@ -4,6 +4,7 @@ import com.goudong.boot.web.config.ExceptionHandlerConfiguration;
 import com.goudong.boot.web.config.WebMvcConfig;
 import com.goudong.boot.web.core.ErrorAttributes;
 import com.goudong.boot.web.core.ErrorController;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -19,5 +20,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({ExceptionHandlerConfiguration.class, WebMvcConfig.class, ErrorAttributes.class, ErrorController.class})
+@ConfigurationPropertiesScan(basePackages = {"com.goudong.boot.web.properties"})
 public @interface EnableCommonsWebMvcConfig {
 }

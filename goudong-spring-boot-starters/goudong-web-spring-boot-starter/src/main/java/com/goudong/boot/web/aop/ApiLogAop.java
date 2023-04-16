@@ -1,7 +1,10 @@
 package com.goudong.boot.web.aop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.boot.web.core.ApiLog;
 import com.goudong.boot.web.core.BasicException;
+import com.goudong.boot.web.properties.ApiLogProperties;
+import com.goudong.boot.web.util.IpUtil;
 import com.goudong.core.util.ListUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInvocation;
@@ -41,12 +44,15 @@ public class ApiLogAop {
 
     private final ObjectMapper objectMapper;
 
-    public ApiLogAop(Environment env, ObjectMapper objectMapper) {
+    private final ApiLogProperties apiLogProperties;
+
+    public ApiLogAop(Environment env, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
         if (log.isDebugEnabled()) {
             log.debug("注入apiLogAop");
         }
         this.env = env;
         this.objectMapper = objectMapper;
+        this.apiLogProperties = apiLogProperties;
     }
 
     /**
@@ -87,44 +93,33 @@ public class ApiLogAop {
      */
     @Around("springBeanPointcut() && springBeanPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        Map<String, String> requestHead = getRequestHead(request);
-        /*
-            简单打印基础信息
-         */
-        log.debug("URI: {}; Method：{}； HeadParams：{}", requestURI, method, requestHead);
+        // 计时器，当是开启接口打印时才创建对象，提高程序性能
+        StopWatch stopWatch = null;
+        ApiLog apiLog = null;
+        if (apiLogProperties.getEnabled()) {
+            stopWatch = new StopWatch();  // 创建计时器
+            stopWatch.start();
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            String ip = IpUtil.getStringIp(request);
+            String requestURI = request.getRequestURI();
+            String method = request.getMethod();
+            Map<String, String> requestHead = getRequestHead(request);
+            Object params = Objects.equals("GET", method) ? request.getParameterMap() : getArgs(joinPoint);
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("\n-------------------------------------------------------------\n");
-        sb.append("URI       : ").append(requestURI).append("\n");
-        sb.append("Method    : ").append(method).append("\n");
-        sb.append("HeadParams: ").append(requestHead).append("\n");
-
-        if (Objects.equals("GET", method)) {
-            String params = objectMapper.writeValueAsString(request.getParameterMap());
-            sb.append("Params    : ").append(params).append("\n");
-        } else {
-            // 过滤掉部分参数
-            List<Object> args = getArgs(joinPoint);
-            String params;
-            try {
-                params = objectMapper.writeValueAsString(args);
-            } catch (Exception e) {
-                log.warn("接口参数序列化json失败：{}", e);
-                params = args.toString();
-            }
-            sb.append("Params    : ").append(params).append("\n");
+            // 创建apiLog对象
+            apiLog = new ApiLog();
+            apiLog.setIp(ip);
+            apiLog.setUri(requestURI);
+            apiLog.setMethod(method);
+            apiLog.setHeadParams(requestHead);
+            apiLog.setParams(params);
         }
 
         Object result = null;                   // 接口返回值
-        boolean isSuccess = false;              // 是否执行成功
-        StopWatch stopWatch = new StopWatch();  // 创建计时器
+        boolean successful = false;              // 是否执行成功
         try {
-            stopWatch.start();                  // 计时器开始
             result = joinPoint.proceed();       // 执行方法
-            isSuccess = true;                   // 设置本次执行成功
+            successful = true;                   // 设置本次执行成功
         } catch (BasicException e) {
             result = e;
             logger(joinPoint).error(
@@ -132,7 +127,7 @@ public class ApiLogAop {
                                 joinPoint.getSignature().getName(),
                                 e.getCause() != null ? e.getCause() : "NULL",
                                 e.getMessage()
-                        );
+            );
             throw e;
         } catch (Exception ex) {
             result = ex;
@@ -144,30 +139,17 @@ public class ApiLogAop {
             );
             throw ex;
         } finally {
-            stopWatch.stop();           // 停止
-            String resultStr;           // 打印接口返回值
-            try {
-                resultStr = objectMapper.writeValueAsString(result);
-            } catch (Exception e) {
-                log.warn("接口响应序列化json失败：{}", e);
-                resultStr = result.toString();
-            }
 
-            // 获取需要打印得长度限制
-            int maxResultStrLength = requestHead.containsKey("x-api-result-length") && requestHead.get("x-api-result-length") != null ?
-                    request.getIntHeader("x-api-result-length") : 700;
-            // 获取最终需要打印得返回值
-            resultStr = resultStr.length() > maxResultStrLength ? resultStr.substring(0, maxResultStrLength) : resultStr;
-            sb.append("Results   : ").append(resultStr).append("\n");
-            sb.append("successful: ").append(isSuccess).append("\n");
-            if (stopWatch.getTotalTimeSeconds() < 1) {
-                sb.append("Time      : ").append(stopWatch.getTotalTimeMillis()).append("ms").append("\n");
-            } else {
-                sb.append("Time      : ").append(stopWatch.getTotalTimeSeconds()).append("s").append("\n");
-            }
+            if (apiLogProperties.getEnabled()) {
+                stopWatch.stop();
+                long time = stopWatch != null ? stopWatch.getTotalTimeMillis() : -1;
+                apiLog.setResults(result);
+                apiLog.setSuccessful(successful);
+                apiLog.setTime(time);
 
-            sb.append("-------------------------------------------------------------\n");
-            log.info(sb.toString());
+                // 输出接口日志
+                apiLog.printLogString(apiLogProperties, objectMapper);
+            }
         }
 
         return result;
@@ -230,15 +212,21 @@ public class ApiLogAop {
         //获取请求参数
         Enumeration<String> headerNames = request.getHeaderNames();
         Map<String, String> data = new HashMap<>();
+        ApiLogProperties.PrintLogLimit printLogLimit = apiLogProperties.getPrintLogLimit();
+        // 自定义配置的请求头限制
+        Map<String, Boolean> headParams = printLogLimit.getHeadParams();
         while (headerNames.hasMoreElements()) {
+            // 请求头转小写
             String name = headerNames.nextElement().toLowerCase();
-            if(name.indexOf("x-")!=-1) {
-                String value = request.getHeader(name);
-                data.put(name, value);
-            }
-            if (Objects.equals(name.toLowerCase(), "authorization")) {
+            if (headParams.containsKey(name) && headParams.get(name)) {
                 data.put(name, request.getHeader(name));
+                continue;
             }
+            if (name.indexOf("x-") != -1 && !headParams.containsKey(name)) {
+                data.put(name, request.getHeader(name));
+                continue;
+            }
+
         }
         return data;
     }

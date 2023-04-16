@@ -53,14 +53,17 @@ public class JacksonConfig {
         // 使用transient修饰的字段忽略序列化和反序列化
         objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
 
-        // 反序列化设置 关闭反序列化时Jackson发现无法找到对应的对象字段，便会抛出UnrecognizedPropertyException: Unrecognized field xxx异常
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         // 序列化设置 关闭日志输出为时间戳的设置
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        // 反序列化，不存在属性时反序列化不让它报错（@JsonIgnoreProperties(ignoreUnknown = true)）
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         // 请求接口对象没有成员时不报错
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+        /*
+            反序列化设置
+         */
+        // 关闭反序列化时Jackson发现无法找到对应的对象字段，便会抛出UnrecognizedPropertyException: Unrecognized field xxx异常；@JsonIgnoreProperties(ignoreUnknown = true)）
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
         //忽略value为null时key的输出
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

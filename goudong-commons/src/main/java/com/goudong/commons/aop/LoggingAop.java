@@ -125,7 +125,7 @@ public class LoggingAop {
             try {
                 params = objectMapper.writeValueAsString(args);
             } catch (Exception e) {
-                log.warn("对象序列化json失败：{}", e);
+                log.warn("对象序列化json失败：{}", e.getMessage());
                 params = args.toString();
             }
 
@@ -137,7 +137,7 @@ public class LoggingAop {
             try {
                 resultStr = objectMapper.writeValueAsString(result);
             } catch (Exception e) {
-                log.warn("对象序列化json失败：{}", e);
+                log.warn("对象序列化json失败：{}", e.getMessage());
                 resultStr = args.toString();
             }
 

@@ -112,6 +112,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         AccountRadioEnum accountRadioEnum = AccountRadioEnum.valueOf(baseUserDTO.getAccountRadio());
         BaseUserPO userPO = BeanUtil.copyProperties(baseUserDTO, BaseUserPO.class);
         userPO.setEnabled(true);
+        userPO.setLocked(false);
         switch (accountRadioEnum) {
             case BLANK:
                 // 查询填写的基本信息是否已存在

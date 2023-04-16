@@ -15,6 +15,11 @@
     <name>Goudong Gateway Server</name>
     <description>网关</description>
     <dependencies>
+        <!--core-->
+        <dependency>
+            <groupId>com.goudong</groupId>
+            <artifactId>goudong-core</artifactId>
+        </dependency>
         <!--commons-->
         <dependency>
             <groupId>com.goudong</groupId>

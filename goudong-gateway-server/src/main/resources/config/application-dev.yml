@@ -64,7 +64,15 @@ ribbon:
 #  MaxAutoRetries: 1
 #  # 切换实例重试的最大次数，默认：1
 #  MaxAutoRetriesNextServer: 1
-commons:
-  goudong:
-    exception:
-      enable: false
+
+#commons:
+#  goudong:
+#    exception:
+#      enable: false
+
+goudong:
+  web:
+    api-log:
+      print-log-limit:
+        head-params:
+          Authorization: true

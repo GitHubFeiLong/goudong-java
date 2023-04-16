@@ -1,9 +1,11 @@
 package com.goudong.gateway.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.aop.LoggingAop;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -18,6 +20,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableCommonsFeignConfig
 @EnableCommonsJacksonConfig
+@EnableConfigurationProperties(value = {ApiLogProperties.class})
 public class CommonsConfig {
 
     //~fields

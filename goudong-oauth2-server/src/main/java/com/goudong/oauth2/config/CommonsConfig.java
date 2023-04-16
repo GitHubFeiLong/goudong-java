@@ -3,6 +3,8 @@ package com.goudong.oauth2.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
+import com.goudong.boot.web.aop.ApiLogAop;
+import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.commons.annotation.enable.EnableCommonsFeignConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJacksonConfig;
 import com.goudong.commons.annotation.enable.EnableCommonsJpaConfig;
@@ -32,7 +34,17 @@ public class CommonsConfig {
     //~methods
     //==================================================================================================================
     /**
-     * 日志切面
+     * 接口日志切面
+     * @param environment
+     * @return
+     */
+    @Bean
+    public ApiLogAop ApiLogAop(Environment environment, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
+        return new ApiLogAop(environment, objectMapper, apiLogProperties);
+    }
+
+    /**
+     * 方法日志切面
      * @param environment
      * @return
      */

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.boot.web.aop.ApiLogAop;
+import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class CommonsConfig {
      * @return
      */
     @Bean
-    public ApiLogAop apiLogAop(Environment environment, ObjectMapper objectMapper) {
-        return new ApiLogAop(environment, objectMapper);
+    public ApiLogAop apiLogAop(Environment environment, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
+        return new ApiLogAop(environment, objectMapper, apiLogProperties);
     }
 }
