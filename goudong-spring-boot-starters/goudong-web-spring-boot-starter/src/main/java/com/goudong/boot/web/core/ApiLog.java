@@ -55,6 +55,11 @@ public class ApiLog {
      * 响应结果对象
      */
     private Object results;
+
+    /**
+     * 全局唯一id
+     */
+    private String tranceId;
     /**
      * 接口成功或失败
      */
@@ -67,17 +72,6 @@ public class ApiLog {
     //==================================================================================================================
 
     public ApiLog() {
-    }
-
-    public ApiLog(String ip, String uri, String method, Map<String, String> headParams, Object params, Object results, Boolean successful, Long time) {
-        this.ip = ip;
-        this.uri = uri;
-        this.method = method;
-        this.headParams = headParams;
-        this.params = params;
-        this.results = results;
-        this.successful = successful;
-        this.time = time;
     }
 
     /**
@@ -148,6 +142,10 @@ public class ApiLog {
             sb.append("Results   : ").append(resultStr).append("\n");
         }
 
+        if (typeEnabled.getTraceId()) {
+            sb.append("traceId   : ").append(Optional.ofNullable(tranceId).orElseGet(() -> "null")).append("\n");
+        }
+
         // 接口响应
         if (typeEnabled.getSuccessful()) {
             sb.append("successful: ").append(successful).append("\n");
@@ -179,9 +177,6 @@ public class ApiLog {
             case TRACE:
                 log.trace(logStr);
                 break;
-            case DEBUG:
-                log.debug(logStr);
-                break;
             case INFO:
                 log.info(logStr);
                 break;
@@ -192,7 +187,7 @@ public class ApiLog {
                 log.error(logStr);
                 break;
             default:
-                log.info(logStr);
+                log.debug(logStr);
         }
     }
 }

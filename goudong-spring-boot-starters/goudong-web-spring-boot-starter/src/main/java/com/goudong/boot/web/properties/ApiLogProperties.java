@@ -91,6 +91,10 @@ public class ApiLogProperties {
          */
         private Boolean results = true;
         /**
+         * 是否打印接口的追踪id
+         */
+        private Boolean traceId = true;
+        /**
          * 是否打印接口请求的状态(成功失败)
          */
         private Boolean successful = true;

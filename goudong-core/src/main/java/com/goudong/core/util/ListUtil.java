@@ -25,7 +25,9 @@ public class ListUtil {
      * @param <E>
      */
     public static <E> ArrayList<E> newArrayList(E... elements) {
-        AssertUtil.isNotEmpty(elements);
+        if (elements.length == 0) {
+            return new ArrayList<>(0);
+        }
         ArrayList<E> list = new ArrayList<>(elements.length);
         Collections.addAll(list, elements);
         return list;

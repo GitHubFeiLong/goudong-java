@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
+import com.goudong.core.util.ListUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -30,6 +31,10 @@ import java.util.List;
 public class AuthenticationFilter implements GlobalFilter, Ordered {
     //~fields
     //==================================================================================================================
+    private static List<String> IGNORE_URIS = ListUtil.newArrayList(
+            "/authentication/login",
+            "/api/oauth2/authentication/refresh-token"
+    );
     /**
      * oauth2服务
      */
@@ -70,7 +75,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String method = request.getMethodValue();
 
         // 本次请求是登录认证/刷新令牌时，不需要进行后面的token校验
-        if (uri.contains("/authentication/login") || uri.contains("/api/oauth2/authentication/refresh-token")) {
+        if (IGNORE_URIS.stream().filter(f -> uri.contains(f)).findFirst().orElseGet(() -> "").length() > 0) {
             return chain.filter(exchange);
         }
 

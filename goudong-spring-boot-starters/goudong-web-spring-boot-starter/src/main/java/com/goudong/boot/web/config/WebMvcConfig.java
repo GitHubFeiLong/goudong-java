@@ -1,6 +1,8 @@
 package com.goudong.boot.web.config;
 
 import com.goudong.boot.web.core.ErrorAttributes;
+import com.goudong.boot.web.filter.TraceIdFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -99,5 +102,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public ErrorAttributes errorAttributes () {
         return new ErrorAttributes(request);
+    }
+
+    /**
+     * 添加过滤器到过滤器链中，并设置优先级。
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean traceIdFilter(){
+        FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
+        filterFilterRegistrationBean.setFilter(new TraceIdFilter());
+        // 执行的顺序(值越低，优先级越高)
+        filterFilterRegistrationBean.setOrder(0);
+        filterFilterRegistrationBean.addUrlPatterns("/*");
+        return filterFilterRegistrationBean;
     }
 }

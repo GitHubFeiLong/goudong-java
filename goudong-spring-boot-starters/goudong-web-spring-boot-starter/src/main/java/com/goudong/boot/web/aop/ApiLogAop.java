@@ -5,6 +5,7 @@ import com.goudong.boot.web.core.ApiLog;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.boot.web.util.IpUtil;
+import com.goudong.boot.web.util.TraceIdUtil;
 import com.goudong.core.util.ListUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInvocation;
@@ -144,9 +145,10 @@ public class ApiLogAop {
                 stopWatch.stop();
                 long time = stopWatch != null ? stopWatch.getTotalTimeMillis() : -1;
                 apiLog.setResults(result);
+
+                apiLog.setTranceId(TraceIdUtil.get());
                 apiLog.setSuccessful(successful);
                 apiLog.setTime(time);
-
                 // 输出接口日志
                 apiLog.printLogString(apiLogProperties, objectMapper);
             }
