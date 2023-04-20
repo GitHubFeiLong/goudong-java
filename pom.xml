@@ -13,9 +13,6 @@
     <groupId>com.goudong</groupId>
     <artifactId>goudong-java</artifactId>
     <version>${revision}</version>
-    <modules>
-        <module>goudong-modules/spring-web-reactive</module>
-    </modules>
     <name>Goudong Java</name>
     <description>Goudong Java 微服务</description>
     <packaging>pom</packaging>

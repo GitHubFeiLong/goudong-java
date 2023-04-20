@@ -27,6 +27,7 @@
         <module>jpa-spring-boot</module>
         <module>mongo-spring-boot</module>
         <module>easyexcel-demo</module>
+<!--        <module>netty</module>-->
     </modules>
     <dependencies>
         <dependency>

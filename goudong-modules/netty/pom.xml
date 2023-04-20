@@ -2,15 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>goudong-java</artifactId>
+   <!-- <parent>
+        <artifactId>goudong-modules</artifactId>
         <groupId>com.goudong</groupId>
         <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
+    </parent>-->
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-web-reactive</artifactId>
+    <groupId>com.goudong</groupId>
+    <artifactId>netty</artifactId>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,7 +19,4 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
-
-    </dependencies>
 </project>
