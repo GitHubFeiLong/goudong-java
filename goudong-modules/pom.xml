@@ -27,7 +27,7 @@
         <module>jpa-spring-boot</module>
         <module>mongo-spring-boot</module>
         <module>easyexcel-demo</module>
-<!--        <module>netty</module>-->
+        <module>netty</module>
     </modules>
     <dependencies>
         <dependency>
@@ -46,6 +46,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
         <activiti-engine.version>7.0.0.Beta1</activiti-engine.version>
+        <netty-all.version>4.1.91.Final</netty-all.version>
     </properties>
 
 
