@@ -78,7 +78,14 @@ public class Client {
                                     // 创建一个缓冲区
                                     ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                                     // 从通道中读取数据，保存到缓冲区中
-                                    int read = channel.read(byteBuffer);
+                                    int read;
+
+                                    try {
+                                        read = channel.read(byteBuffer);
+                                    } catch (IOException e) {
+                                        System.out.println("服务器关闭服务，断开连接");
+                                        read = -1;
+                                    }
                                     // 读取到数据
                                     if (read > 0) {
                                         // 切换读模式
