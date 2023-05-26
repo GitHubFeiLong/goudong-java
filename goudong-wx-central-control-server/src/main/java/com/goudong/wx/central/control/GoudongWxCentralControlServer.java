@@ -30,6 +30,7 @@ import org.springframework.util.StopWatch;
 @Slf4j
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @ConfigurationPropertiesScan(value = {"com.goudong.wx.central.control.properties"})
+// @ConfigurationPropertiesScan(value = {"com.goudong.wx.central.control.properties", "com.goudong.boot.web.properties"})
 @EnableCommonsRedisConfig
 @EnableCommonsJacksonConfig
 @EnableCommonsWebMvcConfig

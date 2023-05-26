@@ -1,21 +1,16 @@
 package com.goudong.wx.central.control.controller;
 
-import com.goudong.core.lang.Result;
 import com.goudong.core.util.MessageFormatUtil;
 import com.goudong.wx.central.control.util.XMLUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,6 +100,28 @@ public class CutInController {
         int createTime = (int)(System.currentTimeMillis() / 1000);
 
         String text = MessageFormatUtil.format(responseText, map.get("FromUserName"), map.get("ToUserName"), createTime, "hello world");
+
+        return text;
+    }
+
+    /**
+     * 处理用户发送的消息
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/send")
+    public String handlerMessage(@RequestParam String content) throws IOException {
+        // 回复文本
+        String responseText = "<xml>\n" +
+                "  <ToUserName><![CDATA[{toUser}]]></ToUserName>\n" +
+                "  <FromUserName><![CDATA[{fromUser}]]></FromUserName>\n" +
+                "  <CreateTime>{12345678}</CreateTime>\n" +
+                "  <MsgType><![CDATA[text]]></MsgType>\n" +
+                "  <Content><![CDATA[{}]]></Content>\n" +
+                "</xml>";
+        int createTime = (int)(System.currentTimeMillis() / 1000);
+
+        String text = MessageFormatUtil.format(responseText, "opEtJ6-tmfyKxzt0t5d6XS5NFDc0", "gh_aceb4f257187", createTime, content);
 
         return text;
     }

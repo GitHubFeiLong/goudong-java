@@ -99,29 +99,6 @@ under the License.
     <modules> 
       <!-- module filepath="$$PROJECT_DIR$$/${pom.artifactId}.iml"/ -->  
       <module filepath="$PROJECT_DIR$/goudong-java.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-commons/goudong-exception-spring-boot-starter/goudong-exception-spring-boot-starter.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-commons/goudong-commons.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-gateway-server/goudong-gateway-server.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-user-server/goudong-user-server.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-message-server/goudong-message-server.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-oauth2-server/goudong-oauth2-server.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-commodity-server/goudong-commodity-server.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-file-server/goudong-file-server.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-oauth2-client-serve/goudong-oauth2-client-serve.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-oauth2-service-serve/goudong-oauth2-service-serve.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/activiti-demo/activiti-demo.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/activiti-spring/activiti-spring.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/activiti-spring-boot/activiti-spring-boot.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/seata-client-a/seata-client-a.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/seata-client-b/seata-client-b.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/xxl-job/xxl-job.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/junit5-demo/junit5-demo.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/rabbitmq-demo/rabbitmq-demo.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/rabbitmq-spring-boot/rabbitmq-spring-boot.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/redis-master-slave/redis-master-slave.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-modules/goudong-modules.iml"/>
-      <module filepath="$PROJECT_DIR$/goudong-bpm-serve/goudong-bpm-serve.iml"/>
-      <module filepath="$PROJECT_DIR$/demo/demo.iml"/>
     </modules> 
   </component>  
   <UsedPathMacros> 
