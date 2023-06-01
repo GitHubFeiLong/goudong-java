@@ -24,7 +24,6 @@ import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.exception.RoleException;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
-import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseMenuRepository;
 import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseMenuService;
@@ -91,6 +90,12 @@ public class BaseRoleServiceImpl implements BaseRoleService {
             if (StringUtils.isNotBlank(page.getRoleNameCn())) {
                 query.where(criteriaBuilder.like(root.get("roleNameCn"), page.getRoleNameCn() + "%"));
             }
+            if (StringUtils.isNotBlank(page.getRoleName())) {
+                query.where(criteriaBuilder.like(root.get("roleName"),  "%" + page.getRoleName().toUpperCase() + "%"));
+            }
+            if (StringUtils.isNotBlank(page.getRemark())) {
+                query.where(criteriaBuilder.like(root.get("remark"), page.getRemark() + "%"));
+            }
             return query.getRestriction();
         };
 
@@ -103,7 +108,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
 
         // 设置用户数量
         convert.getContent().stream().forEach(p -> {
-            p.setUsers(Optional.ofNullable(longIntegerMap.get(p.getId())).orElseGet(() -> 0));
+            p.setUserNumbers(Optional.ofNullable(longIntegerMap.get(p.getId())).orElseGet(() -> 0));
         });
         return convert;
     }
@@ -163,6 +168,9 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Transactional
     public BaseRoleDTO removeRole(Long id) {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
+        if (CollectionUtil.isNotEmpty(rolePO.getUsers())) {
+            throw RoleException.client("角色删除失败", String.format("角色%s不能被删除,该角色拥有%d个用户", rolePO.getRoleNameCn(), rolePO.getUsers().size()));
+        }
         baseRoleRepository.delete(rolePO);
         return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
     }
@@ -180,7 +188,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         // 查询是否有用户在使用角色
         baseRolePOS.stream().forEach(p -> {
             if (CollectionUtil.isNotEmpty(p.getUsers())) {
-                throw RoleException.client("角色删除失败", String.format("角色%s不能被删除", p.getRoleNameCn()));
+                throw RoleException.client("角色删除失败", String.format("角色%s不能被删除,该角色拥有%d个用户", p.getRoleNameCn(), p.getUsers().size()));
             }
         });
         baseRoleRepository.deleteAll(baseRolePOS);

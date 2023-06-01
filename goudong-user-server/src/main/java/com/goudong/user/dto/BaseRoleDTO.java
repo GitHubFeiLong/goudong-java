@@ -46,5 +46,5 @@ public class BaseRoleDTO extends BasePO {
     private List<BaseMenuDTO> permission;
 
     @ApiModelProperty(value = "角色下的用户数量")
-    private Integer users;
+    private Integer userNumbers;
 }

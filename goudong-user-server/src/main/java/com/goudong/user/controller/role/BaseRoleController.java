@@ -2,7 +2,12 @@ package com.goudong.user.controller.role;
 
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
-import com.goudong.user.dto.*;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.user.dto.AddRoleReq;
+import com.goudong.user.dto.BaseRole2QueryPageDTO;
+import com.goudong.user.dto.BaseRoleDTO;
+import com.goudong.user.dto.ModifyRoleReq;
+import com.goudong.user.exception.RoleException;
 import com.goudong.user.service.BaseRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,7 +22,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -64,16 +68,18 @@ public class BaseRoleController {
     @DeleteMapping("{id}")
     @ApiOperation(value = "删除角色")
     public Result<BaseRoleDTO> removeRole (@PathVariable @Min(value = 100) Long id){
+        // 参数校验，预置角色不能删除
         return Result.ofSuccess(baseRoleService.removeRole(id));
     }
 
     @DeleteMapping("/ids")
     @ApiOperation(value = "批量删除角色", notes = "只能删除没有用户的角色")
-    @ApiImplicitParam(name = "id", value = "role id", required = true)
+    @ApiImplicitParam(name = "ids", value = "role ids", required = true)
     public Result<Boolean> deleteUserById (@RequestParam(name = "ids")@NotNull @NotEmpty List<Long> ids){
         // 参数校验，预置角色不能删除
-        List<Long> deleteIds = ids.stream().filter(f -> f > 100).collect(Collectors.toList());
-        return Result.ofSuccess(baseRoleService.removeRoles(deleteIds));
+        boolean present = ids.stream().filter(f -> f < 100).findFirst().isPresent();
+        AssertUtil.isFalse(present, () -> RoleException.client("角色删除失败"));
+        return Result.ofSuccess(baseRoleService.removeRoles(ids));
     }
 
     @PostMapping("/permissions/{id}")

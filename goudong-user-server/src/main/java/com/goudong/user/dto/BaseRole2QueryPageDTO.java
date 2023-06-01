@@ -21,6 +21,18 @@ public class BaseRole2QueryPageDTO extends BasePage {
     @ApiModelProperty("角色名称中文")
     private String roleNameCn;
 
+    /**
+     * 角色标识
+     */
+    @ApiModelProperty("角色标识")
+    private String roleName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty("备注")
+    private String remark;
+
     //~methods
     //==================================================================================================================
 }
