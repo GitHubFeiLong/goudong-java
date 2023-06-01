@@ -1,10 +1,10 @@
 package com.goudong.oauth2.config.security;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.LoginInfoDTO;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.dto.BaseTokenDTO;

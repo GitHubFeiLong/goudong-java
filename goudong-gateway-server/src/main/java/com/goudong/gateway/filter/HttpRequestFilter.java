@@ -49,7 +49,7 @@ public class HttpRequestFilter implements GlobalFilter, Ordered {
                 return chain.filter(exchange);
         }
 
-        return null;
+        return chain.filter(exchange);
     }
 
     /**

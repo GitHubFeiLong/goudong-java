@@ -1,10 +1,10 @@
 package com.goudong.oauth2.config.security;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseRoleDTO;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
@@ -107,11 +107,10 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         } else {
             // 使用 BCrypt 加密的方式进行匹配
             passwordMatches = BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
-
         }
         AssertUtil.isTrue(passwordMatches, () -> new BadCredentialsException("用户密码错误"));
         AssertUtil.isTrue(userInfo.isEnabled(), () -> new DisabledException("用户未激活"));
-        AssertUtil.isTrue(userInfo.isAccountNonLocked(), () -> new LockedException("用户以锁定"));
+        AssertUtil.isTrue(userInfo.isAccountNonLocked(), () -> new LockedException("用户已锁定"));
         AssertUtil.isTrue(userInfo.isAccountNonExpired(), () -> new AccountExpiredException("账户已过期"));
 
         // 验证通过，返回用户信息

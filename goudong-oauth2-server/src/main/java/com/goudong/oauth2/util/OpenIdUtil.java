@@ -7,7 +7,7 @@ import java.util.Base64;
 
 /**
  * 类描述：
- * 快登id工具
+ * openId工具
  * @author cfl
  * @version 1.0
  * @date 2023/5/31 9:12
@@ -15,7 +15,7 @@ import java.util.Base64;
 public class OpenIdUtil {
 
     /**
-     * 生成一个extUserId
+     * 生成一个openId
      * @param appId
      * @param userId
      * @return
@@ -42,7 +42,7 @@ public class OpenIdUtil {
                     .append(Base64.getEncoder().encodeToString(md5.digest()).substring(0, 4))
                     .append(s).toString();
         } catch (Exception e) {
-            throw new RuntimeException("生成extUserId错误：" + e.getMessage());
+            throw new RuntimeException("生成openId错误：" + e.getMessage());
         }
 
     }

@@ -185,7 +185,7 @@ public class RedisTool extends RedisTemplate {
                 }
 
                 operations.delete(delKes);
-                return true;
+                return operations.exec();
             }
         });
     }

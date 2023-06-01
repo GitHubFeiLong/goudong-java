@@ -28,6 +28,11 @@ public class TokenExpiresProperties {
     //==================================================================================================================
     /**
      * 是否允许同时登陆(单个账号允许多设备同时在线)
+     * <pre>
+     *     情景：员工A在自己电脑使用【admin账号】登录成功后，员工B也在自己的电脑上使用【admin账号】进行登录。
+     *     {@code enableRepeatLogin} = true 时：员工A的令牌不受影响，可以正常使用；
+     *     {@code enableRepeatLogin} = false 时：员工A的令牌会直接失效。
+     * </pre>
      */
     private Boolean enableRepeatLogin = false;
 
