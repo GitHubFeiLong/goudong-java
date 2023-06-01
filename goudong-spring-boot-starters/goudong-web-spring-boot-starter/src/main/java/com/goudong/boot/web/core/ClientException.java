@@ -68,6 +68,10 @@ public class ClientException extends BasicException {
         super(DEFAULT_EXCEPTION, clientMessage);
     }
 
+    public ClientException(String clientMessage, String serverMessage) {
+        super(DEFAULT_EXCEPTION, clientMessage, serverMessage);
+    }
+
     public ClientException(Throwable cause) {
         super(DEFAULT_EXCEPTION, cause);
     }

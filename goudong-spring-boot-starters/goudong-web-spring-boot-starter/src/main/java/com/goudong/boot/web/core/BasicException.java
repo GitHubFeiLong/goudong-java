@@ -234,6 +234,16 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
     }
 
     /**
+     * 返回默认异常,自定义clientMessage
+     * @see ClientException#DEFAULT_EXCEPTION
+     * @param clientMessage 客户端提示信息
+     * @return
+     */
+    public static BasicException client(String clientMessage, String serverMessage) {
+        return new ClientException(clientMessage, serverMessage);
+    }
+
+    /**
      * 将e加入异常堆栈，返回默认异常,自定义clientMessage
      * @see ClientException#DEFAULT_EXCEPTION
      * @param clientMessage 客户端提示信息
@@ -875,6 +885,16 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
      */
     public static BasicException server(String serverMessage) {
         return new ServerException(ServerExceptionEnum.SERVER_ERROR, serverMessage);
+    }
+
+    /**
+     * 返回默认异常,自定义serverMessage
+     * @param clientMessage 客户端提示信息
+     * @param serverMessage 自定义服务端提示信息
+     * @return
+     */
+    public static BasicException server(String clientMessage, String serverMessage) {
+        return new ServerException(ServerExceptionEnum.SERVER_ERROR, clientMessage, serverMessage);
     }
 
     /**

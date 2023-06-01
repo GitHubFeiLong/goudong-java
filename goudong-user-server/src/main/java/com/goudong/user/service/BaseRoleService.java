@@ -61,6 +61,13 @@ public interface BaseRoleService {
     BaseRoleDTO removeRole(Long id);
 
     /**
+     * 删除角色
+     * @param ids
+     * @return
+     */
+    boolean removeRoles(List<Long> ids);
+
+    /**
      * 根据id查询角色
      * @param id
      * @return
@@ -74,4 +81,10 @@ public interface BaseRoleService {
      */
     BaseRoleDTO updatePermissions(@NotNull Long id, @NotNull List<Long> menuIds);
 
+    /**
+     * 角色名模糊分页查询
+     * @param page
+     * @return
+     */
+    PageResult<BaseRoleDTO> pageRoleName(BaseRole2QueryPageDTO page);
 }

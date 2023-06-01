@@ -22,7 +22,7 @@ public class HttpHeaderConst {
     /**
      * 当鉴权过后，将当前用户转成json设置到请求头里面，下游服务通过拦截器拦截获取当前发起请求的用户信息
      */
-    public static final String X_REQUEST_USER = "Request-User";
+    public static final String X_REQUEST_USER = "X-Request-User";
 
     /**
      * 前端使用AES加密请求参数的密钥信息

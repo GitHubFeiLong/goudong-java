@@ -154,10 +154,6 @@ public class LoggingAop {
      * @return
      */
     private List<Object> getArgs(ProceedingJoinPoint joinPoint) {
-        List<Class> filter = ListUtil.newArrayList(
-                RequestFacade.class,
-                ResponseFacade.class
-        );
         Object[] argsArr = joinPoint.getArgs();
         // Stream.of(null).collect(Collectors.toList()) 会出现NPE
         if (argsArr != null && argsArr.length > 0) {
@@ -165,7 +161,7 @@ public class LoggingAop {
             // 过滤掉大对象，避免转json报错
             return Stream.of(argsArr)
                     // 过滤掉
-                    .filter(f -> f != null && !filter.contains(f.getClass()))
+                    .filter(f -> f.getClass().getName().startsWith("com.goudong"))
                     .collect(Collectors.toList());
         }
 

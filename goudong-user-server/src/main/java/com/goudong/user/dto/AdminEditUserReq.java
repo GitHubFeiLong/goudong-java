@@ -40,6 +40,9 @@ public class AdminEditUserReq {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "性别")
+    private Integer sex;
+
     //~methods
     //==================================================================================================================
 }

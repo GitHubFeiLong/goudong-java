@@ -1,5 +1,6 @@
 package com.goudong.user.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.Assert;
 import com.goudong.boot.redis.context.UserContext;
@@ -11,8 +12,9 @@ import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;
 import com.goudong.user.dto.AddRoleReq;
 import com.goudong.user.dto.BaseRole2QueryPageDTO;
@@ -22,6 +24,7 @@ import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.exception.RoleException;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
+import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseMenuRepository;
 import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseMenuService;
@@ -35,7 +38,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -92,6 +98,13 @@ public class BaseRoleServiceImpl implements BaseRoleService {
 
         PageResult<BaseRoleDTO> convert = PageResultConvert.convert(all, BaseRoleDTO.class);
 
+        // 用户数量 （key 角色id， value 用户数量）
+        Map<Long, Integer> longIntegerMap = all.stream().collect(Collectors.toMap(BaseRolePO::getId, p -> p.getUsers().size(), (k1, k2) -> k1));
+
+        // 设置用户数量
+        convert.getContent().stream().forEach(p -> {
+            p.setUsers(Optional.ofNullable(longIntegerMap.get(p.getId())).orElseGet(() -> 0));
+        });
         return convert;
     }
 
@@ -152,6 +165,26 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
         baseRoleRepository.delete(rolePO);
         return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
+    }
+
+    /**
+     * 删除角色
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean removeRoles(List<Long> ids) {
+        List<BaseRolePO> baseRolePOS = baseRoleRepository.findAllById(ids);
+        // 查询是否有用户在使用角色
+        baseRolePOS.stream().forEach(p -> {
+            if (CollectionUtil.isNotEmpty(p.getUsers())) {
+                throw RoleException.client("角色删除失败", String.format("角色%s不能被删除", p.getRoleNameCn()));
+            }
+        });
+        baseRoleRepository.deleteAll(baseRolePOS);
+        return true;
     }
 
     /**
@@ -216,6 +249,36 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         }
 
         throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "菜单无效");
+    }
+
+    /**
+     * 角色名模糊分页查询
+     *
+     * @param page
+     * @return
+     */
+    @Override
+    @Transactional
+    public PageResult<BaseRoleDTO> pageRoleName(BaseRole2QueryPageDTO page) {
+        Specification<BaseRolePO> specification = new Specification<BaseRolePO>() {
+            @Override
+            public Predicate toPredicate(Root<BaseRolePO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                Predicate predicate = null;
+                if (StringUtil.isNotBlank(page.getRoleNameCn())) {
+                    Path<String> username = root.get("role_name_CN");
+                    predicate = criteriaBuilder.like(username, page.getRoleNameCn() + "%");
+                }
+                return predicate;
+            }
+        };
+
+        PageRequest pageRequest = PageRequest.of(page.getJPAPage(), page.getSize(), Sort.sort(BaseRolePO.class).by(BaseRolePO::getCreateTime).descending());
+
+        Page<BaseRolePO> all = baseRoleRepository.findAll(specification, pageRequest);
+
+        PageResult<BaseRoleDTO> convert = PageResultConvert.convert(all, BaseRoleDTO.class);
+
+        return convert;
     }
 
 

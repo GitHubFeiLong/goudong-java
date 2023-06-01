@@ -2,10 +2,7 @@ package com.goudong.user.controller.role;
 
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
-import com.goudong.user.dto.AddRoleReq;
-import com.goudong.user.dto.BaseRole2QueryPageDTO;
-import com.goudong.user.dto.BaseRoleDTO;
-import com.goudong.user.dto.ModifyRoleReq;
+import com.goudong.user.dto.*;
 import com.goudong.user.service.BaseRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -17,8 +14,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -68,6 +67,15 @@ public class BaseRoleController {
         return Result.ofSuccess(baseRoleService.removeRole(id));
     }
 
+    @DeleteMapping("/ids")
+    @ApiOperation(value = "批量删除角色", notes = "只能删除没有用户的角色")
+    @ApiImplicitParam(name = "id", value = "role id", required = true)
+    public Result<Boolean> deleteUserById (@RequestParam(name = "ids")@NotNull @NotEmpty List<Long> ids){
+        // 参数校验，预置角色不能删除
+        List<Long> deleteIds = ids.stream().filter(f -> f > 100).collect(Collectors.toList());
+        return Result.ofSuccess(baseRoleService.removeRoles(deleteIds));
+    }
+
     @PostMapping("/permissions/{id}")
     @ApiOperation(value = "修改权限")
     @ApiImplicitParams({
@@ -79,5 +87,9 @@ public class BaseRoleController {
         return Result.ofSuccess(baseRoleService.updatePermissions(id, menuIds));
     }
 
-
+    @GetMapping("/page/name")
+    @ApiOperation(value = "角色名模糊分页", notes = "根据角色名称进行分页查询")
+    public Result<PageResult<BaseRoleDTO>> pageRoleName (BaseRole2QueryPageDTO page){
+        return Result.ofSuccess(baseRoleService.pageRoleName(page));
+    }
 }

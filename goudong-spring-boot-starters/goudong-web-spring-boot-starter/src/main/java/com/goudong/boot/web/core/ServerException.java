@@ -36,6 +36,10 @@ public class ServerException extends BasicException {
         super(ServerException.DEFAULT_EXCEPTION, serverMessage);
     }
 
+    public ServerException(String clientMessage, String serverMessage) {
+        super(DEFAULT_EXCEPTION, clientMessage, serverMessage);
+    }
+
     public ServerException(Throwable cause) {
         super(DEFAULT_EXCEPTION, cause);
     }

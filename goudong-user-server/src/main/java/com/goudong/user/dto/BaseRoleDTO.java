@@ -44,4 +44,7 @@ public class BaseRoleDTO extends BasePO {
      */
     @ApiModelProperty(value = "权限")
     private List<BaseMenuDTO> permission;
+
+    @ApiModelProperty(value = "角色下的用户数量")
+    private Integer users;
 }

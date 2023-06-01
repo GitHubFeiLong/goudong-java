@@ -1,5 +1,6 @@
 package com.goudong.user.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -9,7 +10,6 @@ import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.AssertUtil;
@@ -360,6 +360,8 @@ public class BaseUserServiceImpl implements BaseUserService {
         baseUserPO.setPassword(BCrypt.hashpw(createDTO.getPassword(), BCrypt.gensalt()));
         baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
         baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
+        baseUserPO.setSex(0);
+        baseUserPO.setNickname(createDTO.getUsername());
         baseUserPO.setEnabled(true);
         baseUserPO.setLocked(false);
         baseUserRepository.save(baseUserPO);
@@ -400,6 +402,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         userPO.setValidTime(req.getValidTime());
         userPO.setRemark(req.getRemark());
         userPO.setRoles(BeanUtil.copyToList(roles, BaseRolePO.class, CopyOptions.create()));
+        userPO.setSex(req.getSex());
 
         return BeanUtil.copyProperties(userPO, BaseUserDTO.class);
     }
