@@ -91,7 +91,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
                 query.where(criteriaBuilder.like(root.get("roleNameCn"), page.getRoleNameCn() + "%"));
             }
             if (StringUtils.isNotBlank(page.getRoleName())) {
-                query.where(criteriaBuilder.like(root.get("roleName"),  "%" + page.getRoleName().toUpperCase() + "%"));
+                query.where(criteriaBuilder.like(root.get("roleName"),  "%" + page.getRoleName() + "%s"));
             }
             if (StringUtils.isNotBlank(page.getRemark())) {
                 query.where(criteriaBuilder.like(root.get("remark"), page.getRemark() + "%"));
