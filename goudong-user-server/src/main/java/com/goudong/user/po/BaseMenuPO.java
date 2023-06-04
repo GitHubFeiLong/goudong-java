@@ -35,9 +35,14 @@ public class BaseMenuPO extends BasePO {
     private String name;
 
     /**
-     * 是否是api
+     * 菜单类型（0：接口；1：菜单；2：按钮）
      */
-    private Boolean api;
+    private Integer type;
+
+    /**
+     * 打开方式（0：内链；1：外链）
+     */
+    private Integer openModel;
 
     /**
      * 前端的路由或后端的接口，
@@ -51,6 +56,26 @@ public class BaseMenuPO extends BasePO {
     private String method;
 
     /**
+     * 图标
+     */
+    private String icon;
+
+    /**
+     * 权限标识（前端的菜单和按钮需要）
+     */
+    private String permissionId;
+
+    /**
+     * 排序字段（值越小越靠前，仅仅针对前端路由）
+     */
+    private Integer sortNum;
+
+    /**
+     * 是否是隐藏菜单
+     */
+    private Boolean hide;
+
+    /**
      * 前端菜单组件的信息
      */
     private String metadata;
@@ -58,16 +83,6 @@ public class BaseMenuPO extends BasePO {
      * 备注
      */
     private String remark;
-
-    /**
-     * 是否是系统菜单（true：是；false：不是）
-     */
-    private Boolean sys;
-
-    /**
-     * 是否是隐藏菜单
-     */
-    private Boolean hide;
 
     @ManyToMany(targetEntity= BaseRolePO.class, fetch = FetchType.EAGER)
     @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "menu_id")},
@@ -79,12 +94,13 @@ public class BaseMenuPO extends BasePO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        BaseMenuPO that = (BaseMenuPO) o;
-        return Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name) && Objects.equals(api, that.api) && Objects.equals(path, that.path) && Objects.equals(method, that.method) ;
+        BaseMenuPO po = (BaseMenuPO) o;
+        return Objects.equals(parentId, po.parentId) && Objects.equals(name, po.name) && Objects.equals(type, po.type) && Objects.equals(openModel, po.openModel) && Objects.equals(path, po.path) && Objects.equals(method, po.method) && Objects.equals(icon, po.icon) && Objects.equals(permissionId, po.permissionId) && Objects.equals(sortNum, po.sortNum) && Objects.equals(hide, po.hide) && Objects.equals(metadata, po.metadata) && Objects.equals(remark, po.remark);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), parentId, name, api, path, method);
+        return Objects.hash(super.hashCode(), parentId, name, type, openModel, path, method, icon, permissionId, sortNum, hide, metadata, remark);
     }
+
 }

@@ -86,5 +86,5 @@ public interface BaseRoleService {
      * @param page
      * @return
      */
-    PageResult<BaseRoleDTO> pageRoleName(BaseRole2QueryPageDTO page);
+    PageResult<BaseRoleDTO> pageRoleNameCN(BaseRole2QueryPageDTO page);
 }

@@ -91,7 +91,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
                 query.where(criteriaBuilder.like(root.get("roleNameCn"), page.getRoleNameCn() + "%"));
             }
             if (StringUtils.isNotBlank(page.getRoleName())) {
-                query.where(criteriaBuilder.like(root.get("roleName"),  "%" + page.getRoleName() + "%s"));
+                query.where(criteriaBuilder.like(criteriaBuilder.upper(root.get("roleName")),  "%" + page.getRoleName().toUpperCase() + "%"));
             }
             if (StringUtils.isNotBlank(page.getRemark())) {
                 query.where(criteriaBuilder.like(root.get("remark"), page.getRemark() + "%"));
@@ -267,7 +267,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
      */
     @Override
     @Transactional
-    public PageResult<BaseRoleDTO> pageRoleName(BaseRole2QueryPageDTO page) {
+    public PageResult<BaseRoleDTO> pageRoleNameCN(BaseRole2QueryPageDTO page) {
         Specification<BaseRolePO> specification = new Specification<BaseRolePO>() {
             @Override
             public Predicate toPredicate(Root<BaseRolePO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {

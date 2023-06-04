@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.authentication;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.validation.EnumValidator;
 import com.goudong.commons.annotation.core.Inner;
@@ -8,7 +9,6 @@ import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
-import com.goudong.commons.utils.core.BeanUtil;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.CollectionUtil;
@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -182,8 +181,9 @@ public class AuthenticationController {
 
         // 判断是否需要鉴权
         List<BaseMenuDTO> matchingMenus = allMenu.parallelStream()
-                .filter(BaseMenuDTO::getApi)
-                .filter(f -> antPathMatcher.match(f.getPath(), uri) && Objects.equals(f.getMethod(), method))
+                // 接口且是内链
+                .filter(f -> f.getType() == 0 && f.getOpenModel() == 0)
+                .filter(f -> antPathMatcher.match(f.getPath(), uri) && f.getMethod().toUpperCase().indexOf(method.toUpperCase()) !=-1)
                 .collect(Collectors.toList());
 
         boolean isNeedAuthentication = matchingMenus.size() > 0;
@@ -212,7 +212,7 @@ public class AuthenticationController {
                     String menuUrl = menu.getPath();
                     String menuMethod = menu.getMethod();
                     // 符合条件，退出循环
-                    if (antPathMatcher.match(menuUrl, uri) && Objects.equals(menuMethod, method)) {
+                    if (antPathMatcher.match(menuUrl, uri) && menuMethod.toUpperCase().indexOf(method.toUpperCase()) !=-1) {
                         LogUtil.debug(log, "本次请求用户有权访问role:{} uri:{}", role.getAuthority(), httpServletRequest.getRequestURI());
                         return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
                     }

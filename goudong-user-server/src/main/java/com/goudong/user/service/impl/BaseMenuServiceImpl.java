@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -93,7 +92,8 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
         // 查询所有系统菜单
         BaseMenuPO baseMenuPO = new BaseMenuPO();
-        baseMenuPO.setSys(true);
+
+        // baseMenuPO.setSys(true);
         Example<BaseMenuPO> of = Example.of(baseMenuPO);
         List<BaseMenuPO> sysMenus = baseMenuRepository.findAll(of);
 
@@ -110,7 +110,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         });
 
         // 设置成系统菜单
-        pos.stream().forEach(m->m.setSys(true));
+        // pos.stream().forEach(m->m.setSys(true));
 
         // 多余的菜单id（需要删除）
         List<Long> needlessMenuIds = new ArrayList<>();
@@ -230,8 +230,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     @Override
     public List<BaseMenuDTO> listByTree(BaseMenuPageReq req) {
         Specification<BaseMenuPO> specification = (root, query, criteriaBuilder) -> {
-            List<Predicate> and = new ArrayList<>();
-            Order weightOrder = criteriaBuilder.asc(root.get("createTime"));
+            Order weightOrder = criteriaBuilder.asc(root.get("sortNum"));
             return query.orderBy(weightOrder).getRestriction();
         };
         List<BaseMenuPO> all = baseMenuRepository.findAll(specification);
@@ -264,7 +263,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             po.setId(IdUtil.getSnowflake(1,1).nextId());
         }
         po.setName(req.getName());
-        po.setApi(req.getApi());
+        // po.setApi(req.getApi());
         po.setPath(req.getPath());
         po.setHide(false);
         if (StringUtils.isNotBlank(req.getMethod())) {

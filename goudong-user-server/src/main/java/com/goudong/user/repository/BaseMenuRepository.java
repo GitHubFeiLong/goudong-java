@@ -18,8 +18,6 @@ import java.util.List;
  */
 public interface BaseMenuRepository extends JpaRepository<BaseMenuPO, Long>, JpaSpecificationExecutor<BaseMenuPO> {
 
-    Integer countBySys(boolean sys);
-
     @Modifying
     @Query(nativeQuery = true, value = "delete from base_role_menu where menu_id in (:menuIds);")
     void deleteRoleMenu(@Param("menuIds") List<Long> menuIds);

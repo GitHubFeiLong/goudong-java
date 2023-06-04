@@ -29,9 +29,14 @@ public class BaseMenuDTO2Redis extends BasePO implements Serializable {
     private String name;
 
     /**
-     * 是否是api
+     * 菜单类型（0：接口；1：菜单；2：按钮）
      */
-    private Boolean api = false;
+    private Integer type;
+
+    /**
+     * 打开方式（0：内链；1：外链）
+     */
+    private Integer openModel;
 
     /**
      * 前端的路由或后端的接口，
@@ -45,6 +50,26 @@ public class BaseMenuDTO2Redis extends BasePO implements Serializable {
     private String method;
 
     /**
+     * 图标
+     */
+    private String icon;
+
+    /**
+     * 权限标识（前端的菜单和按钮需要）
+     */
+    private String permissionId;
+
+    /**
+     * 排序字段（值越小越靠前，仅仅针对前端路由）
+     */
+    private Integer sortNum;
+
+    /**
+     * 是否是隐藏菜单
+     */
+    private Boolean hide;
+
+    /**
      * 前端菜单组件的信息
      * @see MetadataDTO
      */
@@ -53,16 +78,6 @@ public class BaseMenuDTO2Redis extends BasePO implements Serializable {
      * 备注
      */
     private String remark;
-
-    /**
-     * 是否是系统菜单（true：是；false：不是）
-     */
-    private Boolean sys;
-
-    /**
-     * 是否是隐藏菜单
-     */
-    private Boolean hide;
 
     /**
      * 子节点

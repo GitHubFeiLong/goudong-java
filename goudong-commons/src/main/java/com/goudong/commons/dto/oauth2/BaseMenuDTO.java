@@ -28,11 +28,15 @@ public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
      * 菜单名
      */
     private String name;
+    /**
+     * 菜单类型（0：接口；1：菜单；2：按钮）
+     */
+    private Integer type;
 
     /**
-     * 是否是api
+     * 打开方式（0：内链；1：外链）
      */
-    private Boolean api = false;
+    private Integer openModel;
 
     /**
      * 前端的路由或后端的接口，
@@ -44,6 +48,26 @@ public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
      * 这里path 和 method 是一对一的方式，方便更细粒度鉴权。
      */
     private String method;
+
+    /**
+     * 图标
+     */
+    private String icon;
+
+    /**
+     * 权限标识（前端的菜单和按钮需要）
+     */
+    private String permissionId;
+
+    /**
+     * 排序字段（值越小越靠前，仅仅针对前端路由）
+     */
+    private Integer sortNum;
+
+    /**
+     * 是否是隐藏菜单
+     */
+    private Boolean hide;
 
     /**
      * 前端菜单组件的信息
@@ -60,15 +84,6 @@ public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
     private boolean checked;
 
 
-    /**
-     * 是否是系统菜单（true：是；false：不是）
-     */
-    private Boolean sys;
-
-    /**
-     * 是否是隐藏菜单
-     */
-    private Boolean hide;
 
     /**
      * 子节点

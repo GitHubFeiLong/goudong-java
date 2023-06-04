@@ -95,7 +95,7 @@ public class BaseRoleController {
 
     @GetMapping("/page/name")
     @ApiOperation(value = "角色名模糊分页", notes = "根据角色名称进行分页查询")
-    public Result<PageResult<BaseRoleDTO>> pageRoleName (BaseRole2QueryPageDTO page){
-        return Result.ofSuccess(baseRoleService.pageRoleName(page));
+    public Result<PageResult<BaseRoleDTO>> pageRoleNameCN (BaseRole2QueryPageDTO page){
+        return Result.ofSuccess(baseRoleService.pageRoleNameCN(page));
     }
 }
