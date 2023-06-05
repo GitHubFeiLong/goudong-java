@@ -210,7 +210,14 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         // 当前用户所拥有的菜单权限，不能越级设置权限
         List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = ((BaseUserDTO)(UserContext.get())).getRoles();
         List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
-        List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
+        List<BaseMenuDTO> permissions;
+        // ADMIN 直接返回所有
+        if (roleNames.contains(RoleConst.ROLE_ADMIN)) {
+            permissions = baseMenuService.findAll();
+        } else {
+            permissions = baseMenuService.findAllByRoleNames(roleNames);
+        }
+
 
         BaseRoleDTO baseRoleDTO = BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
         List<Long> menuIds = baseRoleDTO.getMenus().stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
@@ -242,11 +249,13 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         // 校验数据
         List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = ((BaseUserDTO)(UserContext.get())).getRoles();
         List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
-        List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
-        List<Long> hasMenuIds = permissions.stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
+        // 没有ADMIN权限才校验
+        if (!roleNames.contains(RoleConst.ROLE_ADMIN)) {
+            List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
+            List<Long> hasMenuIds = permissions.stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
+            Assert.isTrue(hasMenuIds.containsAll(menuIds), ()->ClientException.client(ClientExceptionEnum.FORBIDDEN, "暂无权限", "当前用户没权限没有权限设置的部分权限"));
 
-        Assert.isTrue(hasMenuIds.containsAll(menuIds), ()->ClientException.client(ClientExceptionEnum.FORBIDDEN, "暂无权限", "当前用户没权限没有权限设置的部分权限"));
-
+        }
         List<BaseMenuPO> menus = baseMenuRepository.findAllById(menuIds);
         if (menus.size() == menuIds.size()) {
             rolePO.setMenus(menus);

@@ -6,6 +6,7 @@ import com.goudong.boot.web.validation.EnumValidator;
 import com.goudong.commons.annotation.core.Inner;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.HttpHeaderConst;
+import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
@@ -147,6 +148,16 @@ public class AuthenticationController {
 
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO)SecurityContextHolder.getContext().getAuthentication();
+
+        // ADMIN用户直接不校验权限
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .filter(f -> RoleConst.ROLE_ADMIN.equalsIgnoreCase(f.getAuthority()))
+                .findFirst().isPresent();
+        if (isAdmin) {
+            // 不需要鉴权，直接放行
+            return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+        }
+
         /*
             判断是否是白名单
          */
