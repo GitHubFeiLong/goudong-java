@@ -23,11 +23,11 @@ public class InitMenuReq {
     @ApiModelProperty("菜单名字")
     private String name;
 
-    /**
-     * 是否是api
-     */
-    @ApiModelProperty("是否是api")
-    private Boolean api = false;
+
+    private Integer type;
+    private Integer openModel;
+    private Integer sortNum;
+    private Boolean hide;
 
     /**
      * 前端的路由或后端的接口，

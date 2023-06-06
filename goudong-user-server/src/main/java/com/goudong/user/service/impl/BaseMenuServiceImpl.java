@@ -3,6 +3,8 @@ package com.goudong.user.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
@@ -93,14 +95,13 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 查询所有系统菜单
         BaseMenuPO baseMenuPO = new BaseMenuPO();
 
-        // baseMenuPO.setSys(true);
         Example<BaseMenuPO> of = Example.of(baseMenuPO);
         List<BaseMenuPO> sysMenus = baseMenuRepository.findAll(of);
 
         // 将菜单转成map，
         Map<String, BaseMenuPO> map = sysMenus.stream()
                 // 转成map
-                .collect(Collectors.toMap(p -> p.getPath() + "#" + String.valueOf(p.getMethod()).toUpperCase(), p -> p, (k1, k2) -> k1));
+                .collect(Collectors.toMap(p -> key(p), p -> p, (k1, k2) -> k1));
 
 
         // 将前端传递的菜单进行转成一维，并填充id和parentId属性建立父子关系
@@ -109,9 +110,6 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             convert(p, null, map, pos);
         });
 
-        // 设置成系统菜单
-        // pos.stream().forEach(m->m.setSys(true));
-
         // 多余的菜单id（需要删除）
         List<Long> needlessMenuIds = new ArrayList<>();
         Date now = new Date();
@@ -119,7 +117,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
         pos.stream().forEach(p->{
             // 获取原始菜单
-            String key = p.getPath() + "#" + String.valueOf(p.getMethod()).toUpperCase();
+            String key = key(p);
             BaseMenuPO poByMap = map.get(key);
             if (poByMap != null) { // 原始菜单中有时，就需要修改
                 // 其他子节点也需要修改父节点id
@@ -156,6 +154,24 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
         return BeanUtil.copyToList(pos, BaseMenuDTO.class, CopyOptions.create());
     }
+
+    /**
+     * 创建唯一标识
+     * @param po
+     * @return
+     */
+    private String key(BaseMenuPO po) {
+        StringBuilder sb = new StringBuilder()
+                .append(po.getType())
+                .append("-").append(po.getOpenModel())
+                .append("-").append(po.getPath())
+                .append("-").append(Optional.ofNullable(po.getMethod()).orElseGet(() -> "").toUpperCase())
+                .append("-").append(Optional.ofNullable(po.getPermissionId()).orElseGet(() -> ""))
+                ;
+
+        return sb.toString();
+    }
+
 
     public List<BaseMenuDTO> findAllByRoleName(String role) {
         // 匿名角色，不需要查询权限
@@ -260,14 +276,14 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             // 拷贝其他属性
             BeanUtil.copyProperties(poByMap, po, "name", "path", "api", "method");
         } else {
+            BeanUtil.copyProperties(req, po);
             po.setId(IdUtil.getSnowflake(1,1).nextId());
         }
-        po.setName(req.getName());
-        // po.setApi(req.getApi());
-        po.setPath(req.getPath());
-        po.setHide(false);
+
         if (StringUtils.isNotBlank(req.getMethod())) {
-            po.setMethod(req.getMethod().toUpperCase());
+            JSONArray jSonAr = new JSONArray();
+            jSonAr.put(req.getMethod().toUpperCase());
+            po.setMethod(jSonAr.toString());
         }
         po.setParentId(parentId);
         // 添加到集合
