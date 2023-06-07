@@ -209,10 +209,10 @@ public class AuthenticationController {
             }
 
             // 如果是隐藏菜单就直接放行
-            if (matchingMenus.stream().filter(f->f.getHide()).count() >= 1) {
-                LogUtil.debug(log, "用户已登录，允许访问隐藏菜单 %s %s", uri, method);
-                return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
-            }
+            // if (matchingMenus.stream().filter(f->f.getHide()).count() >= 1) {
+            //     LogUtil.debug(log, "用户已登录，允许访问隐藏菜单 %s %s", uri, method);
+            //     return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
+            // }
 
             // 循环用户所有角色
             for (GrantedAuthority role : authentication.getAuthorities()) {

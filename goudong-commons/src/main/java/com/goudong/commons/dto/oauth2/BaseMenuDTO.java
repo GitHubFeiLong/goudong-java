@@ -83,8 +83,6 @@ public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
      */
     private boolean checked;
 
-
-
     /**
      * 子节点
      */
