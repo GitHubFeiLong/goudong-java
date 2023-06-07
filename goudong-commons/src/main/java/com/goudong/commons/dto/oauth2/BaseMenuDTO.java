@@ -72,7 +72,7 @@ public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
     /**
      * 前端菜单组件的信息
      */
-    private MetadataDTO metadata;
+    private String metadata;
     /**
      * 备注
      */

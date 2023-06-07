@@ -85,7 +85,7 @@ public class BaseMenuPO extends BasePO {
      */
     @Type(type = "json")
     @Column( columnDefinition = "json" )
-    private MetadataDTO metadata;
+    private String metadata;
     /**
      * 备注
      */

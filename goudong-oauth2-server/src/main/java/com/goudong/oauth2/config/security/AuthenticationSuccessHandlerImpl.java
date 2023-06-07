@@ -2,7 +2,6 @@ package com.goudong.oauth2.config.security;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.LoginInfoDTO;
 import com.goudong.core.lang.Result;
@@ -23,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
  * 类描述：
@@ -52,12 +50,16 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
      */
     private final BaseAuthenticationLogService baseAuthenticationLogService;
 
+    private final ObjectMapper objectMapper;
+
     public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
                                             BaseUserService baseUserService,
-                                            BaseAuthenticationLogService baseAuthenticationLogService) {
+                                            BaseAuthenticationLogService baseAuthenticationLogService,
+                                            ObjectMapper objectMapper) {
         this.baseTokenService = baseTokenService;
         this.baseUserService = baseUserService;
         this.baseAuthenticationLogService = baseAuthenticationLogService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -100,8 +102,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         // 响应令牌和用户信息
         LoginInfoDTO loginInfo = BeanUtil.copyProperties(tokenDTO, LoginInfoDTO.class);
         loginInfo.setUser(baseUser);
-        String json = new ObjectMapper().setDateFormat(new SimpleDateFormat(DateConst.DATE_TIME_FORMATTER))
-                .writeValueAsString(Result.ofSuccess(loginInfo));
+        String json = objectMapper.writeValueAsString(Result.ofSuccess(loginInfo));
 
         httpServletResponse.getWriter().write(json);
     }
