@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.commons.dto.oauth2.BaseRoleDTO;
+import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.framework.jpa.BasePO;
 import lombok.Getter;
 import lombok.Setter;
@@ -164,6 +166,33 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
         baseRolePO.setRoleNameCn("匿名角色");
         anonymousUser.setRoles(Lists.newArrayList(baseRolePO));
         return anonymousUser;
+    }
+
+    /**
+     * 创建一个简单的用户对象，只包含用户基本信息和角色信息
+     * @return
+     */
+    public BaseUserDTO copy() {
+        BaseUserDTO dto = new BaseUserDTO();
+        dto.setId(this.id);
+        dto.setUsername(this.username);
+        dto.setEmail(this.email);
+        dto.setPhone(this.phone);
+        dto.setNickname(this.nickname);
+
+        List<BaseRoleDTO> roles = new ArrayList<>(this.roles.size());
+        this.roles.stream().forEach(p -> {
+            BaseRoleDTO baseRoleDTO = new BaseRoleDTO();
+            baseRoleDTO.setId(p.getId());
+            baseRoleDTO.setRoleName(p.getRoleName());
+            baseRoleDTO.setRoleNameCn(p.getRoleNameCn());
+            roles.add(baseRoleDTO);
+        });
+        dto.setRoles(roles);
+        dto.setMenus(null);
+        dto.setSessionId(this.sessionId);
+
+        return dto;
     }
 
     /**

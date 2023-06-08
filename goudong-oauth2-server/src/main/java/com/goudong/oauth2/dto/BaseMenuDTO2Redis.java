@@ -73,7 +73,7 @@ public class BaseMenuDTO2Redis extends BasePO implements Serializable {
      * 前端菜单组件的信息
      * @see MetadataDTO
      */
-    private MetadataDTO metadata;
+    private String metadata;
     /**
      * 备注
      */

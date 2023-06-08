@@ -14,7 +14,7 @@ public class BaseRoleDTO {
     /**
      * 角色id
      */
-    private String id;
+    private Long id;
 
     /**
      * 角色名称(必须以ROLE_起始命名)
