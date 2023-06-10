@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONArray;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
@@ -13,6 +12,7 @@ import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.tree.v2.Tree;
+import com.goudong.user.dto.AddMenuReq;
 import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
@@ -256,6 +256,21 @@ public class BaseMenuServiceImpl implements BaseMenuService {
                 .children(BaseMenuDTO::getChildren)
                 .toTree(menuDTOS);
         return tree;
+    }
+
+    /**
+     * 新增菜单
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public BaseMenuDTO addMenu(AddMenuReq req) {
+        // 参数校验
+        req.check();
+        BaseMenuPO po = BeanUtil.copyProperties(req, BaseMenuPO.class);
+        baseMenuRepository.save(po);
+        return BeanUtil.copyProperties(po, BaseMenuDTO.class);
     }
 
     /**

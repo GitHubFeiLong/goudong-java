@@ -1,7 +1,9 @@
 package com.goudong.user.po;
 
 import com.goudong.commons.framework.jpa.BasePO;
+import com.goudong.core.lang.IEnum;
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.http.HttpMethod;
@@ -103,4 +105,90 @@ public class BaseMenuPO extends BasePO {
         return Objects.hash(super.hashCode(), parentId, name, type, openModel, path, method, icon, permissionId, sortNum, hide, metadata, remark);
     }
 
+    /**
+     * 接口描述：
+     * 菜单的类型美剧
+     * @author Administrator
+     * @version 1.0
+     * @date 2023/6/4 20:04
+     */
+    @Getter
+    public enum TypeEnum implements IEnum<Integer, TypeEnum> {
+        API_INTERFACE(0, "接口"),
+        MENU(1, "菜单"),
+        BUTTON(2, "按钮"),
+        ;
+        private Integer id;
+
+        private String label;
+        //~methods
+        //==================================================================================================================
+        TypeEnum(Integer id, String label) {
+            this.id = id;
+            this.label = label;
+        }
+        /**
+         * 获取枚举成员的唯一标识
+         *
+         * @return
+         */
+        @Override
+        public Integer getId() {
+            return id;
+        }
+
+        /**
+         * 根据{@code id} 找到对应的枚举成员并返回<br>
+         *
+         * @param id 待找的枚举成员id
+         * @return
+         */
+        @Override
+        public TypeEnum getById(Integer id) {
+            return IEnum.super.getById(id);
+        }
+    }
+
+    /**
+     * 接口描述：
+     * 菜单的类型美剧
+     * @author Administrator
+     * @version 1.0
+     * @date 2023/6/4 20:04
+     */
+    @Getter
+    public enum OpenModelEnum implements IEnum<Integer, OpenModelEnum> {
+        INNER_LINK(0, "内链"),
+        OUTER_LINK(1, "外链"),
+        ;
+        private Integer id;
+
+        private String label;
+        //~methods
+        //==================================================================================================================
+        OpenModelEnum(Integer id, String label) {
+            this.id = id;
+            this.label = label;
+        }
+        /**
+         * 获取枚举成员的唯一标识
+         *
+         * @return
+         */
+        @Override
+        public Integer getId() {
+            return id;
+        }
+
+        /**
+         * 根据{@code id} 找到对应的枚举成员并返回<br>
+         *
+         * @param id 待找的枚举成员id
+         * @return
+         */
+        @Override
+        public OpenModelEnum getById(Integer id) {
+            return IEnum.super.getById(id);
+        }
+    }
 }
