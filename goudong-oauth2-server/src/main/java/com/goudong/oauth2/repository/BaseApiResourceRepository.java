@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2022/8/2 22:39
  * @version 1.0
  */
-public interface BaseApiResourceRepository  extends JpaRepository<BaseApiResourcePO, Long>, JpaSpecificationExecutor<BaseApiResourcePO> {
+public interface BaseApiResourceRepository extends JpaRepository<BaseApiResourcePO, Long>, JpaSpecificationExecutor<BaseApiResourcePO> {
 
     //~fields
     //==================================================================================================================

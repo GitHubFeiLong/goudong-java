@@ -1,4 +1,4 @@
-package com.goudong.user.enumerate;
+package com.goudong.oauth2.enumerate;
 
 import com.goudong.boot.web.bean.DatabaseKeyInterface;
 import com.goudong.core.util.StringUtil;
@@ -16,42 +16,10 @@ import org.slf4j.LoggerFactory;
 @Getter
 public enum DatabaseKeyEnum implements DatabaseKeyInterface {
 
-    //~ 用户表 base_user
+    //~ 用户表 base_app
     //==================================================================================================================
-    /**
-     * 用户表 邮箱唯一索引
-     */
-    UK_BASE_USER_EMAIL("uk_base_user_email", "保存用户失败，邮箱已存在"),
-    /**
-     * 用户表 用户名唯一索引
-     */
-    UK_BASE_USER_USERNAME("uk_base_user_username", "保存用户失败，用户名已存在"),
-    /**
-     * 用户表手机唯一索引
-     */
-    UK_BASE_USER_PHONE("uk_base_user_phone", "保存用户失败，手机号已存在"),
+    UK_APP_NAME_BASE_APP("uk_app_name", "应用已存在"),
 
-    //~ 角色表 base_role
-    //==================================================================================================================
-    UK_ROLE_ROLE_NAME("uk_role_role_name", "保存失败，角色已存在"),
-
-    /**
-     * 用户角色表用户id和角色id唯一索引
-     */
-    UK_BASE_USER_ROLE__BASE_USER_ID_BASE_ROLE_ID("uk_base_user_role__base_user_id_base_role_id", "保存用户角色失败，用户已拥有该角色"),
-    /**
-     * 角色菜单表角色id和菜单id唯一索引
-     */
-    UK_BASE_ROLE_MENU__BASE_ROLE_ID_BASE_MENU_ID("uk_base_role_menu__base_role_id_base_menu_id", "保存角色菜单失败，角色已拥有菜单"),
-
-    /**
-     * api接口资源表的唯一索引
-     */
-    UK_BASE_API_RESOURCE_PATTERN_METHOD_APPLICATION_NAME("uk_base_api_resource_pattern_method_application_name", "保存api_resource失败，数据已存在"),
-
-    //~ 菜单表 base_menu
-    //==================================================================================================================
-    UK_BASE_MENU_PATH_METHOD("uk_base_menu_path_method", "请勿重复添加相同菜单"),
     ;
 
     public static final Logger log = LoggerFactory.getLogger(DatabaseKeyEnum.class);

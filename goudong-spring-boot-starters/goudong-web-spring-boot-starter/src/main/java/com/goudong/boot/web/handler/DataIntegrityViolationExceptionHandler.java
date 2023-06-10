@@ -1,6 +1,6 @@
 package com.goudong.boot.web.handler;
 
-import com.goudong.boot.web.bean.DatabaseKeyInterface;
+import com.goudong.boot.web.bean.DatabaseKey;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.core.ServerException;
@@ -38,10 +38,10 @@ public class DataIntegrityViolationExceptionHandler implements HandlerInterface{
     /**
      * 数据库索引相关
      */
-    private DatabaseKeyInterface databaseKey;
+    private DatabaseKey databaseKey;
 
     @Autowired(required = false)
-    public void setDatabaseKey(DatabaseKeyInterface databaseKey) {
+    public void setDatabaseKey(DatabaseKey databaseKey) {
         this.databaseKey = databaseKey;
     }
 

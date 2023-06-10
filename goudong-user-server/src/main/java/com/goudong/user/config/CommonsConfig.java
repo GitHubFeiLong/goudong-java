@@ -4,13 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
 import com.goudong.boot.web.aop.ApiLogAop;
+import com.goudong.boot.web.bean.DatabaseKey;
+import com.goudong.boot.web.bean.DatabaseKeyInterface;
 import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
+import com.goudong.user.enumerate.DatabaseKeyEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 类描述：
@@ -55,5 +62,15 @@ public class CommonsConfig {
         return new ApiLogAop(environment, objectMapper, apiLogProperties);
     }
 
+    /**
+     * 数据库索引异常配置
+     * @return
+     */
+    @Bean
+    public DatabaseKey databaseKey() {
+        Map<String, String> map = Stream.of(DatabaseKeyEnum.values()).collect(Collectors.toMap(DatabaseKeyInterface::getKey, p -> p.getClientMessage(), (k1, k2) -> k1));
+        DatabaseKey databaseKey = new DatabaseKey(map);
+        return databaseKey;
+    }
 
 }

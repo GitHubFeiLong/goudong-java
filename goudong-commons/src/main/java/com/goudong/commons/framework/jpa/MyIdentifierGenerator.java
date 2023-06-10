@@ -1,5 +1,6 @@
 package com.goudong.commons.framework.jpa;
 
+import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -16,10 +17,11 @@ import java.io.Serializable;
  */
 public class MyIdentifierGenerator implements IdentifierGenerator {
 
+    public static Snowflake ID  = IdUtil.getSnowflake();
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
         if (o == null) throw new HibernateException(new NullPointerException());
         Long id = ((BasePO) o).getId();
-        return id == null ? IdUtil.getSnowflake(1, 1).nextId() : id;
+        return id == null ? ID.nextId() : id;
     }
 }

@@ -304,6 +304,17 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     }
 
     /**
+     * 用户是否是超级管理员
+     * @return
+     */
+    public boolean isAdmin() {
+        // ADMIN用户直接不校验权限
+        return this.getAuthorities().stream()
+                .filter(f -> RoleConst.ROLE_ADMIN.equalsIgnoreCase(f.getAuthority()))
+                .findFirst().isPresent();
+    }
+
+    /**
      * 自定义的一个会话id，用于区分发起请求的用户，可以是认证过后的token可以是未登录的cookie
      */
     @Transient

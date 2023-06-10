@@ -10,6 +10,13 @@ package com.goudong.boot.web.bean;
 public interface DatabaseKeyInterface {
 
     /**
+     * 数据库中的索引
+     *
+     * @return
+     */
+    String getKey();
+
+    /**
      * 根据数据库中的{@code key}获取对应的提示信息
      *
      * @param key 数据库索引名
