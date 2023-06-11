@@ -21,7 +21,7 @@ CREATE TABLE `base_app`
 
 INSERT INTO `base_app`(`id`, `app_id`, `app_secret`, `app_name`, `status`, `remark`, `deleted`, `create_time`,
                        `update_time`, `create_user_id`, `update_user_id`)
-VALUES (1667779450730426368, 'gdmty2nzc3otq1mdczmdqynjm2oa', 'ad6f121d48f540fdb7efe7ea80b40926', '狗东后台管理', 1, '1', b'0',
+VALUES (1667779450730426368, 'gdmty2nzc3otq1mdczmdqynjm2oa', 'ad6f121d48f540fdb7efe7ea80b40926', '狗东后台管理', 1, '后台管理', b'0',
         '2023-06-11 14:23:05', '2023-06-11 14:23:05', 1, 1);
 
 CREATE TABLE `base_app_open_user`
