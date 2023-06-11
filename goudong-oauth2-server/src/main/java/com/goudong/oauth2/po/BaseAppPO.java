@@ -44,21 +44,25 @@ public class BaseAppPO extends BasePO {
     /**
      * 应用名
      */
+    @Column(name = "app_name", nullable = false, unique = true)
     private String appName;
+
     /**
      * 状态
      * @see StatusEnum#getId()
      */
+    @Column(name = "status", nullable = false)
     private Integer status;
 
     /**
      * 备注
      */
+    @Column(name = "remark", nullable = true)
     private String remark;
 
     /**
      * 类描述：
-     * 应用的状态枚举
+     * 应用的状态枚举: 状态（0：待审核；1：通过；2：拒绝；）
      * @author cfl
      * @date 2023/6/10 22:40
      * @version 1.0

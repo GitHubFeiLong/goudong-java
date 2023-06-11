@@ -4,6 +4,7 @@ import com.goudong.core.lang.Result;
 import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
+import com.goudong.oauth2.dto.BaseAppQueryReq;
 import com.goudong.oauth2.service.BaseAppService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 类描述：
@@ -46,5 +49,11 @@ public class BaseAppController {
     @ApiOperation("审核应用")
     public Result<BaseAppDTO> audit(@RequestBody @Validated BaseAppAuditReq req) {
         return Result.ofSuccess(baseAppService.audit(req));
+    }
+
+    @GetMapping
+    @ApiOperation("查询应用")
+    public Result<List<BaseAppDTO>> query(BaseAppQueryReq req) {
+        return Result.ofSuccess(baseAppService.query(req));
     }
 }

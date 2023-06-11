@@ -1,6 +1,7 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.UUID;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
@@ -9,15 +10,20 @@ import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
+import com.goudong.oauth2.dto.BaseAppQueryReq;
 import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.repository.BaseAppRepository;
 import com.goudong.oauth2.service.BaseAppService;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 类描述：
@@ -101,5 +107,36 @@ public class BaseAppServiceImpl implements BaseAppService {
         po.setStatus(req.getStatus());
 
         return BeanUtil.copyProperties(po, BaseAppDTO.class);
+    }
+
+    /**
+     * 查询应用
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public List<BaseAppDTO> query(BaseAppQueryReq req) {
+        // 获取当前用户
+        BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
+        // 查询所有系统菜单
+        BaseAppPO po = new BaseAppPO();
+        po.setCreateUserId(authentication.getId());
+        po.setAppName(req.getAppName());
+        po.setStatus(req.getStatus());
+
+        //实例化对象
+        ExampleMatcher matching = ExampleMatcher.matching();
+        //设置搜索的字段(实体的属性名)
+        matching = matching.withMatcher("appName", ExampleMatcher.GenericPropertyMatchers.contains());
+        //最后用这个构造获取Example
+        Example<BaseAppPO> example = Example.of(po, matching);
+
+        // 排序规则(实体的属性名)
+        Sort sort = Sort.by(Sort.Direction.DESC,"createTime");
+
+        List<BaseAppPO> pos = baseAppRepository.findAll(example, sort);
+
+        return BeanUtil.copyToList(pos, BaseAppDTO.class, CopyOptions.create());
     }
 }
