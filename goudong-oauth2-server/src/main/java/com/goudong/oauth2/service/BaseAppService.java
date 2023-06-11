@@ -1,11 +1,10 @@
 package com.goudong.oauth2.service;
 
+import com.goudong.core.lang.PageResult;
 import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
 import com.goudong.oauth2.dto.BaseAppQueryReq;
-
-import java.util.List;
 
 /**
  * 接口描述：
@@ -42,7 +41,7 @@ public interface BaseAppService {
      * @param req
      * @return
      */
-    List<BaseAppDTO> query(BaseAppQueryReq req);
+    PageResult<BaseAppDTO> query(BaseAppQueryReq req);
     //~methods
     //==================================================================================================================
 }

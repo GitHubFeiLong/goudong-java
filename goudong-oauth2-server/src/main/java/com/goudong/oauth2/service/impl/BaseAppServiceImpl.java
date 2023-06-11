@@ -1,12 +1,15 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.lang.UUID;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
+import com.goudong.boot.web.util.PageResultConvert;
+import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.StringUtil;
 import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
@@ -15,14 +18,18 @@ import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.repository.BaseAppRepository;
 import com.goudong.oauth2.service.BaseAppService;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
+import com.goudong.oauth2.util.AppIdUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,10 +58,9 @@ public class BaseAppServiceImpl implements BaseAppService {
     public BaseAppDTO apply(BaseAppApplyReq req) {
         BaseAppPO po = new BaseAppPO();
         Long id = MyIdentifierGenerator.ID.nextId();
-        String appId = "gd" + Long.toHexString(id);
-        po.setAppId(appId);
-        po.setAppSecret(UUID.randomUUID(true).toString(true));
-        po.setAppName(req.getAppName());
+        po.setAppId(AppIdUtil.getAppId(id));
+        po.setAppSecret(AppIdUtil.getAppSecret());
+        po.setAppName(req.getAppName().trim());
         po.setStatus(BaseAppPO.StatusEnum.CHECK_PENDING.getId());
         po.setRemark(req.getRemark());
         po.setId(id);
@@ -116,27 +122,53 @@ public class BaseAppServiceImpl implements BaseAppService {
      * @return
      */
     @Override
-    public List<BaseAppDTO> query(BaseAppQueryReq req) {
+    public PageResult<BaseAppDTO> query(BaseAppQueryReq req) {
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
-        // 查询所有系统菜单
-        BaseAppPO po = new BaseAppPO();
-        po.setCreateUserId(authentication.getId());
-        po.setAppName(req.getAppName());
-        po.setStatus(req.getStatus());
 
-        //实例化对象
-        ExampleMatcher matching = ExampleMatcher.matching();
-        //设置搜索的字段(实体的属性名)
-        matching = matching.withMatcher("appName", ExampleMatcher.GenericPropertyMatchers.contains());
-        //最后用这个构造获取Example
-        Example<BaseAppPO> example = Example.of(po, matching);
 
-        // 排序规则(实体的属性名)
-        Sort sort = Sort.by(Sort.Direction.DESC,"createTime");
+        Specification<BaseAppPO> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> and = new ArrayList<>();
 
-        List<BaseAppPO> pos = baseAppRepository.findAll(example, sort);
+            if (!authentication.isAdmin()) {
+                and.add(criteriaBuilder.equal(root.get("createUserId"), authentication.getId()));
+            }
 
-        return BeanUtil.copyToList(pos, BaseAppDTO.class, CopyOptions.create());
+            if (StringUtil.isNotBlank(req.getAppName())) {
+                and.add(criteriaBuilder.like(root.get("appName"), "%" + req.getAppName() + "%"));
+            }
+
+            if (req.getStatus() != null) {
+                and.add(criteriaBuilder.equal(root.get("status"), req.getStatus()));
+            }
+
+            if (req.getStartCreateTime() != null && req.getEndCreateTime() != null) {
+                and.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(String.class), req.getStartCreateTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
+                and.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(String.class), req.getEndCreateTime().format(DateConst.YYYY_MM_DD_HH_MM_SS)));
+            }
+
+            // 分页
+            Order weightOrder = criteriaBuilder.desc(root.get("createTime"));
+            if (CollectionUtil.isNotEmpty(and)) {
+                return query.where(and.toArray(new Predicate[and.size()])).orderBy(weightOrder).getRestriction();
+            }
+
+            return query.orderBy(weightOrder).getRestriction();
+        };
+
+        PageResult<BaseAppDTO> convert = null;
+        if (req.getJPAPage() != null && req.getSize() != null) {
+            PageRequest pageRequest = PageRequest.of(req.getJPAPage(), req.getSize());
+            Page<BaseAppPO> all = baseAppRepository.findAll(specification, pageRequest);
+            convert = PageResultConvert.convert(all, BaseAppDTO.class);
+        } else {
+            // // 导出时
+            // List<BaseUserPO> all = baseUserRepository.findAll(specification);
+            // List<com.goudong.commons.dto.oauth2.BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
+            // convert = new PageResult<>(baseUserDTOS);
+        }
+
+
+        return convert;
     }
 }

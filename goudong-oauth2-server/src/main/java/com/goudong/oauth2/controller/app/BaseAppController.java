@@ -1,5 +1,6 @@
 package com.goudong.oauth2.controller.app;
 
+import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
@@ -12,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 类描述：
@@ -53,7 +52,7 @@ public class BaseAppController {
 
     @GetMapping
     @ApiOperation("查询应用")
-    public Result<List<BaseAppDTO>> query(BaseAppQueryReq req) {
+    public Result<PageResult<BaseAppDTO>> query(BaseAppQueryReq req) {
         return Result.ofSuccess(baseAppService.query(req));
     }
 }

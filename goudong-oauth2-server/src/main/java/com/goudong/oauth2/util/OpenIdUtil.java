@@ -28,11 +28,7 @@ public class OpenIdUtil {
             String userIdStr = userId.toString();
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             md5.update((appIdStr + userIdStr).getBytes("utf-8"));
-            String s = Base64.getEncoder().encodeToString(md5.digest());
-
-            if(s.indexOf("=") != -1) {
-                s = s.substring(0, s.indexOf("="));
-            }
+            String s = Base64.getEncoder().withoutPadding().encodeToString(md5.digest());
             // 重置
             md5.reset();
             md5.update(appIdStr.getBytes("utf-8"));

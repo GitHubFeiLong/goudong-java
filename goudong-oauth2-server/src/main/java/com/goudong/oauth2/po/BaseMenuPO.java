@@ -29,6 +29,10 @@ import java.util.List;
 public class BaseMenuPO extends BasePO {
     private static final long serialVersionUID = -6254288573268456187L;
     /**
+     * 应用id
+     */
+    private Long appId;
+    /**
      * 父菜单主键
      */
     private Long parentId;

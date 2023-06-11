@@ -319,6 +319,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         BaseMenuPO poByMap = map.get(key);
         po.setHide(false);
         po.setSortNum(sortNumAtomic.getAndIncrement());
+        po.setAppId(1667779450730426368L);
         if (poByMap != null) {  // 原始菜单中有时，就需要修改
             // 拷贝其他属性
             BeanUtil.copyProperties(poByMap, po);
