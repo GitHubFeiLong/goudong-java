@@ -1,6 +1,7 @@
 package com.goudong.commons.dto.oauth2;
 
 import com.goudong.core.util.tree.v2.TreeInterface;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
@@ -42,6 +43,12 @@ public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO> {
      * 前端的路由或后端的接口，
      */
     private String path;
+
+    /**
+     * 前端的路由指向的组件地址
+     */
+    @ApiModelProperty("前端的路由指向的组件地址")
+    private String componentPath;
 
     /**
      * 请求方式,值为{@link HttpMethod}元素的name(),例如：GET，POST。

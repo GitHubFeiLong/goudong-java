@@ -37,12 +37,14 @@ public class InitMenuReq {
     @ApiModelProperty("前端的路由或后端的接口")
     private String path;
 
+    /**
+     * 前端的路由指向的组件地址
+     */
+    @ApiModelProperty("前端的路由指向的组件地址")
+    private String componentPath;
+
     @ApiModelProperty(value = "菜单唯一标识", required = true)
     private String permissionId;
-
-    @Deprecated
-    private Boolean hide;
-
 
     /**
      * 请求方式,值为{@link HttpMethod}元素的name(),例如：GET，POST。
@@ -53,7 +55,7 @@ public class InitMenuReq {
     private String method;
 
     @ApiModelProperty("路由元数据，JSON字符串")
-    private String meta;
+    private String metadata;
 
     /**
      * 子菜单

@@ -52,6 +52,11 @@ public class BaseMenuPO extends BasePO {
     private String path;
 
     /**
+     * 前端组件地址
+     */
+    private String componentPath;
+
+    /**
      * 请求方式,值为{@link HttpMethod}元素的name(),例如：GET，POST。
      * 这里path 和 method 是一对一的方式，方便更细粒度鉴权。
      */

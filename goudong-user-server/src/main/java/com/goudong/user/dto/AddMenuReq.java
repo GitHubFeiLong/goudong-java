@@ -54,6 +54,12 @@ public class AddMenuReq {
     @ApiModelProperty(value = "请求方式(菜单不传，其余都传)", required = false)
     private String method;
 
+    /**
+     * 前端的路由指向的组件地址
+     */
+    @ApiModelProperty("前端的路由指向的组件地址")
+    private String componentPath;
+
     @ApiModelProperty(value = "排序号", required = true)
     @Range(min = 1, max = Integer.MAX_VALUE)
     private Integer sortNum;

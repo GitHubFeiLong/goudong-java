@@ -2,15 +2,15 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.json.JSONArray;
 import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
 import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;
 import com.goudong.user.dto.AddMenuReq;
 import com.goudong.user.dto.BaseMenuPageReq;
@@ -23,7 +23,6 @@ import com.goudong.user.repository.BaseRoleRepository;
 import com.goudong.user.service.BaseMenuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.Cursor;
@@ -34,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Order;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -106,8 +106,9 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
         // 将前端传递的菜单进行转成一维，并填充id和parentId属性建立父子关系
         List<BaseMenuPO> pos = new ArrayList<>();
+        AtomicInteger sortNumAtomic = new AtomicInteger(1);
         req.stream().forEach(p -> {
-            convert(p, null, map, pos);
+            convert(sortNumAtomic, p, null, map, pos);
         });
 
         // 多余的菜单id（需要删除）
@@ -161,12 +162,40 @@ public class BaseMenuServiceImpl implements BaseMenuService {
      * @return
      */
     private String key(BaseMenuPO po) {
+        if (StringUtil.isNotBlank(po.getPermissionId())) {
+            return po.getPermissionId();
+        }
         StringBuilder sb = new StringBuilder()
-                .append(po.getType())
-                .append("-").append(po.getOpenModel())
-                .append("-").append(po.getPath())
+                .append(Optional.ofNullable(po.getType()).orElseGet(() -> -1))
+                .append("-").append(Optional.ofNullable(po.getOpenModel()).orElseGet(() -> -1))
+                .append("-").append(Optional.ofNullable(po.getPath()).orElseGet(() -> ""))
+                .append("-").append(Optional.ofNullable(po.getComponentPath()).orElseGet(() -> ""))
                 .append("-").append(Optional.ofNullable(po.getMethod()).orElseGet(() -> "").toUpperCase())
-                .append("-").append(Optional.ofNullable(po.getPermissionId()).orElseGet(() -> ""))
+                ;
+
+        return sb.toString();
+    }
+
+    /**
+     * 创建唯一标识
+     * @param type
+     * @param openModel
+     * @param path
+     * @param componentPath
+     * @param method
+     * @param permissionId
+     * @return
+     */
+    private String key(Integer type, Integer openModel, String path, String componentPath, String method, String permissionId) {
+        if (StringUtil.isNotBlank(permissionId)) {
+            return permissionId;
+        }
+        StringBuilder sb = new StringBuilder()
+                .append(Optional.ofNullable(type).orElseGet(() -> -1))
+                .append("-").append(Optional.ofNullable(openModel).orElseGet(() -> -1))
+                .append("-").append(Optional.ofNullable(path).orElseGet(() -> ""))
+                .append("-").append(Optional.ofNullable(componentPath).orElseGet(() -> ""))
+                .append("-").append(Optional.ofNullable(method).orElseGet(() -> "").toUpperCase())
                 ;
 
         return sb.toString();
@@ -277,29 +306,27 @@ public class BaseMenuServiceImpl implements BaseMenuService {
      * 将 InitMenuReq 对象转换成 BaseMenuPO 并放入集合中
      * 如果原始菜单存在相同数据，那么不创建新的id，只是修改
      *
+     * @param sortNumAtomic  排序值
      * @param req 前端传递的菜单参数
      * @param parentId 该菜单的父id
      * @param map 数据库中原始系统菜单
      * @param pos 转换后对象放入的容器
      */
-    private void convert(InitMenuReq req, Long parentId, Map<String, BaseMenuPO> map, List<BaseMenuPO> pos) {
+    private void convert(AtomicInteger sortNumAtomic, InitMenuReq req, Long parentId, Map<String, BaseMenuPO> map, List<BaseMenuPO> pos) {
         BaseMenuPO po = new BaseMenuPO();
 
-        String key = req.getPath() + "#" + String.valueOf(req.getMethod()).toUpperCase();
+        String key = key(req.getType(), req.getOpenModel(), req.getPath(), req.getComponentPath(), req.getMethod(), req.getPermissionId());
         BaseMenuPO poByMap = map.get(key);
+        po.setHide(false);
+        po.setSortNum(sortNumAtomic.getAndIncrement());
         if (poByMap != null) {  // 原始菜单中有时，就需要修改
             // 拷贝其他属性
-            BeanUtil.copyProperties(poByMap, po, "name", "path", "api", "method");
+            BeanUtil.copyProperties(poByMap, po);
         } else {
             BeanUtil.copyProperties(req, po);
-            po.setId(IdUtil.getSnowflake(1,1).nextId());
+            po.setId(MyIdentifierGenerator.ID.nextId());
         }
 
-        if (StringUtils.isNotBlank(req.getMethod())) {
-            JSONArray jSonAr = new JSONArray();
-            jSonAr.put(req.getMethod().toUpperCase());
-            po.setMethod(jSonAr.toString());
-        }
         po.setParentId(parentId);
         // 添加到集合
         pos.add(po);
@@ -307,7 +334,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         if (CollectionUtil.isNotEmpty(req.getChildren())) {
             req.getChildren().stream().forEach(p->{
                 // 递归添加
-                convert(p, po.getId(), map, pos);
+                convert(sortNumAtomic, p, po.getId(), map, pos);
             });
         }
     }

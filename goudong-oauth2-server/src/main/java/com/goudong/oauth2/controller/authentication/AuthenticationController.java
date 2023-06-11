@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -187,13 +188,13 @@ public class AuthenticationController {
         List<BaseMenuDTO> allMenu = baseMenuService.findAll();
 
         // 判断是否需要鉴权
-        List<BaseMenuDTO> matchingMenus = allMenu.parallelStream()
+        Optional<BaseMenuDTO> menuOptional = allMenu.parallelStream()
                 // 接口且是内链
                 .filter(f -> f.getType() == 0 && f.getOpenModel() == 0)
-                .filter(f -> antPathMatcher.match(f.getPath(), uri) && f.getMethod().toUpperCase().indexOf(method.toUpperCase()) !=-1)
-                .collect(Collectors.toList());
+                .filter(f -> antPathMatcher.match(f.getPath(), uri) && f.getMethod().toUpperCase().indexOf(method.toUpperCase()) != -1)
+                .findFirst();
 
-        boolean isNeedAuthentication = matchingMenus.size() > 0;
+        boolean isNeedAuthentication = menuOptional.isPresent();
 
         // 只有需要”鉴权“时，才进行鉴权
         if (isNeedAuthentication) {
@@ -203,12 +204,6 @@ public class AuthenticationController {
                 // 没有权限，拒绝访问
                 throw new Oauth2Exception(ClientExceptionEnum.UNAUTHORIZED);
             }
-
-            // 如果是隐藏菜单就直接放行
-            // if (matchingMenus.stream().filter(f->f.getHide()).count() >= 1) {
-            //     LogUtil.debug(log, "用户已登录，允许访问隐藏菜单 %s %s", uri, method);
-            //     return Result.ofSuccess(BeanUtil.copyProperties(authentication, BaseUserDTO.class));
-            // }
 
             // 循环用户所有角色
             for (GrantedAuthority role : authentication.getAuthorities()) {
