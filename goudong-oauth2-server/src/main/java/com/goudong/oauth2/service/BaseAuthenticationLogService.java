@@ -1,6 +1,7 @@
 package com.goudong.oauth2.service;
 
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
+import com.goudong.oauth2.po.BaseAuthenticationLogPO;
 
 /**
  * 接口描述：
@@ -15,6 +16,6 @@ public interface BaseAuthenticationLogService {
      * @param authenticationLogDTO
      * @return
      */
-    BaseAuthenticationLogDTO create(BaseAuthenticationLogDTO authenticationLogDTO);
+    BaseAuthenticationLogPO create(BaseAuthenticationLogDTO authenticationLogDTO);
 
 }

@@ -18,34 +18,44 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
 
     /**
      * 根据手机号查询用户
+     * @param appId
      * @param phone
      * @return
      */
-    BaseUserPO findByPhone(String phone);
+    BaseUserPO findByAppIdAndPhone(Long appId, String phone);
 
     /**
      * 根据用户名查询用户
      * @param username
+     * @param appId
      * @return
      */
-    BaseUserPO findByUsername(String username);
+    BaseUserPO findByAppIdAndUsername(Long appId, String username);
 
     /**
      * 根据用户名模糊查询
+     * @param appId
      * @param username
      * @return
      */
-    List<BaseUserPO> findAllByUsernameIsLike(String username);
+    List<BaseUserPO> findAllByAppIdAndUsernameIsLike(Long appId, String username);
 
     /**
      * 根据邮箱查询用户
+     * @param appId
      * @param email
      * @return
      */
-    BaseUserPO findByEmail(String email);
+    BaseUserPO findByAppIdAndEmail(Long appId, String email);
 
-    @Query(value = "from BaseUserPO where username=?1 or email = ?1 or phone=?1")
-    BaseUserPO findByLogin(String login);
+    /**
+     * 根据登录账号查询用户
+     * @param appId
+     * @param login
+     * @return
+     */
+    @Query(value = "from BaseUserPO where appId= ?1 and (username=?2 or email = ?2 or phone=?2)")
+    BaseUserPO findByLogin(Long appId, String login);
 
     /**
      * 根据qq的openId查询用户信息

@@ -1,15 +1,16 @@
 package com.goudong.oauth2.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.google.common.collect.Lists;
 import com.goudong.boot.redis.core.RedisKeyProvider;
 import com.goudong.boot.redis.core.RedisTool;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
-import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.core.TokenExpires;
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.exception.RefreshTokenExpiredException;
 import com.goudong.oauth2.exception.RefreshTokenInvalidException;
@@ -84,18 +85,20 @@ public class BaseTokenServiceImpl implements BaseTokenService {
     /**
      * 用户登录成功或使用刷新Token，获取新的令牌。并将其令牌保存到Redis和Mysql中
      * 根据设置是否允许重复登录配置，判断删除已有的令牌
+     * @param appId 应用id
      * @param userId 用户id
      * @return
      */
     @Override
     @Transactional
-    public BaseTokenDTO loginHandler(Long userId) {
+    public BaseTokenDTO loginHandler(Long appId, Long userId) {
         ClientSideEnum clientSideEnum = ClientSideEnum.getClientSide(httpServletRequest);
 
         BaseTokenPO baseTokenPO = new BaseTokenPO();
         baseTokenPO.setAccessToken(IdUtil.simpleUUID());
         baseTokenPO.setRefreshToken(IdUtil.simpleUUID());
         baseTokenPO.setUserId(userId);
+        baseTokenPO.setAppId(appId);
         baseTokenPO.setClientType(clientSideEnum.getLowerName());
 
         // 默认是 browser
@@ -199,33 +202,29 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         /*
             获取令牌详细信息
          */
-        BaseTokenPO byRefreshToken = baseTokenRepository.findByRefreshToken(refreshToken);
-        if (byRefreshToken == null) {
-            throw new RefreshTokenInvalidException("refreshToken令牌无效");
-        }
+        BaseTokenPO byRefreshToken = baseTokenRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new RefreshTokenInvalidException("refreshToken令牌无效"));
+
         // 判断刷新Token是否过期
         Date refreshExpires = byRefreshToken.getRefreshExpires();
-        if (refreshExpires.after(new Date())) {
-            // 未过期，就需要生成新的token，并将原有的token删除（使之无效）
-            Long userId = byRefreshToken.getUserId();
-            BaseTokenDTO baseTokenDTO = this.loginHandler(userId);
+        AssertUtil.isTrue(refreshExpires.after(new Date()), () -> new RefreshTokenExpiredException(String.format("令牌已经过期refreshExpires=%s", refreshExpires)));
 
-            // 保存accessToken和用户信息到redis中
-            BaseUserDTO baseUser = baseUserService.findById(userId);
-            baseUserService.saveAccessToken2Redis(BeanUtil.copyProperties(baseUser, BaseUserPO.class, "password")
-                    , baseTokenDTO.getAccessToken());
+        // 未过期，就需要生成新的token，并将原有的token删除（使之无效）
+        Long userId = byRefreshToken.getUserId();
+        BaseTokenDTO baseTokenDTO = this.loginHandler(byRefreshToken.getAppId(), userId);
+
+        // 保存accessToken和用户信息到redis中
+        BaseUserDTO baseUser = baseUserService.findById(userId);
+        baseUserService.saveAccessToken2Redis(BeanUtil.copyProperties(baseUser, BaseUserPO.class, "password")
+                , baseTokenDTO.getAccessToken());
 
             /*
                 将原refreshToken对应的accessToken删除（MySQL、Redis）,跟重复登录没任何关系
              */
-            // 删除Mysql中的数据
-            baseTokenRepository.delete(byRefreshToken);
-            // 删除Redis中的数据
-            redisTool.deleteKey(RedisKeyProviderEnum.AUTHENTICATION, byRefreshToken.getClientType(), byRefreshToken.getAccessToken());
-            return baseTokenDTO;
-        }
-
-        throw new RefreshTokenExpiredException(String.format("令牌已经过期refreshExpires=%s", refreshExpires));
+        // 删除Mysql中的数据
+        baseTokenRepository.delete(byRefreshToken);
+        // 删除Redis中的数据
+        redisTool.deleteKey(RedisKeyProviderEnum.AUTHENTICATION, byRefreshToken.getAppId(), byRefreshToken.getClientType(), byRefreshToken.getAccessToken());
+        return baseTokenDTO;
     }
 
 

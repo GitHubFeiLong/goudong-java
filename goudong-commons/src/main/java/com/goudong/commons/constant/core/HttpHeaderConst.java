@@ -40,6 +40,11 @@ public class HttpHeaderConst {
      */
     public static final String X_API_RESULT_LENGTH = "X-Api-Result-Length";
 
+    /**
+     * 应用id
+     */
+    public static final String X_APP_ID = "X-App-Id";
+
     //~methods
     //==================================================================================================================
 

@@ -1,15 +1,10 @@
 package com.goudong.commons.autoconfigure;
 
 import com.goudong.commons.config.FeignConfig;
-import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
-import com.goudong.commons.framework.whitelist.WhitelistInitialize;
 import com.goudong.commons.properties.WhitelistProperties;
-import com.goudong.commons.utils.core.LogUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -34,11 +29,11 @@ public class WhitelistAutoConfiguration {
      * @param whitelistProperties 白名单配置
      * @return
      */
-    @Bean
-    @ConditionalOnMissingBean
-    public WhitelistInitialize whitelistInitialize(GoudongOauth2ServerService goudongOauth2ServerService, WhitelistProperties whitelistProperties) {
-        LogUtil.debug(log, "启用了白名单自动配置");
-        return new WhitelistInitialize(goudongOauth2ServerService, whitelistProperties);
-    }
+    // @Bean
+    // @ConditionalOnMissingBean
+    // public WhitelistInitialize whitelistInitialize(GoudongOauth2ServerService goudongOauth2ServerService, WhitelistProperties whitelistProperties) {
+    //     LogUtil.debug(log, "启用了白名单自动配置");
+    //     return new WhitelistInitialize(goudongOauth2ServerService, whitelistProperties);
+    // }
 
 }

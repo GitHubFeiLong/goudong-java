@@ -22,6 +22,11 @@ public class BaseTokenDTO extends BasePO {
     //~fields
     //==================================================================================================================
     /**
+     * 应用Id
+     */
+    @NotNull
+    private Long appId;
+    /**
      * 访问令牌
      */
     @NotBlank

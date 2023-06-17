@@ -1,13 +1,10 @@
 package com.goudong.oauth2.config.security;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.commons.dto.oauth2.BaseRoleDTO;
 import com.goudong.core.util.AssertUtil;
-import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
+import com.goudong.oauth2.repository.BaseAppRepository;
 import com.goudong.oauth2.service.BaseAuthenticationLogService;
 import com.goudong.oauth2.service.BaseMenuService;
 import com.goudong.oauth2.service.BaseRoleService;
@@ -24,11 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -51,6 +46,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      */
     private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
 
+   /**
+     * 用户服务接口
+     */
+    private final HttpServletRequest httpServletRequest;
+
     /**
      * 用户服务接口
      */
@@ -70,6 +70,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      */
     private final BaseAuthenticationLogService baseAuthenticationLogService;
 
+    /**
+     * 应用吃持久层
+     */
+    private final BaseAppRepository baseAppRepository;
+
 
     /**
      * 自定义登录认证
@@ -88,9 +93,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         // 用户名/电话/邮箱不传时直接抛出异常
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码");
-        }
+        AssertUtil.isFalse(StringUtils.isBlank(username) || StringUtils.isBlank(password), () -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "请输入正确的用户名和密码"));
 
         // 将用户账号设置到request中，再登录成功和失败处理器中记录认证日志
         ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().setAttribute("principal", username);
@@ -101,34 +104,18 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         // 用户不存在
         AssertUtil.isNotNull(userInfo, () -> new UsernameNotFoundException("用户不存在"));
 
-        boolean passwordMatches = false;
-        if (BCRYPT_PATTERN.matcher(password).matches()) {
-            passwordMatches = Objects.equals(password, userInfo.getPassword());
-        } else {
-            // 使用 BCrypt 加密的方式进行匹配
-            passwordMatches = BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
-        }
+        boolean passwordMatches = BCRYPT_PATTERN.matcher(password).matches()
+                // 是密码格式，直接比较值
+                ? Objects.equals(password, userInfo.getPassword())
+                // 使用 BCrypt 加密的方式进行匹配
+                : BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
+
         AssertUtil.isTrue(passwordMatches, () -> new BadCredentialsException("用户密码错误"));
         AssertUtil.isTrue(userInfo.isEnabled(), () -> new DisabledException("用户未激活"));
         AssertUtil.isTrue(userInfo.isAccountNonLocked(), () -> new LockedException("用户已锁定"));
         AssertUtil.isTrue(userInfo.isAccountNonExpired(), () -> new AccountExpiredException("账户已过期"));
 
-        // 验证通过，返回用户信息
-        BaseUserPO baseUserPO = BeanUtil.copyProperties(userInfo, BaseUserPO.class);
-
-        // no session 解决jpa的lazy
-        baseUserPO.getRoles().stream().forEach(p->p.setMenus(null));
-
-        // 查询菜单
-        List<Long> roleIds = baseUserPO.getRoles().stream().map(BaseRolePO::getId).collect(Collectors.toList());
-        List<BaseRoleDTO> roleDTOS = baseRoleService.listByIds(roleIds);
-        Set<BaseMenuDTO> menuDTOS = roleDTOS
-                .stream()
-                .flatMap(m -> m.getMenus().stream()).collect(Collectors.toSet());
-
-        baseUserPO.setPassword(null);
-        baseUserPO.setMenus(menuDTOS);
-        return baseUserPO;
+        return (BaseUserPO)userInfo;
     }
 
     @Override

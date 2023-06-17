@@ -3,10 +3,9 @@ package com.goudong.oauth2.repository;
 import com.goudong.oauth2.po.BaseTokenPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 接口描述：
@@ -38,5 +37,5 @@ public interface BaseTokenRepository extends JpaRepository<BaseTokenPO, Long>, J
      * @param refreshToken 刷新令牌
      * @return
      */
-    BaseTokenPO findByRefreshToken(String refreshToken);
+    Optional<BaseTokenPO> findByRefreshToken(String refreshToken);
 }

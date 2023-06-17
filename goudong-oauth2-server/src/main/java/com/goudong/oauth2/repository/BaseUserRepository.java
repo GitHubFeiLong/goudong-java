@@ -14,13 +14,13 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, JpaSpecificationExecutor<BaseUserPO> {
 
-    @Query(value = "from BaseUserPO where username=?1 or email = ?1 or phone=?1")
-    BaseUserPO findByLogin(String login);
+    @Query(value = "from BaseUserPO where appId=?1 and (username=?2 or email = ?2 or phone=?2)")
+    BaseUserPO findByLogin(Long appId, String login);
 
     /**
      * 根据qq的openId查询用户信息
      * @param qqOpenId
      * @return
      */
-    BaseUserPO findByQqOpenId(String qqOpenId);
+    // BaseUserPO findByQqOpenId(String qqOpenId);
 }

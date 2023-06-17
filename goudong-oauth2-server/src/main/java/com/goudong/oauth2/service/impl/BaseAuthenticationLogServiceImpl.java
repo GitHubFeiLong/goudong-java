@@ -43,14 +43,17 @@ public class BaseAuthenticationLogServiceImpl implements BaseAuthenticationLogSe
      * @return
      */
     @Override
-    public BaseAuthenticationLogDTO create(BaseAuthenticationLogDTO authenticationLogDTO) {
+    public BaseAuthenticationLogPO create(BaseAuthenticationLogDTO authenticationLogDTO) {
         // 参数校验
         AssertUtil.isEnum(authenticationLogDTO.getType(), AuthenticationLogTypeEnum.class);
-        long longIp = IpUtil.getLongIp(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        String ipv4 = IpUtil.getStringIp(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        long longIp = IpUtil.getLongIp(ipv4);
         BaseAuthenticationLogPO baseAuthenticationLogPO = BeanUtil.copyProperties(authenticationLogDTO, BaseAuthenticationLogPO.class);
+        baseAuthenticationLogPO.setAppId(authenticationLogDTO.getAppId());
         baseAuthenticationLogPO.setIp(longIp);
+        baseAuthenticationLogPO.setIpv4(ipv4);
         baseAuthenticationLogRepository.save(baseAuthenticationLogPO);
-        return BeanUtil.copyProperties(baseAuthenticationLogPO, BaseAuthenticationLogDTO.class);
+        return baseAuthenticationLogPO;
     }
 
 

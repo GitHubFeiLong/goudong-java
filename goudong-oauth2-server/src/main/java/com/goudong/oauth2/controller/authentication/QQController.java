@@ -1,7 +1,6 @@
 package com.goudong.oauth2.controller.authentication;
 
 import com.goudong.boot.redis.core.RedisTool;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.pojo.Transition;
 import com.goudong.commons.utils.core.BeanUtil;
@@ -9,6 +8,7 @@ import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.oauth2.core.OtherUserInfoBean;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.RedirectPageProperties;
@@ -141,7 +141,7 @@ public class QQController {
             } else {
 
                 // 持久化token到Mysql
-                BaseTokenDTO tokenDTO = baseTokenService.loginHandler(byOpenId.getId());
+                BaseTokenDTO tokenDTO = baseTokenService.loginHandler(byOpenId.getAppId(), byOpenId.getId());
 
                 // 将认证信息存储到redis中
                 BaseUserPO baseUserPO = BeanUtil.copyProperties(byOpenId, BaseUserPO.class);
@@ -161,6 +161,7 @@ public class QQController {
 
             // 保存认证日志
             BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
+                    null,
                     openID,
                     true,
                     AuthenticationLogTypeEnum.QQ.name(),

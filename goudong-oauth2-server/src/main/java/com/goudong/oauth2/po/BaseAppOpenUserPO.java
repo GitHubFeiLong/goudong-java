@@ -31,7 +31,6 @@ public class BaseAppOpenUserPO extends BasePO {
     //==================================================================================================================
     private static final long serialVersionUID = -1;
 
-    private String appId;
     private String openId;
     private Long userId;
 }

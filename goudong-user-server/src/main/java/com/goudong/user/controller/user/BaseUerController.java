@@ -1,12 +1,13 @@
 package com.goudong.user.controller.user;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
-import com.goudong.commons.utils.core.BeanUtil;
+import com.goudong.core.context.GoudongContext;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.RegexConst;
 import com.goudong.core.lang.Result;
@@ -83,10 +84,10 @@ public class BaseUerController {
     @GetMapping("/check-registry/phone/{phone}")
     @ApiOperation(value = "检查手机号", notes = "检查手机号是否可以使用，true可以使用")
     @ApiImplicitParam(name = "phone", value = "手机号")
-    @Whitelist("根据手机号获取账号")
     public Result<Boolean> checkPhone(@PathVariable String phone) {
         AssertUtil.isTrue(phone.matches(RegexConst.PHONE_LOOSE), "手机号码格式不正确");
-        BaseUserPO baseUserPO = baseUserRepository.findByPhone(phone);
+        Long appId = GoudongContext.get().getAppId();
+        BaseUserPO baseUserPO = baseUserRepository.findByAppIdAndPhone(appId, phone);
         Result<Boolean> booleanResult = Result.ofSuccess(baseUserPO == null);
         // 返回附加信息，用户基本信息
         if (baseUserPO != null) {
@@ -109,7 +110,6 @@ public class BaseUerController {
     @GetMapping("/check-registry/username/{username}")
     @ApiOperation(value = "检查用户名是否存在", notes = "注册时，检查用户名是否可用。可用时，返回空集合；\n当不可用时，返回3个可用的用户名")
     @ApiImplicitParam(name = "username", value = "用户名")
-    @Whitelist("检查用户名是否存在")
     public Result<List<String>> checkUsername(@PathVariable String username) {
         List<String> strings = baseUserService.generateUserName(username);
         return Result.ofSuccess(strings);
@@ -123,11 +123,10 @@ public class BaseUerController {
      */
     @GetMapping("/check-registry/email/{email}")
     @ApiOperation(value = "检查邮箱能否使用", notes = "当返回对象的data属性为True时，表示可以使用")
-    @Whitelist("检查邮箱能否使用")
     public Result<Boolean> checkEmail(@PathVariable String email) {
         AssertUtil.isEmail(email, "邮箱格式错误");
-
-        BaseUserPO byEmail = baseUserRepository.findByEmail(email);
+        Long appId = GoudongContext.get().getAppId();
+        BaseUserPO byEmail = baseUserRepository.findByAppIdAndEmail(appId, email);
 
         Result<Boolean> result = Result.ofSuccess(byEmail==null);
         return result;
@@ -154,7 +153,6 @@ public class BaseUerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "ui创建普通账号", notes = "后台手动创建用户")
-    @Whitelist("创建普通账号")
     public Result<BaseUserDTO> createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
         AssertUtil.isTrue(createDTO.getPhone().matches(RegexConst.PHONE_LOOSE), "手机号格式错误");
         AssertUtil.isEmail(createDTO.getEmail(), "邮箱格式不正确");

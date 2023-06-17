@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
 import com.goudong.commons.constant.user.RoleConst;
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.commons.dto.oauth2.BaseRoleDTO;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.framework.jpa.BasePO;
+import com.goudong.core.context.Context;
+import com.goudong.oauth2.dto.authentication.BaseMenuDTO;
+import com.goudong.oauth2.dto.authentication.BaseRoleDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,7 +21,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -41,6 +46,7 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     //~fields
     //==================================================================================================================
     private static final long serialVersionUID = -1209701285445397589L;
+
     /**
      * 用户名
      */
@@ -92,12 +98,6 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     private Date validTime;
 
     /**
-     * qq登录后，系统获取腾讯的open_id
-     */
-    @Column(name = "qq_open_id")
-    private String qqOpenId;
-
-    /**
      * 是否已经认证
      */
     @Transient
@@ -128,24 +128,6 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
 
     //~methods
     //==================================================================================================================
-    /**
-     * 创建匿名用户
-     * @return
-     */
-    public static BaseUserPO createAnonymousUser() {
-        BaseUserPO anonymousUser = new BaseUserPO();
-        anonymousUser.setAuthenticated(true);
-        // 这里id不能修改，其他地方已经定义了0是匿名用户
-        anonymousUser.setId(0L);
-        anonymousUser.setUsername("匿名用户");
-        // 创建匿名角色
-        BaseRolePO baseRolePO = new BaseRolePO();
-        baseRolePO.setId(0L);
-        baseRolePO.setRoleName(RoleConst.ROLE_ANONYMOUS);
-        baseRolePO.setRoleNameCn("匿名角色");
-        anonymousUser.setRoles(Lists.newArrayList(baseRolePO));
-        return anonymousUser;
-    }
 
     /**
      * 创建匿名用户
@@ -172,6 +154,7 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
      * 创建一个简单的用户对象，只包含用户基本信息和角色信息
      * @return
      */
+    @Deprecated
     public BaseUserDTO copy() {
         BaseUserDTO dto = new BaseUserDTO();
         dto.setId(this.id);
@@ -190,11 +173,18 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
         });
         dto.setRoles(roles);
         dto.setMenus(null);
-        dto.setSessionId(this.sessionId);
 
         return dto;
     }
 
+    /**
+     * 创建全局上下文对象
+     * @return
+     */
+    public Context toContext() {
+        List<String> roles = this.roles.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        return new Context(this.appId, this.id, roles, this.sessionId);
+    }
     /**
      * 获取用户权限，本质上是用户的角色信息
      * @return
@@ -321,8 +311,14 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     private String sessionId;
 
     /**
+     * 用户对应的角色
+     */
+    @Transient
+    private List<BaseRoleDTO> roleList;
+
+    /**
      * 用户对应的菜单
      */
     @Transient
-    private Set<BaseMenuDTO> menus;
+    private List<BaseMenuDTO> menus;
 }

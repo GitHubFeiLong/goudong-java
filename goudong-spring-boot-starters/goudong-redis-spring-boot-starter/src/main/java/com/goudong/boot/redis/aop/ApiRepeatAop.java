@@ -1,9 +1,9 @@
 package com.goudong.boot.redis.aop;
 
-import com.goudong.boot.redis.context.User;
-import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.redis.core.SimpleRedisKey;
+import com.goudong.core.context.User;
+import com.goudong.core.context.UserContext;
 import com.goudong.core.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

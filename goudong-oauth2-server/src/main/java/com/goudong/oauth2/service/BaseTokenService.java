@@ -16,10 +16,11 @@ public interface BaseTokenService {
     /**
      * 用户登录成功或使用刷新Token，获取新的令牌。并将其令牌保存到Redis和Mysql中
      * 根据设置是否允许重复登录配置，判断删除已有的令牌
+     * @param appId 应用id
      * @param userId 用户id
      * @return
      */
-    BaseTokenDTO loginHandler(Long userId);
+    BaseTokenDTO loginHandler(Long appId, Long userId);
 
     /**
      * 根据访问令牌,和客户端类型获取令牌信息

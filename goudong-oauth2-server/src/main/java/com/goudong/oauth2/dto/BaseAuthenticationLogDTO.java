@@ -46,7 +46,8 @@ public class BaseAuthenticationLogDTO extends BasePO {
     public BaseAuthenticationLogDTO() {
     }
 
-    public BaseAuthenticationLogDTO(String principal, Boolean successful, String type, String description) {
+    public BaseAuthenticationLogDTO(Long appId, String principal, Boolean successful, String type, String description) {
+        this.appId = appId;
         this.principal = principal;
         this.successful = successful;
         this.type = type;

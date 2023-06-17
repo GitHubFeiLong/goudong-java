@@ -29,6 +29,13 @@ import java.util.List;
 public class BaseUserPO extends BasePO {
 
     private static final long serialVersionUID = -1209701285445397589L;
+
+    /**
+     * 应用id，应用之间进行隔离
+     */
+    @Column(name = "app_id", nullable = false)
+    private Long appId;
+
     /**
      * 用户名
      */
@@ -84,12 +91,6 @@ public class BaseUserPO extends BasePO {
      */
     @Column(name = "avatar", nullable = false)
     private String avatar;
-
-    /**
-     * qq登录后，系统获取腾讯的open_id
-     */
-    @Column(name = "qq_open_id")
-    private String qqOpenId;
 
     /**
      * 激活状态（true：激活；false：未激活）

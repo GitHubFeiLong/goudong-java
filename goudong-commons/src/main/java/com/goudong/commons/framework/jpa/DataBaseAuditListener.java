@@ -1,7 +1,7 @@
 package com.goudong.commons.framework.jpa;
 
-import com.goudong.boot.redis.context.UserContext;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
+import com.goudong.core.context.Context;
+import com.goudong.core.context.GoudongContext;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.PostPersist;
@@ -108,9 +108,9 @@ public class DataBaseAuditListener {
         Object userIdValue = createUserId.get(object);
         if (userIdValue == null) {
             // 获取userId值
-            BaseUserDTO baseUserDTO = (BaseUserDTO)UserContext.get();
-            if (baseUserDTO != null && baseUserDTO.getId() != null) {
-                createUserId.set(object, baseUserDTO.getId());
+            Context context = GoudongContext.get();
+            if (context != null && context.getUserId() != null) {
+                createUserId.set(object, context.getUserId());
             } else {
                 // 注意：反射时，不会自动装箱和拆箱
                 // 在此处使用当前用户id或默认用户id
@@ -136,10 +136,10 @@ public class DataBaseAuditListener {
         Object userIdValue = updateUserId.get(object);
         if (userIdValue == null) {
             // 获取userId值
-            BaseUserDTO baseUserDTO = (BaseUserDTO)UserContext.get();
-            if (baseUserDTO != null && baseUserDTO.getId() != null) {
+            Context context = GoudongContext.get();
+            if (context != null && context.getUserId() != null) {
                 // 在此处使用当前用户id或默认用户id
-                updateUserId.set(object, baseUserDTO.getId());
+                updateUserId.set(object, context.getUserId());
             } else {
                 // 在此处使用当前用户id或默认用户id
                 Long id = 0L;

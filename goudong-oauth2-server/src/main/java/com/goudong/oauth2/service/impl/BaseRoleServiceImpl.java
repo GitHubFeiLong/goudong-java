@@ -1,8 +1,10 @@
 package com.goudong.oauth2.service.impl;
 
-import cn.hutool.core.bean.copier.CopyOptions;
-import com.goudong.commons.dto.oauth2.BaseRoleDTO;
-import com.goudong.commons.utils.core.BeanUtil;
+import cn.hutool.core.bean.BeanUtil;
+import com.goudong.oauth2.dto.authentication.BaseMenuDTO;
+import com.goudong.oauth2.dto.authentication.BaseRoleDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
+import com.goudong.oauth2.po.BaseMenuPO;
 import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.repository.BaseRoleRepository;
 import com.goudong.oauth2.service.BaseRoleService;
@@ -10,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -30,19 +35,27 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     //~methods
     //==================================================================================================================
     /**
-     * 查询角色集合
+     * 填充角色和菜单
      *
      * @param ids
+     * @param user
      * @return
      */
-    @Transactional
     @Override
-    public List<BaseRoleDTO> listByIds(List<Long> ids) {
+    @Transactional
+    public void fillRoleAndMenu(List<Long> ids, BaseUserDTO user) {
         List<BaseRolePO> allById = baseRoleRepository.findAllById(ids);
+        List<BaseMenuPO> menuPOS = allById.stream().flatMap(m -> m.getMenus().stream()).collect(Collectors.toList());
+        Map<Long, BaseMenuDTO> menuDTOMap = new HashMap();
+        menuPOS.stream().forEach(p -> {
+            if (!menuDTOMap.containsKey(p.getId())) {
+                menuDTOMap.put(p.getId(), BeanUtil.copyProperties(p, BaseMenuDTO.class));
+            }
+        });
 
-        // allById.stream().forEach(p->p.getMenus());
-        List<BaseRoleDTO> baseRoleDTOS = BeanUtil.copyToList(allById, BaseRoleDTO.class, CopyOptions.create());
-        return baseRoleDTOS;
+        List<BaseMenuDTO> baseMenuDTOS = menuDTOMap.values().stream().sorted().collect(Collectors.toList());
+        List<BaseRoleDTO> baseRoleDTOS = BeanUtil.copyToList(allById, BaseRoleDTO.class);
+        user.setRoles(baseRoleDTOS);
+        user.setMenus(baseMenuDTOS);
     }
-
 }

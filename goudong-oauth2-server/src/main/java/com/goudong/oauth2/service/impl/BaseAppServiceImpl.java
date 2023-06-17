@@ -47,6 +47,18 @@ public class BaseAppServiceImpl implements BaseAppService {
     private BaseAppRepository baseAppRepository;
     //~methods
     //==================================================================================================================
+
+    /**
+     * 根据AppId获取对象
+     *
+     * @param appId
+     * @return
+     */
+    @Override
+    public BaseAppPO getByAppId(String appId) {
+        return baseAppRepository.findByAppId(appId).orElseThrow(() -> ClientException.client("应用不可用"));
+    }
+
     /**
      * 申请应用
      *

@@ -1,18 +1,20 @@
 package com.goudong.oauth2.po;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.goudong.commons.framework.jpa.BasePO;
 import com.goudong.core.lang.IEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 /**
  * 类描述：
@@ -29,10 +31,48 @@ import javax.validation.constraints.NotBlank;
 @SQLDelete(sql = "update base_app set deleted=true where id=?")
 @Where(clause = "deleted=false")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BaseAppPO extends BasePO {
+public class BaseAppPO {
     //~fields
     //==================================================================================================================
     private static final long serialVersionUID = -1;
+    @Id
+    @GeneratedValue
+    public Long id;
+
+    /**
+     * 创建时间
+     */
+    @CreatedDate
+    @Column(name = "create_time")
+    private Date createTime;
+
+    /**
+     * 创建人id
+     */
+    @CreatedBy
+    @Column(name = "create_user_id")
+    private Long createUserId;
+
+    /**
+     * 更新时间
+     */
+    @LastModifiedDate
+    @Column(name = "update_time")
+    private Date updateTime;
+
+    /**
+     * 更新人id
+     */
+    @LastModifiedBy
+    @Column(name = "update_user_id")
+    private Long updateUserId;
+
+    /**
+     * 删除状态 0 正常1 删除
+     */
+    @Column(name = "deleted")
+    protected Boolean deleted;
+
 
     @Column(name = "app_Id", nullable = false)
     @NotBlank(message = "app_id不能为空")
@@ -70,7 +110,7 @@ public class BaseAppPO extends BasePO {
     @Getter
     public enum StatusEnum implements IEnum<Integer, StatusEnum> {
         CHECK_PENDING(0, "待审核"),
-        pass(1, "通过"),
+        PASS(1, "通过"),
         REFER(2, "拒绝"),
         ;
         private int id;

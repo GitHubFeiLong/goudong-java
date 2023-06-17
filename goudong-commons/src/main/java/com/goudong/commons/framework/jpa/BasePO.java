@@ -39,6 +39,12 @@ public abstract class BasePO implements Serializable {
     public Long id;
 
     /**
+     * 应用id，应用之间进行隔离
+     */
+    @Column(name = "app_id", nullable = false)
+    public Long appId;
+
+    /**
      * 创建时间
      */
     @CreatedDate

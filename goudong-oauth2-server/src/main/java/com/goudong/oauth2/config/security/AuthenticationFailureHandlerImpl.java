@@ -3,6 +3,7 @@ package com.goudong.oauth2.config.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
+import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
@@ -61,6 +62,7 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
 
         // 保存认证日志
         BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
+                (Long)httpServletRequest.getAttribute(HttpHeaderConst.X_APP_ID),
                 (String)httpServletRequest.getAttribute("principal"),
                 false,
                 AuthenticationLogTypeEnum.SYSTEM.name(),

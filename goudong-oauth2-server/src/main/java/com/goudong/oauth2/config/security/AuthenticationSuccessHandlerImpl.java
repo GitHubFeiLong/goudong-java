@@ -2,14 +2,17 @@ package com.goudong.oauth2.config.security;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.oauth2.LoginInfoDTO;
 import com.goudong.core.lang.Result;
 import com.goudong.oauth2.dto.BaseAuthenticationLogDTO;
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.dto.authentication.BaseRoleDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
+import com.goudong.oauth2.dto.authentication.LoginInfoDTO;
 import com.goudong.oauth2.enumerate.AuthenticationLogTypeEnum;
+import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseAuthenticationLogService;
+import com.goudong.oauth2.service.BaseRoleService;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -52,14 +58,18 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     private final ObjectMapper objectMapper;
 
+    private final BaseRoleService baseRoleService;
+
     public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
                                             BaseUserService baseUserService,
                                             BaseAuthenticationLogService baseAuthenticationLogService,
-                                            ObjectMapper objectMapper) {
+                                            ObjectMapper objectMapper,
+                                            BaseRoleService baseRoleService) {
         this.baseTokenService = baseTokenService;
         this.baseUserService = baseUserService;
         this.baseAuthenticationLogService = baseAuthenticationLogService;
         this.objectMapper = objectMapper;
+        this.baseRoleService = baseRoleService;
     }
 
     /**
@@ -82,17 +92,23 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         // 转换成自定义的Authentication对象
         BaseUserPO baseUserPO = (BaseUserPO) authentication;
 
+        // role
+        List<BaseRoleDTO> roleDTOList = new ArrayList<>(baseUserPO.getRoles().size());
+        baseUserPO.getRoles().stream().forEach(p->{
+            p.setMenus(null);
+            roleDTOList.add(new BaseRoleDTO(p.getId(), p.getRoleName(), p.getRoleNameCn()));
+        });
         // 持久化token到Mysql
-        BaseTokenDTO tokenDTO = baseTokenService.loginHandler(baseUserPO.getId());
+        BaseTokenDTO tokenDTO = baseTokenService.loginHandler(baseUserPO.getAppId(), baseUserPO.getId());
 
         // 将认证信息存储到redis中
-        BaseUserDTO baseUser = BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
-        baseUser.setSessionId(tokenDTO.getSessionId());
-        baseUserPO.setSessionId(tokenDTO.getSessionId());
         baseUserService.saveAccessToken2Redis(baseUserPO, tokenDTO.getAccessToken());
+
+        baseUserPO.setSessionId(tokenDTO.getSessionId());
 
         // 保存认证日志
         BaseAuthenticationLogDTO baseAuthenticationLogDTO = new BaseAuthenticationLogDTO(
+                baseUserPO.getAppId(),
                 (String)httpServletRequest.getAttribute("principal"),
                 true,
                 AuthenticationLogTypeEnum.SYSTEM.name(),
@@ -101,6 +117,17 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
         // 响应令牌和用户信息
         LoginInfoDTO loginInfo = BeanUtil.copyProperties(tokenDTO, LoginInfoDTO.class);
+
+        BaseUserDTO baseUser = new BaseUserDTO();
+        baseUser.setId(baseUserPO.getId());
+        baseUser.setUsername(baseUserPO.getUsername());
+        baseUser.setEmail(baseUserPO.getEmail());
+        baseUser.setPhone(baseUserPO.getPhone());
+        baseUser.setNickname(baseUserPO.getNickname());
+
+        List<Long> roleIds = baseUserPO.getRoles().stream().map(BaseRolePO::getId).collect(Collectors.toList());
+        baseRoleService.fillRoleAndMenu(roleIds, baseUser);
+        baseUser.setAvatar(baseUserPO.getAvatar());
         loginInfo.setUser(baseUser);
         String json = objectMapper.writeValueAsString(Result.ofSuccess(loginInfo));
 

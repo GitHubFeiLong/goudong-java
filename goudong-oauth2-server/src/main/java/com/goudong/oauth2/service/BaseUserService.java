@@ -1,7 +1,7 @@
 package com.goudong.oauth2.service;
 
 
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import com.goudong.oauth2.po.BaseUserPO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 

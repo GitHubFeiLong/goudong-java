@@ -1,4 +1,4 @@
-package com.goudong.boot.redis.context;
+package com.goudong.core.context;
 
 /**
  * 接口描述：
@@ -7,6 +7,7 @@ package com.goudong.boot.redis.context;
  * @version 1.0
  * @date 2022/11/4 11:36
  */
+@Deprecated
 public interface User {
 
     Long getId();

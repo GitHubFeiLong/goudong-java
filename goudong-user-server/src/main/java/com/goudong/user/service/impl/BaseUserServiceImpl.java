@@ -10,6 +10,7 @@ import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.core.DateConst;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
+import com.goudong.core.context.GoudongContext;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.AssertUtil;
@@ -72,8 +73,9 @@ public class BaseUserServiceImpl implements BaseUserService {
         AssertUtil.isNotBlank(username, "根据用户名查询用户时，用户名不能为空");
         List<String> result = new ArrayList<>();
 
+        Long appId = GoudongContext.get().getAppId();
         // 查询用户名是否存在
-        BaseUserPO byUsername = baseUserRepository.findByUsername(username);
+        BaseUserPO byUsername = baseUserRepository.findByAppIdAndUsername(appId, username);
 
         // 不存在用户，直接使用
         if (byUsername == null) {
@@ -81,7 +83,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         // 模糊查询
-        List<BaseUserPO> baseUserPOS = baseUserRepository.findAllByUsernameIsLike(username);
+        List<BaseUserPO> baseUserPOS = baseUserRepository.findAllByAppIdAndUsernameIsLike(appId, username);
 
         List<String> names = baseUserPOS.stream().map(BaseUserPO::getUsername).collect(Collectors.toList());
 
@@ -123,7 +125,7 @@ public class BaseUserServiceImpl implements BaseUserService {
                 return createBaseUser(userPO);
             case MY_SELF:
             case NOT_MY_SELF:
-                BaseUserPO byPhone = baseUserRepository.findByPhone(baseUserDTO.getPhone());
+                BaseUserPO byPhone = baseUserRepository.findByAppIdAndPhone(GoudongContext.get().getAppId(), baseUserDTO.getPhone());
                 if (byPhone != null) {
                     // 先删除，再新增
                     baseUserRepository.delete(byPhone);
@@ -357,6 +359,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
 
         BaseUserPO baseUserPO = BeanUtil.copyProperties(createDTO, BaseUserPO.class);
+        baseUserPO.setAppId(GoudongContext.get().getAppId());
         baseUserPO.setPassword(BCrypt.hashpw(createDTO.getPassword(), BCrypt.gensalt()));
         baseUserPO.setRoles(BeanUtil.copyToList(baseRoleDTOS, BaseRolePO.class, CopyOptions.create()));
         baseUserPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
@@ -364,6 +367,8 @@ public class BaseUserServiceImpl implements BaseUserService {
         baseUserPO.setNickname(createDTO.getUsername());
         baseUserPO.setEnabled(true);
         baseUserPO.setLocked(false);
+        baseUserPO.setCreateUserId(GoudongContext.get().getUserId());
+        baseUserPO.setUpdateUserId(GoudongContext.get().getUserId());
         baseUserRepository.save(baseUserPO);
         return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
     }
@@ -482,7 +487,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 判断用户名和密码是否匹配
         String loginName = userDTO.getLoginName();
 
-        BaseUserPO byLogin = baseUserRepository.findByLogin(loginName);
+        BaseUserPO byLogin = baseUserRepository.findByLogin(null, loginName);
 
 
         boolean error = byLogin ==null
@@ -491,7 +496,7 @@ public class BaseUserServiceImpl implements BaseUserService {
             throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "账户名与密码不匹配，请重新输入");
         }
         // 修改openId
-        byLogin.setQqOpenId(userDTO.getQqOpenId());
+        // byLogin.setQqOpenId(userDTO.getQqOpenId());
         return BeanUtil.copyProperties(byLogin, BaseUserDTO.class);
     }
 
@@ -503,6 +508,6 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     public BaseUserDTO getUserDetailByLoginName(String loginName) {
-        return BeanUtil.copyProperties(baseUserRepository.findByLogin(loginName), BaseUserDTO.class);
+        return BeanUtil.copyProperties(baseUserRepository.findByLogin(GoudongContext.get().getAppId(), loginName), BaseUserDTO.class);
     }
 }

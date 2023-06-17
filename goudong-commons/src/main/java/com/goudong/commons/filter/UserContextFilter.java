@@ -1,10 +1,10 @@
 package com.goudong.commons.filter;
 
 import cn.hutool.json.JSONUtil;
-import com.goudong.boot.redis.context.UserContext;
 import com.goudong.commons.constant.core.HttpHeaderConst;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.core.context.Context;
+import com.goudong.core.context.GoudongContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,13 +42,13 @@ public class UserContextFilter implements Filter {
         try {
             if (StringUtils.isNotBlank(requestUser)) {
                 String decodeJson = URLDecoder.decode(requestUser, "UTF-8");
-                BaseUserDTO baseUserDTO = JSONUtil.toBean(decodeJson, BaseUserDTO.class);
-                LogUtil.debug(log, "当前请求用户信息：{}", baseUserDTO);
-                UserContext.set(baseUserDTO);
+                Context context = JSONUtil.toBean(decodeJson, Context.class);
+                LogUtil.debug(log, "当前请求用户信息：{}", context);
+                GoudongContext.set(context);
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
-            UserContext.remove();
+            GoudongContext.remove();
         }
     }
 

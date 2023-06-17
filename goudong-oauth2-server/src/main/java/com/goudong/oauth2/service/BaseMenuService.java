@@ -1,8 +1,8 @@
 package com.goudong.oauth2.service;
 
 
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.dto.oauth2.HideMenu2CreateDTO;
+import com.goudong.oauth2.dto.authentication.BaseMenuDTO;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;

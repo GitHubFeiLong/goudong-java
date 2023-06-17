@@ -20,6 +20,10 @@ public class BasePO implements Serializable {
      */
     protected Long id;
     /**
+     * appId
+     */
+    protected Long appId;
+    /**
      * 是否被删除
      */
     protected Boolean deleted;

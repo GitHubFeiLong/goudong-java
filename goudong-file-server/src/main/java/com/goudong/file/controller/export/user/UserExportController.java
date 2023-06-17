@@ -1,18 +1,6 @@
 package com.goudong.file.controller.export.user;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.date.DateUtil;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.metadata.WriteSheet;
-import com.goudong.commons.constant.core.DateConst;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.user.BaseUser2QueryPageReq;
-import com.goudong.commons.framework.openfeign.GoudongUserServerService;
-import com.goudong.core.lang.PageResult;
-import com.goudong.core.lang.Result;
-import com.goudong.file.dto.BaseUserExportDTO;
 import com.goudong.file.service.BaseUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,11 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 /**
  * 类描述：

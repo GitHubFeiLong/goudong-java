@@ -1,4 +1,4 @@
-package com.goudong.boot.redis.context;
+package com.goudong.core.context;
 
 import com.goudong.core.util.AssertUtil;
 
@@ -10,31 +10,31 @@ import com.goudong.core.util.AssertUtil;
  * @version 1.0
  * @date 2022/1/23 10:59
  */
-public final class UserContext {
+public final class GoudongContext {
 
     //~fields
     //==================================================================================================================
-    private static final ThreadLocal<User> threadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<Context> threadLocal = new ThreadLocal<>();
 
     //~methods
     //==================================================================================================================
-    private UserContext() {
+    private GoudongContext() {
     }
 
     /**
      * 设置当前请求的用户信息
-     * @param user
+     * @param context
      */
-    public static void set(User user) {
-        AssertUtil.isNotNull(user, "Only non-null user instances are permitted");
-        threadLocal.set(user);
+    public static void set(Context context) {
+        AssertUtil.isNotNull(context, "Only non-null context instances are permitted");
+        threadLocal.set(context);
     }
 
     /**
      * 获取当前请求的用户信息
      * @return
      */
-    public static User get() {
+    public static Context get() {
         return threadLocal.get();
     }
 

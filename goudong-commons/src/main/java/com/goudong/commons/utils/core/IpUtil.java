@@ -27,6 +27,14 @@ public class IpUtil {
     }
 
     /**
+     * 获取请求的IP地址以long类型返回
+     * @return
+     */
+    public static long getLongIp(String ipString) {
+        return IpUtil.ipToLong(ipString);
+    }
+
+    /**
      * 获取Ip地址
      * @param request 请求对象
      * @return ip地址

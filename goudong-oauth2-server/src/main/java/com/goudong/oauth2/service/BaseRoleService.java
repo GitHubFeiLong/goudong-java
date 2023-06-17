@@ -1,7 +1,7 @@
 package com.goudong.oauth2.service;
 
 
-import com.goudong.commons.dto.oauth2.BaseRoleDTO;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 
 import java.util.List;
 
@@ -15,10 +15,11 @@ import java.util.List;
 public interface BaseRoleService {
 
     /**
-     * 查询角色集合
+     * 填充角色和菜单
      * @param ids
+     * @param user
      * @return
      */
-    List<BaseRoleDTO> listByIds(List<Long> ids);
+    void fillRoleAndMenu(List<Long> ids, BaseUserDTO user);
 }
 

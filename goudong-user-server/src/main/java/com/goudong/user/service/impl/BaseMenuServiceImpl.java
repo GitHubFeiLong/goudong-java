@@ -2,13 +2,13 @@ package com.goudong.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import com.goudong.boot.redis.context.UserContext;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
+import com.goudong.core.context.UserContext;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;

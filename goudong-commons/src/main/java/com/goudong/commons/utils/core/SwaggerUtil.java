@@ -39,6 +39,14 @@ public class SwaggerUtil {
                 .in(ParameterType.HEADER)
                 .build());
 
+        // 应用Id
+        requestParameters.add(new RequestParameterBuilder()
+                .name(HttpHeaderConst.X_APP_ID)
+                .description("应用ID")
+                .required(true)
+                .in(ParameterType.HEADER)
+                .build());
+
         // 客户端类型
         requestParameters.add(new RequestParameterBuilder()
                 .name(HttpHeaderConst.X_CLIENT_SIDE)

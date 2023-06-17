@@ -5,6 +5,7 @@ import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
 import com.goudong.oauth2.dto.BaseAppQueryReq;
+import com.goudong.oauth2.po.BaseAppPO;
 
 /**
  * 接口描述：
@@ -14,6 +15,17 @@ import com.goudong.oauth2.dto.BaseAppQueryReq;
  * @date 2023/6/10 22:50
  */
 public interface BaseAppService {
+
+
+    //~methods
+    //==================================================================================================================
+
+    /**
+     * 根据AppId获取对象
+     * @param appId
+     * @return
+     */
+    BaseAppPO getByAppId(String appId);
 
     /**
      * 申请应用
@@ -42,6 +54,4 @@ public interface BaseAppService {
      * @return
      */
     PageResult<BaseAppDTO> query(BaseAppQueryReq req);
-    //~methods
-    //==================================================================================================================
 }

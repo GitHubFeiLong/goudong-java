@@ -2,9 +2,9 @@ package com.goudong.oauth2.enumerate;
 
 import com.goudong.boot.redis.core.RedisKeyProvider;
 import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO2Redis;
 import com.goudong.oauth2.dto.BaseMenuDTO2Redis;
+import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;
@@ -35,7 +35,7 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      * @param client_side 客户端类型
      * @param access_token 访问令牌 uuid
      */
-    AUTHENTICATION("goudong-oauth2-server:authentication:${client_side}:${access_token}", DataType.STRING, BaseUserDTO.class, 2, TimeUnit.HOURS),
+    AUTHENTICATION("goudong-oauth2-server:authentication:${app_id}:${client_side}:${access_token}", DataType.STRING, BaseUserDTO.class, 2, TimeUnit.HOURS),
 
     /**
      * 将所有菜单数据保存到redis

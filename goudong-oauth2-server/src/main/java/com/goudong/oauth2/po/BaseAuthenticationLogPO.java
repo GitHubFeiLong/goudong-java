@@ -35,6 +35,11 @@ public class BaseAuthenticationLogPO extends BasePO {
     private Long ip;
 
     /**
+     * ip地址,当获取不到ip时使用0
+     */
+    private String ipv4;
+
+    /**
      * 是否是认证成功
      */
     private Boolean successful;
