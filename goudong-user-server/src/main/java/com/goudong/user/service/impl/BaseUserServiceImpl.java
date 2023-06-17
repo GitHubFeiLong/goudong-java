@@ -268,7 +268,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Transactional
     @Override
-    public PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> page(BaseUser2QueryPageDTO page) {
+    public PageResult<BaseUserDTO> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
             if (CollectionUtil.isNotEmpty(page.getIds())) {
@@ -307,15 +307,15 @@ public class BaseUserServiceImpl implements BaseUserService {
             return query.orderBy(weightOrder).getRestriction();
         };
 
-        PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO> convert = null;
+        PageResult<BaseUserDTO> convert = null;
         if (page.getJPAPage() != null && page.getSize() != null) {
             PageRequest pageRequest = PageRequest.of(page.getJPAPage(), page.getSize());
             Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
-            convert = PageResultConvert.convert(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+            convert = PageResultConvert.convert(all, BaseUserDTO.class);
         } else {
             // 导出时
             List<BaseUserPO> all = baseUserRepository.findAll(specification);
-            List<com.goudong.commons.dto.oauth2.BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
+            List<BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, BaseUserDTO.class, CopyOptions.create());
             convert = new PageResult<>(baseUserDTOS);
         }
 
@@ -334,9 +334,9 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     @Transactional
-    public List<com.goudong.commons.dto.oauth2.BaseUserDTO> findAllById(List<Long> ids) {
+    public List<BaseUserDTO> findAllById(List<Long> ids) {
         List<BaseUserPO> allById = baseUserRepository.findAllById(ids);
-        return BeanUtil.copyToList(allById, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
+        return BeanUtil.copyToList(allById, BaseUserDTO.class, CopyOptions.create());
     }
 
     /**
@@ -381,9 +381,9 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     @Transactional
-    public com.goudong.commons.dto.oauth2.BaseUserDTO getUserById(Long id) {
+    public BaseUserDTO getUserById(Long id) {
         BaseUserPO baseUserPO = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
-        return BeanUtil.copyProperties(baseUserPO, com.goudong.commons.dto.oauth2.BaseUserDTO.class);
+        return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
     }
 
     /**

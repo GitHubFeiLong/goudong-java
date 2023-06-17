@@ -2,8 +2,8 @@ package com.goudong.gateway.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.goudong.commons.constant.core.HttpHeaderConst;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
+import com.goudong.core.context.Context;
 import com.goudong.core.util.ListUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +73,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
         String uri = request.getURI().getPath();
         String method = request.getMethodValue();
+        String appId = request.getHeaders().getFirst(HttpHeaderConst.X_APP_ID);
 
         // 本次请求是登录认证/刷新令牌时，不需要进行后面的token校验
         if (IGNORE_URIS.stream().filter(f -> uri.contains(f)).findFirst().orElseGet(() -> "").length() > 0) {
@@ -95,12 +96,12 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         // 鉴权，返回用户信息
         // 注意：内部服务间使用Feign调用，不会走网关！所以也就不会在进行鉴权！
         // 如果需求是内部服务也要鉴权，那么就需要每个服务都添加全局拦截器，调用下面这个鉴权方法即可！！
-        BaseUserDTO baseUserDTO = goudongOauth2ServerService.authorize(uri, method, token, cookie).getData();
+        Context context = goudongOauth2ServerService.authorize(uri, method, appId, token, cookie).getData();
 
         // 将用户信息保存到请求头中，供下游服务使用
         ServerHttpRequest newRequest = request
                 .mutate()
-                .header(HttpHeaderConst.X_REQUEST_USER, URLEncoder.encode(JSON.toJSONString(baseUserDTO), "UTF-8"))
+                .header(HttpHeaderConst.X_REQUEST_USER, URLEncoder.encode(JSON.toJSONString(context), "UTF-8"))
                 .build();
 
         // 创建新的交换机

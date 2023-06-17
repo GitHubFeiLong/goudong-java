@@ -2,7 +2,7 @@ package com.goudong.user.enumerate;
 
 import com.goudong.boot.redis.core.RedisKeyProvider;
 import com.goudong.boot.redis.core.RedisKeyTemplateProviderEnum;
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
+import com.goudong.user.dto.BaseMenuDTO;
 import org.springframework.data.redis.connection.DataType;
 
 import javax.validation.constraints.NotBlank;

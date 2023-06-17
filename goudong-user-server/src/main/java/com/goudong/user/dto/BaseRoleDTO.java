@@ -1,6 +1,5 @@
 package com.goudong.user.dto;
 
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.commons.po.core.BasePO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.goudong.user.service;
 
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.user.dto.AddMenuReq;
+import com.goudong.user.dto.BaseMenuDTO;
 import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
 

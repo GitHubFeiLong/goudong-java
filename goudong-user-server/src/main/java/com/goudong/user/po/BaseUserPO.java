@@ -31,12 +31,6 @@ public class BaseUserPO extends BasePO {
     private static final long serialVersionUID = -1209701285445397589L;
 
     /**
-     * 应用id，应用之间进行隔离
-     */
-    @Column(name = "app_id", nullable = false)
-    private Long appId;
-
-    /**
      * 用户名
      */
     @NotBlank(message = "username不能为空")

@@ -9,17 +9,12 @@ import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.boot.web.enumerate.ServerExceptionEnum;
 import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.user.RoleConst;
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.core.context.UserContext;
+import com.goudong.core.context.GoudongContext;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;
-import com.goudong.user.dto.AddRoleReq;
-import com.goudong.user.dto.BaseRole2QueryPageDTO;
-import com.goudong.user.dto.BaseRoleDTO;
-import com.goudong.user.dto.ModifyRoleReq;
+import com.goudong.user.dto.*;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.exception.RoleException;
 import com.goudong.user.po.BaseMenuPO;
@@ -208,14 +203,13 @@ public class BaseRoleServiceImpl implements BaseRoleService {
                 .orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
 
         // 当前用户所拥有的菜单权限，不能越级设置权限
-        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = ((BaseUserDTO)(UserContext.get())).getRoles();
-        List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
+        List<String> roles = GoudongContext.get().getRoles();
         List<BaseMenuDTO> permissions;
         // ADMIN 直接返回所有
-        if (roleNames.contains(RoleConst.ROLE_ADMIN)) {
+        if (roles.contains(RoleConst.ROLE_ADMIN)) {
             permissions = baseMenuService.findAll();
         } else {
-            permissions = baseMenuService.findAllByRoleNames(roleNames);
+            permissions = baseMenuService.findAllByRoleNames(roles);
         }
 
 
@@ -247,11 +241,10 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         BaseRolePO rolePO = baseRoleRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
 
         // 校验数据
-        List<com.goudong.commons.dto.oauth2.BaseRoleDTO> roles = ((BaseUserDTO)(UserContext.get())).getRoles();
-        List<String> roleNames = roles.stream().map(m -> m.getRoleName()).collect(Collectors.toList());
+        List<String> roles = GoudongContext.get().getRoles();
         // 没有ADMIN权限才校验
-        if (!roleNames.contains(RoleConst.ROLE_ADMIN)) {
-            List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roleNames);
+        if (!roles.contains(RoleConst.ROLE_ADMIN)) {
+            List<BaseMenuDTO> permissions = baseMenuService.findAllByRoleNames(roles);
             List<Long> hasMenuIds = permissions.stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
             Assert.isTrue(hasMenuIds.containsAll(menuIds), ()->ClientException.client(ClientExceptionEnum.FORBIDDEN, "暂无权限", "当前用户没权限没有权限设置的部分权限"));
 

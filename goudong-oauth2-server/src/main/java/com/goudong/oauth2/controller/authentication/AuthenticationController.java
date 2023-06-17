@@ -8,6 +8,7 @@ import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.dto.oauth2.BaseWhitelistDTO;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.core.context.Context;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.oauth2.dto.BaseTokenDTO;
@@ -144,7 +145,7 @@ public class AuthenticationController {
             @ApiImplicitParam(name = "uri", value = "请求uri", required = true),
             @ApiImplicitParam(name = "method", value = "请求方法", required = true)
     })
-    public Result<BaseUserDTO> authorize(@NotBlank String uri, @EnumValidator(enumClass = HttpMethod.class) String method) {
+    public Result<Context> authorize(@NotBlank String uri, @EnumValidator(enumClass = HttpMethod.class) String method) {
         // TODO 响应的用户需要进行精简，不然数据太大没必要网络带宽
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO)SecurityContextHolder.getContext().getAuthentication();
@@ -152,7 +153,7 @@ public class AuthenticationController {
         // ADMIN用户直接不校验权限
         if (authentication.isAdmin()) {
             // 不需要鉴权，直接放行
-            return Result.ofSuccess(authentication.copy());
+            return Result.ofSuccess(authentication.toContext());
         }
 
         /*
@@ -170,7 +171,7 @@ public class AuthenticationController {
                 // 内部接口，需要判断请求
                 if (StringUtils.isNotBlank(httpServletRequest.getHeader(HttpHeaderConst.X_INNER))) {
                     LogUtil.debug(log, "本次请求属于内部请求,不需要鉴权，url:{}", httpServletRequest.getRequestURI());
-                    return Result.ofSuccess(authentication.copy());
+                    return Result.ofSuccess(authentication.toContext());
                 }
                 // 不是内部请求
                 LogUtil.debug(log, "本次请求不属于内部请求，url:{}", httpServletRequest.getRequestURI());
@@ -178,7 +179,7 @@ public class AuthenticationController {
             } else {
                 LogUtil.debug(log, "本次请求命中白名单，不需要鉴权:{}", httpServletRequest.getRequestURI());
                 // 白名单直接放行
-                return Result.ofSuccess(authentication.copy());
+                return Result.ofSuccess(authentication.toContext());
             }
         }
 
@@ -216,7 +217,7 @@ public class AuthenticationController {
                     // 符合条件，退出循环
                     if (antPathMatcher.match(menuUrl, uri) && menuMethod.toUpperCase().indexOf(method.toUpperCase()) !=-1) {
                         LogUtil.debug(log, "本次请求用户有权访问role:{} uri:{}", role.getAuthority(), httpServletRequest.getRequestURI());
-                        return Result.ofSuccess(authentication.copy());
+                        return Result.ofSuccess(authentication.toContext());
                     }
                 }
             }
@@ -226,7 +227,7 @@ public class AuthenticationController {
         }
 
         // 不需要鉴权，直接放行
-        return Result.ofSuccess(authentication.copy());
+        return Result.ofSuccess(authentication.toContext());
     }
 
     /**

@@ -57,12 +57,5 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
     @Query(value = "from BaseUserPO where appId= ?1 and (username=?2 or email = ?2 or phone=?2)")
     BaseUserPO findByLogin(Long appId, String login);
 
-    /**
-     * 根据qq的openId查询用户信息
-     * @param qqOpenId
-     * @return
-     */
-    BaseUserPO findByQqOpenId(String qqOpenId);
-
     int deleteByIdIn(List<Long> ids);
 }

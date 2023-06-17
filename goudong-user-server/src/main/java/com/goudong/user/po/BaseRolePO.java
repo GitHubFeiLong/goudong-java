@@ -20,13 +20,7 @@ import java.util.List;
 @SQLDelete(sql = "update base_role set deleted=null where id=?")
 @Where(clause = "deleted=false")
 public class BaseRolePO extends BasePO {
-
     private static final long serialVersionUID = 3961964136793768410L;
-    /**
-     * 应用id，应用之间进行隔离
-     */
-    @Column(name = "app_id", nullable = false)
-    private Long appId;
 
     /**
      * 角色名称(必须以ROLE_起始命名)

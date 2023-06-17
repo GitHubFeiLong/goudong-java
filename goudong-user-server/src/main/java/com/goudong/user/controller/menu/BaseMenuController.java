@@ -1,8 +1,8 @@
 package com.goudong.user.controller.menu;
 
-import com.goudong.commons.dto.oauth2.BaseMenuDTO;
 import com.goudong.core.lang.Result;
 import com.goudong.user.dto.AddMenuReq;
+import com.goudong.user.dto.BaseMenuDTO;
 import com.goudong.user.dto.BaseMenuPageReq;
 import com.goudong.user.dto.InitMenuReq;
 import com.goudong.user.service.BaseMenuService;

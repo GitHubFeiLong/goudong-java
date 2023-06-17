@@ -231,13 +231,13 @@ public class BaseUerController {
 
     @GetMapping("/page")
     @ApiOperation(value = "分页查询")
-    public Result<PageResult<com.goudong.commons.dto.oauth2.BaseUserDTO>> page (BaseUser2QueryPageDTO page){
+    public Result<PageResult<BaseUserDTO>> page (BaseUser2QueryPageDTO page){
         return Result.ofSuccess(baseUserService.page(page));
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "查询用户信息")
-    public Result<com.goudong.commons.dto.oauth2.BaseUserDTO> getUserById (@PathVariable Long id){
+    public Result<BaseUserDTO> getUserById (@PathVariable Long id){
         return Result.ofSuccess(baseUserService.getUserById(id));
     }
 
