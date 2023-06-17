@@ -1,6 +1,7 @@
 package com.goudong.oauth2.po;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.goudong.commons.framework.jpa.DataBaseAuditListener;
 import com.goudong.core.lang.IEnum;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,12 +32,14 @@ import java.util.Date;
 @SQLDelete(sql = "update base_app set deleted=true where id=?")
 @Where(clause = "deleted=false")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@EntityListeners({DataBaseAuditListener.class})
 public class BaseAppPO {
     //~fields
     //==================================================================================================================
     private static final long serialVersionUID = -1;
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Long id;
 
     /**

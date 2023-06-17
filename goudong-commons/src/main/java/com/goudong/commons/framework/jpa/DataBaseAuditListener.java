@@ -40,7 +40,13 @@ public class DataBaseAuditListener {
     @PrePersist
     public void prePersist(Object object) {
         // 如果填充字段被分装在一个父类中： Class<?> aClass = object.getClass().getSuperclass();
-        Class<?> aClass = object.getClass().getSuperclass();
+        Class<?> aClass;
+        if (object.getClass().getSuperclass() == BasePO.class) {
+            aClass = object.getClass().getSuperclass();
+        } else {
+            aClass = object.getClass();
+        }
+
         try {
             // 填充创建用户Id
             fillCreateUserId(object, aClass, CREATE_USER_ID);
