@@ -271,6 +271,10 @@ public class BaseUserServiceImpl implements BaseUserService {
     public PageResult<BaseUserDTO> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
+
+            // 查询指定应用
+            and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
+
             if (CollectionUtil.isNotEmpty(page.getIds())) {
                 CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("id"));
                 page.getIds().stream().forEach(p -> in.value(p));
