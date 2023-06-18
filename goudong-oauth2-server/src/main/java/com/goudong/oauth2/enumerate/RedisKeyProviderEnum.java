@@ -46,7 +46,12 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      * 将角色对应的菜单保存到redis
      * @param role 角色英文名
      */
-    MENU_ROLE("goudong-oauth2-server:menu:${role}", DataType.LIST, BaseMenuDTO2Redis.class, 1, TimeUnit.DAYS)
+    MENU_ROLE("goudong-oauth2-server:menu:${role}", DataType.LIST, BaseMenuDTO2Redis.class, 1, TimeUnit.DAYS),
+
+    /**
+     * 将应用下所有菜单数据保存到redis
+     */
+    APP_MENU_ALL("goudong-oauth2-server:menu:${appId}:ALL", DataType.LIST, BaseMenuDTO2Redis.class, 1, TimeUnit.DAYS),
     ;
     //~fields
     //==================================================================================================================

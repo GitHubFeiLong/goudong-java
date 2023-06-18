@@ -28,4 +28,11 @@ public interface BaseMenuRepository extends JpaRepository<BaseMenuPO, Long>, Jpa
      */
     List<BaseMenuPO> findAllByHide(boolean hide);
 
+    /**
+     * 查询应用下的所有菜单
+     * @param appId
+     * @return
+     */
+    List<BaseMenuPO> findAllByAppId(Long appId);
+
 }

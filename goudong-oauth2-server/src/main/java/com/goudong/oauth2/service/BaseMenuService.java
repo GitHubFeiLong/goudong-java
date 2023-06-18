@@ -23,6 +23,13 @@ public interface BaseMenuService {
     List<BaseMenuDTO> findAll();
 
     /**
+     * 查询应用下的所有菜单
+     * @param appId
+     * @return
+     */
+    List<BaseMenuDTO> findAllByAppId(Long appId);
+
+    /**
      * 查询指定role的菜单资源
      * @param role
      * @return

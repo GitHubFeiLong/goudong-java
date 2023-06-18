@@ -7,6 +7,7 @@ import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
+import com.goudong.core.context.GoudongContext;
 import com.goudong.core.context.UserContext;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
@@ -319,7 +320,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         BaseMenuPO poByMap = map.get(key);
         po.setHide(false);
         po.setSortNum(sortNumAtomic.getAndIncrement());
-        po.setAppId(1667779450730426368L);
+        po.setAppId(GoudongContext.get().getAppId());
         if (poByMap != null) {  // 原始菜单中有时，就需要修改
             // 拷贝其他属性
             BeanUtil.copyProperties(poByMap, po);

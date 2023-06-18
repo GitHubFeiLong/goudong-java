@@ -82,6 +82,37 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     }
 
     /**
+     * 查询应用下的所有菜单
+     *
+     * @param appId
+     * @return
+     */
+    @Override
+    public List<BaseMenuDTO> findAllByAppId(Long appId) {
+        // 查询redis是否存在，不存在再加锁查询数据库
+        List<BaseMenuDTO2Redis> menuDTO2Redis = redisTool.getList(RedisKeyProviderEnum.APP_MENU_ALL, BaseMenuDTO2Redis.class, appId);
+
+        if (CollectionUtil.isNotEmpty(menuDTO2Redis)) {
+            return BeanUtil.copyToList(menuDTO2Redis, BaseMenuDTO.class, CopyOptions.create());
+        }
+        synchronized (this) {
+            menuDTO2Redis = redisTool.getList(RedisKeyProviderEnum.APP_MENU_ALL, BaseMenuDTO2Redis.class, appId);
+            if (CollectionUtil.isNotEmpty(menuDTO2Redis)) {
+                return BeanUtil.copyToList(menuDTO2Redis, BaseMenuDTO.class, CopyOptions.create());
+            }
+            // 查询数据库
+            List<BaseMenuPO> menus = baseMenuRepository.findAllByAppId(appId);
+            if (CollectionUtil.isNotEmpty(menus)) {
+                menuDTO2Redis = BeanUtil.copyToList(menus, BaseMenuDTO2Redis.class, CopyOptions.create());
+                redisTool.set(RedisKeyProviderEnum.APP_MENU_ALL, menuDTO2Redis, appId);
+                return BeanUtil.copyToList(menuDTO2Redis, BaseMenuDTO.class, CopyOptions.create());
+            }
+        }
+
+        return new ArrayList<>(0);
+    }
+
+    /**
      * 查询指定role的菜单资源
      *
      * @param role

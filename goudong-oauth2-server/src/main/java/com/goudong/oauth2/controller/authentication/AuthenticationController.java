@@ -146,7 +146,6 @@ public class AuthenticationController {
             @ApiImplicitParam(name = "method", value = "请求方法", required = true)
     })
     public Result<Context> authorize(@NotBlank String uri, @EnumValidator(enumClass = HttpMethod.class) String method) {
-        // TODO 响应的用户需要进行精简，不然数据太大没必要网络带宽
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO)SecurityContextHolder.getContext().getAuthentication();
 
@@ -186,7 +185,7 @@ public class AuthenticationController {
         /*
             不是白名单，不是内部调用，就需要判断该请求需要什么角色的权限
          */
-        List<BaseMenuDTO> allMenu = baseMenuService.findAll();
+        List<BaseMenuDTO> allMenu = baseMenuService.findAllByAppId(authentication.getAppId());
 
         // 判断是否需要鉴权
         Optional<BaseMenuDTO> menuOptional = allMenu.parallelStream()

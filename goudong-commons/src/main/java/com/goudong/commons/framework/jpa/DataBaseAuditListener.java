@@ -25,6 +25,7 @@ public class DataBaseAuditListener {
 
     //~fields
     //==================================================================================================================
+    public static final String APP_ID = "appId";
     public static final String CREATE_USER_ID = "createUserId";
     public static final String UPDATE_USER_ID = "updateUserId";
     public static final String CREATE_TIME = "createTime";
@@ -35,7 +36,7 @@ public class DataBaseAuditListener {
     //==================================================================================================================
 
     /**
-     * 新增数据时，填充创建人，更新人，更新时间和创建时间
+     * 新增数据时，填充应用Id,创建人，更新人，更新时间和创建时间
      */
     @PrePersist
     public void prePersist(Object object) {
@@ -46,8 +47,9 @@ public class DataBaseAuditListener {
         } else {
             aClass = object.getClass();
         }
-
         try {
+            // 填充创建用户Id
+            fillAppId(object, aClass, APP_ID);
             // 填充创建用户Id
             fillCreateUserId(object, aClass, CREATE_USER_ID);
             // 填充更新用户id
@@ -69,7 +71,12 @@ public class DataBaseAuditListener {
     @PreUpdate
     public void preUpdate(Object object) {
         // 如果填充字段被分装在一个父类中： Class<?> aClass = object.getClass().getSuperclass();
-        Class<?> aClass = object.getClass().getSuperclass();
+        Class<?> aClass;
+        if (object.getClass().getSuperclass() == BasePO.class) {
+            aClass = object.getClass().getSuperclass();
+        } else {
+            aClass = object.getClass();
+        }
         try {
             // 填充更新用户Id
             fillUpdateUserId(object, aClass, UPDATE_USER_ID);
@@ -95,6 +102,35 @@ public class DataBaseAuditListener {
     @PostUpdate
     public void postUpdate(Object object)
             throws IllegalArgumentException, IllegalAccessException {
+    }
+
+    /**
+     * 填充应用Id
+     *
+     * @param object
+     * @param aClass
+     * @param propertyName 属性名（对应实体类中的属性）
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    protected void fillAppId(Object object, Class<?> aClass, String propertyName) throws NoSuchFieldException, IllegalAccessException, IntrospectionException, InvocationTargetException, NoSuchMethodException {
+        Field appId = aClass.getDeclaredField(propertyName);
+        appId.setAccessible(true);
+
+        // 没有特意设置用户id，就需要设置用户id
+        Object appIdValue = appId.get(object);
+        if (appIdValue == null) {
+            // 获取userId值
+            Context context = GoudongContext.get();
+            if (context != null && context.getAppId() != null) {
+                appId.set(object, context.getAppId());
+            } else {
+                // 注意：反射时，不会自动装箱和拆箱
+                // 在此处使用当前用户id或默认用户id
+                Long id = 0L;
+                appId.set(object, id);
+            }
+        }
     }
 
     /**
