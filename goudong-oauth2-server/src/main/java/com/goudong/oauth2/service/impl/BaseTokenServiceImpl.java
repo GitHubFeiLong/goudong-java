@@ -100,7 +100,11 @@ public class BaseTokenServiceImpl implements BaseTokenService {
         baseTokenPO.setUserId(userId);
         baseTokenPO.setAppId(appId);
         baseTokenPO.setClientType(clientSideEnum.getLowerName());
-
+        baseTokenPO.setDeleted(false);
+        baseTokenPO.setCreateUserId(userId);
+        baseTokenPO.setUpdateUserId(userId);
+        baseTokenPO.setCreateTime(new Date());
+        baseTokenPO.setUpdateTime(new Date());
         // 默认是 browser
         TokenExpires tokenExpires = TokenExpires.getTokenExpires(clientSideEnum, tokenExpiresProperties);
 

@@ -8,7 +8,6 @@ import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
 import com.goudong.core.context.GoudongContext;
-import com.goudong.core.context.UserContext;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;
@@ -95,7 +94,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
         // 查询所有系统菜单
         BaseMenuPO baseMenuPO = new BaseMenuPO();
-
+        baseMenuPO.setAppId(GoudongContext.get().getAppId());
         Example<BaseMenuPO> of = Example.of(baseMenuPO);
         List<BaseMenuPO> sysMenus = baseMenuRepository.findAll(of);
 
@@ -115,7 +114,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 多余的菜单id（需要删除）
         List<Long> needlessMenuIds = new ArrayList<>();
         Date now = new Date();
-        Long userId = UserContext.get().getId();
+        Long userId = GoudongContext.get().getUserId();
 
         pos.stream().forEach(p->{
             // 获取原始菜单

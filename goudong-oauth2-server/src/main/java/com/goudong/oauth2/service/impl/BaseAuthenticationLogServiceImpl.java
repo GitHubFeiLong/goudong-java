@@ -52,6 +52,11 @@ public class BaseAuthenticationLogServiceImpl implements BaseAuthenticationLogSe
         baseAuthenticationLogPO.setAppId(authenticationLogDTO.getAppId());
         baseAuthenticationLogPO.setIp(longIp);
         baseAuthenticationLogPO.setIpv4(ipv4);
+        baseAuthenticationLogPO.setDeleted(authenticationLogDTO.getDeleted());
+        baseAuthenticationLogPO.setCreateTime(authenticationLogDTO.getCreateTime());
+        baseAuthenticationLogPO.setCreateUserId(authenticationLogDTO.getCreateUserId());
+        baseAuthenticationLogPO.setUpdateTime(authenticationLogDTO.getUpdateTime());
+        baseAuthenticationLogPO.setUpdateUserId(authenticationLogDTO.getUpdateUserId());
         baseAuthenticationLogRepository.save(baseAuthenticationLogPO);
         return baseAuthenticationLogPO;
     }

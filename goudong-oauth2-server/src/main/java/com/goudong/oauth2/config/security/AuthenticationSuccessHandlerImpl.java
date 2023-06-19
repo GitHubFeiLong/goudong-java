@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,6 +114,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                 true,
                 AuthenticationLogTypeEnum.SYSTEM.name(),
                 "认证成功");
+        // 由于登录时，没有用户的上下文，所以不能使用审计填充字段
+        baseAuthenticationLogDTO.setDeleted(false);
+        baseAuthenticationLogDTO.setCreateTime(new Date());
+        baseAuthenticationLogDTO.setCreateUserId(baseUserPO.getId());
+        baseAuthenticationLogDTO.setUpdateTime(new Date());
+        baseAuthenticationLogDTO.setUpdateUserId(baseUserPO.getId());
         baseAuthenticationLogService.create(baseAuthenticationLogDTO);
 
         // 响应令牌和用户信息

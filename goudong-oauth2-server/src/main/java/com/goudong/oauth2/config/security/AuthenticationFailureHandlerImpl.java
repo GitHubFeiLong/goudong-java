@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * 类描述：
@@ -67,6 +68,12 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
                 false,
                 AuthenticationLogTypeEnum.SYSTEM.name(),
                 result.getClientMessage());
+        // 由于登录时，没有用户的上下文，所以不能使用审计填充字段
+        baseAuthenticationLogDTO.setDeleted(false);
+        baseAuthenticationLogDTO.setCreateTime(new Date());
+        baseAuthenticationLogDTO.setCreateUserId(0L);
+        baseAuthenticationLogDTO.setUpdateTime(new Date());
+        baseAuthenticationLogDTO.setUpdateUserId(0L);
         baseAuthenticationLogService.create(baseAuthenticationLogDTO);
 
         httpServletResponse.setStatus(exceptionEnum.getStatus());

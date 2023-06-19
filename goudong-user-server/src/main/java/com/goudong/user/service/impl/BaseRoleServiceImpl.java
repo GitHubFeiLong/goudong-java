@@ -122,10 +122,15 @@ public class BaseRoleServiceImpl implements BaseRoleService {
      */
     @Override
     public List<BaseRoleDTO> listByIds(List<Long> roleIds) {
-        Specification<BaseRolePO> specification = ((root, query, criteriaBuilder) -> query.where(
-                criteriaBuilder.in(root.get("id")).in(roleIds),
-                criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId())
-                ).getRestriction());
+        Specification<BaseRolePO> specification = ((root, query, criteriaBuilder) -> {
+            List<Predicate> and = new ArrayList<>();
+            and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
+            CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("id"));
+            roleIds.stream().forEach(p -> in.value(p));
+            and.add(in);
+
+            return query.where(and.toArray(new Predicate[and.size()])).getRestriction();
+        });
 
         List<BaseRolePO> roles = baseRoleRepository.findAll(specification);
         return BeanUtil.copyToList(roles, BaseRoleDTO.class, CopyOptions.create());
