@@ -2,6 +2,8 @@ package com.goudong.core.context;
 
 import com.goudong.core.util.AssertUtil;
 
+import java.util.Optional;
+
 /**
  * 类描述：
  * 获取当前请求的用户信息
@@ -35,7 +37,7 @@ public final class GoudongContext {
      * @return
      */
     public static Context get() {
-        return threadLocal.get();
+        return Optional.ofNullable(threadLocal.get()).orElseThrow(() -> new RuntimeException("上下文不存在"));
     }
 
     /**

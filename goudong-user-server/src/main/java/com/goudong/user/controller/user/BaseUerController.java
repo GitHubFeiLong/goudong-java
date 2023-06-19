@@ -175,9 +175,7 @@ public class BaseUerController {
     @Whitelist("根据账户名查询基本信息")
     public Result getUserByLoginName(@PathVariable("login-name") String loginName){
         List<BaseUserPO> userByLoginName = baseUserService.getUserByLoginName(loginName);
-        if (CollectionUtil.isEmpty(userByLoginName)) {
-            throw ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在");
-        }
+        AssertUtil.isNotEmpty(userByLoginName, () -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
         BaseUserDTO baseUserDTO = BeanUtil.copyProperties(userByLoginName.get(0), BaseUserDTO.class, "password");
         return Result.ofSuccess(baseUserDTO);
     }
@@ -191,24 +189,26 @@ public class BaseUerController {
     @ApiOperation(value = "修改密码")
     @Whitelist("修改密码")
     public Result<BaseUserDTO> updatePassword(@RequestBody @Validated BaseUser2UpdatePasswordDTO user2UpdatePasswordDTO){
+        AssertUtil.isEquals(user2UpdatePasswordDTO.getId(), GoudongContext.get().getUserId(), () -> ClientException.clientByForbidden("无权修改其他账户密码"));
         BaseUserDTO baseUserDTO = BeanUtil.copyProperties(user2UpdatePasswordDTO, BaseUserDTO.class);
         return Result.ofSuccess(baseUserService.updatePassword(baseUserDTO));
     }
 
-    /**
-     * 绑定openId
-     * @param updateOpenIdDTO
-     * @return
-     */
-    @PatchMapping("/bind-open-id")
-    @ApiOperation(value = "绑定openId", hidden = true)
-    public Result updateOpenId(@RequestBody @Validated BaseUser2UpdateOpenIdDTO updateOpenIdDTO){
-        AssertUtil.isEnum(updateOpenIdDTO.getUserType(), OtherUserTypeEnum.class);
-
-        BaseUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdDTO, BaseUserDTO.class);
-
-        return Result.ofSuccess(baseUserService.updateOpenId(userDTO));
-    }
+    // /**
+    //  * 绑定openId
+    //  * TODO
+    //  * @param updateOpenIdDTO
+    //  * @return
+    //  */
+    // @PatchMapping("/bind-open-id")
+    // @ApiOperation(value = "绑定openId", hidden = true)
+    // public Result updateOpenId(@RequestBody @Validated BaseUser2UpdateOpenIdDTO updateOpenIdDTO){
+    //     AssertUtil.isEnum(updateOpenIdDTO.getUserType(), OtherUserTypeEnum.class);
+    //
+    //     BaseUserDTO userDTO = BeanUtil.copyProperties(updateOpenIdDTO, BaseUserDTO.class);
+    //
+    //     return Result.ofSuccess(baseUserService.updateOpenId(userDTO));
+    // }
 
     /**
      * 查询用户的详细信息
@@ -218,6 +218,7 @@ public class BaseUerController {
     @GetMapping("/detail-info/{login-name}")
     @ApiOperation(value = "查询用户的详细信息")
     @ApiImplicitParam(name = "login-name", value = "账户名")
+    @Deprecated
     public Result<BaseUserDTO> getUserDetailByLoginName (@PathVariable("login-name") String loginName){
         BaseUserDTO authorityUserDTO = baseUserService.getUserDetailByLoginName(loginName);
         return Result.ofSuccess(authorityUserDTO);
@@ -235,11 +236,11 @@ public class BaseUerController {
         return Result.ofSuccess(baseUserService.page(page));
     }
 
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询用户信息")
-    public Result<BaseUserDTO> getUserById (@PathVariable Long id){
-        return Result.ofSuccess(baseUserService.getUserById(id));
-    }
+    // @GetMapping("/{id}")
+    // @ApiOperation(value = "查询用户信息")
+    // public Result<BaseUserDTO> getUserById (@PathVariable Long id){
+    //     return Result.ofSuccess(baseUserService.getUserById(id));
+    // }
 
     @PutMapping("/admin/user")
     @ApiOperation(value = "admin-更新用户信息")
@@ -283,13 +284,5 @@ public class BaseUerController {
     @ApiImplicitParam(name = "id", value = "user id", required = true)
     public Result<Boolean> changeLocked(@PathVariable @Min(value = 100) Long id) {
         return Result.ofSuccess(baseUserService.changeLocked(id));
-    }
-
-
-    @GetMapping("/demo")
-    @ApiOperation(value = "测试请求")
-    @Whitelist("测试请求")
-    public Result demo(@RequestParam String name, @RequestParam String password){
-        return Result.ofSuccess(name+password);
     }
 }

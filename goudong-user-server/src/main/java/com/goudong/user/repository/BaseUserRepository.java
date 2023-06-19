@@ -57,5 +57,11 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
     @Query(value = "from BaseUserPO where appId= ?1 and (username=?2 or email = ?2 or phone=?2)")
     BaseUserPO findByLogin(Long appId, String login);
 
-    int deleteByIdIn(List<Long> ids);
+    /**
+     * 删除用户
+     * @param appId
+     * @param ids
+     * @return
+     */
+    int deleteByAppIdAndIdIn(Long appId, List<Long> ids);
 }

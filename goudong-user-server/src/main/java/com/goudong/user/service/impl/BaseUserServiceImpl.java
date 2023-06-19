@@ -119,9 +119,8 @@ public class BaseUserServiceImpl implements BaseUserService {
             case BLANK:
                 // 查询填写的基本信息是否已存在
                 List<BaseUserPO> baseUserPOS = ListUsersByLoginName(baseUserDTO.getUsername(), baseUserDTO.getPhone(), baseUserDTO.getEmail());
-                if (CollectionUtil.isNotEmpty(baseUserPOS)) {
-                    throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在");
-                }
+
+                AssertUtil.isEmpty(baseUserPOS, () -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "注册的用户已存在"));
                 return createBaseUser(userPO);
             case MY_SELF:
             case NOT_MY_SELF:
@@ -228,22 +227,27 @@ public class BaseUserServiceImpl implements BaseUserService {
         Specification<BaseUserPO> specification = new Specification<BaseUserPO>() {
             @Override
             public Predicate toPredicate(Root<BaseUserPO> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> and = new ArrayList<>();
+                // 查询指定应用
+                and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
+
                 Predicate predicate = null;
                 if (StringUtil.isNotBlank(page.getUsername())) {
                     Path<String> username = root.get("username");
-                    predicate = criteriaBuilder.like(username, page.getUsername() + "%");
+                    and.add(criteriaBuilder.like(username, page.getUsername() + "%"));
                 } else if (StringUtil.isNotBlank(page.getPhone())) {
                     Path<String> phone = root.get("phone");
-                    predicate = criteriaBuilder.like(phone, page.getPhone() + "%");
+                    and.add(criteriaBuilder.like(phone, page.getPhone() + "%"));
                 } else if (StringUtil.isNotBlank(page.getEmail())) {
                     Path<String> email = root.get("email");
-                    predicate = criteriaBuilder.like(email, page.getEmail() + "%");
+                    and.add(criteriaBuilder.like(email, page.getEmail() + "%"));
                 } else if (StringUtil.isNotBlank(page.getNickname())) {
                     Path<String> nickname = root.get("nickname");
-                    predicate = criteriaBuilder.like(nickname, page.getNickname() + "%");
+                    and.add(criteriaBuilder.like(nickname, page.getNickname() + "%"));
                 }
 
-                return predicate;
+                Order weightOrder = criteriaBuilder.desc(root.get("createTime"));
+                return query.where(and.toArray(new Predicate[and.size()])).orderBy(weightOrder).getRestriction();
             }
         };
 
@@ -371,8 +375,6 @@ public class BaseUserServiceImpl implements BaseUserService {
         baseUserPO.setNickname(createDTO.getUsername());
         baseUserPO.setEnabled(true);
         baseUserPO.setLocked(false);
-        baseUserPO.setCreateUserId(GoudongContext.get().getUserId());
-        baseUserPO.setUpdateUserId(GoudongContext.get().getUserId());
         baseUserRepository.save(baseUserPO);
         return BeanUtil.copyProperties(baseUserPO, BaseUserDTO.class);
     }
@@ -400,11 +402,9 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Transactional
     public BaseUserDTO adminEditUser(AdminEditUserReq req) {
         BaseUserPO userPO = baseUserRepository.findById(req.getId()).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
-
+        AssertUtil.isEquals(userPO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         List<BaseRoleDTO> roles = baseRoleService.listByIds(req.getRoleIds());
-        if (req.getRoleIds().size() != roles.size()) {
-            throw ClientException.client(ClientExceptionEnum.BAD_REQUEST, "角色不正确");
-        }
+        AssertUtil.isEquals(req.getRoleIds().size(), roles.size(), () -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "角色不正确"));
 
         userPO.setNickname(req.getNickname());
         userPO.setAvatar(req.getAvatar());
@@ -425,6 +425,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     public BaseUserDTO deleteUserById(Long id) {
         BaseUserPO user = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "用户不存在"));
+        AssertUtil.isEquals(user.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         baseUserRepository.delete(user);
         return BeanUtil.copyProperties(user, BaseUserDTO.class);
     }
@@ -438,6 +439,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     public boolean resetPassword(Long id) {
         BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
+        AssertUtil.isEquals(userPO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         userPO.setPassword(BCrypt.hashpw("123456", BCrypt.gensalt()));
         return true;
     }
@@ -451,6 +453,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     public boolean changeEnabled(Long id) {
         BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
+        AssertUtil.isEquals(userPO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         userPO.setEnabled(!userPO.getEnabled());
         return true;
     }
@@ -463,7 +466,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     public boolean deleteUserByIds(List<Long> ids) {
-        baseUserRepository.deleteByIdIn(ids);
+        baseUserRepository.deleteByAppIdAndIdIn(GoudongContext.get().getAppId(), ids);
         return true;
     }
 
@@ -476,6 +479,7 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     public boolean changeLocked(Long id) {
         BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
+        AssertUtil.isEquals(userPO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         userPO.setLocked(!userPO.getLocked());
         return true;
     }

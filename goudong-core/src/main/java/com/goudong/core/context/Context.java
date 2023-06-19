@@ -1,5 +1,7 @@
 package com.goudong.core.context;
 
+import com.goudong.core.util.CollectionUtil;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +36,8 @@ public class Context {
      */
     private String sessionId;
 
+    // ~ construction
+    //==================================================================================================================
     public Context() {
     }
 
@@ -44,6 +48,18 @@ public class Context {
         this.sessionId = sessionId;
     }
 
+    // ~ 自定义方法
+    //==================================================================================================================
+    /**
+     * 是否拥有admin权限
+     * @return
+     */
+    public boolean hasAdmin() {
+        return CollectionUtil.isNotEmpty(roles) ? roles.contains("ROLE_ADMIN") : false;
+    }
+
+    // ~ getter & setter
+    //==================================================================================================================
     public Long getAppId() {
         return appId;
     }

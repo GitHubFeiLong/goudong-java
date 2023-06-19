@@ -21,10 +21,6 @@ public class ModifyRoleReq {
     @ApiModelProperty(value = "角色id", required = true)
     private Long id;
 
-    @ApiModelProperty(value = "角色名", required = true)
-    @NotEmpty
-    private String roleNameCn;
-
     @ApiModelProperty(value = "备注")
     private String remark;
     //~methods

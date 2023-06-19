@@ -61,21 +61,21 @@ public class BaseMenuServiceImpl implements BaseMenuService {
      */
     public List<BaseMenuDTO> findAll() {
         // 查询redis是否存在，不存在再加锁查询数据库
-        List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class);
+        Long appId = GoudongContext.get().getAppId();
+        List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class, appId);
         if (CollectionUtil.isNotEmpty(menuDTOS)) {
             return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
         }
         synchronized (this) {
-            menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class);
+            menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ALL, BaseMenuDTO.class, appId);
             if (CollectionUtil.isNotEmpty(menuDTOS)) {
                 return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
             }
             // 查询数据库
-            List<BaseMenuPO> menus = baseMenuRepository.findAll();
+            List<BaseMenuPO> menus = baseMenuRepository.findAllByAppId(appId);
             if (CollectionUtil.isNotEmpty(menus)) {
                 menuDTOS = BeanUtil.copyToList(menus, BaseMenuDTO.class, CopyOptions.create());
-                redisTool.set(RedisKeyProviderEnum.MENU_ALL, menuDTOS);
-
+                redisTool.set(RedisKeyProviderEnum.MENU_ALL, menuDTOS, appId);
                 return BeanUtil.copyToList(menuDTOS, BaseMenuDTO.class, CopyOptions.create());
             }
         }
@@ -209,24 +209,24 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             return new ArrayList<>(0);
         }
         // 查询redis是否存在，不存在再加锁查询数据库
-        List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, role);
+        List<BaseMenuDTO> menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, GoudongContext.get().getAppId(),role);
         if (CollectionUtil.isNotEmpty(menuDTOS)) {
             return menuDTOS;
         }
         synchronized (this) {
-            menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, role);
+            menuDTOS = redisTool.getList(RedisKeyProviderEnum.MENU_ROLE, BaseMenuDTO.class, GoudongContext.get().getAppId(), role);
             if (CollectionUtil.isNotEmpty(menuDTOS)) {
                 return menuDTOS;
             }
             // 查询数据库
-            BaseRolePO baseRolePO = baseRoleRepository.findByRoleName(role)
+            BaseRolePO baseRolePO = baseRoleRepository.findByAppIdAndRoleName(GoudongContext.get().getAppId(), role)
                     .orElseThrow(() -> ClientException.client(ClientExceptionEnum.BAD_REQUEST, "参数错误，角色不存在"));
             List<BaseMenuPO> menus = baseRolePO.getMenus();
 
             if (CollectionUtil.isNotEmpty(menus)) {
                 menuDTOS = BeanUtil.copyToList(menus, BaseMenuDTO.class, CopyOptions.create());
 
-                redisTool.set(RedisKeyProviderEnum.MENU_ROLE, menuDTOS, role);
+                redisTool.set(RedisKeyProviderEnum.MENU_ROLE, menuDTOS, GoudongContext.get().getAppId(), role);
 
                 return menuDTOS;
             }

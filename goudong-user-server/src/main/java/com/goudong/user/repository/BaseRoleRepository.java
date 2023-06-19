@@ -4,6 +4,7 @@ import com.goudong.user.po.BaseRolePO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,10 +18,19 @@ public interface BaseRoleRepository extends JpaRepository<BaseRolePO, Long>, Jpa
 
     /**
      * 根据角色名称，查询角色
+     * @param appId
      * @param roleName
      * @return
      */
-    Optional<BaseRolePO> findByRoleName(String roleName);
+    Optional<BaseRolePO> findByAppIdAndRoleName(Long appId, String roleName);
+
+    /**
+     * 查询应用下的指定id的所有角色
+     * @param appId
+     * @param ids
+     * @return
+     */
+    List<BaseRolePO> findAllByAppIdAndIdIn(Long appId, List<Long> ids);
 
     /**
      * 根据角色名查询

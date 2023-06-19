@@ -18,6 +18,21 @@ import java.util.List;
  */
 public interface BaseMenuRepository extends JpaRepository<BaseMenuPO, Long>, JpaSpecificationExecutor<BaseMenuPO> {
 
+    /**
+     * 查询应用下的所有菜单
+     * @param appId
+     * @return
+     */
+    List<BaseMenuPO> findAllByAppId(Long appId);
+
+    /**
+     * 查询应用下的所有菜单
+     * @param appId
+     * @param ids
+     * @return
+     */
+    List<BaseMenuPO> findAllByAppIdAndIdIsIn(Long appId, List<Long> ids);
+
     @Modifying
     @Query(nativeQuery = true, value = "delete from base_role_menu where menu_id in (:menuIds);")
     void deleteRoleMenu(@Param("menuIds") List<Long> menuIds);

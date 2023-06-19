@@ -1,5 +1,6 @@
 package com.goudong.oauth2.filter;
 
+import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.core.util.AssertUtil;
@@ -52,7 +53,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
         try {
             // 先校验请求头应用Id
             String appId = httpServletRequest.getHeader(HttpHeaderConst.X_APP_ID);
-            AssertUtil.isNotBlank(appId, () -> new IllegalArgumentException(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
+            AssertUtil.isNotBlank(appId, () -> BasicException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
             BaseAppPO baseAppPO = baseAppService.getByAppId(appId);
             AssertUtil.isTrue(baseAppPO.getStatus() == BaseAppPO.StatusEnum.PASS.getId(), () -> ClientException.client("应用不可用"));
             // 替换请求头中的应用Id
