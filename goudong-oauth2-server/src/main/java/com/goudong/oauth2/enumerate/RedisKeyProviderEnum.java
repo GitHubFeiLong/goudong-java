@@ -52,6 +52,10 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
      * 将应用下所有菜单数据保存到redis
      */
     APP_MENU_ALL("goudong-oauth2-server:menu:${appId}:ALL", DataType.LIST, BaseMenuDTO2Redis.class, 1, TimeUnit.DAYS),
+
+    //~分布式锁
+    //==================================================================================================================
+    LOCK_BASE_APP__AUDIT("goudong-oauth2-server:lock:base-app:audit", DataType.STRING, String.class),
     ;
     //~fields
     //==================================================================================================================

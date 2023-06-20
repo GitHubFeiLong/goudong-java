@@ -272,7 +272,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Transactional
     @Override
-    public PageResult<BaseUserDTO> page(BaseUser2QueryPageDTO page) {
+    public PageResult<BaseUserPageResp> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
 
@@ -315,22 +315,10 @@ public class BaseUserServiceImpl implements BaseUserService {
             return query.orderBy(weightOrder).getRestriction();
         };
 
-        PageResult<BaseUserDTO> convert = null;
-        if (page.getJPAPage() != null && page.getSize() != null) {
-            PageRequest pageRequest = PageRequest.of(page.getJPAPage(), page.getSize());
-            Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
-            convert = PageResultConvert.convert(all, BaseUserDTO.class);
-        } else {
-            // 导出时
-            List<BaseUserPO> all = baseUserRepository.findAll(specification);
-            List<BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, BaseUserDTO.class, CopyOptions.create());
-            convert = new PageResult<>(baseUserDTOS);
-        }
+        PageRequest pageRequest = PageRequest.of(page.getJPAPage(), page.getSize());
+        Page<BaseUserPO> all = baseUserRepository.findAll(specification, pageRequest);
+        PageResult<BaseUserPageResp> convert = PageResultConvert.convert(all, BaseUserPageResp.class);
 
-        // 脱敏
-        convert.getContent().forEach(p->{
-            p.setPassword(null);
-        });
         return convert;
     }
 

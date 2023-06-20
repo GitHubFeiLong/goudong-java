@@ -1,10 +1,7 @@
 package com.goudong.user.service;
 
 import com.goudong.core.lang.PageResult;
-import com.goudong.user.dto.AdminEditUserReq;
-import com.goudong.user.dto.BaseUser2QueryPageDTO;
-import com.goudong.user.dto.BaseUserDTO;
-import com.goudong.user.dto.SimpleCreateUserReq;
+import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseUserPO;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,7 +68,7 @@ public interface BaseUserService {
      * @param page
      * @return
      */
-    PageResult<BaseUserDTO> page(BaseUser2QueryPageDTO page);
+    PageResult<BaseUserPageResp> page(BaseUser2QueryPageDTO page);
 
     /**
      * 根据id查询

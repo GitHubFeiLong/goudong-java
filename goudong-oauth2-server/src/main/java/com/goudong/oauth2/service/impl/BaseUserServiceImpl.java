@@ -79,22 +79,19 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     private final ObjectMapper objectMapper;
 
-    private final BaseAppRepository baseAppRepository;
-
     public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
                                RedisTool redisTool,
                                @Lazy BaseTokenService baseTokenService,
                                TokenExpiresProperties tokenExpiresProperties,
                                HttpServletRequest httpServletRequest,
-                               ObjectMapper objectMapper,
-                               BaseAppRepository baseAppRepository) {
+                               ObjectMapper objectMapper
+    ) {
         this.baseUserRepository = baseUserRepository;
         this.redisTool = redisTool;
         this.baseTokenService = baseTokenService;
         this.tokenExpiresProperties = tokenExpiresProperties;
         this.httpServletRequest = httpServletRequest;
         this.objectMapper = objectMapper;
-        this.baseAppRepository = baseAppRepository;
     }
 
     /**
@@ -257,6 +254,17 @@ public class BaseUserServiceImpl implements BaseUserService {
     public BaseUserDTO findByOpenId(String openId) {
         // BaseUserPO byQqOpenId = baseUserRepository.findByQqOpenId(openId);
         return BeanUtil.copyProperties(null, BaseUserDTO.class);
+    }
+
+    /**
+     * 应用审核通过后，进行创建admin用户信息
+     *
+     * @param id
+     */
+    @Override
+    public void saveAppAdminUser(Long id) {
+        // 查询用户表admin的最大id
+
     }
 
 

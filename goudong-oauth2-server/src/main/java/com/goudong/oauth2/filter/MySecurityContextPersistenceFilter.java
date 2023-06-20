@@ -55,7 +55,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             String appId = httpServletRequest.getHeader(HttpHeaderConst.X_APP_ID);
             AssertUtil.isNotBlank(appId, () -> BasicException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
             BaseAppPO baseAppPO = baseAppService.getByAppId(appId);
-            AssertUtil.isTrue(baseAppPO.getStatus() == BaseAppPO.StatusEnum.PASS.getId(), () -> ClientException.client("应用不可用"));
+            AssertUtil.isTrue(baseAppPO.getStatus() == BaseAppPO.StatusEnum.PASS.getId(), () -> ClientException.clientByForbidden("应用未通过"));
             // 替换请求头中的应用Id
             httpServletRequest.setAttribute(HttpHeaderConst.X_APP_ID, baseAppPO.getId());
 

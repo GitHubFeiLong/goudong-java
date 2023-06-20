@@ -4,6 +4,8 @@ package com.goudong.oauth2.service;
 import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import com.goudong.oauth2.po.BaseUserPO;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,5 +45,12 @@ public interface BaseUserService extends UserDetailsService {
      * @return
      */
     BaseUserDTO findByOpenId(String openId);
+
+    /**
+     * 应用审核通过后，进行创建admin用户信息
+     * @param id
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    void saveAppAdminUser(Long id);
 }
 

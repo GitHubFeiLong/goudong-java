@@ -14,11 +14,17 @@ import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
 import com.goudong.oauth2.dto.BaseAppQueryReq;
+import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.repository.BaseAppRepository;
 import com.goudong.oauth2.service.BaseAppService;
+import com.goudong.oauth2.service.BaseMenuService;
+import com.goudong.oauth2.service.BaseRoleService;
+import com.goudong.oauth2.service.BaseUserService;
 import com.goudong.oauth2.util.AppIdUtil;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,6 +51,18 @@ public class BaseAppServiceImpl implements BaseAppService {
     //==================================================================================================================
     @Resource
     private BaseAppRepository baseAppRepository;
+
+    @Resource
+    private RedissonClient redissonClient;
+
+    @Resource
+    private BaseUserService baseUserService;
+
+    @Resource
+    private BaseRoleService baseRoleService;
+
+    @Resource
+    private BaseMenuService baseMenuService;
     //~methods
     //==================================================================================================================
 
@@ -115,14 +133,26 @@ public class BaseAppServiceImpl implements BaseAppService {
     @Override
     @Transactional
     public BaseAppDTO audit(BaseAppAuditReq req) {
-        BaseAppPO po = baseAppRepository.findById(req.getId()).orElseThrow(() -> BasicException.client("应用不存在"));
+        String key = RedisKeyProviderEnum.LOCK_BASE_APP__AUDIT.getFullKey();
+        RLock lock = redissonClient.getLock(key);
+        try {
+            lock.lock();
+            BaseAppPO po = baseAppRepository.findById(req.getId()).orElseThrow(() -> BasicException.client("应用不存在"));
+            AssertUtil.isTrue(po.getStatus() == BaseAppPO.StatusEnum.CHECK_PENDING.getId(), () -> "请勿重复审核应用");
+            // 获取当前用户
+            BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
+            po.setRemark(req.getRemark());
+            po.setStatus(req.getStatus());
 
-        // 获取当前用户
-        BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
-        po.setUpdateUserId(authentication.getId());
-        po.setUpdateUserId(authentication.getId());
-        po.setRemark(req.getRemark());
-        po.setStatus(req.getStatus());
+            // 审核通过，创建账号
+            if (req.getStatus() == BaseAppPO.StatusEnum.PASS.getId()) {
+                baseUserService.saveAppAdminUser(req.getId());
+            }
+
+        } finally {
+            lock.unlock();
+        }
+
 
         return BeanUtil.copyProperties(po, BaseAppDTO.class);
     }

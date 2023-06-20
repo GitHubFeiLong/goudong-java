@@ -67,7 +67,7 @@ public class BaseRoleController {
 
     @DeleteMapping("{id}")
     @ApiOperation(value = "删除角色")
-    public Result<BaseRoleDTO> removeRole (@PathVariable @Min(value = 100) Long id){
+    public Result<BaseRoleDTO> removeRole (@PathVariable @Min(value = Integer.MAX_VALUE + 1) Long id){
         // 参数校验，预置角色不能删除
         return Result.ofSuccess(baseRoleService.removeRole(id));
     }
@@ -88,7 +88,7 @@ public class BaseRoleController {
             @ApiImplicitParam(name = "id", value = "角色id"),
             @ApiImplicitParam(name = "menuIds", value = "菜单id"),
     })
-    public Result<BaseRoleDTO> updatePermissions(@PathVariable("id")@Min(value = 100) Long id,
+    public Result<BaseRoleDTO> updatePermissions(@PathVariable("id")@Min(value = Integer.MAX_VALUE + 1) Long id,
                                                  @RequestBody @NotNull List<Long> menuIds) {
         return Result.ofSuccess(baseRoleService.updatePermissions(id, menuIds));
     }

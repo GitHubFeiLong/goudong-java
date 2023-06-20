@@ -5,14 +5,12 @@ import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
-import com.goudong.commons.enumerate.user.OtherUserTypeEnum;
 import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.core.context.GoudongContext;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.RegexConst;
 import com.goudong.core.lang.Result;
 import com.goudong.core.util.AssertUtil;
-import com.goudong.core.util.CollectionUtil;
 import com.goudong.user.dto.*;
 import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
@@ -26,12 +24,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -232,7 +228,7 @@ public class BaseUerController {
 
     @GetMapping("/page")
     @ApiOperation(value = "分页查询")
-    public Result<PageResult<BaseUserDTO>> page (BaseUser2QueryPageDTO page){
+    public Result<PageResult<BaseUserPageResp>> page (BaseUser2QueryPageDTO page){
         return Result.ofSuccess(baseUserService.page(page));
     }
 
@@ -245,13 +241,15 @@ public class BaseUerController {
     @PutMapping("/admin/user")
     @ApiOperation(value = "admin-更新用户信息")
     public Result<BaseUserDTO> adminEditUser (@RequestBody @Validated AdminEditUserReq req){
+        AssertUtil.isTrue(req.getId() > Integer.MAX_VALUE, () -> ClientException.clientByForbidden());
         return Result.ofSuccess(baseUserService.adminEditUser(req));
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除用户")
     @ApiImplicitParam(name = "id", value = "user id", required = true)
-    public Result<BaseUserDTO> deleteUserById (@PathVariable @Min(value = 100) Long id){
+    public Result<BaseUserDTO> deleteUserById (@PathVariable Long id){
+        AssertUtil.isTrue(id > Integer.MAX_VALUE, () -> ClientException.clientByForbidden());
         BaseUserDTO userDTO = baseUserService.deleteUserById(id);
         return Result.ofSuccess(userDTO);
     }
@@ -261,28 +259,31 @@ public class BaseUerController {
     @ApiImplicitParam(name = "id", value = "user id", required = true)
     public Result<Boolean> deleteUserById (@RequestParam(name = "ids")@NotNull @NotEmpty List<Long> ids){
         // 参数校验，预置用户不能删除
-        List<Long> deleteIds = ids.stream().filter(f -> f > 100).collect(Collectors.toList());
-        return Result.ofSuccess(baseUserService.deleteUserByIds(deleteIds));
+        AssertUtil.isFalse(ids.stream().filter(f -> f <= Integer.MAX_VALUE).findFirst().isPresent(), () -> ClientException.clientByForbidden());
+        return Result.ofSuccess(baseUserService.deleteUserByIds(ids));
     }
 
     @PutMapping("/reset-password/{id}")
     @ApiOperation("重置用户密码")
     @ApiImplicitParam(name = "id", value = "user id", required = true)
-    public Result<Boolean> resetPassword(@PathVariable @Min(value = 100) Long id) {
+    public Result<Boolean> resetPassword(@PathVariable Long id) {
+        AssertUtil.isTrue(id > Integer.MAX_VALUE, () -> ClientException.clientByForbidden());
         return Result.ofSuccess(baseUserService.resetPassword(id));
     }
 
     @PutMapping("/change-enabled/{id}")
     @ApiOperation("修改激活状态")
     @ApiImplicitParam(name = "id", value = "user id", required = true)
-    public Result<Boolean> changeEnabled(@PathVariable @Min(value = 100) Long id) {
+    public Result<Boolean> changeEnabled(@PathVariable Long id) {
+        AssertUtil.isTrue(id > Integer.MAX_VALUE, () -> ClientException.clientByForbidden());
         return Result.ofSuccess(baseUserService.changeEnabled(id));
     }
 
     @PutMapping("/change-locked/{id}")
     @ApiOperation("修改锁定状态")
     @ApiImplicitParam(name = "id", value = "user id", required = true)
-    public Result<Boolean> changeLocked(@PathVariable @Min(value = 100) Long id) {
+    public Result<Boolean> changeLocked(@PathVariable Long id) {
+        AssertUtil.isTrue(id > Integer.MAX_VALUE, () -> ClientException.clientByForbidden());
         return Result.ofSuccess(baseUserService.changeLocked(id));
     }
 }
