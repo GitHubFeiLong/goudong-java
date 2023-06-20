@@ -23,4 +23,11 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      * @return
      */
     // BaseUserPO findByQqOpenId(String qqOpenId);
+
+    /**
+     * 查询最大admin用户id
+     * @return
+     */
+    @Query(nativeQuery = true, value = "select id from base_user where id <= 2147483647 and deleted = false order by id desc limit 1")
+    Long findMaxAdminUserId();
 }

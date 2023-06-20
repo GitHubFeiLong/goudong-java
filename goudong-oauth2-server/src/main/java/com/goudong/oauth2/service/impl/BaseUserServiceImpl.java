@@ -1,14 +1,18 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.core.ServerException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.enumerate.oauth2.ClientSideEnum;
+import com.goudong.commons.framework.jpa.DataBaseAuditListener;
+import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
 import com.goudong.commons.utils.core.LogUtil;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.core.TokenExpires;
@@ -18,9 +22,12 @@ import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.exception.AccessTokenExpiredException;
 import com.goudong.oauth2.exception.AccessTokenInvalidException;
+import com.goudong.oauth2.po.BaseMenuPO;
+import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.properties.TokenExpiresProperties;
-import com.goudong.oauth2.repository.BaseAppRepository;
+import com.goudong.oauth2.repository.BaseMenuRepository;
+import com.goudong.oauth2.repository.BaseRoleRepository;
 import com.goudong.oauth2.repository.BaseUserRepository;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
@@ -32,14 +39,14 @@ import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 类描述：
@@ -79,12 +86,29 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * 角色持久层
+     */
+    private final BaseRoleRepository baseRoleRepository;
+
+    /**
+     * 菜单持久层
+     */
+    private final BaseMenuRepository baseMenuRepository;
+
+    /**
+     * 密码编码器
+     */
+    public PasswordEncoder passwordEncoder;
     public BaseUserServiceImpl(BaseUserRepository baseUserRepository,
                                RedisTool redisTool,
                                @Lazy BaseTokenService baseTokenService,
                                TokenExpiresProperties tokenExpiresProperties,
                                HttpServletRequest httpServletRequest,
-                               ObjectMapper objectMapper
+                               ObjectMapper objectMapper,
+                               BaseRoleRepository baseRoleRepository,
+                               BaseMenuRepository baseMenuRepository,
+                               PasswordEncoder passwordEncoder
     ) {
         this.baseUserRepository = baseUserRepository;
         this.redisTool = redisTool;
@@ -92,6 +116,9 @@ public class BaseUserServiceImpl implements BaseUserService {
         this.tokenExpiresProperties = tokenExpiresProperties;
         this.httpServletRequest = httpServletRequest;
         this.objectMapper = objectMapper;
+        this.baseRoleRepository = baseRoleRepository;
+        this.baseMenuRepository = baseMenuRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -258,13 +285,101 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     /**
      * 应用审核通过后，进行创建admin用户信息
+     * @param appId
+     * @param appSecret 创建的用户默认密码
      *
-     * @param id
      */
     @Override
-    public void saveAppAdminUser(Long id) {
+    public void saveAppAdminUser(Long appId, String appSecret) {
         // 查询用户表admin的最大id
+        Long maxAdminUserId = baseUserRepository.findMaxAdminUserId();
+        Long userId = maxAdminUserId + 1;
+        BaseUserPO optionUser = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
 
+        Date now = new Date();
+
+        // 新增用户
+        BaseUserPO userPO = new BaseUserPO();
+        userPO.setUsername("admin");
+        // 密码默认是应用id
+        userPO.setPassword(passwordEncoder.encode(appSecret));
+        userPO.setEmail("admin");
+        userPO.setPhone("admin_phone");
+        userPO.setSex(0);
+        userPO.setNickname("超级管理员");
+        userPO.setRemark("应用超级管理员");
+        userPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
+        userPO.setAvatar(null);
+        userPO.setEnabled(true);
+        userPO.setLocked(false);
+
+        userPO.setId(userId);
+        userPO.setAppId(appId);
+        userPO.setCreateTime(now);
+        userPO.setCreateUserId(optionUser.getId());
+        userPO.setUpdateTime(now);
+        userPO.setUpdateUserId(optionUser.getId());
+        userPO.setDeleted(false);
+        // 新增角色
+        BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(() -> ServerException.server(String.format("角色Id:%s不存在", maxAdminUserId)));
+        // 断言数据库没有id=userId的角色
+        AssertUtil.isFalse(baseRoleRepository.findById(userId).isPresent(), () -> ServerException.server(String.format("角色Id:%s存在", userId)));
+        // 复制，修改id appId 菜单 等属性
+        BaseRolePO rolePO = BeanUtil.copyProperties(baseRolePO, BaseRolePO.class);
+        rolePO.setId(userId);
+        rolePO.setAppId(appId);
+        rolePO.setCreateTime(now);
+        rolePO.setCreateUserId(optionUser.getId());
+        rolePO.setUpdateTime(now);
+        rolePO.setUpdateUserId(optionUser.getId());
+        rolePO.setDeleted(false);
+
+        // 新增菜单
+        // key: 原id， value：现id
+        Map<Long, Long> idMap = new HashMap<>();
+        // 拷贝时，忽略属性
+        String[] ignoreFields = new String[] {
+                "id",
+                "parentId",
+                "roles",
+                DataBaseAuditListener.APP_ID,
+                DataBaseAuditListener.CREATE_USER_ID,
+                DataBaseAuditListener.CREATE_TIME,
+                DataBaseAuditListener.UPDATE_USER_ID,
+                DataBaseAuditListener.UPDATE_TIME
+        };
+        // 新菜单
+        List<BaseMenuPO> newMenuPOS = new ArrayList<>(rolePO.getMenus().size());
+        rolePO.getMenus().stream().forEach(p -> {
+            Long newId = MyIdentifierGenerator.ID.nextId();
+            idMap.put(p.getId(), newId);
+
+            // 复制一份菜单
+            BaseMenuPO newMenu = BeanUtil.copyProperties(p, BaseMenuPO.class, ignoreFields);
+            newMenu.setAppId(appId);
+            newMenu.setCreateUserId(optionUser.getId());
+            newMenu.setCreateTime(now);
+            newMenu.setUpdateUserId(optionUser.getId());
+            newMenu.setUpdateTime(now);
+            newMenu.setId(newId);
+
+            if (p.getParentId() != null) {
+                Long newParentId = Optional.ofNullable(idMap.get(p.getParentId())).orElseThrow(() -> ServerException.server("菜单父id不能为空"));
+                newMenu.setParentId(newParentId);
+            }
+
+            newMenuPOS.add(newMenu);
+        });
+
+        rolePO.setMenus(newMenuPOS);
+        rolePO.setUsers(Lists.newArrayList());
+        userPO.setRoles(Lists.newArrayList(rolePO));
+        // 保存菜单
+        baseMenuRepository.saveAll(newMenuPOS);
+        // 保存角色
+        baseRoleRepository.save(rolePO);
+        // 保存用户
+        baseUserRepository.save(userPO);
     }
 
 

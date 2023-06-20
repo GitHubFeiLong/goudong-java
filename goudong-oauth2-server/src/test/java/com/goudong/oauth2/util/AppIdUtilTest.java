@@ -8,6 +8,8 @@ class AppIdUtilTest {
 
     @Test
     void createAppId() throws UnsupportedEncodingException {
+        String appId = AppIdUtil.getAppId(1L);
+        System.out.println("appId = " + appId);
     }
 
     @Test

@@ -146,15 +146,13 @@ public class BaseAppServiceImpl implements BaseAppService {
 
             // 审核通过，创建账号
             if (req.getStatus() == BaseAppPO.StatusEnum.PASS.getId()) {
-                baseUserService.saveAppAdminUser(req.getId());
+                baseUserService.saveAppAdminUser(po.getId(), po.getAppSecret());
             }
-
+            return BeanUtil.copyProperties(po, BaseAppDTO.class);
         } finally {
             lock.unlock();
         }
 
-
-        return BeanUtil.copyProperties(po, BaseAppDTO.class);
     }
 
     /**

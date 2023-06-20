@@ -48,9 +48,10 @@ public interface BaseUserService extends UserDetailsService {
 
     /**
      * 应用审核通过后，进行创建admin用户信息
-     * @param id
+     * @param appId
+     * @param appSecret 创建的用户默认密码
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    void saveAppAdminUser(Long id);
+    void saveAppAdminUser(Long appId, String appSecret);
 }
 
