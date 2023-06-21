@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version 1.0
  * @date 2021/8/29 19:33
  */
-public interface BaseUserService extends UserDetailsService {
+public interface BaseUserService {
 
     /**
      * 保存令牌和用户信息到redis中

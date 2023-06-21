@@ -2,6 +2,7 @@ package com.goudong.oauth2.service;
 
 
 import com.goudong.oauth2.dto.BaseTokenDTO;
+import com.goudong.oauth2.po.BaseUserPO;
 
 /**
  * 接口描述：

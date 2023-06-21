@@ -16,11 +16,13 @@ import com.goudong.oauth2.service.BaseRoleService;
 import com.goudong.oauth2.service.BaseTokenService;
 import com.goudong.oauth2.service.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,33 +47,27 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     /**
      * token服务层接口
      */
-    private final BaseTokenService baseTokenService;
+    @Resource
+    private BaseTokenService baseTokenService;
 
     /**
      * 用户服务
      */
-    private final BaseUserService baseUserService;
+    @Lazy
+    @Resource
+    private BaseUserService baseUserService;
 
     /**
      * 认证日志服务层接口
      */
-    private final BaseAuthenticationLogService baseAuthenticationLogService;
+    @Resource
+    private BaseAuthenticationLogService baseAuthenticationLogService;
 
-    private final ObjectMapper objectMapper;
+    @Resource
+    private ObjectMapper objectMapper;
 
-    private final BaseRoleService baseRoleService;
-
-    public AuthenticationSuccessHandlerImpl(BaseTokenService baseTokenService,
-                                            BaseUserService baseUserService,
-                                            BaseAuthenticationLogService baseAuthenticationLogService,
-                                            ObjectMapper objectMapper,
-                                            BaseRoleService baseRoleService) {
-        this.baseTokenService = baseTokenService;
-        this.baseUserService = baseUserService;
-        this.baseAuthenticationLogService = baseAuthenticationLogService;
-        this.objectMapper = objectMapper;
-        this.baseRoleService = baseRoleService;
-    }
+    @Resource
+    private BaseRoleService baseRoleService;
 
     /**
      *

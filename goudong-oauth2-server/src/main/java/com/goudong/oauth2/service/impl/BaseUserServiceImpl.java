@@ -122,23 +122,6 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
-     * 加载根据用户名、手机号、邮箱 加载用户
-     * 当认证失败
-     * @see AuthenticationException
-     * @param username
-     * @return
-     * @throws AuthenticationException
-     */
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws AuthenticationException {
-        Long appId = (Long)httpServletRequest.getAttribute(HttpHeaderConst.X_APP_ID);
-        BaseUserPO byLogin = baseUserRepository.findByLogin(appId, username);
-        return byLogin;
-    }
-
-
-    /**
      * 保存令牌和用户信息到redis中
      *
      * @param baseUserPO  用户信息

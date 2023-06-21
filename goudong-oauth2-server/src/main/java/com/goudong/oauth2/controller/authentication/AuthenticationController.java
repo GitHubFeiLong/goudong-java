@@ -16,10 +16,7 @@ import com.goudong.oauth2.dto.authentication.BaseMenuDTO;
 import com.goudong.oauth2.dto.authentication.BaseUserDTO;
 import com.goudong.oauth2.exception.Oauth2Exception;
 import com.goudong.oauth2.po.BaseUserPO;
-import com.goudong.oauth2.service.BaseMenuService;
-import com.goudong.oauth2.service.BaseTokenService;
-import com.goudong.oauth2.service.BaseUserService;
-import com.goudong.oauth2.service.BaseWhitelistService;
+import com.goudong.oauth2.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -75,6 +72,8 @@ public class AuthenticationController {
      * 用户服务
      */
     private final BaseUserService baseUserService;
+
+    private final MyUserDetailsService myUserDetailsService;
 
     /**
      * request对象
@@ -241,7 +240,7 @@ public class AuthenticationController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true),
     })
     public Result<BaseUserDTO> loadUserByUsername(@NotBlank String username) {
-        BaseUserPO userDetails = (BaseUserPO)baseUserService.loadUserByUsername(username);
+        BaseUserPO userDetails = (BaseUserPO)myUserDetailsService.loadUserByUsername(username);
         // 只保留基本信息
         BaseUserPO incomplete = new BaseUserPO();
         incomplete.setUsername(userDetails.getUsername());

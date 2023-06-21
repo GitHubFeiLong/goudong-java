@@ -8,6 +8,8 @@ import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.service.BaseAppService;
 import com.goudong.oauth2.service.BaseUserService;
+import com.goudong.oauth2.util.AppIdUtil;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,7 +44,8 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     //~methods
     //==================================================================================================================
     public MySecurityContextPersistenceFilter(BaseAppService baseAppService,
-                                              BaseUserService baseUserService) {
+                                              BaseUserService baseUserService
+    ) {
         this.baseAppService = baseAppService;
         this.baseUserService = baseUserService;
     }
@@ -51,23 +54,28 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 获取认证用户，并将其设置到 SecurityContext中
         try {
-            // 先校验请求头应用Id
-            String appId = httpServletRequest.getHeader(HttpHeaderConst.X_APP_ID);
-            AssertUtil.isNotBlank(appId, () -> BasicException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
-            BaseAppPO baseAppPO = baseAppService.getByAppId(appId);
-            AssertUtil.isTrue(baseAppPO.getStatus() == BaseAppPO.StatusEnum.PASS.getId(), () -> ClientException.clientByForbidden("应用未通过"));
-            // 替换请求头中的应用Id
-            httpServletRequest.setAttribute(HttpHeaderConst.X_APP_ID, baseAppPO.getId());
-
             /*
                 认证和刷新认证接口不需要添加上下文
              */
+            // 先校验请求头应用Id
+            String appId = httpServletRequest.getHeader(HttpHeaderConst.X_APP_ID);
             String requestURI = httpServletRequest.getRequestURI();
             if (requestURI.contains("/authentication/refresh-token")
                     ||requestURI.contains("/authentication/login")) {
+
+                AssertUtil.isNotBlank(appId, () -> BasicException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
+                BaseAppPO baseAppPO = baseAppService.getByAppId(appId);
+                AssertUtil.isTrue(baseAppPO.getStatus() == BaseAppPO.StatusEnum.PASS.getId(), () -> ClientException.clientByForbidden("应用未通过"));
+                // 替换请求头中的应用Id
+                httpServletRequest.setAttribute(HttpHeaderConst.X_APP_ID, baseAppPO.getId());
+
+
                 filterChain.doFilter(httpServletRequest, httpServletResponse);
                 return;
             }
+
+            // 替换请求头中的应用Id
+            httpServletRequest.setAttribute(HttpHeaderConst.X_APP_ID, AppIdUtil.getAppId(appId));
 
             BaseUserPO baseUserPO = baseUserService.getAuthentication(httpServletRequest);
             // 官网建议，避免跨多个线程的竞态条件

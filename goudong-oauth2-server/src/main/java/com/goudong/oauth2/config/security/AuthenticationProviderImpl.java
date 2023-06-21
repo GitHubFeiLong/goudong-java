@@ -4,24 +4,21 @@ import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.oauth2.po.BaseUserPO;
-import com.goudong.oauth2.repository.BaseAppRepository;
-import com.goudong.oauth2.service.BaseAuthenticationLogService;
-import com.goudong.oauth2.service.BaseMenuService;
-import com.goudong.oauth2.service.BaseRoleService;
 import com.goudong.oauth2.service.BaseUserService;
-import lombok.RequiredArgsConstructor;
+import com.goudong.oauth2.service.MyUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -35,45 +32,23 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AuthenticationProviderImpl implements AuthenticationProvider {
-
-    private static final BCryptPasswordEncoder BCRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     /**
      * BCrypt格式的字符串
-     * @see BCryptPasswordEncoder#BCRYPT_PATTERN
+     * {@code BCryptPasswordEncoder#BCRYPT_PATTERN}
      */
     private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
 
-   /**
-     * 用户服务接口
-     */
-    private final HttpServletRequest httpServletRequest;
+    @Lazy
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     /**
      * 用户服务接口
      */
-    private final BaseUserService baseUserService;
-
-    /**
-     * 菜单接口
-     */
-    private final BaseMenuService baseMenuService;
-
-    /**
-     * 角色服务层接口
-     */
-    private final BaseRoleService baseRoleService;
-    /**
-     * 认证日志服务层接口
-     */
-    private final BaseAuthenticationLogService baseAuthenticationLogService;
-
-    /**
-     * 应用吃持久层
-     */
-    private final BaseAppRepository baseAppRepository;
+    @Resource
+    private MyUserDetailsService myUserDetailsService;
 
 
     /**
@@ -99,7 +74,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().setAttribute("principal", username);
 
         // 根据用户名查询用户是否存在
-        UserDetails userInfo = baseUserService.loadUserByUsername(username);
+        UserDetails userInfo = myUserDetailsService.loadUserByUsername(username);
 
         // 用户不存在
         AssertUtil.isNotNull(userInfo, () -> new UsernameNotFoundException("用户不存在"));
@@ -108,7 +83,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
                 // 是密码格式，直接比较值
                 ? Objects.equals(password, userInfo.getPassword())
                 // 使用 BCrypt 加密的方式进行匹配
-                : BCRYPT_PASSWORD_ENCODER.matches(password, userInfo.getPassword());
+                : passwordEncoder.matches(password, userInfo.getPassword());
 
         AssertUtil.isTrue(passwordMatches, () -> new BadCredentialsException("用户密码错误"));
         AssertUtil.isTrue(userInfo.isEnabled(), () -> new DisabledException("用户未激活"));
