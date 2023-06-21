@@ -16,6 +16,12 @@ import java.util.Optional;
 public interface BaseAppRepository extends JpaRepository<BaseAppPO, Long>, JpaSpecificationExecutor<BaseAppPO> {
     //~methods
     //==================================================================================================================
+    /**
+     * 根据应用名查询应用
+     * @param appName
+     * @return
+     */
+    Optional<BaseAppPO> findByAppName(String appName);
 
     /**
      * 根据对外appId查询应用

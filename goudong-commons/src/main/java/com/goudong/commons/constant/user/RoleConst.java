@@ -12,6 +12,11 @@ public class RoleConst {
     /**
      * 超级管理员角色
      */
+    public static final String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
+
+    /**
+     * 理员角色
+     */
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     /**

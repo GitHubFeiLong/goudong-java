@@ -69,7 +69,6 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
     /**
      * 手机号
      */
-    @Length(min = 6, max = 32)
     @Column(name = "phone", nullable = false, length = 32)
     private String phone;
 
@@ -295,6 +294,17 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
 
     /**
      * 用户是否是超级管理员
+     * @return
+     */
+    public boolean isSuperAdmin() {
+        // ADMIN用户直接不校验权限
+        return this.getAuthorities().stream()
+                .filter(f -> RoleConst.ROLE_SUPER_ADMIN.equalsIgnoreCase(f.getAuthority()))
+                .findFirst().isPresent();
+    }
+
+    /**
+     * 用户是否是管理员
      * @return
      */
     public boolean isAdmin() {

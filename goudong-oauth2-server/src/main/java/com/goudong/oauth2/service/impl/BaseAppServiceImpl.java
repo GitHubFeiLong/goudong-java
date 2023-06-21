@@ -1,6 +1,7 @@
 package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.util.PageResultConvert;
@@ -18,6 +19,7 @@ import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.repository.BaseAppRepository;
+import com.goudong.oauth2.repository.BaseUserRepository;
 import com.goudong.oauth2.service.BaseAppService;
 import com.goudong.oauth2.service.BaseMenuService;
 import com.goudong.oauth2.service.BaseRoleService;
@@ -28,7 +30,9 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,7 @@ import javax.annotation.Resource;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,10 +64,16 @@ public class BaseAppServiceImpl implements BaseAppService {
     private BaseUserService baseUserService;
 
     @Resource
+    private BaseUserRepository baseUserRepository;
+
+    @Resource
     private BaseRoleService baseRoleService;
 
     @Resource
     private BaseMenuService baseMenuService;
+
+    @Resource
+    private PasswordEncoder passwordEncoder;
     //~methods
     //==================================================================================================================
 
@@ -86,22 +97,58 @@ public class BaseAppServiceImpl implements BaseAppService {
     @Override
     @Transactional
     public BaseAppDTO apply(BaseAppApplyReq req) {
-        BaseAppPO po = new BaseAppPO();
-        Long id = MyIdentifierGenerator.ID.nextId();
-        po.setAppId(AppIdUtil.getAppId(id));
-        po.setAppSecret(AppIdUtil.getAppSecret());
-        po.setAppName(req.getAppName().trim());
-        po.setStatus(BaseAppPO.StatusEnum.CHECK_PENDING.getId());
-        po.setRemark(req.getRemark());
-        po.setId(id);
-        // 获取当前用户
-        BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
-        Long userId = authentication.getId();
-        po.setCreateUserId(userId);
-        po.setUpdateUserId(userId);
+        RLock lock = redissonClient.getLock(RedisKeyProviderEnum.LOCK_BASE_APP__CREATE.getFullKey());
+        lock.lock();
+        try {
+            // 获取当前用户
+            BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
 
-        baseAppRepository.save(po);
-        return BeanUtil.copyProperties(po, BaseAppDTO.class);
+            // 检查用户名是否存在
+            AssertUtil.isFalse(baseUserRepository.findByUsername(req.getAppName()).isPresent(), () -> ClientException.client("应用已存在"));
+            AssertUtil.isFalse(baseAppRepository.findByAppName(req.getAppName()).isPresent(), () -> ClientException.client("应用已存在"));
+            // 查询用户表admin的最大id
+            Long maxAdminUserId = baseUserRepository.findMaxAdminUserId();
+            Long userId = maxAdminUserId + 1;
+            String appSecret = AppIdUtil.getAppSecret();
+            Long appId = MyIdentifierGenerator.ID.nextId();
+            String appIdStr = AppIdUtil.getAppId(appId);
+            Date now = new Date();
+
+            BaseUserPO userPO = new BaseUserPO();
+            userPO.setUsername(req.getAppName());
+            userPO.setPassword(passwordEncoder.encode(appSecret));
+            userPO.setEmail("");
+            userPO.setPhone("");
+            userPO.setSex(0);
+            userPO.setNickname(req.getAppName());
+            userPO.setValidTime(DateUtil.parse("9999-12-31 23:59:59"));
+            userPO.setEnabled(false);
+            userPO.setLocked(false);
+            userPO.setId(userId);
+            userPO.setAppId(appId);
+            userPO.setCreateTime(now);
+            userPO.setCreateUserId(authentication.getId());
+            userPO.setUpdateTime(now);
+            userPO.setUpdateUserId(authentication.getId());
+            userPO.setDeleted(false);
+            baseUserRepository.save(userPO);
+
+            BaseAppPO po = new BaseAppPO();
+            po.setAppId(appIdStr);
+            po.setAppSecret(AppIdUtil.getAppSecret());
+            po.setAppName(req.getAppName());
+            po.setStatus(BaseAppPO.StatusEnum.CHECK_PENDING.getId());
+            po.setRemark(req.getRemark());
+            po.setId(appId);
+            po.setCreateUserId(authentication.getId());
+            po.setUpdateUserId(authentication.getId());
+
+            baseAppRepository.save(po);
+            return BeanUtil.copyProperties(po, BaseAppDTO.class);
+        } finally {
+            lock.unlock();
+        }
+
     }
 
     /**
