@@ -5,7 +5,6 @@ import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.annotation.core.Whitelist;
 import com.goudong.commons.enumerate.user.AccountRadioEnum;
-import com.goudong.commons.framework.openfeign.GoudongMessageServerService;
 import com.goudong.core.context.GoudongContext;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.RegexConst;
@@ -23,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -46,30 +45,15 @@ public class BaseUerController {
     /**
      * 用户持久层接口
      */
-    private final BaseUserRepository baseUserRepository;
+    @Resource
+    private BaseUserRepository baseUserRepository;
 
     /**
      * 用户服务层接口
      */
-    private final BaseUserService baseUserService;
+    @Resource
+    private BaseUserService baseUserService;
 
-    private final HttpServletRequest httpServletRequest;
-
-    private final GoudongMessageServerService goudongMessageServerService;
-
-    /**
-     * 构造方法注入Bean
-     */
-    public BaseUerController(BaseUserRepository baseUserRepository,
-                             BaseUserService baseUserService,
-                             HttpServletRequest httpServletRequest,
-                             GoudongMessageServerService goudongMessageServerService
-    ) {
-        this.baseUserRepository = baseUserRepository;
-        this.baseUserService = baseUserService;
-        this.httpServletRequest = httpServletRequest;
-        this.goudongMessageServerService = goudongMessageServerService;
-    }
 
     /**
      * 检查手机号是否可以被注册
@@ -100,6 +84,7 @@ public class BaseUerController {
     /**
      * 检查用户名是否存在
      * 存在就返回三条可使用的账号名，不存在返回空数组
+     * TODO 需要优化
      * @param username
      * @return
      */
@@ -148,7 +133,7 @@ public class BaseUerController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "ui创建普通账号", notes = "后台手动创建用户")
+    @ApiOperation(value = "ui注册账号")
     public Result<BaseUserDTO> createUser(@RequestBody @Validated BaseUser2CreateDTO createDTO) {
         AssertUtil.isTrue(createDTO.getPhone().matches(RegexConst.PHONE_LOOSE), "手机号格式错误");
         AssertUtil.isEmail(createDTO.getEmail(), "邮箱格式不正确");

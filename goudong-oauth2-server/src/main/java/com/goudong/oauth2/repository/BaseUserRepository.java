@@ -30,7 +30,7 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      * 查询最大admin用户id
      * @return
      */
-    @Query(nativeQuery = true, value = "select id from base_user where id <= 2147483647 and deleted = false order by id desc limit 1")
+    @Query(nativeQuery = true, value = "select id from base_user where id <= 2147483647 order by id desc limit 1")
     Long findMaxAdminUserId();
 
     /**
@@ -38,5 +38,14 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      * @param username
      * @return
      */
+    @Deprecated
     Optional<BaseUserPO> findByUsername(String username);
+
+    /**
+     * 根据用户名查询用户
+     * @param username
+     * @return
+     */
+    @Query(value = "from BaseUserPO where id <= 2147483647 and username = ?1")
+    BaseUserPO findByAppAdminUser(String username);
 }

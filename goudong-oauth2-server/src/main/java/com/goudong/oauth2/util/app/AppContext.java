@@ -23,7 +23,7 @@ public class AppContext {
         if (appId.startsWith(AppIdV1Strategy.PREFIX)) {
             this.appIdStrategy = new AppIdV1Strategy() ;
         } else {
-            throw AppException.builder(ExceptionEnum.X_APP_ID_INVALID).clientMessage("请求头X-App-Id格式错误").build();
+            throw AppException.builder(ExceptionEnum.X_APP_ID_INVALID).code("400").clientMessage("请求头X-App-Id格式错误").build();
         }
     }
     //~methods

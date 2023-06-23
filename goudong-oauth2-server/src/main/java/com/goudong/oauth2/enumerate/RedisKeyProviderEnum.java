@@ -55,7 +55,13 @@ public enum RedisKeyProviderEnum implements RedisKeyProvider {
 
     //~分布式锁
     //==================================================================================================================
+    /**
+     * 应用创建
+     */
     LOCK_BASE_APP__CREATE("goudong-oauth2-server:lock:base-app:create", DataType.STRING, String.class),
+    /**
+     * 应用审核
+     */
     LOCK_BASE_APP__AUDIT("goudong-oauth2-server:lock:base-app:audit", DataType.STRING, String.class),
     ;
     //~fields

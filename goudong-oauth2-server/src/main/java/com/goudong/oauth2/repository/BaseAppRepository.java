@@ -23,6 +23,7 @@ public interface BaseAppRepository extends JpaRepository<BaseAppPO, Long>, JpaSp
      */
     Optional<BaseAppPO> findByAppName(String appName);
 
+
     /**
      * 根据对外appId查询应用
      * @param appId

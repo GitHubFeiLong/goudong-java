@@ -1,7 +1,6 @@
 package com.goudong.oauth2.service.impl;
 
 import com.goudong.commons.constant.core.HttpHeaderConst;
-import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.repository.BaseAppRepository;
 import com.goudong.oauth2.repository.BaseUserRepository;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * 类描述：
@@ -48,11 +46,7 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
 
         // 后台管理员，就需要查询应用表
         if (appId.longValue() == 1667779450730426368L) {
-            Optional<BaseAppPO> appPO = baseAppRepository.findByAppName(username);
-            if (appPO.isPresent()) {
-                return baseUserRepository.findByUsername(username).orElseGet(() -> null);
-            }
-            return null;
+            return baseUserRepository.findByAppAdminUser(username);
         }
 
         BaseUserPO byLogin = baseUserRepository.findByLogin(appId, username);

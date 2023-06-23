@@ -111,10 +111,12 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     @Transactional
     public BaseUserDTO createUser(BaseUserDTO baseUserDTO) {
+        Long appId = GoudongContext.get().getAppId();
         AccountRadioEnum accountRadioEnum = AccountRadioEnum.valueOf(baseUserDTO.getAccountRadio());
         BaseUserPO userPO = BeanUtil.copyProperties(baseUserDTO, BaseUserPO.class);
         userPO.setEnabled(true);
         userPO.setLocked(false);
+        userPO.setAppId(appId);
         switch (accountRadioEnum) {
             case BLANK:
                 // 查询填写的基本信息是否已存在
@@ -147,8 +149,8 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 设置非空属性
         userPO.setValidTime(new DateTime("9999-12-31 23:59:59"));
         // 设置角色
-        BaseRolePO roleUser = baseRoleService.findByRoleUser();
-        userPO.getRoles().add(roleUser);
+        // BaseRolePO roleUser = baseRoleService.findByRoleUser();
+        // userPO.getRoles().add(roleUser);
         userPO.setEnabled(true);
         baseUserRepository.save(userPO);
 
@@ -166,11 +168,15 @@ public class BaseUserServiceImpl implements BaseUserService {
         List<BaseUserPO> baseUserPOS = baseUserRepository.findAll(new Specification<BaseUserPO>() {
             @Override
             public Predicate toPredicate(Root<BaseUserPO> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.or(
+                List<Predicate> and = new ArrayList<>();
+                // 查询指定应用
+                and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
+                and.add(criteriaBuilder.or(
                         criteriaBuilder.equal(root.get("username").as(String.class), username),
                         criteriaBuilder.equal(root.get("phone").as(String.class), phone),
                         criteriaBuilder.equal(root.get("email").as(String.class), email)
-                );
+                ));
+                return criteriaQuery.where(and.toArray(new Predicate[and.size()])).getRestriction();
             }
         });
         return baseUserPOS;
@@ -275,7 +281,8 @@ public class BaseUserServiceImpl implements BaseUserService {
     public PageResult<BaseUserPageResp> page(BaseUser2QueryPageDTO page) {
         Specification<BaseUserPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
-
+            // 去掉管理员账户
+            and.add(criteriaBuilder.gt(root.get("id"), Integer.MAX_VALUE));
             // 查询指定应用
             and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
 

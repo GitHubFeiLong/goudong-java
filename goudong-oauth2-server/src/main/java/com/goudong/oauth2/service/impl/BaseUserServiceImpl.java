@@ -232,7 +232,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 请求的sessionId，默认使用Cookie，当authorization不为空时，使用token做sessionId
         String sessionId = request.getHeader(HttpHeaders.COOKIE);
         // redis中不存在，数据库不存在令牌，设置一个匿名用户
-        return BaseUserPO.createAnonymousUser(sessionId);
+        return BaseUserPO.createAnonymousUser(sessionId, appId);
     }
 
     /**

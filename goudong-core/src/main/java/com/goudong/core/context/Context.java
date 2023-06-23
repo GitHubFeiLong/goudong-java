@@ -54,6 +54,14 @@ public class Context {
      * 是否拥有admin权限
      * @return
      */
+    public boolean hasSuperAdmin() {
+        return CollectionUtil.isNotEmpty(roles) ? roles.contains("ROLE_SUPER_ADMIN") : false;
+    }
+
+    /**
+     * 是否拥有admin权限
+     * @return
+     */
     public boolean hasAdmin() {
         return CollectionUtil.isNotEmpty(roles) ? roles.contains("ROLE_ADMIN") : false;
     }

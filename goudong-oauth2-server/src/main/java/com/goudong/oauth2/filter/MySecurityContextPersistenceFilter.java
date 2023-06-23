@@ -67,7 +67,9 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
 
             String requestURI = httpServletRequest.getRequestURI();
             if (requestURI.contains("/authentication/refresh-token")
-                    ||requestURI.contains("/authentication/login")) {
+                    || requestURI.contains("/authentication/login")
+                    || requestURI.contains("/authentication/login")
+            ) {
                 BaseAppPO baseAppPO = baseAppRepository.findById(appIdLong)
                         .orElseThrow(() -> AppException
                                 .builder(ExceptionEnum.X_APP_ID_INVALID)

@@ -68,6 +68,7 @@ public interface GoudongOauth2ServerService {
      * 鉴权 将令牌放在请求头中。
      * @param uri 请求地址
      * @param method 请求方式
+     * @param appId 请求头应用Id
      * @param token 令牌
      * @param cookie
      * @return

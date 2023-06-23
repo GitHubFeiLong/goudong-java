@@ -145,6 +145,7 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Override
     public BaseRoleDTO addRole(AddRoleReq req) {
         BaseRolePO rolePO = BeanUtil.copyProperties(req, BaseRolePO.class);
+        rolePO.setAppId(GoudongContext.get().getAppId());
         rolePO.setRoleName("ROLE_" + req.getRoleNameCn());
         baseRoleRepository.save(rolePO);
         return BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
@@ -215,7 +216,6 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     public BaseRoleDTO getById(Long id) {
         BaseRolePO rolePO = baseRoleRepository.findById(id)
                 .orElseThrow(() -> ClientException.client(ClientExceptionEnum.NOT_FOUND, "角色不存在"));
-
         AssertUtil.isEquals(rolePO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         // 当前用户所拥有的菜单权限，不能越级设置权限
         List<String> roles = GoudongContext.get().getRoles();

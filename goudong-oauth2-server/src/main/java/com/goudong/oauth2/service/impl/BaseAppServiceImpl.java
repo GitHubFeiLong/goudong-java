@@ -2,7 +2,6 @@ package com.goudong.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
-import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.core.ServerException;
 import com.goudong.boot.web.util.PageResultConvert;
@@ -19,6 +18,7 @@ import com.goudong.oauth2.dto.BaseAppAuditReq;
 import com.goudong.oauth2.dto.BaseAppDTO;
 import com.goudong.oauth2.dto.BaseAppQueryReq;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
+import com.goudong.oauth2.exception.AppException;
 import com.goudong.oauth2.po.BaseAppPO;
 import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
@@ -26,8 +26,6 @@ import com.goudong.oauth2.repository.BaseAppRepository;
 import com.goudong.oauth2.repository.BaseRoleRepository;
 import com.goudong.oauth2.repository.BaseUserRepository;
 import com.goudong.oauth2.service.BaseAppService;
-import com.goudong.oauth2.service.BaseMenuService;
-import com.goudong.oauth2.service.BaseRoleService;
 import com.goudong.oauth2.service.BaseUserService;
 import com.goudong.oauth2.util.app.AppContext;
 import com.goudong.oauth2.util.app.AppIdV1Strategy;
@@ -40,6 +38,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Order;
@@ -47,7 +46,8 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
+import static com.goudong.oauth2.enumerate.ExceptionEnum.*;
 
 /**
  * 类描述：
@@ -76,13 +76,10 @@ public class BaseAppServiceImpl implements BaseAppService {
     private BaseRoleRepository baseRoleRepository;
 
     @Resource
-    private BaseRoleService baseRoleService;
-
-    @Resource
-    private BaseMenuService baseMenuService;
-
-    @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
     //~methods
     //==================================================================================================================
 
@@ -113,14 +110,15 @@ public class BaseAppServiceImpl implements BaseAppService {
             BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
 
             // 检查用户名是否存在
-            AssertUtil.isFalse(baseUserRepository.findByUsername(req.getAppName()).isPresent(), () -> ClientException.client("应用已存在"));
-            AssertUtil.isFalse(baseAppRepository.findByAppName(req.getAppName()).isPresent(), () -> ClientException.client("应用已存在"));
+            AssertUtil.isFalse(baseUserRepository.findByAppAdminUser(req.getAppName()) != null,
+                    () -> AppException.builder(APP_UNIQUE).build());
+            AssertUtil.isFalse(baseAppRepository.findByAppName(req.getAppName()).isPresent(), () ->AppException.builder(APP_UNIQUE).build());
             // 查询用户表admin的最大id
             Long maxAdminUserId = baseUserRepository.findMaxAdminUserId();
             Long userId = maxAdminUserId + 1;
 
-            AppIdV1Strategy appIdV1Strategy = new AppIdV1Strategy();
-            AppContext appContext = new AppContext(appIdV1Strategy);
+            // APPID 策略
+            AppContext appContext = new AppContext(new AppIdV1Strategy());
 
             String appSecret = appContext.getAppSecret();
             Long appId = MyIdentifierGenerator.ID.nextId();
@@ -178,7 +176,7 @@ public class BaseAppServiceImpl implements BaseAppService {
      */
     @Override
     public boolean deleteById(Long id) {
-        BaseAppPO po = baseAppRepository.findById(id).orElseThrow(() -> BasicException.client("应用不存在"));
+        BaseAppPO po = baseAppRepository.findById(id).orElseThrow(() -> AppException.builder(APP_INVALID).build());
 
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
@@ -186,7 +184,20 @@ public class BaseAppServiceImpl implements BaseAppService {
         // 只能删除自己创建的
         AssertUtil.isEquals(authentication.getId(), po.getCreateUserId(), () -> ClientException.clientByForbidden());
 
-        baseAppRepository.delete(po);
+        transactionTemplate.execute(status -> {
+            try {
+                // 删除应用
+                baseAppRepository.delete(po);
+                // 删除用户
+                BaseUserPO byAppAdminUser = baseUserRepository.findByAppAdminUser(po.getAppName());
+                baseUserRepository.delete(byAppAdminUser);
+                return true;
+            } catch(Exception e) {
+                status.setRollbackOnly();
+                throw new RuntimeException(e);
+            }
+        });
+
         return true;
     }
 
@@ -199,24 +210,23 @@ public class BaseAppServiceImpl implements BaseAppService {
     @Override
     @Transactional
     public BaseAppDTO audit(BaseAppAuditReq req) {
+        // 获取当前用户
+        BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
+        AssertUtil.isTrue(authentication.getId() == 1, () -> ClientException.clientByForbidden());
         String key = RedisKeyProviderEnum.LOCK_BASE_APP__AUDIT.getFullKey();
         RLock lock = redissonClient.getLock(key);
         try {
             lock.lock();
-            BaseAppPO po = baseAppRepository.findById(req.getId()).orElseThrow(() -> BasicException.client("应用不存在"));
-            AssertUtil.isTrue(po.getStatus() == BaseAppPO.StatusEnum.CHECK_PENDING.getId(), () -> "请勿重复审核应用");
-            // 获取当前用户
-            BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
+            BaseAppPO po = baseAppRepository.findById(req.getId()).orElseThrow(() -> AppException.builder(APP_INVALID).build());
+            AssertUtil.isTrue(po.getStatus() == BaseAppPO.StatusEnum.CHECK_PENDING.getId(), () -> AppException.builder(APP).clientMessage("请勿重复审核应用").build());
             po.setRemark(req.getRemark());
             po.setStatus(req.getStatus());
-
             // 审核通过,将账号激活
             if (req.getStatus() == BaseAppPO.StatusEnum.PASS.getId()) {
-                Optional<BaseUserPO> byUsername = baseUserRepository.findByUsername(po.getAppName());
-                if (byUsername.isPresent()) {
-                    BaseUserPO baseUserPO = byUsername.get();
+                BaseUserPO baseUserPO = baseUserRepository.findByAppAdminUser(po.getAppName());
+                if (baseUserPO != null) {
                     baseUserPO.setEnabled(true);
-                    baseUserPO.setLocked(true);
+                    baseUserPO.setLocked(false);
                 }
             }
             return BeanUtil.copyProperties(po, BaseAppDTO.class);
@@ -236,7 +246,6 @@ public class BaseAppServiceImpl implements BaseAppService {
     public PageResult<BaseAppDTO> query(BaseAppQueryReq req) {
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO) SecurityContextHolder.getContext().getAuthentication();
-
 
         Specification<BaseAppPO> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> and = new ArrayList<>();
@@ -267,18 +276,9 @@ public class BaseAppServiceImpl implements BaseAppService {
             return query.orderBy(weightOrder).getRestriction();
         };
 
-        PageResult<BaseAppDTO> convert = null;
-        if (req.getJPAPage() != null && req.getSize() != null) {
-            PageRequest pageRequest = PageRequest.of(req.getJPAPage(), req.getSize());
-            Page<BaseAppPO> all = baseAppRepository.findAll(specification, pageRequest);
-            convert = PageResultConvert.convert(all, BaseAppDTO.class);
-        } else {
-            // // 导出时
-            // List<BaseUserPO> all = baseUserRepository.findAll(specification);
-            // List<com.goudong.commons.dto.oauth2.BaseUserDTO> baseUserDTOS = BeanUtil.copyToList(all, com.goudong.commons.dto.oauth2.BaseUserDTO.class, CopyOptions.create());
-            // convert = new PageResult<>(baseUserDTOS);
-        }
-
+        PageRequest pageRequest = PageRequest.of(req.getJPAPage(), req.getSize());
+        Page<BaseAppPO> all = baseAppRepository.findAll(specification, pageRequest);
+        PageResult<BaseAppDTO> convert = PageResultConvert.convert(all, BaseAppDTO.class);
 
         return convert;
     }

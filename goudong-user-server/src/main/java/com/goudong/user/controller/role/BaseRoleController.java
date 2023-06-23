@@ -77,8 +77,8 @@ public class BaseRoleController {
     @ApiImplicitParam(name = "ids", value = "role ids", required = true)
     public Result<Boolean> deleteUserById (@RequestParam(name = "ids")@NotNull @NotEmpty List<Long> ids){
         // 参数校验，预置角色不能删除
-        boolean present = ids.stream().filter(f -> f < 100).findFirst().isPresent();
-        AssertUtil.isFalse(present, () -> RoleException.client("角色删除失败"));
+        boolean present = ids.stream().filter(f -> f < Integer.MAX_VALUE).findFirst().isPresent();
+        AssertUtil.isFalse(present, () -> RoleException.clientByForbidden());
         return Result.ofSuccess(baseRoleService.removeRoles(ids));
     }
 

@@ -13,7 +13,25 @@ public enum ExceptionEnum implements ExceptionEnumInterface {
 
     //~app异常
     //==================================================================================================================
-    X_APP_ID_INVALID("10000001"),
+    /**
+     * 应用通用异常
+     */
+    APP("10001001"),
+    /**
+     * 请求头X-App-Id无效
+     */
+    X_APP_ID_INVALID("10001002", "请求头X-App-Id值无效"),
+
+    /**
+     * 应用唯一
+     */
+    APP_UNIQUE("10001003", "应用已存在"),
+
+    /**
+     * 应用不存在
+     */
+    APP_INVALID("10001004", "应用不存在"),
+
 
     ;
 
@@ -27,15 +45,28 @@ public enum ExceptionEnum implements ExceptionEnumInterface {
      */
     private String code;
 
+    /**
+     * 提示信息
+     */
+    private String clientMessage;
+
     ExceptionEnum(String code) {
         this.status = 400;
         this.code = code;
     }
 
-    ExceptionEnum(int status, String code) {
+    ExceptionEnum(String code, String clientMessage) {
+        this.status = 400;
+        this.code = code;
+        this.clientMessage = clientMessage;
+    }
+    ExceptionEnum(int status, String code, String clientMessage) {
         this.status = status;
         this.code = code;
+        this.clientMessage = clientMessage;
     }
+
+
 
     /**
      * 响应码
@@ -58,7 +89,7 @@ public enum ExceptionEnum implements ExceptionEnumInterface {
      */
     @Override
     public String getClientMessage() {
-        return "未知异常";
+        return this.clientMessage;
     }
 
     /**
@@ -66,7 +97,7 @@ public enum ExceptionEnum implements ExceptionEnumInterface {
      */
     @Override
     public String getServerMessage() {
-        return "未知异常";
+        return null;
     }
     //~fields
     //==================================================================================================================

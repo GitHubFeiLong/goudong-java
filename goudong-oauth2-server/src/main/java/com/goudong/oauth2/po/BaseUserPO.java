@@ -14,7 +14,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -133,13 +132,14 @@ public class BaseUserPO extends BasePO implements UserDetails, Authentication {
      * @param sessionId 用户会话唯一id
      * @return
      */
-    public static BaseUserPO createAnonymousUser(String sessionId) {
+    public static BaseUserPO createAnonymousUser(String sessionId, Long appId) {
         BaseUserPO anonymousUser = new BaseUserPO();
         anonymousUser.setAuthenticated(true);
         // 这里id不能修改，其他地方已经定义了0是匿名用户
         anonymousUser.setId(0L);
         anonymousUser.setUsername("匿名用户");
         anonymousUser.setSessionId(sessionId);
+        anonymousUser.setAppId(appId);
         // 创建匿名角色
         BaseRolePO baseRolePO = new BaseRolePO();
         baseRolePO.setId(0L);

@@ -8,6 +8,7 @@ import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
 import com.goudong.core.context.GoudongContext;
+import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -84,14 +86,13 @@ public class BaseMenuServiceImpl implements BaseMenuService {
 
     /**
      * 初始化
-     * @// TODO: 2022/9/18 需要给管理员加上权限
      * @param req
      * @return
      */
     @Override
     @Transactional
     public List<BaseMenuDTO> init(List<InitMenuReq> req) {
-
+        AssertUtil.isTrue(GoudongContext.get().hasSuperAdmin(), () -> ClientException.clientByForbidden());
         // 查询所有系统菜单
         BaseMenuPO baseMenuPO = new BaseMenuPO();
         baseMenuPO.setAppId(GoudongContext.get().getAppId());
@@ -275,8 +276,10 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     @Override
     public List<BaseMenuDTO> listByTree(BaseMenuPageReq req) {
         Specification<BaseMenuPO> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> and = new ArrayList<>();
+            and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
             Order weightOrder = criteriaBuilder.asc(root.get("sortNum"));
-            return query.orderBy(weightOrder).getRestriction();
+            return query.where(and.toArray(new Predicate[and.size()])).orderBy(weightOrder).getRestriction();
         };
         List<BaseMenuPO> all = baseMenuRepository.findAll(specification);
         List<BaseMenuDTO> menuDTOS = BeanUtil.copyToList(all, BaseMenuDTO.class, CopyOptions.create());
@@ -298,6 +301,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         // 参数校验
         req.check();
         BaseMenuPO po = BeanUtil.copyProperties(req, BaseMenuPO.class);
+        po.setAppId(GoudongContext.get().getAppId());
         baseMenuRepository.save(po);
         return BeanUtil.copyProperties(po, BaseMenuDTO.class);
     }

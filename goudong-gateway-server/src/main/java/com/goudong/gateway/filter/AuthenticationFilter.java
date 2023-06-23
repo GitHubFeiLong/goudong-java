@@ -13,12 +13,14 @@ import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -33,7 +35,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     //==================================================================================================================
     private static List<String> IGNORE_URIS = ListUtil.newArrayList(
             "/authentication/login",
-            "/api/oauth2/authentication/refresh-token"
+            "/authentication/refresh-token",
+            "/**/*.html*",
+            "/**/*.css*",
+            "/**/*.js*",
+            "/**/*.ico*",
+            "/**/swagger-resources*",
+            "/**/api-docs*",
+            "/druid/**",
+            "/actuator/**"
     );
     /**
      * oauth2服务
@@ -75,8 +85,13 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String method = request.getMethodValue();
         String appId = request.getHeaders().getFirst(HttpHeaderConst.X_APP_ID);
 
-        // 本次请求是登录认证/刷新令牌时，不需要进行后面的token校验
-        if (IGNORE_URIS.stream().filter(f -> uri.contains(f)).findFirst().orElseGet(() -> "").length() > 0) {
+        // 本次请求是白名单，不需要进行后面的token校验
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        Optional<String> first = IGNORE_URIS.stream()
+                .filter(f -> antPathMatcher.match(f, uri))
+                .findFirst();
+
+        if (first.isPresent()) {
             return chain.filter(exchange);
         }
 
