@@ -4,12 +4,15 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
+import com.goudong.boot.web.core.ServerException;
 import com.goudong.boot.web.util.PageResultConvert;
 import com.goudong.commons.constant.core.DateConst;
+import com.goudong.commons.constant.user.RoleConst;
 import com.goudong.commons.framework.jpa.MyIdentifierGenerator;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.ListUtil;
 import com.goudong.core.util.StringUtil;
 import com.goudong.oauth2.dto.BaseAppApplyReq;
 import com.goudong.oauth2.dto.BaseAppAuditReq;
@@ -17,20 +20,22 @@ import com.goudong.oauth2.dto.BaseAppDTO;
 import com.goudong.oauth2.dto.BaseAppQueryReq;
 import com.goudong.oauth2.enumerate.RedisKeyProviderEnum;
 import com.goudong.oauth2.po.BaseAppPO;
+import com.goudong.oauth2.po.BaseRolePO;
 import com.goudong.oauth2.po.BaseUserPO;
 import com.goudong.oauth2.repository.BaseAppRepository;
+import com.goudong.oauth2.repository.BaseRoleRepository;
 import com.goudong.oauth2.repository.BaseUserRepository;
 import com.goudong.oauth2.service.BaseAppService;
 import com.goudong.oauth2.service.BaseMenuService;
 import com.goudong.oauth2.service.BaseRoleService;
 import com.goudong.oauth2.service.BaseUserService;
-import com.goudong.oauth2.util.AppIdUtil;
+import com.goudong.oauth2.util.app.AppContext;
+import com.goudong.oauth2.util.app.AppIdV1Strategy;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,6 +47,7 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -65,6 +71,9 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     @Resource
     private BaseUserRepository baseUserRepository;
+
+    @Resource
+    private BaseRoleRepository baseRoleRepository;
 
     @Resource
     private BaseRoleService baseRoleService;
@@ -109,9 +118,13 @@ public class BaseAppServiceImpl implements BaseAppService {
             // 查询用户表admin的最大id
             Long maxAdminUserId = baseUserRepository.findMaxAdminUserId();
             Long userId = maxAdminUserId + 1;
-            String appSecret = AppIdUtil.getAppSecret();
+
+            AppIdV1Strategy appIdV1Strategy = new AppIdV1Strategy();
+            AppContext appContext = new AppContext(appIdV1Strategy);
+
+            String appSecret = appContext.getAppSecret();
             Long appId = MyIdentifierGenerator.ID.nextId();
-            String appIdStr = AppIdUtil.getAppId(appId);
+            String appIdStr = appContext.getAppId(appId);
             Date now = new Date();
 
             BaseUserPO userPO = new BaseUserPO();
@@ -131,11 +144,17 @@ public class BaseAppServiceImpl implements BaseAppService {
             userPO.setUpdateTime(now);
             userPO.setUpdateUserId(authentication.getId());
             userPO.setDeleted(false);
+
+            // 设置角色
+            BaseRolePO baseRolePO = baseRoleRepository.findByRoleName(RoleConst.ROLE_ADMIN)
+                    .orElseThrow(() -> ServerException.server(String.format("ROLE_ADMIN角色不存在")));
+            userPO.setRoles(ListUtil.newArrayList(baseRolePO));
+
             baseUserRepository.save(userPO);
 
             BaseAppPO po = new BaseAppPO();
             po.setAppId(appIdStr);
-            po.setAppSecret(AppIdUtil.getAppSecret());
+            po.setAppSecret(appSecret);
             po.setAppName(req.getAppName());
             po.setStatus(BaseAppPO.StatusEnum.CHECK_PENDING.getId());
             po.setRemark(req.getRemark());
@@ -191,9 +210,14 @@ public class BaseAppServiceImpl implements BaseAppService {
             po.setRemark(req.getRemark());
             po.setStatus(req.getStatus());
 
-            // 审核通过，创建账号
+            // 审核通过,将账号激活
             if (req.getStatus() == BaseAppPO.StatusEnum.PASS.getId()) {
-                baseUserService.saveAppAdminUser(po.getId(), po.getAppSecret());
+                Optional<BaseUserPO> byUsername = baseUserRepository.findByUsername(po.getAppName());
+                if (byUsername.isPresent()) {
+                    BaseUserPO baseUserPO = byUsername.get();
+                    baseUserPO.setEnabled(true);
+                    baseUserPO.setLocked(true);
+                }
             }
             return BeanUtil.copyProperties(po, BaseAppDTO.class);
         } finally {

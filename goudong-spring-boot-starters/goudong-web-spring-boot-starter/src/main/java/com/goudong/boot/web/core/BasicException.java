@@ -1095,6 +1095,15 @@ public class BasicException extends RuntimeException implements BasicExceptionIn
         super(cause);
     }
 
+    public BasicException(BasicException be) {
+        super(be.getClientMessage()+"\t"+be.getServerMessage());
+        this.status = be.getStatus();
+        this.code = be.getCode();
+        this.clientMessage = be.getClientMessage();
+        this.serverMessage = be.getServerMessage();
+        this.serverMessage = be.getServerMessage();
+    }
+
     public BasicException(String message, Throwable cause) {
         super(message, cause);
     }

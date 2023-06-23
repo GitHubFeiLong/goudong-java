@@ -32,5 +32,7 @@ public interface ExceptionEnumInterface {
      * @param status http状态码
      * @return true 包含；false 不包含
      */
-    boolean containStatus(int status);
+    default boolean containStatus(int status) {
+        return false;
+    };
 }

@@ -34,7 +34,7 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
     Long findMaxAdminUserId();
 
     /**
-     * 根据用户名查询用户是否存在
+     * 根据用户名查询用户
      * @param username
      * @return
      */
