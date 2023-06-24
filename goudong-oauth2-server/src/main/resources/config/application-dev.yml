@@ -89,9 +89,9 @@ oauth2:
     enableRepeatLogin: false
     # 浏览器
     browser:
-      access: 1
+      access: 24
       access-time-unit: hours
-      refresh: 2
+      refresh: 48
       refresh-time-unit: days
 
   # 重定向页面配置

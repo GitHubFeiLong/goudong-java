@@ -3,6 +3,7 @@ package com.goudong.oauth2.filter;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.ListUtil;
 import com.goudong.oauth2.enumerate.ExceptionEnum;
 import com.goudong.oauth2.exception.AppException;
 import com.goudong.oauth2.po.BaseAppPO;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.annotation.Resource;
@@ -22,6 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -34,6 +38,18 @@ import java.io.IOException;
 public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     //~fields
     //==================================================================================================================
+    private static List<String> IGNORE_URIS = ListUtil.newArrayList(
+            "/**/authentication/login",
+            "/**/authentication/refresh-token",
+            "/**/*.html*",
+            "/**/*.css*",
+            "/**/*.js*",
+            "/**/*.ico*",
+            "/**/swagger-resources*",
+            "/**/api-docs*",
+            "/druid/**",
+            "/actuator/**"
+    );
 
     /**
      * 应用服务层
@@ -66,10 +82,13 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             Long appIdLong = appContext.getAppId(appId);
 
             String requestURI = httpServletRequest.getRequestURI();
-            if (requestURI.contains("/authentication/refresh-token")
-                    || requestURI.contains("/authentication/login")
-                    || requestURI.contains("/authentication/login")
-            ) {
+            // 本次请求是白名单，不需要进行后面的token校验
+            AntPathMatcher antPathMatcher = new AntPathMatcher();
+            Optional<String> first = IGNORE_URIS.stream()
+                    .filter(f -> antPathMatcher.match(f, requestURI))
+                    .findFirst();
+
+            if (first.isPresent()) {
                 BaseAppPO baseAppPO = baseAppRepository.findById(appIdLong)
                         .orElseThrow(() -> AppException
                                 .builder(ExceptionEnum.X_APP_ID_INVALID)

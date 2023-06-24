@@ -34,8 +34,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     //~fields
     //==================================================================================================================
     private static List<String> IGNORE_URIS = ListUtil.newArrayList(
-            "/authentication/login",
-            "/authentication/refresh-token",
+            "/**/authentication/login",
+            "/**/authentication/refresh-token",
             "/**/*.html*",
             "/**/*.css*",
             "/**/*.js*",
