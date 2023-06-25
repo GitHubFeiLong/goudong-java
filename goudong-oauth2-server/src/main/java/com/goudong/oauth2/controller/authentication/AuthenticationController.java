@@ -148,8 +148,8 @@ public class AuthenticationController {
         // 获取当前用户
         BaseUserPO authentication = (BaseUserPO)SecurityContextHolder.getContext().getAuthentication();
 
-        // ADMIN用户直接不校验权限
-        if (authentication.isAdmin()) {
+        // 超级管理员用户直接不校验权限
+        if (authentication.isSuperAdmin()) {
             // 不需要鉴权，直接放行
             return Result.ofSuccess(authentication.toContext());
         }
