@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * 类描述：
@@ -46,7 +47,7 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
 
         // 后台管理员，就需要查询应用表
         if (appId.longValue() == 1667779450730426368L) {
-            return baseUserRepository.findByAppAdminUser(username);
+            return Optional.ofNullable(baseUserRepository.findByAppAdminUser(username)).orElseGet(() -> baseUserRepository.findByLogin(appId, username));
         }
 
         BaseUserPO byLogin = baseUserRepository.findByLogin(appId, username);

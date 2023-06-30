@@ -189,7 +189,7 @@ public class AuthenticationController {
         // 判断是否需要鉴权
         Optional<BaseMenuDTO> menuOptional = allMenu.parallelStream()
                 // 接口且是内链
-                .filter(f -> f.getType() == 0 && f.getOpenModel() == 0)
+                .filter(f -> (f.getType() == 2 || f.getType() == 0) && f.getOpenModel() == 0)
                 .filter(f -> antPathMatcher.match(f.getPath(), uri) && f.getMethod().toUpperCase().indexOf(method.toUpperCase()) != -1)
                 .findFirst();
 

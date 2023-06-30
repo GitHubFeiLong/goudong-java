@@ -220,27 +220,27 @@ public class BaseRoleServiceImpl implements BaseRoleService {
         // 当前用户所拥有的菜单权限，不能越级设置权限
         List<String> roles = GoudongContext.get().getRoles();
         List<BaseMenuDTO> permissions;
+
+        BaseRoleDTO baseRoleDTO = BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
         // ADMIN 直接返回所有
         if (GoudongContext.get().hasAdmin()) {
             permissions = baseMenuService.findAll();
+
         } else {
             permissions = baseMenuService.findAllByRoleNames(roles);
+
+
         }
 
-
-        BaseRoleDTO baseRoleDTO = BeanUtil.copyProperties(rolePO, BaseRoleDTO.class);
+        // 转换成Tree
+        baseRoleDTO.setPermission(Tree.getInstance().toTree(permissions));
         List<Long> menuIds = baseRoleDTO.getMenus().stream().map(BaseMenuDTO::getId).collect(Collectors.toList());
-
         // 拥有的权限
         permissions.stream().forEach(p -> {
             if (menuIds.contains(p.getId())) {
                 p.setChecked(true);
             }
         });
-
-        // 转换成Tree
-        baseRoleDTO.setPermission(Tree.getInstance().toTree(permissions));
-
         return baseRoleDTO;
     }
 
