@@ -12,10 +12,7 @@ import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import com.goudong.core.util.tree.v2.Tree;
-import com.goudong.user.dto.AddMenuReq;
-import com.goudong.user.dto.BaseMenuDTO;
-import com.goudong.user.dto.BaseMenuPageReq;
-import com.goudong.user.dto.InitMenuReq;
+import com.goudong.user.dto.*;
 import com.goudong.user.enumerate.RedisKeyProviderEnum;
 import com.goudong.user.po.BaseMenuPO;
 import com.goudong.user.po.BaseRolePO;
@@ -302,6 +299,22 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         req.check();
         BaseMenuPO po = BeanUtil.copyProperties(req, BaseMenuPO.class);
         po.setAppId(GoudongContext.get().getAppId());
+        baseMenuRepository.save(po);
+        return BeanUtil.copyProperties(po, BaseMenuDTO.class);
+    }
+
+    /**
+     * 修改菜单
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public BaseMenuDTO updateMenu(UpdateMenuReq req) {
+        // 参数校验
+        req.check();
+        BaseMenuPO po = baseMenuRepository.findById(req.getId()).orElseThrow(() -> ClientException.client("菜单不存在"));
+        BeanUtil.copyProperties(req, po, CopyOptions.create().setIgnoreNullValue(true).setIgnoreError(true));
         baseMenuRepository.save(po);
         return BeanUtil.copyProperties(po, BaseMenuDTO.class);
     }

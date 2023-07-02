@@ -1,9 +1,6 @@
 package com.goudong.user.service;
 
-import com.goudong.user.dto.AddMenuReq;
-import com.goudong.user.dto.BaseMenuDTO;
-import com.goudong.user.dto.BaseMenuPageReq;
-import com.goudong.user.dto.InitMenuReq;
+import com.goudong.user.dto.*;
 
 import java.util.List;
 
@@ -54,4 +51,11 @@ public interface BaseMenuService {
      * @return
      */
     BaseMenuDTO addMenu(AddMenuReq req);
+
+    /**
+     * 修改菜单
+     * @param req
+     * @return
+     */
+    BaseMenuDTO updateMenu(UpdateMenuReq req);
 }

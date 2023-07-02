@@ -1,10 +1,7 @@
 package com.goudong.user.controller.menu;
 
 import com.goudong.core.lang.Result;
-import com.goudong.user.dto.AddMenuReq;
-import com.goudong.user.dto.BaseMenuDTO;
-import com.goudong.user.dto.BaseMenuPageReq;
-import com.goudong.user.dto.InitMenuReq;
+import com.goudong.user.dto.*;
 import com.goudong.user.service.BaseMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,5 +46,11 @@ public class BaseMenuController {
     @ApiOperation(value = "添加单个菜单")
     public Result<BaseMenuDTO> addMenu(@RequestBody AddMenuReq req) {
         return Result.ofSuccess(baseMenuService.addMenu(req));
+    }
+
+    @PutMapping
+    @ApiOperation(value = "修改单个菜单")
+    public Result<BaseMenuDTO> updateMenu(@RequestBody UpdateMenuReq req) {
+        return Result.ofSuccess(baseMenuService.updateMenu(req));
     }
 }

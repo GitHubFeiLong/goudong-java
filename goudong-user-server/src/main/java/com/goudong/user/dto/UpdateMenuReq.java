@@ -24,9 +24,13 @@ import static com.goudong.commons.constant.core.HttpMethodConst.ALL_HTTP_METHOD;
  * @date 2023/6/10 1:48
  */
 @Data
-public class AddMenuReq {
+public class UpdateMenuReq {
     //~fields
     //==================================================================================================================
+    @ApiModelProperty(value = "id", required = true)
+    @NotNull
+    private Long id;
+
     @ApiModelProperty("上级菜单id（如果为空就是一级菜单）")
     private Long parentId;
 
