@@ -271,4 +271,10 @@ public class BaseUerController {
         AssertUtil.isTrue(id > Integer.MAX_VALUE, () -> ClientException.clientByForbidden());
         return Result.ofSuccess(baseUserService.changeLocked(id));
     }
+
+    @PutMapping("/change-own-password")
+    @ApiOperation("修改账户自己的密码")
+    public Result<Boolean> changeOwnPassword(@RequestBody @Validated ChangeOwnPasswordReq req) {
+        return Result.ofSuccess(baseUserService.changeOwnPassword(req));
+    }
 }

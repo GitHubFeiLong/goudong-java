@@ -3,6 +3,7 @@ package com.goudong.user.repository;
 import com.goudong.user.po.BaseUserPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -64,4 +65,13 @@ public interface BaseUserRepository extends JpaRepository<BaseUserPO, Long>, Jpa
      * @return
      */
     int deleteByAppIdAndIdIn(Long appId, List<Long> ids);
+
+    /**
+     * 修改密码
+     * @param password
+     * @param id
+     */
+    @Query(value = "update base_user set password=?1 where id=?2", nativeQuery = true)
+    @Modifying
+    int updatePasswordById(String password, Long id);
 }

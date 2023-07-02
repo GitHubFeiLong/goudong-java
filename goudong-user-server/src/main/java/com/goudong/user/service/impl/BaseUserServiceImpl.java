@@ -22,7 +22,6 @@ import com.goudong.user.po.BaseUserPO;
 import com.goudong.user.repository.BaseUserRepository;
 import com.goudong.user.service.BaseRoleService;
 import com.goudong.user.service.BaseUserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,6 +31,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -44,22 +44,25 @@ import java.util.stream.Collectors;
  * @Date 2022/1/7 15:34
  */
 @Service
-@RequiredArgsConstructor
 public class BaseUserServiceImpl implements BaseUserService {
 
     /**
      * 用户持久层接口
      */
-    private final BaseUserRepository baseUserRepository;
+    @Resource
+    private BaseUserRepository baseUserRepository;
 
     /**
      * 角色服务层接口
      */
-    private final BaseRoleService baseRoleService;
+    @Resource
+    private BaseRoleService baseRoleService;
 
-    private final GoudongMessageServerService goudongMessageServerService;
+    @Resource
+    private GoudongMessageServerService goudongMessageServerService;
 
-    private final EntityManager entityManager;
+    @Resource
+    private EntityManager entityManager;
 
     /**
      * 根据指定的用户名，生成3个可以未被注册的用户名
@@ -236,8 +239,8 @@ public class BaseUserServiceImpl implements BaseUserService {
                 List<Predicate> and = new ArrayList<>();
                 // 查询指定应用
                 and.add(criteriaBuilder.equal(root.get("appId"), GoudongContext.get().getAppId()));
+                and.add(criteriaBuilder.gt(root.get("id"), Integer.MAX_VALUE));
 
-                Predicate predicate = null;
                 if (StringUtil.isNotBlank(page.getUsername())) {
                     Path<String> username = root.get("username");
                     and.add(criteriaBuilder.like(username, page.getUsername() + "%"));
@@ -476,6 +479,19 @@ public class BaseUserServiceImpl implements BaseUserService {
         BaseUserPO userPO = baseUserRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("user id not found"));
         AssertUtil.isEquals(userPO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
         userPO.setLocked(!userPO.getLocked());
+        return true;
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public boolean changeOwnPassword(ChangeOwnPasswordReq req) {
+        Long userId = GoudongContext.get().getUserId();
+        baseUserRepository.updatePasswordById(BCrypt.hashpw(req.getPassword(), BCrypt.gensalt()), userId);
         return true;
     }
 

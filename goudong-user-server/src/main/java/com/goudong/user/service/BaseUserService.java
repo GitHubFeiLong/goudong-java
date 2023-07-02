@@ -137,4 +137,12 @@ public interface BaseUserService {
      */
     @Transactional
     boolean changeLocked(Long id);
+
+    /**
+     * 修改密码
+     * @param req
+     * @return
+     */
+    @Transactional
+    boolean changeOwnPassword(ChangeOwnPasswordReq req);
 }
