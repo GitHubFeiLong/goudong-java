@@ -58,4 +58,11 @@ public interface BaseMenuService {
      * @return
      */
     BaseMenuDTO updateMenu(UpdateMenuReq req);
+
+    /**
+     * 根据id删除单个菜单
+     * @param id
+     * @return
+     */
+    Boolean deleteMenuById(Long id);
 }

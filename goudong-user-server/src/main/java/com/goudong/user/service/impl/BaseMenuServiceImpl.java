@@ -320,6 +320,23 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     }
 
     /**
+     * 根据id删除单个菜单
+     *
+     * @param id
+     * @return
+     */
+    @Transactional
+    @Override
+    public Boolean deleteMenuById(Long id) {
+        BaseMenuPO menuPO = baseMenuRepository.findById(id).orElseThrow(() -> ClientException.client("菜单不存在"));
+        AssertUtil.isTrue(menuPO.getAppId() == GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
+
+        menuPO.setDeleted(true);
+
+        return true;
+    }
+
+    /**
      * 将 InitMenuReq 对象转换成 BaseMenuPO 并放入集合中
      * 如果原始菜单存在相同数据，那么不创建新的id，只是修改
      *

@@ -53,4 +53,10 @@ public class BaseMenuController {
     public Result<BaseMenuDTO> updateMenu(@RequestBody UpdateMenuReq req) {
         return Result.ofSuccess(baseMenuService.updateMenu(req));
     }
+
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "删除单个菜单")
+    public Result<Boolean> deleteMenuById(@PathVariable Long id) {
+        return Result.ofSuccess(baseMenuService.deleteMenuById(id));
+    }
 }
