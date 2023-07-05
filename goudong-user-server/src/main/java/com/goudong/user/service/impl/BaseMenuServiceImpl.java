@@ -329,7 +329,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     @Override
     public Boolean deleteMenuById(Long id) {
         BaseMenuPO menuPO = baseMenuRepository.findById(id).orElseThrow(() -> ClientException.client("菜单不存在"));
-        AssertUtil.isTrue(menuPO.getAppId() == GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
+        AssertUtil.isEquals(menuPO.getAppId(), GoudongContext.get().getAppId(), () -> ClientException.clientByForbidden());
 
         menuPO.setDeleted(true);
 

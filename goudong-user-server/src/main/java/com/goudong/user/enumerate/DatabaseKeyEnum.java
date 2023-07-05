@@ -51,7 +51,7 @@ public enum DatabaseKeyEnum implements DatabaseKeyInterface {
 
     //~ 菜单表 base_menu
     //==================================================================================================================
-    UK_BASE_MENU_PATH_METHOD("uk_base_menu_path_method", "请勿重复添加相同菜单"),
+    UK_BASE_MENU_PERMISSION_ID("uk_base_menu_permission_id", "权限标识已存在"),
     ;
 
     public static final Logger log = LoggerFactory.getLogger(DatabaseKeyEnum.class);
