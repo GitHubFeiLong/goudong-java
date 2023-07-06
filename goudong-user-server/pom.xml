@@ -117,6 +117,12 @@
             <artifactId>lombok</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!--searcher-->
+        <dependency>
+            <groupId>cn.zhxu</groupId>
+            <artifactId>bean-searcher-boot-starter</artifactId>
+            <version>${bean-searcher-boot-starter.version}</version>
+        </dependency>
     </dependencies>
 
     <!-- 构建项目需要的信息 -->
