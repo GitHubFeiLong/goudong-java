@@ -3,6 +3,7 @@ package com.goudong.gateway.filter;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.utils.core.LogUtil;
+import com.goudong.gateway.util.HttpHeaderUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -58,7 +59,8 @@ public class ModifyRequestHeaderFilter implements GlobalFilter, Ordered {
             removeRequestHeaders(exchange, removeHeaders);
         }
 
-        addXRealIP(exchange);
+        HttpHeaderUtil.getXRealIp(exchange);
+        HttpHeaderUtil.getXTraceId(exchange);
         return chain.filter(exchange);
     }
 
@@ -78,19 +80,4 @@ public class ModifyRequestHeaderFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = requestBuilder.build();
         exchange.mutate().request(request).build();
     }
-
-    /**
-     * 添加 X-Real-IP 请求头信息
-     * @param exchange
-     */
-    private void addXRealIP(ServerWebExchange exchange) {
-        // Add your custom logic here to modify the request headers
-        exchange.getRequest().mutate().headers(httpHeaders -> {
-            if (!httpHeaders.containsKey("X-Real-IP")) {
-                httpHeaders.add("X-Real-IP", "127.0.0.2");
-            }
-        });
-        // Continue the filter chain
-    }
-
 }

@@ -34,12 +34,10 @@ public class IpUtil {
      */
     public static String getStringIp(HttpServletRequest request) {
         String xIp = request.getHeader("X-Real-IP");
-        String xFor = request.getHeader("X-Forwarded-For");
-
         if (StringUtil.isNotBlank(xIp)) {
-            return getIp(request, xIp);
+            return xIp;
         }
-
+        String xFor = request.getHeader("X-Forwarded-For");
         if(StringUtil.isNotBlank(xFor) && !IpUtil.UNKNOWN.equalsIgnoreCase(xFor)){
             //多次反向代理后会有多个ip值，第一个ip才是真实ip
             int index = xFor.indexOf(",");
@@ -50,37 +48,7 @@ public class IpUtil {
             }
         }
 
-        return "localhost---";
-    }
-
-    /**
-     * 获取ip地址
-     * @param request
-     * @param xIp
-     * @return
-     */
-    private static String getIp(HttpServletRequest request, String xIp) {
-        String xFor;
-        xFor = xIp;
-        if(StringUtil.isNotBlank(xFor) && !IpUtil.UNKNOWN.equalsIgnoreCase(xFor)){
-            return xFor;
-        }
-        if (StringUtil.isBlank(xFor) || IpUtil.UNKNOWN.equalsIgnoreCase(xFor)) {
-            xFor = request.getHeader("Proxy-Client-IP");
-        }
-        if (StringUtil.isBlank(xFor) || IpUtil.UNKNOWN.equalsIgnoreCase(xFor)) {
-            xFor = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (StringUtil.isBlank(xFor) || IpUtil.UNKNOWN.equalsIgnoreCase(xFor)) {
-            xFor = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (StringUtil.isBlank(xFor) || IpUtil.UNKNOWN.equalsIgnoreCase(xFor)) {
-            xFor = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (StringUtil.isBlank(xFor) || IpUtil.UNKNOWN.equalsIgnoreCase(xFor)) {
-            xFor = request.getRemoteAddr();
-        }
-        return xFor;
+        return "localhost";
     }
 
     /**

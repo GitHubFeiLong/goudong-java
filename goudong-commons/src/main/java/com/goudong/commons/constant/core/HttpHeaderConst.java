@@ -45,6 +45,16 @@ public class HttpHeaderConst {
      */
     public static final String X_APP_ID = "X-App-Id";
 
+    /**
+     * 真实ip地址
+     */
+    public static final String X_REAL_IP = "X-Real-IP";
+
+    /**
+     * 全局链路id
+     */
+    public static final String X_TRACE_ID = "X-Trace-Id";
+
     //~methods
     //==================================================================================================================
 

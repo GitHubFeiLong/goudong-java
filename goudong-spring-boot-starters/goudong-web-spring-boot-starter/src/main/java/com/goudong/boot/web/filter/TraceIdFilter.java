@@ -1,8 +1,10 @@
 package com.goudong.boot.web.filter;
 
 import com.goudong.boot.web.util.TraceIdUtil;
+import com.goudong.core.util.StringUtil;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -18,7 +20,12 @@ public class TraceIdFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
             // 添加请求日志的全局唯一id
-            TraceIdUtil.put();
+            String traceId = ((HttpServletRequest) request).getHeader("X-Trace-Id");
+            if (StringUtil.isNotBlank(traceId)) {
+                TraceIdUtil.put(traceId);
+            } else {
+                TraceIdUtil.put();
+            }
             chain.doFilter(request, response);
         } finally {
             // 清除请求的全局日志id

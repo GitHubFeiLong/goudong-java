@@ -113,7 +113,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         FilterRegistrationBean<Filter> filterFilterRegistrationBean = new FilterRegistrationBean<>();
         filterFilterRegistrationBean.setFilter(new TraceIdFilter());
         // 执行的顺序(值越低，优先级越高)
-        filterFilterRegistrationBean.setOrder(0);
+        filterFilterRegistrationBean.setOrder(Integer.MIN_VALUE);
         filterFilterRegistrationBean.addUrlPatterns("/*");
         return filterFilterRegistrationBean;
     }

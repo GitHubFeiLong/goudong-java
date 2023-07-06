@@ -5,16 +5,15 @@ import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.commons.framework.openfeign.GoudongOauth2ServerService;
 import com.goudong.core.context.Context;
 import com.goudong.core.util.ListUtil;
+import com.goudong.gateway.util.HttpHeaderUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -96,22 +95,29 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         // 获取请求头Authorization对应的属性值
-        List<String> tokenList = request.getHeaders().get(HttpHeaders.AUTHORIZATION);
-        String token = null;
-        if (!CollectionUtils.isEmpty(tokenList)) {
-            token = tokenList.get(0);
-        }
+        String token = HttpHeaderUtil.getAuthorization(exchange);
 
         // 获取cookie，用来做用户标识
-        String cookie = request.getHeaders().getFirst(HttpHeaders.COOKIE);
+        String cookie = HttpHeaderUtil.getCookie(exchange);
         if (cookie != null && cookie.contains("=")) {
             cookie = cookie.substring(cookie.indexOf("=") + 1);
         }
 
+        String xRealIp = HttpHeaderUtil.getXRealIp(exchange);
+        String xTraceId = HttpHeaderUtil.getXTraceId(exchange);
+        // 全局
+
         // 鉴权，返回用户信息
         // 注意：内部服务间使用Feign调用，不会走网关！所以也就不会在进行鉴权！
         // 如果需求是内部服务也要鉴权，那么就需要每个服务都添加全局拦截器，调用下面这个鉴权方法即可！！
-        Context context = goudongOauth2ServerService.authorize(uri, method, appId, token, cookie).getData();
+        Context context = goudongOauth2ServerService.authorize(uri,
+                method,
+                appId,
+                token,
+                cookie,
+                xRealIp,
+                xTraceId
+        ).getData();
 
         // 将用户信息保存到请求头中，供下游服务使用
         ServerHttpRequest newRequest = request

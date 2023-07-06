@@ -71,6 +71,8 @@ public interface GoudongOauth2ServerService {
      * @param appId 请求头应用Id
      * @param token 令牌
      * @param cookie
+     * @param ip 真实ip地址
+     * @param traceId 全局链路追踪id
      * @return
      */
     @GetMapping("/authentication/authorize")
@@ -79,6 +81,8 @@ public interface GoudongOauth2ServerService {
             , @RequestHeader(HttpHeaderConst.X_APP_ID) String appId
             , @RequestHeader(HttpHeaders.AUTHORIZATION) String token
             , @RequestHeader(HttpHeaders.COOKIE) String cookie
+            , @RequestHeader(HttpHeaderConst.X_REAL_IP) String ip
+            , @RequestHeader(HttpHeaderConst.X_TRACE_ID) String traceId
     );
 
     //~ 测试seata

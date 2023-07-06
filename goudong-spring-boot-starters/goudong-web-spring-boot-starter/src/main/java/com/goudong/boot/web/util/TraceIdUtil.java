@@ -26,6 +26,16 @@ public class TraceIdUtil {
     }
 
     /**
+     * 添加自定义的id
+     * @param traceId
+     * @return
+     */
+    public static String put(String traceId) {
+        MDC.put(TRACE_ID, traceId);
+        return traceId;
+    }
+
+    /**
      * 获取
      * @return
      */

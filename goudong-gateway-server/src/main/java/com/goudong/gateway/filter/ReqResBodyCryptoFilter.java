@@ -1,6 +1,5 @@
 package com.goudong.gateway.filter;
 
-import com.goudong.boot.web.util.TraceIdUtil;
 import com.goudong.commons.constant.core.HttpHeaderConst;
 import com.goudong.core.security.aes.AES;
 import com.goudong.core.security.rsa.ServerRSA;
@@ -55,8 +54,6 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
-            TraceIdUtil.put();
-            log.info("hhh");
             ServerHttpRequest request = exchange.getRequest();
             // 查看请求头是否自定义的请求头(X-Aes-Key)
             String aesKeyEncrypt = request.getHeaders().getFirst(HttpHeaderConst.X_AES_KEY);
@@ -97,8 +94,6 @@ public class ReqResBodyCryptoFilter implements GlobalFilter, Ordered {
             //
             // }
         } finally {
-            log.info("hhh");
-            TraceIdUtil.remove();
         }
     }
 

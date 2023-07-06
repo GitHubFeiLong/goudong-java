@@ -1,5 +1,6 @@
 package com.goudong.commons.utils.core;
 
+import com.goudong.core.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +42,10 @@ public class IpUtil {
      */
     public static String getStringIp(HttpServletRequest request) {
         String xIp = request.getHeader("X-Real-IP");
+        if (StringUtil.isNotBlank(xIp)) {
+            return xIp;
+        }
         String xFor = request.getHeader("X-Forwarded-For");
-
         if(StringUtils.isNotEmpty(xFor) && !IpUtil.UNKNOWN.equalsIgnoreCase(xFor)){
             //多次反向代理后会有多个ip值，第一个ip才是真实ip
             int index = xFor.indexOf(",");
@@ -53,7 +56,7 @@ public class IpUtil {
             }
         }
 
-        return getIp(request, xIp);
+        return "localhost";
     }
 
     /**
