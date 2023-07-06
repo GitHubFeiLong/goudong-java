@@ -58,6 +58,7 @@ public class ModifyRequestHeaderFilter implements GlobalFilter, Ordered {
             removeRequestHeaders(exchange, removeHeaders);
         }
 
+        addXRealIP(exchange);
         return chain.filter(exchange);
     }
 
@@ -76,6 +77,20 @@ public class ModifyRequestHeaderFilter implements GlobalFilter, Ordered {
          });
         ServerHttpRequest request = requestBuilder.build();
         exchange.mutate().request(request).build();
+    }
+
+    /**
+     * 添加 X-Real-IP 请求头信息
+     * @param exchange
+     */
+    private void addXRealIP(ServerWebExchange exchange) {
+        // Add your custom logic here to modify the request headers
+        exchange.getRequest().mutate().headers(httpHeaders -> {
+            if (!httpHeaders.containsKey("X-Real-IP")) {
+                httpHeaders.add("X-Real-IP", "127.0.0.2");
+            }
+        });
+        // Continue the filter chain
     }
 
 }
