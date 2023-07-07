@@ -1,6 +1,7 @@
 package com.goudong.commons.framework.openfeign;
 
-import com.goudong.commons.dto.user.BaseUser2QueryPageReq;
+import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageReq;
+import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageResp;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -23,5 +24,5 @@ public interface GoudongUserServerService {
      * @return
      */
     @GetMapping("/base-user/page")
-    Result<PageResult> pageUser (@SpringQueryMap BaseUser2QueryPageReq page);
+    Result<PageResult<BaseUser2QueryPageResp>> pageUser (@SpringQueryMap BaseUser2QueryPageReq page);
 }

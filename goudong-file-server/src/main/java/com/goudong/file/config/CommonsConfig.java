@@ -3,6 +3,8 @@ package com.goudong.file.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
+import com.goudong.boot.web.aop.ApiLogAop;
+import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.commons.annotation.enable.*;
 import com.goudong.commons.aop.LoggingAop;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +35,8 @@ public class CommonsConfig {
     public CommonsConfig(HttpServletRequest request) {
         this.request = request;
     }
-
-    /*
-    ==========================================================
-    ===========================Aop===============================
-    ==========================================================
-     */
+    //~methods
+    //==================================================================================================================
     /**
      * 日志切面
      * @param environment
@@ -47,6 +45,16 @@ public class CommonsConfig {
     @Bean
     public LoggingAop loggingAop(Environment environment, ObjectMapper objectMapper) {
         return new LoggingAop(environment, objectMapper);
+    }
+
+    /**
+     * 接口日志切面
+     * @param environment
+     * @return
+     */
+    @Bean
+    public ApiLogAop apiLogAop(Environment environment, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
+        return new ApiLogAop(environment, objectMapper, apiLogProperties);
     }
 
     /**

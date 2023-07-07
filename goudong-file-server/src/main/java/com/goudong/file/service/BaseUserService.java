@@ -1,6 +1,6 @@
 package com.goudong.file.service;
 
-import com.goudong.commons.dto.user.BaseUser2QueryPageReq;
+import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageReq;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;

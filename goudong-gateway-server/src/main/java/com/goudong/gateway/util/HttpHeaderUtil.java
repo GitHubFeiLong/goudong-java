@@ -53,9 +53,6 @@ public class HttpHeaderUtil {
             if (ipAddress == null || ipAddress.isEmpty()) {
                 ipAddress = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
             }
-            // 在这里可以使用获取到的真实IP地址进行相关处理
-            System.out.println("客户端真实IP地址：" + ipAddress);
-
             String finalIpAddress = ipAddress;
             exchange.getRequest().mutate().headers(httpHeaders -> httpHeaders.add(HttpHeaderConst.X_REAL_IP, finalIpAddress));
             return ipAddress;

@@ -32,7 +32,7 @@ import java.util.Date;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/user/template")
+@RequestMapping("/user-server/template")
 @RequiredArgsConstructor
 public class UserTemplateController {
     //~fields

@@ -1,8 +1,8 @@
 logging:
-  config: classpath:log4j2/log4j2-dev.xml
   level:
     ROOT: INFO
     com.goudong: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
 
 server:
   port: 10004
@@ -17,15 +17,14 @@ spring:
     add-mappings: false #工程中的资源文件建立映射
   application:
     name: goudong-file-server #微服务名
-  # json日期格式化
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
+#  # json日期格式化
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: GMT+8
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # nacos服务集群
-
   servlet:
     multipart:
       # 设置值为-1，不限制大小
@@ -62,11 +61,11 @@ spring:
     baseline-version: 0
     baseline-on-migrate: true
     table: goudong_file_server_flyway_schema_history
-# redisson配置
-redisson:
-  password: ${spring.redis.password}
-  singleServerConfig:
-    address: ${spring.redis.host}:${spring.redis.port}
+## redisson配置
+#redisson:
+#  password: ${spring.redis.password}
+#  singleServerConfig:
+#    address: ${spring.redis.host}:${spring.redis.port}
 
 ribbon:
   ReadTimeout: 5000 #建立连接所用时间（避免超时）
@@ -86,7 +85,8 @@ knife4j:
 # 自定义配置
 commons:
   whitelist:
-    enable: true
+    enable: false
+
 file:
   upload:
     enable-full-path-model: true
@@ -103,6 +103,11 @@ file:
 feign:
   httpclient:
     enabled: true
-#  compression:
-#    request:
-#      min-request-size: 4096
+
+
+goudong:
+  web:
+    api-log:
+      print-log-limit:
+        head-params:
+          Authorization: true

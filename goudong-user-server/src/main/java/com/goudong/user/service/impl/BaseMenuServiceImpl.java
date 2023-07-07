@@ -357,6 +357,7 @@ public class BaseMenuServiceImpl implements BaseMenuService {
         if (poByMap != null) {  // 原始菜单中有时，就需要修改
             // 拷贝其他属性
             BeanUtil.copyProperties(poByMap, po);
+            BeanUtil.copyProperties(req, po, CopyOptions.create().ignoreNullValue());
         } else {
             BeanUtil.copyProperties(req, po);
             po.setId(MyIdentifierGenerator.ID.nextId());

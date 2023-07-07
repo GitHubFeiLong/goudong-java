@@ -1,4 +1,4 @@
-package com.goudong.commons.dto.user;
+package com.goudong.commons.framework.openfeign.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

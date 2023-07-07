@@ -26,7 +26,7 @@ import java.io.IOException;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("/user/import")
+@RequestMapping("/user-server/import")
 @RequiredArgsConstructor
 public class UserImportController {
     //~fields

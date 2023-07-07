@@ -1,4 +1,4 @@
-package com.goudong.gateway.filter;
+package com.goudong.gateway.filter.out;
 
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.goudong.commons.constant.core.HttpHeaderConst;

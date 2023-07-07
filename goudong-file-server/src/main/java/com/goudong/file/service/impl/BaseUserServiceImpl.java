@@ -1,15 +1,14 @@
 package com.goudong.file.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.goudong.commons.constant.core.DateConst;
-import com.goudong.commons.dto.oauth2.BaseUserDTO;
-import com.goudong.commons.dto.user.BaseUser2QueryPageReq;
 import com.goudong.commons.framework.openfeign.GoudongUserServerService;
+import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageReq;
+import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageResp;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import com.goudong.file.dto.BaseUserExportDTO;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -53,7 +53,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
         String fileName = null;
         try {
-            fileName = URLEncoder.encode("用户导出" + DateUtil.format(new Date(), DateConst.DATE_TIME_FORMATTER_SHORT) + ".xlsx", "UTF-8")
+            fileName = URLEncoder.encode("用户导出" + DateUtil.format(new Date(), DateConst.DATE_TIME_FORMATTER_SHORT) + ".csv", "UTF-8")
                     .replaceAll("\\+", "%20");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
@@ -65,7 +65,10 @@ public class BaseUserServiceImpl implements BaseUserService {
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 
         // 这里 需要指定写用哪个class去写
-        try (ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream(), BaseUserExportDTO.class).build()) {
+        try (ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream(), BaseUserExportDTO.class)
+                .registerConverter(new LongStringConverter())
+                .build()
+        ) {
             // 这里注意 如果同一个sheet只要创建一次
             WriteSheet writeSheet = EasyExcel.writerSheet("sheet01").build();
             /*
@@ -83,17 +86,29 @@ public class BaseUserServiceImpl implements BaseUserService {
                 // 页码加一
                 page += 1;
                 req.setPage(page);
-                Result<PageResult<BaseUserDTO>> pageResult = goudongUserServerService.pageUser(req);
+                Result<PageResult<BaseUser2QueryPageResp>> pageResult = goudongUserServerService.pageUser(req);
                 // 分页查询
                 // 获取总数量
                 total = pageResult.getData().getTotal();
 
-                List<BaseUserExportDTO> data = BeanUtil.copyToList(pageResult.getData().getContent(), BaseUserExportDTO.class, CopyOptions.create());
+                List<BaseUserExportDTO> data = new ArrayList<>(pageResult.getData().getContent().size());
 
-                data.stream().forEach(p->{
-                    p.setSerialNumber(atomicLong.getAndIncrement());
-                    String collect = p.getRoles().stream().map(m -> m.getRoleNameCn()).collect(Collectors.joining(","));
-                    p.setRoleNameCn(collect);
+                pageResult.getData().getContent().stream().forEach(p -> {
+                    BaseUserExportDTO dto = new BaseUserExportDTO();
+                    dto.setSerialNumber(atomicLong.getAndIncrement());
+                    dto.setUsername(p.getUsername());
+                    dto.setNickname(p.getNickname());
+                    dto.setSex(p.getSex() == 0 ? "未知" : (p.getSex() == 1 ? "男性" : "女性"));
+                    dto.setPhone(p.getPhone());
+                    dto.setEmail(p.getEmail());
+                    dto.setRoleNameCn(p.getRoles().stream().map(m -> m.getRoleNameCn()).collect(Collectors.joining(",")));
+                    dto.setRemark(p.getRemark());
+                    dto.setValidTime(p.getValidTime());
+                    dto.setCreateTime(p.getCreateTime());
+                    dto.setEnabled(p.getEnabled() ? "激活" : "未激活");
+                    dto.setLocked(p.getLocked() ? "锁定" : "未锁定");
+
+                    data.add(dto);
                 });
 
                 // 调用写入
