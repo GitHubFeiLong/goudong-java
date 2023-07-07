@@ -34,7 +34,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/user-server/template")
 @RequiredArgsConstructor
-public class UserTemplateController {
+public class UserServerTemplateController {
     //~fields
     //==================================================================================================================
 

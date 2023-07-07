@@ -28,7 +28,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/user-server/import")
 @RequiredArgsConstructor
-public class UserImportController {
+public class UserServerImportController {
     //~fields
     //==================================================================================================================
     private final BaseUserService baseUserService;

@@ -1,4 +1,4 @@
-package com.goudong.file.controller.export.user;
+package com.goudong.file.controller.export;
 
 import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageReq;
 import com.goudong.file.service.BaseUserService;
@@ -27,7 +27,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/user-server/export")
 @RequiredArgsConstructor
-public class UserExportController {
+public class UserServerExportController {
 
     private final BaseUserService userService;
 
