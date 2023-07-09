@@ -1,8 +1,6 @@
 package com.goudong.file.controller.imports;
 
-import com.goudong.core.util.ListUtil;
-import com.goudong.file.service.BaseUserService;
-import com.goudong.file.service.UploadService;
+import com.goudong.file.service.UserServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -31,26 +29,16 @@ import java.io.IOException;
 public class UserServerImportController {
     //~fields
     //==================================================================================================================
-    private final BaseUserService baseUserService;
+    private final UserServerService userServerService;
 
-    private final UploadService uploadService;
+
 
     //~methods
     //==================================================================================================================
     @PostMapping(value = "/user")
     @ApiOperation(value = "导入用户")
     public void importUser(MultipartFile file) throws IOException {
-        // 检查文件是否能上传
-        uploadService.checkSimpleUpload(ListUtil.newArrayList(file));
 
-        // 判断本次导入是否需要异步
-        file.getSize();
-
-
-
-        // EasyExcel.read(file.getInputStream(),
-        //                 UserExcelTemplateDTO.class,
-        //                 new UserExcelTemplateReadListener(baseUserService, baseRoleService))
-        //         .sheet().doRead();
+        userServerService.importUser(file);
     }
 }

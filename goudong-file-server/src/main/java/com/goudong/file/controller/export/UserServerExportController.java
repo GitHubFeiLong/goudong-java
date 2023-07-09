@@ -1,7 +1,7 @@
 package com.goudong.file.controller.export;
 
 import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageReq;
-import com.goudong.file.service.BaseUserService;
+import com.goudong.file.service.UserServerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +29,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserServerExportController {
 
-    private final BaseUserService userService;
+    private final UserServerService userServerService;
 
     @GetMapping(value = "/user")
     @ApiOperation(value = "导出用户", notes = "参数跟分页参数基本一致")
     public void userExportExcel(BaseUser2QueryPageReq req, HttpServletResponse response) throws IOException {
-        userService.userExportExcel(req, response);
+        userServerService.userExportExcel(req, response);
     }
 }

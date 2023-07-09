@@ -11,11 +11,14 @@ import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageReq;
 import com.goudong.commons.framework.openfeign.dto.BaseUser2QueryPageResp;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
+import com.goudong.core.util.ListUtil;
 import com.goudong.file.dto.BaseUserExportDTO;
-import com.goudong.file.service.BaseUserService;
+import com.goudong.file.service.UploadService;
+import com.goudong.file.service.UserServerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -36,9 +39,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BaseUserServiceImpl implements BaseUserService {
+public class UserServerServiceImpl implements UserServerService {
 
     private final GoudongUserServerService goudongUserServerService;
+
+    private final UploadService uploadService;
 
     /**
      * 导出用户
@@ -117,5 +122,24 @@ public class BaseUserServiceImpl implements BaseUserService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 导入用户
+     *
+     * @param file
+     */
+    @Override
+    public void importUser(MultipartFile file) {
+        // 检查文件是否能上传
+        uploadService.checkSimpleUpload(ListUtil.newArrayList(file));
+
+        // 判断本次导入是否需要异步
+        // file.getSize();
+
+        // EasyExcel.read(file.getInputStream(),
+        //                 UserExcelTemplateDTO.class,
+        //                 new UserExcelTemplateReadListener(baseUserService, baseRoleService))
+        //         .sheet().doRead();
     }
 }

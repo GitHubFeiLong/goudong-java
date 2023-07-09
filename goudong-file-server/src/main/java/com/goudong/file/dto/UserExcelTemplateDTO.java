@@ -73,7 +73,6 @@ public class UserExcelTemplateDTO implements Serializable {
      */
     @ExcelProperty(value = "角色")
     @ExcelComment("设置用户角色，不同角色对应着不同的权限")
-    // @ExcelDataValidation(source = BaseRoleServiceImpl.class)
     @ColumnWidth(30)
     @ExcelRequired
     private String roleNameCn;
