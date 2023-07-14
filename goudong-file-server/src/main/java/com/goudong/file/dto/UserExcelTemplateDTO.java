@@ -25,48 +25,13 @@ public class UserExcelTemplateDTO implements Serializable {
     //~methods
     //==================================================================================================================
     /**
-     * 用户名
-     */
-    @ExcelProperty(value = "用户名")
-    @ExcelRequired
-    @ColumnWidth(15)
-    private String username;
-
-    /**
-     * 密码
-     */
-    @ExcelProperty(value = "密码")
-    @ExcelComment("登录密码，如果不填写，默认值是123456")
-    @ColumnWidth(15)
-    private String password;
-
-    /**
-     * 昵称
-     */
-    @ExcelProperty(value = "昵称")
-    @ColumnWidth(15)
-    private String nickname;
-    /**
-     * 性别
-     */
-    @ExcelProperty(value = "性别")
-    @ExcelDataValidation(value = {"男", "女"})
-    @ColumnWidth(10)
-    private String sex;
-    /**
      * 手机号
      */
     @ExcelProperty(value = "手机号")
+    @ExcelComment("登录密码，如果不填写，默认值是123456")
     @ColumnWidth(15)
     @ExcelRequired
     private String phone;
-    /**
-     * 邮箱
-     */
-    @ExcelProperty(value = "邮箱")
-    @ColumnWidth(20)
-    @ExcelRequired
-    private String email;
 
     /**
      * 角色
@@ -81,9 +46,10 @@ public class UserExcelTemplateDTO implements Serializable {
      * 有效期
      */
     @ExcelProperty(value = "账号有效期")
-    @ExcelComment("设置账户的有效期，如果不填写就默认永久有效")
+    @ExcelComment("设置账户的有效期，如果不填写就默认30天有效")
     @ColumnWidth(20)
     private Date validTime;
+
     /**
      * 备注
      */
