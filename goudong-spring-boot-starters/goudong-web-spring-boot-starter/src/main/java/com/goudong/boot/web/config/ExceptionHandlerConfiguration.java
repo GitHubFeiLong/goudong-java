@@ -1,10 +1,14 @@
 package com.goudong.boot.web.config;
 
+import com.goudong.boot.web.core.ErrorAttributesService;
+import com.goudong.boot.web.core.ErrorAttributesServiceImpl;
 import com.goudong.boot.web.handler.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +28,17 @@ public class ExceptionHandlerConfiguration {
 
     //~methods
     //==================================================================================================================
+    /**
+     * 通用得异常处理
+     *
+     * @param request
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(ErrorAttributesService.class)
+    public ErrorAttributesService errorAttributesService(HttpServletRequest request) {
+        return new ErrorAttributesServiceImpl(request);
+    }
 
     /**
      * 通用得异常处理

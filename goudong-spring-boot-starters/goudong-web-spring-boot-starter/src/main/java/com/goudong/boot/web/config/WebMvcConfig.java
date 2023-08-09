@@ -1,6 +1,6 @@
 package com.goudong.boot.web.config;
 
-import com.goudong.boot.web.core.ErrorAttributes;
+import com.goudong.boot.web.core.ErrorAttributesServiceImpl;
 import com.goudong.boot.web.filter.TraceIdFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -100,8 +100,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
      * @return
      */
     @Bean
-    public ErrorAttributes errorAttributes () {
-        return new ErrorAttributes(request);
+    public ErrorAttributesServiceImpl errorAttributes () {
+        return new ErrorAttributesServiceImpl(request);
     }
 
     /**

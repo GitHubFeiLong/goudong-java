@@ -34,3 +34,5 @@ target/
 logs/
 
 .flattened-pom.xml
+
+node_moduls/

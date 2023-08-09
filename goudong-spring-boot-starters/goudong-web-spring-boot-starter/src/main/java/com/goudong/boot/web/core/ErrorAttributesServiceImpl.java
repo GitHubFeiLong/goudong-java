@@ -7,7 +7,6 @@ import com.goudong.core.lang.Result;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -17,16 +16,19 @@ import java.util.Map;
 
 /**
  * 自定义异常逻辑，返回自定义格式的json错误信息
+ *
+ * <pre>
+ *
+ * </pre>
  * @Author msi
  * @Date 2021-05-25 9:53
  * @Version 1.0
  */
-@Component
-public class ErrorAttributes extends DefaultErrorAttributes {
+public class ErrorAttributesServiceImpl extends DefaultErrorAttributes implements ErrorAttributesService{
 
     private final HttpServletRequest request;
 
-    public ErrorAttributes(HttpServletRequest request){
+    public ErrorAttributesServiceImpl(HttpServletRequest request){
         this.request = request;
     }
 
@@ -41,7 +43,9 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             // 设置响应码值
             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, be.getStatus());
             return map;
-        } else if (error instanceof NoHandlerFoundException) { // 静态资源404
+        }
+
+        if (error instanceof NoHandlerFoundException) { // 静态资源404
             NoHandlerFoundException exception = (NoHandlerFoundException) error;
             Result result = Result.ofFailByNotFound(exception.getRequestURL());
             Map<String, Object> map = BeanUtil.beanToMap(result);
@@ -49,17 +53,10 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             // 设置响应码值
             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.NOT_FOUND.value());
             return map;
-        } else if (error == null) {
-            BasicException be = ClientException.client(ClientExceptionEnum.NOT_FOUND);
-            Result result = Result.ofFail(be);
-            Map<String, Object> map = BeanUtil.beanToMap(result);
+        }
 
-            // 设置响应码值
-            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, be.getStatus());
-            return map;
-        } else {
-            // 其它不确定异常
-            BasicException be = ServerException.server(ServerExceptionEnum.SERVER_ERROR, error.getMessage());
+        if (error == null) {
+            BasicException be = ClientException.client(ClientExceptionEnum.NOT_FOUND);
             Result result = Result.ofFail(be);
             Map<String, Object> map = BeanUtil.beanToMap(result);
 
@@ -68,8 +65,14 @@ public class ErrorAttributes extends DefaultErrorAttributes {
             return map;
         }
 
-        // 使用默认的错误
-        // return super.getErrorAttributes(webRequest, options);
+        // 其它不确定异常
+        BasicException be = ServerException.server(ServerExceptionEnum.SERVER_ERROR, error.getMessage());
+        Result result = Result.ofFail(be);
+        Map<String, Object> map = BeanUtil.beanToMap(result);
+
+        // 设置响应码值
+        request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, be.getStatus());
+        return map;
     }
 
 }
