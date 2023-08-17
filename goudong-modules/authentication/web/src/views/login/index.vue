@@ -8,7 +8,7 @@
 
       <el-form-item prop="selectAppId">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="iconfont-yingyongguanli" />
         </span>
         <el-select v-model="loginForm.selectAppId" width="85%" placeholder="请选择应用登录" clearable>
           <el-option
@@ -89,7 +89,6 @@ export default {
       },
       // 规则
       loginRules: {
-        selectAppId: [{ required: true, trigger: 'blur' }],
         username: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur' }]
       },
@@ -124,11 +123,11 @@ export default {
       this.apps = data
     })
 
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
-    }
+    // if (this.loginForm.username === '') {
+    //   this.$refs.username.focus()
+    // } else if (this.loginForm.password === '') {
+    //   this.$refs.password.focus()
+    // }
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
