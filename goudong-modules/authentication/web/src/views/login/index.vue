@@ -67,12 +67,12 @@
 </template>
 
 <script>
-import SocialSign from './components/SocialSignin'
+// import SocialSign from './components/SocialSignin'
 import { dropDownAllAppApi } from '@/api/dropDown';
 
 export default {
   name: 'Login',
-  components: { SocialSign },
+  // components: { SocialSign },
   data() {
     return {
       loginForm: {
