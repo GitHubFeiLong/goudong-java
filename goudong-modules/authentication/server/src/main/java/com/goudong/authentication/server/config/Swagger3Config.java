@@ -50,7 +50,7 @@ public class Swagger3Config {
                 .enable(true)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.zhy.authentication.server.rest"))
+                .apis(RequestHandlerSelectors.basePackage("com.goudong.authentication.server.rest"))
                 //只有标记了@ApiOperation的方法才会暴露出给swagger
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())

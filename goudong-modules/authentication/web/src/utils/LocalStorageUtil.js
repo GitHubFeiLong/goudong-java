@@ -61,14 +61,7 @@ export default class LocalStorageUtil {
     return LocalStorageUtil.get(TOKEN_LOCAL_STORAGE)
   }
 
-  /**
-   * 获取 Access Token
-   * @returns {string|*}
-   */
-  static getAccessToken() {
-    const token = LocalStorageUtil.getToken()
-    if (token) {
-      return token.accessToken
-    }
+  static setToken(token) {
+    return LocalStorageUtil.set(TOKEN_LOCAL_STORAGE, token)
   }
 }

@@ -1,5 +1,5 @@
 import { getInfo, login, logout } from '@/api/user'
-import { router, resetRouter } from '@/router'
+import { resetRouter } from '@/router'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
 import {
   PERMISSION_BUTTONS_LOCAL_STORAGE,
@@ -7,9 +7,7 @@ import {
   TOKEN_LOCAL_STORAGE,
   USER_LOCAL_STORAGE
 } from '@/constant/LocalStorageConst.js'
-import Token from '@/pojo/Token'
 import defaultAvatarPng from '@/assets/png/default-avatar.png'
-import store from "@/store";
 
 const state = {
   token: '',
@@ -37,21 +35,20 @@ const mutations = {
     state.roles = roles
   },
 }
-import { arrayToTree } from "@/utils/tree";
 const actions = {
   // 登录
   login({ commit }, userInfo) {
     const { username, password, selectAppId } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password,selectAppId: selectAppId }).then(async data => {
+      login({ username: username.trim(), password: password, selectAppId: selectAppId }).then(async data => {
         console.log("登录接口成功")
         const { homePage, token, roles, username } = data
         commit('SET_TOKEN', token)
         commit('SET_ROLES', roles)
         commit('SET_NAME', username)
-        commit('SET_AVATAR',defaultAvatarPng)
+        commit('SET_AVATAR', defaultAvatarPng)
 
-        window.location.href = homePage + "?token="+token
+        window.location.href = homePage + "?token=" + token
         // LocalStorageUtil.set(TOKEN_LOCAL_STORAGE, token)
         //
         // const user = data.user
@@ -116,11 +113,10 @@ const actions = {
         //
         // router.addRoutes(accessRoutes)
         //
-        // resolve(data)
+        resolve(data)
       }).catch((reason) => reject())
     })
   },
-
 
   // 获取用户信息
   getInfo({ commit, state }) {

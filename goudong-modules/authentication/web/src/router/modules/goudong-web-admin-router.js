@@ -24,6 +24,10 @@ import { treeToArr } from "@/utils/tree";
  */
 export const goudongWebAdminResource = [
   {
+    path: '/dashboard',
+    component: 'views/dashboard/index',
+  },
+  {
     name: '系统管理',
     type: 1,
     openModel: 0,

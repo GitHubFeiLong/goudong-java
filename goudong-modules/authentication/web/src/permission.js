@@ -5,7 +5,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/get-page-title'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
-import { PERMISSION_ROUTES_LOCAL_STORAGE, TOKEN_LOCAL_STORAGE } from "@/constant/LocalStorageConst";
+import { PERMISSION_ROUTES_LOCAL_STORAGE } from "@/constant/LocalStorageConst";
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -18,8 +18,15 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
 
+  // 如果链接上有token就保存
+  console.log(from)
+  console.log(to)
+  if (to.query && to.query.token) {
+    LocalStorageUtil.setToken(to.query.token)
+  }
+
   // determine whether the user has logged in
-  const accessToken = LocalStorageUtil.getAccessToken()
+  const accessToken = LocalStorageUtil.getToken()
   if (accessToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
@@ -28,8 +35,9 @@ router.beforeEach(async(to, from, next) => {
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       // 当有角色，且已经根据角色添加过路由了就放行，否则需要去计算路由
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      if (hasRoles) {
+      // const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      // if (hasRoles) {
+      if (true) {
         next()
       } else {
         // 当页面刷新时会store会清空。

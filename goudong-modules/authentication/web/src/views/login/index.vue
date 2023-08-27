@@ -15,8 +15,8 @@
             v-for="item in apps"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
 
@@ -63,19 +63,12 @@
 
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import SocialSign from './components/SocialSignin'
-import {dropDownAllAppApi} from '@/api/dropDown';
+import { dropDownAllAppApi } from '@/api/dropDown';
 
 export default {
   name: 'Login',
@@ -95,7 +88,6 @@ export default {
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
-      showDialog: false,
       redirect: undefined,
       otherQuery: {},
       apps: []
@@ -113,24 +105,12 @@ export default {
       immediate: true
     }
   },
-  created() {
-    // window.addEventListener('storage', this.afterQRScan)
-  },
   mounted() {
     // 获取应用下拉
     dropDownAllAppApi().then(data => {
       console.log(data);
       this.apps = data
     })
-
-    // if (this.loginForm.username === '') {
-    //   this.$refs.username.focus()
-    // } else if (this.loginForm.password === '') {
-    //   this.$refs.password.focus()
-    // }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     checkCapslock(e) {
@@ -154,8 +134,8 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
+              // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
             })
             .catch(() => {
               this.loading = false

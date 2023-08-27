@@ -1,8 +1,6 @@
 import { constantRoutes } from '@/router'
 import Layout from "@/layout";
-import {
-  goudongWebAdminComponent,
-} from "@/router/modules/goudong-web-admin-router";
+import { goudongWebAdminComponent, } from "@/router/modules/goudong-web-admin-router";
 import vueElementAdminRouter from "@/router/modules/vue-element-admin-router";
 
 function hasPermissionByMenus(menus, route) {
@@ -61,7 +59,7 @@ const actions = {
       permission_routes.push({ path: '*', redirect: '/404', hidden: true })
       // permission_routes = constantRoutes.concat(permission_routes)
       commit('SET_ROUTES', permission_routes)
-      // permission_routes = constantRoutes.concat(vueElementAdminRouter).concat(permission_routes)
+      permission_routes = constantRoutes.concat(vueElementAdminRouter).concat(permission_routes)
       resolve(permission_routes)
     })
   }
