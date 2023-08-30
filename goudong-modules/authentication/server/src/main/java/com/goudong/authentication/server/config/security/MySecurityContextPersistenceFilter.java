@@ -1,12 +1,12 @@
 package com.goudong.authentication.server.config.security;
 
+import com.goudong.authentication.common.core.UserSimple;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.ListUtil;
 import com.goudong.authentication.common.core.Jwt;
-import com.goudong.authentication.common.core.UserToken;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.repository.BaseAppRepository;
 import com.goudong.authentication.server.service.BaseAppService;
@@ -57,6 +57,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     );
     private static List<String> IGNORE_URIS = ListUtil.newArrayList(
             "/**/user/login",
+            "/**/base-user/info/*",
             "/**/drop-down/base-app/all-drop-down" // 应用下拉
     );
 
@@ -123,15 +124,15 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             String token = authorization.substring(prefix.length());
 
             Jwt jwt = new Jwt(0, TimeUnit.SECONDS, appDTO.getSecret());
-            UserToken userToken = jwt.parseToken(token);
-            log.debug("解析token：{}", userToken);
+            UserSimple userSimple = jwt.parseToken(token);
+            log.debug("解析token：{}", userSimple);
 
             MyAuthentication myAuthentication = new MyAuthentication();
-            myAuthentication.setId(userToken.getId());
-            myAuthentication.setAppId(userToken.getAppId());
-            myAuthentication.setRealAppId(userToken.getRealAppId());
-            myAuthentication.setUsername(userToken.getUsername());
-            myAuthentication.setRoles(userToken.getRoles().stream().map(m -> new SimpleGrantedAuthority(m)).collect(Collectors.toList()));
+            myAuthentication.setId(userSimple.getId());
+            myAuthentication.setAppId(userSimple.getAppId());
+            myAuthentication.setRealAppId(userSimple.getRealAppId());
+            myAuthentication.setUsername(userSimple.getUsername());
+            myAuthentication.setRoles(userSimple.getRoles().stream().map(m -> new SimpleGrantedAuthority(m)).collect(Collectors.toList()));
             // 官网建议，避免跨多个线程的竞态条件
             SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
             emptyContext.setAuthentication(myAuthentication);

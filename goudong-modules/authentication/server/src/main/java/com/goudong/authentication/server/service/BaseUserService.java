@@ -1,12 +1,13 @@
 package com.goudong.authentication.server.service;
 
+import com.goudong.authentication.common.core.LoginResp;
+import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
 import com.goudong.authentication.server.rest.req.search.BaseUserPage;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
-import com.goudong.authentication.server.service.dto.LoginDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.core.lang.PageResult;
 import org.springframework.data.domain.Page;
@@ -63,7 +64,7 @@ public interface BaseUserService {
      * @param myAuthentication
      * @return
      */
-    LoginDTO login(MyAuthentication myAuthentication);
+    LoginResp login(MyAuthentication myAuthentication);
 
     /**
      * 分页查询
@@ -86,4 +87,11 @@ public interface BaseUserService {
      * @return
      */
     List<BaseUserDropDown> dropDown(BaseUserDropDown req);
+
+    /**
+     * 根据token获取用户信息
+     * @param token
+     * @return
+     */
+    UserDetail getUserDetailByToken(String token);
 }

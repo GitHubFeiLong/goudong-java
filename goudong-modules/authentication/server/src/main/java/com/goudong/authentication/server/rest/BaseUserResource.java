@@ -1,5 +1,6 @@
 package com.goudong.authentication.server.rest;
 
+import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
@@ -53,6 +54,15 @@ public class BaseUserResource {
     @ApiOperation(value = "注销")
     public Result logout () {
         return Result.ofSuccess();
+    }
+
+    @GetMapping("/base-user/detail/{token}")
+    @ApiOperation(value = "查询用户信息(token)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "令牌", required = true),
+    })
+    public Result<UserDetail> getUserDetailByToken(@PathVariable String token) {
+        return Result.ofSuccess(baseUserService.getUserDetailByToken(token));
     }
 
     @PostMapping("/base-user")

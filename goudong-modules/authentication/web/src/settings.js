@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'authentication web admin',
+  title: '认证服务',
 
   /**
    * @type {boolean} true | false

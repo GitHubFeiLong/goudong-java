@@ -64,4 +64,8 @@ export default class LocalStorageUtil {
   static setToken(token) {
     return LocalStorageUtil.set(TOKEN_LOCAL_STORAGE, token)
   }
+
+  static removeToken() {
+    LocalStorageUtil.s.removeItem(TOKEN_LOCAL_STORAGE)
+  }
 }

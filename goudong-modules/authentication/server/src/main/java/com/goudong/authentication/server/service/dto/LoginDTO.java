@@ -14,6 +14,7 @@ import java.util.Set;
  * @date 2023/7/18 13:44
  */
 @Data
+@Deprecated
 public class LoginDTO {
 
     private Long id;

@@ -31,6 +31,12 @@ public interface BaseAppService {
     BaseAppDTO update(BaseAppUpdate req);
 
     /**
+     * 根据请求头的应用id查询应用
+     * @return
+     */
+    Optional<BaseAppDTO> findByHeader();
+
+    /**
      * 根据id查询应用
      * @param id
      * @return

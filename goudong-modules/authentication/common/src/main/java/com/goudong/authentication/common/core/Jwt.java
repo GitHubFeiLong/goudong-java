@@ -2,6 +2,7 @@ package com.goudong.authentication.common.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.authentication.common.util.JsonUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,6 +37,13 @@ public class Jwt {
      */
     private String secretKey;
 
+    public Jwt(String secretKey) {
+        try {
+            this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * 构造方法，创建jwt实例
      * @param time
@@ -54,25 +62,36 @@ public class Jwt {
 
     /**
      * 创建token
-     * @param userToken
+     * @param userSimple
      * @return
      */
-    public String generateToken(UserToken userToken) {
+    public Token generateToken(UserSimple userSimple) {
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + this.timeUnit.toMillis(time));
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String userTokenJson = objectMapper.writeValueAsString(userToken);
+        long millis = this.timeUnit.toMillis(time);
+        Date accessExpiration = new Date(now.getTime() + millis);
+        Date refreshExpiration = new Date(now.getTime() + millis * 2);
+        String json = JsonUtil.toJsonString(userSimple);
+        String accessToken = Jwts.builder()
+                .setSubject(json)
+                .setIssuedAt(now)
+                .setExpiration(accessExpiration)
+                .signWith(SignatureAlgorithm.HS256, this.secretKey)
+                .compact();
 
-            return Jwts.builder()
-                    .setSubject(userTokenJson)
-                    .setIssuedAt(now)
-                    .setExpiration(expiration)
-                    .signWith(SignatureAlgorithm.HS256, this.secretKey)
-                    .compact();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        String refreshToken = Jwts.builder()
+                .setSubject(json)
+                .setIssuedAt(now)
+                .setExpiration(refreshExpiration)
+                .signWith(SignatureAlgorithm.HS256, this.secretKey)
+                .compact();
+
+        Token token = new Token();
+        token.setAccessToken(accessToken);
+        token.setRefreshToken(refreshToken);
+        token.setAccessExpires(accessExpiration);
+        token.setRefreshExpires(refreshExpiration);
+
+        return token;
     }
 
     /**
@@ -80,17 +99,12 @@ public class Jwt {
      * @param token
      * @return
      */
-    public UserToken parseToken(String token) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            Claims body = Jwts.parser()
-                    .setSigningKey(this.secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
-            return objectMapper.readValue(body.getSubject(), UserToken.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public UserSimple parseToken(String token) {
+        Claims body = Jwts.parser()
+                .setSigningKey(this.secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+        return JsonUtil.toObject(body.getSubject(), UserSimple.class);
     }
 
 }

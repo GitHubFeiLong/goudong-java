@@ -5,6 +5,9 @@ import cn.zhxu.bs.BeanSearcher;
 import cn.zhxu.bs.SearchResult;
 import cn.zhxu.bs.operator.InList;
 import cn.zhxu.bs.util.MapUtils;
+import com.goudong.authentication.common.core.*;
+import com.goudong.authentication.server.constant.HttpHeaderConst;
+import com.goudong.authentication.server.domain.BaseMenu;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.*;
@@ -17,11 +20,10 @@ import com.goudong.authentication.server.service.dto.LoginDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
+import com.goudong.boot.web.core.ServerException;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
-import com.goudong.authentication.common.core.Jwt;
-import com.goudong.authentication.common.core.UserToken;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
 import com.goudong.authentication.server.service.BaseAppService;
@@ -263,9 +265,9 @@ public class BaseUserServiceImpl implements BaseUserService {
      */
     @Override
     @Transactional(readOnly = true)
-    public LoginDTO login(MyAuthentication myAuthentication) {
+    public LoginResp login(MyAuthentication myAuthentication) {
         log.info("认证成功，添加角色权限");
-        LoginDTO loginDTO = new LoginDTO();
+        LoginResp loginResp = new LoginResp();
 
         // 查询角色，权限使用
         BaseUser baseUser = baseUserRepository.findById(myAuthentication.getId()).get();
@@ -274,18 +276,21 @@ public class BaseUserServiceImpl implements BaseUserService {
         // 设置角色
         List<String> roles = baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
 
-        loginDTO.setId(myAuthentication.getId());
-        loginDTO.setUsername(myAuthentication.getUsername());
-        loginDTO.setAppId(myAuthentication.getAppId());
-        loginDTO.setRoles(roles);
+        loginResp.setId(myAuthentication.getId());
+        loginResp.setUsername(myAuthentication.getUsername());
+        loginResp.setAppId(myAuthentication.getAppId());
+        loginResp.setRealAppId(baseUser.getRealAppId());
+        loginResp.setRoles(roles);
+
         // 创建token
         Jwt jwt = new Jwt(1, TimeUnit.DAYS, baseAppDTO.getSecret());
-        String token = jwt.generateToken(new UserToken(myAuthentication.getId(), myAuthentication.getAppId(), myAuthentication.getRealAppId(),myAuthentication.getUsername(), roles));
-        loginDTO.setToken(token);
+        UserSimple userSimple = new UserSimple(myAuthentication.getId(), myAuthentication.getAppId(), myAuthentication.getRealAppId(), myAuthentication.getUsername(), roles);
+        Token token = jwt.generateToken(userSimple);
+        loginResp.setToken(token);
         // 设置应用首页地址
-        loginDTO.setHomePage(baseAppDTO.getHomePage());
+        loginResp.setHomePage(baseAppDTO.getHomePage());
 
-        return loginDTO;
+        return loginResp;
     }
 
     /**
@@ -371,5 +376,51 @@ public class BaseUserServiceImpl implements BaseUserService {
             redisTool.set(APP_DROP_DOWN, list, appId);
             return list;
         }
+    }
+
+    /**
+     * 根据token获取用户信息
+     * @param token
+     * @return
+     */
+    @Override
+    public UserDetail getUserDetailByToken(String token) {
+        BaseAppDTO baseAppDTO = baseAppService.findByHeader().orElseThrow(() -> ClientException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
+
+        Jwt jwt = new Jwt(baseAppDTO.getSecret());
+        UserSimple userSimple = jwt.parseToken(token);
+
+        // 查询用户角色菜单
+        BaseUser baseUser = baseUserRepository.findById(1L).orElseThrow(() -> ClientException.client("用户不存在"));
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setId(userSimple.getId());
+        userDetail.setAppId(userSimple.getAppId());
+        userDetail.setUsername(userSimple.getUsername());
+
+        List<BaseRole> roles = baseUser.getRoles();
+        List<String> roleNames = new ArrayList<>(roles.size());
+        Set<Menu> menuHashSet = new HashSet<>(roles.size());
+        roles.forEach(p -> {
+            roleNames.add(p.getName());
+
+            p.getMenus().forEach(p2 -> {
+                menuHashSet.add(BeanUtil.copyProperties(p2, Menu.class));
+            });
+
+        });
+
+        List menuArrayList = new ArrayList<>(menuHashSet);
+        menuArrayList.sort(new Comparator<Menu>() {
+            @Override
+            public int compare(Menu o1, Menu o2) {
+                return Optional.ofNullable(o1.getSortNum()).orElseGet(() ->Integer.MAX_VALUE).compareTo(Optional.ofNullable(o2.getSortNum()).orElseGet(() ->Integer.MAX_VALUE));
+            }
+        });
+        // 处理菜单
+        userDetail.setRoles(roleNames);
+        userDetail.setMenus(menuArrayList);
+
+        return userDetail;
     }
 }

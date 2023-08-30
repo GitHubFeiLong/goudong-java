@@ -40,79 +40,10 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password, selectAppId } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password, selectAppId: selectAppId }).then(async data => {
-        console.log("登录接口成功")
-        const { homePage, token, roles, username } = data
-        commit('SET_TOKEN', token)
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', username)
-        commit('SET_AVATAR', defaultAvatarPng)
-
-        window.location.href = homePage + "?token=" + token
-        // LocalStorageUtil.set(TOKEN_LOCAL_STORAGE, token)
-        //
-        // const user = data.user
-        // LocalStorageUtil.set(USER_LOCAL_STORAGE, user)
-        // const { username, nickname } = user
-        // const roles = []
-        // for (const key in user.roles) {
-        //   roles.push(user.roles[key].roleName)
-        // }
-        //
-        // if (roles.length === 0) {
-        //   roles.push('匿名角色')
-        // }
-        //
-        // // 处理动态路由，将其保存树节点
-        // console.log(123)
-        // let permission_routes = [] // 权限路由信息
-        // let permission_buttons = [] // 权限按钮
-        // if (user.menus) {
-        //   // 循环所有
-        //   user.menus.map((item, index, array) => {
-        //     const metadata = item.metadata ? JSON.parse(item.metadata) : {};
-        //     switch (item.type) {
-        //       case 1:
-        //         // 菜单
-        //         permission_routes.push({
-        //           id: item.id,
-        //           parentId: item.parentId,
-        //           path: item.path,
-        //           componentPath: item.componentPath,
-        //           name: item.name,
-        //           alwaysShow: item.parentId == null ? !item.hide : undefined,
-        //           meta: metadata,
-        //           sortNum: item.sortNum,
-        //           openModel: item.openModel
-        //         })
-        //         break;
-        //       default: // 按钮
-        //         permission_buttons.push(item.permissionId)
-        //         break;
-        //     }
-        //   })
-        // }
-        // // 路由先排序
-        // permission_routes.sort(function(a, b) {
-        //   return (a.sortNum - b.sortNum);
-        // });
-        // // 路由数组转tree
-        // permission_routes = arrayToTree(permission_routes, null);
-        // // 设置到本地缓存
-        // LocalStorageUtil.set(PERMISSION_ROUTES_LOCAL_STORAGE, permission_routes)
-        // LocalStorageUtil.set(PERMISSION_BUTTONS_LOCAL_STORAGE, permission_buttons)
-        //
-        // commit('SET_TOKEN', accessToken)
-        // commit('SET_ROLES', roles)
-        // commit('SET_NAME', username)
-        // commit('SET_AVATAR', user.avatar || defaultAvatarPng)
-        // commit('SET_INTRODUCTION', nickname)
-        //
-        // // 计算用户有权访问的路由，动态添加路由
-        // const accessRoutes = await store.dispatch('permission/generateRoutes', permission_routes)
-        //
-        // router.addRoutes(accessRoutes)
-        //
+      login({ username: username.trim(), password: password, selectAppId: selectAppId }).then(data => {
+        const { homePage, token } = data
+        const url = homePage + "?token=" + token
+        window.location.href = url
         resolve(data)
       }).catch((reason) => reject())
     })
@@ -166,37 +97,12 @@ const actions = {
     })
   },
   // 退出
-  logout({ commit, state, dispatch }) {
+  logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        LocalStorageUtil.remove(TOKEN_LOCAL_STORAGE)
-        LocalStorageUtil.remove(USER_LOCAL_STORAGE)
-        LocalStorageUtil.remove(PERMISSION_ROUTES_LOCAL_STORAGE)
-        LocalStorageUtil.remove(PERMISSION_BUTTONS_LOCAL_STORAGE)
-        resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, { root: true })
-
-        resolve()
-      })
-    })
-  },
-
-  // 重置令牌
-  resetToken({ commit }) {
-    return new Promise(resolve => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
-      LocalStorageUtil.remove(TOKEN_LOCAL_STORAGE)
-      LocalStorageUtil.remove(USER_LOCAL_STORAGE)
-      LocalStorageUtil.remove(PERMISSION_ROUTES_LOCAL_STORAGE)
-      LocalStorageUtil.remove(PERMISSION_BUTTONS_LOCAL_STORAGE)
+      LocalStorageUtil.removeToken()
       resetRouter()
-      // store.dispatch('tagsView/delAllViews', null, { root: true })
       resolve()
     })
   },

@@ -11,19 +11,33 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect', '/index'] // no redirect whitelist
 
+// 路由守卫
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
 
   // set page title
-  document.title = getPageTitle(to.meta.title)
+  document.title = getPageTitle(to)
 
   // 如果链接上有token就保存
   console.log(from)
   console.log(to)
   if (to.query && to.query.token) {
     LocalStorageUtil.setToken(to.query.token)
+    delete to.query.token
   }
+
+  if (to.path === '/login') {
+    NProgress.done()
+    next()
+  }
+
+  // 首页接受token的页面
+  if (to.path === '/login-success') {
+    NProgress.done()
+    next('/')
+  }
+
 
   // determine whether the user has logged in
   const accessToken = LocalStorageUtil.getToken()

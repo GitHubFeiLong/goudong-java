@@ -8,6 +8,7 @@ import cn.zhxu.bs.SearchResult;
 import cn.zhxu.bs.util.MapUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.repository.BaseAppRepository;
 import com.goudong.authentication.server.repository.BaseMenuRepository;
 import com.goudong.authentication.server.repository.BaseRoleRepository;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,6 +88,9 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private HttpServletRequest httpServletRequest;
 
     /**
      * 新增应用
@@ -163,6 +168,17 @@ public class BaseAppServiceImpl implements BaseAppService {
 
         cleanCache(req.getId());
         return baseAppMapper.toDto(baseApp);
+    }
+
+    /**
+     * 根据请求头的应用id查询应用
+     *
+     * @return
+     */
+    @Override
+    public Optional<BaseAppDTO> findByHeader() {
+        Long appId = (Long)httpServletRequest.getAttribute(HttpHeaderConst.X_APP_ID);
+        return findOne(appId);
     }
 
     /**

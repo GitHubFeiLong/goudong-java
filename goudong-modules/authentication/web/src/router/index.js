@@ -35,6 +35,10 @@ Vue.use(Router)
  */
 export const constantRoutes = [
   {
+    path: '/login-success',
+    component: () => import('@/layout'),
+  },
+  {
     path: '/redirect',
     component: Layout,
     hidden: true,

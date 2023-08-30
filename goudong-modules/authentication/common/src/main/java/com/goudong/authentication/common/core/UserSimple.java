@@ -1,20 +1,18 @@
 package com.goudong.authentication.common.core;
 
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * 类描述：
- * 用户token
- * @author cfl
- * @version 1.0
- * @date 2023/7/20 10:42
+ *
+ * @Author Administrator
+ * @Version 1.0
  */
-public class UserToken implements Serializable {
-
-    private static final long serialVersionUID = 9149779931324786687L;
-
+public class UserSimple {
+    //~fields
+    //==================================================================================================================
     /**
      * 用户id
      */
@@ -38,12 +36,14 @@ public class UserToken implements Serializable {
     /**
      * 角色
      */
-    private Collection<String> roles;
+    private List<String> roles;
 
-    public UserToken() {
+    //~methods
+    //==================================================================================================================
+    public UserSimple() {
     }
 
-    public UserToken(Long id, Long appId, Long realAppId, String username, Collection<String> roles) {
+    public UserSimple(Long id, Long appId, Long realAppId, String username, List<String> roles) {
         this.id = id;
         this.appId = appId;
         this.realAppId = realAppId;
@@ -83,11 +83,11 @@ public class UserToken implements Serializable {
         this.username = username;
     }
 
-    public Collection<String> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<String> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
@@ -95,8 +95,8 @@ public class UserToken implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserToken userToken = (UserToken) o;
-        return Objects.equals(id, userToken.id) && Objects.equals(appId, userToken.appId) && Objects.equals(realAppId, userToken.realAppId) && Objects.equals(username, userToken.username) && Objects.equals(roles, userToken.roles);
+        UserSimple that = (UserSimple) o;
+        return Objects.equals(id, that.id) && Objects.equals(appId, that.appId) && Objects.equals(realAppId, that.realAppId) && Objects.equals(username, that.username) && Objects.equals(roles, that.roles);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class UserToken implements Serializable {
 
     @Override
     public String toString() {
-        return "UserToken{" +
+        return "UserSimple{" +
                 "id=" + id +
                 ", appId=" + appId +
                 ", realAppId=" + realAppId +
