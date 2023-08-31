@@ -15,7 +15,23 @@ import java.util.Optional;
  * Service Interface for managing {@link BaseApp}.
  */
 public interface BaseAppService {
+    //~methods
+    //==================================================================================================================
 
+    /**
+     * 根据应用id查询应用
+     * @param id
+     * @return
+     */
+    BaseApp findById(Long id);
+
+
+
+
+
+
+    //~以下待删除methods
+    //==================================================================================================================
     /**
      * 新增应用
      * @param req

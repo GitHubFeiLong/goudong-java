@@ -3,6 +3,7 @@ package com.goudong.authentication.server.service.dto;
 import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +44,7 @@ public class MyAuthentication implements Authentication {
     /**
      * 角色
      */
-    private List<GrantedAuthority> roles;
+    private List<SimpleGrantedAuthority> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

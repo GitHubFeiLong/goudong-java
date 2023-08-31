@@ -1,4 +1,4 @@
-import { getInfo, login, logout } from '@/api/user'
+import { getUserDetailApi } from '@/api/user'
 import { resetRouter } from '@/router'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
 import {
@@ -36,66 +36,80 @@ const mutations = {
   },
 }
 const actions = {
-  // 登录
-  login({ commit }, userInfo) {
-    const { username, password, selectAppId } = userInfo
+  // 根据token获取用户信息
+  getUserDetailByToken({commit, state}) {
+    console.log(123123)
+    const token = LocalStorageUtil.getToken()
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password, selectAppId: selectAppId }).then(data => {
-        const { homePage, token } = data
-        const url = homePage + "?token=" + token
-        window.location.href = url
-        resolve(data)
-      }).catch((reason) => reject())
-    })
-  },
-
-  // 获取用户信息
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo().then(data => {
-        console.log("getInfo")
-        const { username, avatar, nickname } = data
-        const roles = []
-        for (const key in data.roles) {
-          roles.push(data.roles[key].roleName)
-        }
-        if (roles.length === 0) {
-          roles.push('匿名角色')
-        }
-
-        commit('SET_TOKEN', LocalStorageUtil.getAccessToken())
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', username)
-        commit('SET_AVATAR', avatar || defaultAvatarPng)
-        commit('SET_INTRODUCTION', nickname)
+      getUserDetailApi(token.accessToken).then(data => {
+        console.log("data:{}", data)
+        // const { username, avatar, nickname } = data
+        // const roles = []
+        // for (const key in data.roles) {
+        //   roles.push(data.roles[key].roleName)
+        // }
+        // if (roles.length === 0) {
+        //   roles.push('匿名角色')
+        // }
+        //
+        // commit('SET_TOKEN', LocalStorageUtil.getAccessToken())
+        // commit('SET_ROLES', roles)
+        // commit('SET_NAME', username)
+        // commit('SET_AVATAR', avatar || defaultAvatarPng)
+        // commit('SET_INTRODUCTION', nickname)
         resolve(data)
       }).catch(reason => {
         reject()
       })
     })
   },
-
-  getInfoByLocalStorage({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      console.log("getInfo")
-      const user = LocalStorageUtil.getUser();
-      const { username, avatar, nickname } = user
-      const roles = []
-      for (const key in user.roles) {
-        roles.push(user.roles[key].roleName)
-      }
-      if (roles.length === 0) {
-        roles.push('匿名角色')
-      }
-
-      commit('SET_TOKEN', LocalStorageUtil.getAccessToken())
-      commit('SET_ROLES', roles)
-      commit('SET_NAME', user.username)
-      commit('SET_AVATAR', user.avatar || defaultAvatarPng)
-      commit('SET_INTRODUCTION', nickname)
-      resolve(user)
-    })
-  },
+  // // 获取用户信息
+  // getInfo({ commit, state }) {
+  //   return new Promise((resolve, reject) => {
+  //     getInfo().then(data => {
+  //       console.log("getInfo")
+  //       const { username, avatar, nickname } = data
+  //       const roles = []
+  //       for (const key in data.roles) {
+  //         roles.push(data.roles[key].roleName)
+  //       }
+  //       if (roles.length === 0) {
+  //         roles.push('匿名角色')
+  //       }
+  //
+  //       commit('SET_TOKEN', LocalStorageUtil.getAccessToken())
+  //       commit('SET_ROLES', roles)
+  //       commit('SET_NAME', username)
+  //       commit('SET_AVATAR', avatar || defaultAvatarPng)
+  //       commit('SET_INTRODUCTION', nickname)
+  //       resolve(data)
+  //     }).catch(reason => {
+  //       reject()
+  //     })
+  //   })
+  // },
+  //
+  // getInfoByLocalStorage({ commit, state }) {
+  //   return new Promise((resolve, reject) => {
+  //     console.log("getInfo")
+  //     const user = LocalStorageUtil.getUser();
+  //     const { username, avatar, nickname } = user
+  //     const roles = []
+  //     for (const key in user.roles) {
+  //       roles.push(user.roles[key].roleName)
+  //     }
+  //     if (roles.length === 0) {
+  //       roles.push('匿名角色')
+  //     }
+  //
+  //     commit('SET_TOKEN', LocalStorageUtil.getAccessToken())
+  //     commit('SET_ROLES', roles)
+  //     commit('SET_NAME', user.username)
+  //     commit('SET_AVATAR', user.avatar || defaultAvatarPng)
+  //     commit('SET_INTRODUCTION', nickname)
+  //     resolve(user)
+  //   })
+  // },
   // 退出
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {

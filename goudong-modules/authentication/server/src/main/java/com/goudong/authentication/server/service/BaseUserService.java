@@ -20,7 +20,23 @@ import java.util.Optional;
  * Service Interface for managing {@link BaseUser}.
  */
 public interface BaseUserService {
+    //~fields
+    //==================================================================================================================
 
+    //~methods
+    //==================================================================================================================
+
+    /**
+     * 根据应用Id和用户名查询用户
+     * @param appId 应用Id
+     * @param username 用户名
+     * @return 返回用户
+     */
+    BaseUser findOneByAppIdAndUsername(Long appId, String username);
+
+
+    //~待删除methods
+    //==================================================================================================================
     /**
      * 新增用户
      * @param req
@@ -42,6 +58,7 @@ public interface BaseUserService {
      * @return the list of entities.
      */
     Page<BaseUserDTO> findAll(Pageable pageable);
+
 
 
     /**

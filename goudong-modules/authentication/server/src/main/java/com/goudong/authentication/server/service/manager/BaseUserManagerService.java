@@ -24,4 +24,18 @@ import java.util.Optional;
  */
 public interface BaseUserManagerService {
 
+    /**
+     * 根据应用Id和用户名查询用户
+     * @param appId 应用Id
+     * @param username 用户名
+     * @return 返回用户
+     */
+    BaseUser findOneByAppIdAndUsername(Long appId, String username);
+
+    /**
+     * 获取登录成功信息
+     * @param myAuthentication 用户认证成功对象
+     * @return 用户基本信息和token
+     */
+    LoginResp login(MyAuthentication myAuthentication);
 }

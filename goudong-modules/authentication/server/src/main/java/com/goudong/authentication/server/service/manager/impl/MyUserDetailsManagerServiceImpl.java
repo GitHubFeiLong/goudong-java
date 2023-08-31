@@ -29,10 +29,6 @@ public class MyUserDetailsManagerServiceImpl implements MyUserDetailsManagerServ
     @Resource
     private BaseUserRepository baseUserRepository;
 
-    @Resource
-    private BaseAppRepository baseAppRepository;
-
-
     /**
      * 加载根据用户名加载用户
      * 当认证失败

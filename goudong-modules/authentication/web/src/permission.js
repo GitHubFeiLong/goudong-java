@@ -22,9 +22,18 @@ router.beforeEach(async(to, from, next) => {
   // 如果链接上有token就保存
   console.log(from)
   console.log(to)
-  if (to.query && to.query.token) {
-    LocalStorageUtil.setToken(to.query.token)
-    delete to.query.token
+
+  // 接受token的页面
+  if (to.path === '/login-success') {
+    const { accessToken, refreshToken, accessExpires, refreshExpires } = to.query
+    const token = { accessToken, refreshToken, accessExpires, refreshExpires }
+    LocalStorageUtil.setToken(token)
+    // 获取用户信息
+    store.dispatch("user/getUserDetailByToken").then(data => {
+      console.log("123", data)
+    })
+    NProgress.done()
+    next('/')
   }
 
   if (to.path === '/login') {
@@ -32,16 +41,9 @@ router.beforeEach(async(to, from, next) => {
     next()
   }
 
-  // 首页接受token的页面
-  if (to.path === '/login-success') {
-    NProgress.done()
-    next('/')
-  }
-
-
   // determine whether the user has logged in
-  const accessToken = LocalStorageUtil.getToken()
-  if (accessToken) {
+  const token = LocalStorageUtil.getToken()
+  if (token) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })

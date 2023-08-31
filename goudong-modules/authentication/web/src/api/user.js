@@ -1,11 +1,29 @@
 import request from '@/utils/request'
 import {API_PREFIX} from "@/constant/commons";
 
-export function login(data) {
-  const selectAppId = data.selectAppId ? data.selectAppId : "";
+/**
+ * 登录
+ * @param username  用户名
+ * @param password  密码
+ * @param selectAppId 选择的应用Id
+ * @returns {*}
+ */
+export function loginApi(username, password, selectAppId) {
   return request({
-    url: `${API_PREFIX}/user/login?username=${data.username}&password=${encodeURIComponent(data.password)}&appId=${selectAppId}`,
+    url: `${API_PREFIX}/user/login?username=${username}&password=${password}&appId=${selectAppId}`,
     method: 'post'
+  })
+}
+
+/**
+ * 根据token获取用户信息
+ * @param token
+ * @returns {*}
+ */
+export function getUserDetailApi(token) {
+  return request({
+    url: `${API_PREFIX}/user/base-user/detail/${token}`,
+    method: 'get'
   })
 }
 

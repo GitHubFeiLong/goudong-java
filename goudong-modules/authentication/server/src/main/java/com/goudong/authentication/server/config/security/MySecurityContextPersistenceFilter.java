@@ -1,7 +1,9 @@
 package com.goudong.authentication.server.config.security;
 
 import com.goudong.authentication.common.core.UserSimple;
+import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
+import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.util.AssertUtil;
@@ -60,22 +62,8 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             "/**/base-user/info/*",
             "/**/drop-down/base-app/all-drop-down" // 应用下拉
     );
-
-    /**
-     * 应用服务层
-     */
     @Resource
-    private BaseAppRepository baseAppRepository;
-
-    /**
-     * 用户服务层
-     */
-    @Lazy
-    @Resource
-    private BaseUserService baseUserService;
-
-    @Resource
-    private BaseAppService baseAppService;
+    private BaseAppManagerService baseAppManagerService;
 
     //~methods
     //==================================================================================================================
@@ -106,12 +94,8 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
                 return;
             }
 
-            BaseAppDTO appDTO = baseAppService.findOne(appId).orElseThrow(() -> ClientException
-                    .builder()
-                    .clientMessageTemplate("X-App-Id:{}无效")
-                    .clientMessageParams(appId)
-                    .build());
-            AssertUtil.isTrue(appDTO.getEnabled(), () -> ClientException
+            BaseApp app = baseAppManagerService.findById(appId);
+            AssertUtil.isTrue(app.getEnabled(), () -> ClientException
                     .builder()
                     .clientMessageTemplate("X-App-Id:{}未激活")
                     .clientMessageParams(appId)
@@ -123,7 +107,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             AssertUtil.isTrue(authorization.startsWith(prefix), () -> ClientException.client("请求头" + HttpHeaders.AUTHORIZATION + "格式错误"));
             String token = authorization.substring(prefix.length());
 
-            Jwt jwt = new Jwt(0, TimeUnit.SECONDS, appDTO.getSecret());
+            Jwt jwt = new Jwt(0, TimeUnit.SECONDS, app.getSecret());
             UserSimple userSimple = jwt.parseToken(token);
             log.debug("解析token：{}", userSimple);
 

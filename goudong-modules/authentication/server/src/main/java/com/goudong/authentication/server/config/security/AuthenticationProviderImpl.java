@@ -1,6 +1,8 @@
 package com.goudong.authentication.server.config.security;
 
+import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
+import com.goudong.authentication.server.service.manager.BaseUserManagerService;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.core.util.AssertUtil;
@@ -15,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,8 +25,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 类描述：
@@ -43,15 +48,12 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      */
     private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
 
-    @Lazy
     @Resource
     private PasswordEncoder passwordEncoder;
 
     @Resource
-    private BaseUserRepository baseUserRepository;
+    private BaseUserManagerService baseUserManagerService;
 
-    @Resource
-    private JdbcTemplate jdbcTemplate;
     /**
      * 自定义登录认证
      *
@@ -104,7 +106,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      */
     public MyAuthentication selectAppIdAuthentication(Long selectAppId, String username, String password) {
         log.info("选择了应用：{}", selectAppId);
-        BaseUser user = baseUserRepository.findByLogin(selectAppId, username);
+        BaseUser user = baseUserManagerService.findOneByAppIdAndUsername(selectAppId, username);
         AssertUtil.isNotNull(user, () -> {
             log.warn("选择了应用,用户名不存在");
             return new UsernameNotFoundException("用户不存在");
@@ -140,6 +142,8 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         myAuthentication.setAppId(user.getAppId());
         myAuthentication.setRealAppId(user.getRealAppId());
         myAuthentication.setUsername(user.getUsername());
+        List<SimpleGrantedAuthority> roles = user.getRoles().stream().map(m -> new SimpleGrantedAuthority(m.getName())).collect(Collectors.toList());
+        myAuthentication.setRoles(roles);
         return myAuthentication;
     }
 
@@ -152,9 +156,9 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
      */
     @Transactional
     public MyAuthentication xAppIdAuthentication(Long xAppId, String username, String password) {
-        log.info("开始根据X-App-Id校验用户");
+        log.info("开始根据X-App-Id:{} 校验用户:{}", xAppId, username);
         // 未选择应用,或者选择的应用校验用户失败
-        BaseUser user = baseUserRepository.findByLogin(xAppId, username);
+        BaseUser user = baseUserManagerService.findOneByAppIdAndUsername(xAppId, username);
         AssertUtil.isNotNull(user, () -> {
             log.warn("选择了应用,用户名不存在");
             return new UsernameNotFoundException("用户不存在");
@@ -191,6 +195,8 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         myAuthentication.setAppId(user.getAppId());
         myAuthentication.setRealAppId(user.getRealAppId());
         myAuthentication.setUsername(user.getUsername());
+        List<SimpleGrantedAuthority> roles = user.getRoles().stream().map(m -> new SimpleGrantedAuthority(m.getName())).collect(Collectors.toList());
+        myAuthentication.setRoles(roles);
         return myAuthentication;
     }
 }

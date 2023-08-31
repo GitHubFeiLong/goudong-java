@@ -31,12 +31,14 @@ import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.mapper.BaseMenuMapper;
 import com.goudong.authentication.server.service.mapper.BaseUserMapper;
 import com.goudong.authentication.server.util.PageResultUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,38 +56,20 @@ import static com.goudong.authentication.server.enums.RedisKeyTemplateProviderEn
 /**
  * Service Implementation for managing {@link BaseUser}.
  */
+@Slf4j
 @Service
-@Transactional
 public class BaseUserServiceImpl implements BaseUserService {
 
-    private final Logger log = LoggerFactory.getLogger(BaseUserServiceImpl.class);
-
+    //~fields
+    //==================================================================================================================
     @Resource
     private BaseUserRepository baseUserRepository;
-
-    @Resource
-    private BaseRoleMenuRepository baseRoleMenuRepository;
-
-    @Resource
-    private BaseUserRoleRepository baseUserRoleRepository;
-
-    @Resource
-    private BaseRoleRepository baseRoleRepository;
-
-    @Resource
-    private BaseAppRepository baseAppRepository;
 
     @Resource
     private BaseAppService baseAppService;
 
     @Resource
     private BaseUserMapper baseUserMapper;
-
-    @Resource
-    private BaseMenuMapper baseMenuMapper;
-
-    @Resource
-    private HttpServletRequest request;
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -96,9 +80,37 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Resource
     private RedisTool redisTool;
 
+    //~methods
+    //==================================================================================================================
+    /**
+     * 根据应用Id和用户名查询用户
+     *
+     * @param appId    应用Id
+     * @param username 用户名
+     * @return 返回用户
+     */
+    @Override
+    @Transactional
+    public BaseUser findOneByAppIdAndUsername(Long appId, String username) {
+        BaseUser baseUser = baseUserRepository.findByLogin(appId, username);
+        // 懒加载,必须使用才能加载
+        baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
+        return baseUser;
+    }
 
-    @Resource
-    private JdbcTemplate jdbcTemplate;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 新增用户
@@ -166,6 +178,9 @@ public class BaseUserServiceImpl implements BaseUserService {
         return baseUserRepository.findAll(pageable)
             .map(baseUserMapper::toDto);
     }
+
+
+
 
 
     /**

@@ -15,6 +15,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StopWatch;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +48,11 @@ public class AuthenticationServerApplication {
         Environment environment = context.getBean(Environment.class);
         stopWatch.stop();
         LogApplicationStartup.logApplicationStartup(environment, (int)stopWatch.getTotalTimeSeconds());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     /**

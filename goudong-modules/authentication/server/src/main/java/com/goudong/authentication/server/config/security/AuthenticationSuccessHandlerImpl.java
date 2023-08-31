@@ -2,6 +2,7 @@ package com.goudong.authentication.server.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.authentication.common.core.LoginResp;
+import com.goudong.authentication.server.service.manager.BaseUserManagerService;
 import com.goudong.core.lang.Result;
 import com.goudong.authentication.server.service.BaseUserRoleService;
 import com.goudong.authentication.server.service.BaseUserService;
@@ -31,20 +32,16 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
-
-    /**
-     * 用户服务
-     */
-    @Lazy
+    //~fields
+    //==================================================================================================================
     @Resource
-    private BaseUserService baseUserService;
+    private BaseUserManagerService baseUserManagerService;
 
     @Resource
     private ObjectMapper objectMapper;
 
-    @Resource
-    private BaseUserRoleService baseUserRoleService;
-
+    //~methods
+    //==================================================================================================================
     /**
      *
      * @param httpServletRequest
@@ -66,7 +63,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         MyAuthentication myAuthentication = (MyAuthentication) authentication;
 
         // 查询用户，角色，菜单
-        LoginResp login = baseUserService.login(myAuthentication);
+        LoginResp login = baseUserManagerService.login(myAuthentication);
 
         String json = objectMapper.writeValueAsString(Result.ofSuccess(login));
 

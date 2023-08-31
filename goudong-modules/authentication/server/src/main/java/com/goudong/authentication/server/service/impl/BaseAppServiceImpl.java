@@ -8,6 +8,7 @@ import cn.zhxu.bs.SearchResult;
 import cn.zhxu.bs.util.MapUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.goudong.authentication.common.util.JsonUtil;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.repository.BaseAppRepository;
 import com.goudong.authentication.server.repository.BaseMenuRepository;
@@ -91,6 +92,44 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     @Resource
     private HttpServletRequest httpServletRequest;
+
+    //~methods
+    //==================================================================================================================
+    /**
+     * 根据应用id查询应用
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public BaseApp findById(Long id) {
+        String key = APP_ID.getFullKey(id);
+        if (redisTool.hasKey(key)) {
+            String appStr = (String)redisTool.get(APP_ID, id);
+            try {
+                return objectMapper.readValue(appStr, BaseApp.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        synchronized (this) {
+            if (redisTool.hasKey(key)) {
+                String appStr = (String)redisTool.get(APP_ID, id);
+                try {
+                    return objectMapper.readValue(appStr, BaseApp.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            BaseApp baseApp = baseAppRepository.findById(id).orElseThrow(() -> ClientException.client("应用不存在"));
+            redisTool.set(APP_ID, JsonUtil.toJsonString(baseApp), id);
+            return baseApp;
+        }
+    }
+
+
+
 
     /**
      * 新增应用
@@ -187,6 +226,7 @@ public class BaseAppServiceImpl implements BaseAppService {
      * @return
      */
     @Override
+    @Deprecated
     public Optional<BaseAppDTO> findOne(Long id) {
         String key = APP_ID.getFullKey(id);
         if (redisTool.hasKey(key)) {
