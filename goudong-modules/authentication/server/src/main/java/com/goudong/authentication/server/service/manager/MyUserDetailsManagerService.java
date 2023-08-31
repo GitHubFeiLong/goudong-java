@@ -1,4 +1,4 @@
-package com.goudong.authentication.server.service;
+package com.goudong.authentication.server.service.manager;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -9,5 +9,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @version 1.0
  * @date 2023/6/21 10:01
  */
-public interface MyUserDetailsService extends UserDetailsService {
+public interface MyUserDetailsManagerService extends UserDetailsService {
 }

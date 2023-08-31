@@ -1,5 +1,6 @@
 package com.goudong.authentication.server.rest;
 
+import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
@@ -32,9 +33,13 @@ import java.util.List;
 @Slf4j
 public class BaseUserResource {
 
+    //~fields
+    //==================================================================================================================
     @Resource
     private BaseUserService baseUserService;
 
+    //~methods
+    //==================================================================================================================
     @PostMapping("/login")
     @ApiOperation(value = "登录(password)")
     @ApiImplicitParams({
@@ -42,17 +47,13 @@ public class BaseUserResource {
             @ApiImplicitParam(name = "username", value = "用户名", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
     })
-    public Result login () {
-        return Result.ofSuccess();
+    public Result<Token> login () {
+        return Result.ofSuccess(new Token());
     }
 
-    /**
-     * 注销接口
-     * @return
-     */
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
-    public Result logout () {
+    public Result<Object> logout () {
         return Result.ofSuccess();
     }
 

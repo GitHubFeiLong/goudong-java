@@ -53,11 +53,6 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.zhy</groupId>
-                <artifactId>commons</artifactId>
-                <version>${authentication.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson-spring-boot-starter.version}</version>

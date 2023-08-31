@@ -1,11 +1,11 @@
-package com.goudong.authentication.server.service.impl;
+package com.goudong.authentication.server.service.manager.impl;
 
 import com.goudong.core.util.StringUtil;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.BaseAppRepository;
 import com.goudong.authentication.server.repository.BaseUserRepository;
-import com.goudong.authentication.server.service.MyUserDetailsService;
+import com.goudong.authentication.server.service.manager.MyUserDetailsManagerService;
 import com.goudong.authentication.server.service.dto.MyUserDetails;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2023/6/21 10:02
  */
 @Service
-public class MyUserDetailsServiceImpl implements MyUserDetailsService {
+public class MyUserDetailsManagerServiceImpl implements MyUserDetailsManagerService {
 
     @Resource
     private HttpServletRequest httpServletRequest;
