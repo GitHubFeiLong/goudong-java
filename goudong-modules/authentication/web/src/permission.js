@@ -6,6 +6,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import getPageTitle from '@/utils/get-page-title'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
 import { PERMISSION_ROUTES_LOCAL_STORAGE } from "@/constant/LocalStorageConst";
+import log from "echarts/src/scale/Log";
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -21,17 +22,19 @@ router.beforeEach(async(to, from, next) => {
 
   // 如果链接上有token就保存
   console.log(from)
-  console.log(to)
+  console.log(to.path)
 
   // 接受token的页面
   if (to.path === '/login-success') {
+    console.log("中转页1")
     const { accessToken, refreshToken, accessExpires, refreshExpires } = to.query
     const token = { accessToken, refreshToken, accessExpires, refreshExpires }
     LocalStorageUtil.setToken(token)
     // 获取用户信息
-    store.dispatch("user/getUserDetailByToken").then(data => {
+    await store.dispatch("user/getUserDetailByToken").then(data => {
       console.log("123", data)
     })
+    console.log("中转页2")
     NProgress.done()
     next('/')
   }
