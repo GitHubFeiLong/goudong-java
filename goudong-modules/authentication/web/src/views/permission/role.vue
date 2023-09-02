@@ -63,6 +63,7 @@
 import path from 'path'
 import { deepClone } from '@/utils'
 import { getRoutes, getRoles, addRole, deleteRole, updateRole } from '@/api/role'
+import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
 const defaultRole = {
   key: '',
@@ -103,8 +104,8 @@ export default {
       this.routes = this.generateRoutes(res.data)
     },
     async getRoles() {
-      const res = await getRoles()
-      this.rolesList = res.data
+      // const res = await getRoles()
+      this.rolesList = LocalStorageUtil.getUser().roles;
     },
 
     // Reshape the routes structure so that it looks the same as the sidebar

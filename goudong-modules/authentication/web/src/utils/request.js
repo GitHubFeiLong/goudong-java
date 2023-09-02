@@ -109,9 +109,9 @@ service.interceptors.request.use(async config => {
   }
 
   // 在请求头中添加token(这里再次使用方法获取实时的令牌，因为刷新令牌会修改本地存储的token)
-  if (LocalStorageUtil.getToken() && LocalStorageUtil.getAccessToken()) {
+  if (token && token.accessToken) {
     // eslint-disable-next-line require-atomic-updates
-    config.headers[AUTHORIZATION] = BEARER + LocalStorageUtil.getAccessToken()
+    config.headers[AUTHORIZATION] = BEARER + token.accessToken
   }
 
   // 添加请求头 appId

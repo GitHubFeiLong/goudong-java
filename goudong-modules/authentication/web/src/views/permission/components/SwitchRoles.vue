@@ -15,7 +15,7 @@
 export default {
   computed: {
     roles() {
-      return this.$store.getters.roles
+      return this.$store.getters.user.roles
     },
     switchRoles: {
       get() {

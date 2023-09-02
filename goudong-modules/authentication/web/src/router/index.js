@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
+import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-router";
 
 /* Router Modules */
 
@@ -34,9 +35,11 @@ Vue.use(Router)
  * all roles can be accessed
  */
 export const constantRoutes = [
+  // 登录成功中转页
   {
     path: '/login-success',
     component: () => import('@/layout'),
+    hidden: true
   },
   {
     path: '/redirect',

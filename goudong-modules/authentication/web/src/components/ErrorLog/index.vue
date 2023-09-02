@@ -56,7 +56,7 @@ export default {
   },
   computed: {
     errorLogs() {
-      return this.$store.getters.errorLogs
+      return []
     }
   },
   methods: {

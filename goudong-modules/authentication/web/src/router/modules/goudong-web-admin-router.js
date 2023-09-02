@@ -299,7 +299,7 @@ function getComponents() {
   const components = [] // 所有组件（解决动态引入组件有错误）
   newArr.forEach(item => {
     let obj = {
-      path: item.path,
+      permissionId: item.permissionId,
       component: item.component
     }
     components.push(obj)

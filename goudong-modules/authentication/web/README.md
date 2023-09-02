@@ -1,6 +1,6 @@
 # Goudong Web Admin
 狗东后台管理系统
-
+> 版本：node 16 npm使用淘宝镜像
 ## icon的使用
 
 ### 制作icon

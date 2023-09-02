@@ -53,6 +53,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import defaultAvatarPng from '@/assets/png/default-avatar.png'
 
 export default {
   components: {
@@ -63,10 +64,14 @@ export default {
     SizeSelect,
     Search
   },
+  data(){
+    return {
+      avatar: defaultAvatarPng // 头像
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
       'device'
     ])
   },

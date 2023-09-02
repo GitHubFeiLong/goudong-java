@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     routes() {
-      return this.$store.getters.permission_routes
+      return this.$store.getters.routes
     }
   },
   watch: {
@@ -55,6 +55,7 @@ export default {
     }
   },
   mounted() {
+    console.log("this.routes", this.routes)
     this.searchPool = this.generateRoutes(this.routes)
   },
   methods: {

@@ -70,6 +70,7 @@
 // import SocialSign from './components/SocialSignin'
 import { dropDownAllAppApi } from '@/api/dropDown';
 import { loginApi } from "@/api/user";
+import log from "echarts/src/scale/Log";
 
 export default {
   name: 'Login',
@@ -134,11 +135,12 @@ export default {
         if (valid) {
           this.loading = true
           loginApi(this.loginForm.username.trim(), encodeURIComponent(this.loginForm.password), this.loginForm.selectAppId).then(data => {
-            this.loading = false
             const { homePage, token } = data
             const {accessToken, refreshToken, accessExpires, refreshExpires} = token
             const url = `${homePage}?accessToken=${accessToken}&refreshToken=${refreshToken}&accessExpires=${accessExpires}&refreshExpires=${refreshExpires}`
             window.location.href = url
+          }).finally(() => {
+            this.loading = false
           })
         } else {
           console.log('error submit!!')

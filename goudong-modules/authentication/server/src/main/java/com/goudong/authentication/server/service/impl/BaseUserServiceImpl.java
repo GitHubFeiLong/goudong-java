@@ -94,7 +94,9 @@ public class BaseUserServiceImpl implements BaseUserService {
     public BaseUser findOneByAppIdAndUsername(Long appId, String username) {
         BaseUser baseUser = baseUserRepository.findByLogin(appId, username);
         // 懒加载,必须使用才能加载
-        baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
+        if (baseUser !=null) {
+            baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
+        }
         return baseUser;
     }
 
@@ -399,6 +401,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public UserDetail getUserDetailByToken(String token) {
         BaseAppDTO baseAppDTO = baseAppService.findByHeader().orElseThrow(() -> ClientException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
 
