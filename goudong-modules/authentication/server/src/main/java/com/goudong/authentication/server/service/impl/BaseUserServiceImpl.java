@@ -6,11 +6,14 @@ import cn.zhxu.bs.SearchResult;
 import cn.zhxu.bs.operator.InList;
 import cn.zhxu.bs.util.MapUtils;
 import com.goudong.authentication.common.core.*;
+import com.goudong.authentication.common.util.HttpRequestUtil;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
+import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.domain.BaseMenu;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.*;
+import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
 import com.goudong.authentication.server.rest.req.search.BaseUserPage;
 import com.goudong.authentication.server.rest.req.search.SelectUsersRoleNames;
@@ -80,6 +83,9 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Resource
     private RedisTool redisTool;
 
+    @Resource
+    private HttpServletRequest httpServletRequest;
+
     //~methods
     //==================================================================================================================
     /**
@@ -101,7 +107,68 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
 
+    /**
+     * 根据token获取用户信息
+     * @param token
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetail getUserDetailByToken(String token) {
+        BaseAppDTO baseAppDTO = baseAppService.findByHeader().orElseThrow(() -> ClientException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
 
+        Jwt jwt = new Jwt(baseAppDTO.getSecret());
+        UserSimple userSimple = jwt.parseToken(token);
+
+        // 查询用户角色菜单
+        BaseUser baseUser = baseUserRepository.findById(1L).orElseThrow(() -> ClientException.client("用户不存在"));
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setId(userSimple.getId());
+        userDetail.setAppId(userSimple.getAppId());
+        userDetail.setUsername(userSimple.getUsername());
+
+        List<BaseRole> roles = baseUser.getRoles();
+        List<String> roleNames = new ArrayList<>(roles.size());
+        Set<Menu> menuHashSet = new HashSet<>(roles.size());
+        roles.forEach(p -> {
+            roleNames.add(p.getName());
+
+            p.getMenus().forEach(p2 -> {
+                menuHashSet.add(BeanUtil.copyProperties(p2, Menu.class));
+            });
+
+        });
+
+        List menuArrayList = new ArrayList<>(menuHashSet);
+        menuArrayList.sort(new Comparator<Menu>() {
+            @Override
+            public int compare(Menu o1, Menu o2) {
+                return Optional.ofNullable(o1.getSortNum()).orElseGet(() ->Integer.MAX_VALUE).compareTo(Optional.ofNullable(o2.getSortNum()).orElseGet(() ->Integer.MAX_VALUE));
+            }
+        });
+        // 处理菜单
+        userDetail.setRoles(roleNames);
+        userDetail.setMenus(menuArrayList);
+
+        return userDetail;
+    }
+
+    /**
+     * 刷新token
+     *
+     * @param token refreshToken
+     * @return 新的token
+     */
+    @Override
+    public Token refreshToken(RefreshToken token) {
+        Long xAppId = HttpRequestUtil.getXAppId();
+        BaseApp app = baseAppService.findById(xAppId);
+        Jwt jwt = new Jwt(1, TimeUnit.DAYS, app.getSecret());
+        UserSimple userSimple = jwt.parseToken(token.getRefreshToken());
+        Token resp = jwt.generateToken(userSimple);
+        return resp;
+    }
 
 
 
@@ -395,50 +462,5 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
     }
 
-    /**
-     * 根据token获取用户信息
-     * @param token
-     * @return
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetail getUserDetailByToken(String token) {
-        BaseAppDTO baseAppDTO = baseAppService.findByHeader().orElseThrow(() -> ClientException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
 
-        Jwt jwt = new Jwt(baseAppDTO.getSecret());
-        UserSimple userSimple = jwt.parseToken(token);
-
-        // 查询用户角色菜单
-        BaseUser baseUser = baseUserRepository.findById(1L).orElseThrow(() -> ClientException.client("用户不存在"));
-
-        UserDetail userDetail = new UserDetail();
-        userDetail.setId(userSimple.getId());
-        userDetail.setAppId(userSimple.getAppId());
-        userDetail.setUsername(userSimple.getUsername());
-
-        List<BaseRole> roles = baseUser.getRoles();
-        List<String> roleNames = new ArrayList<>(roles.size());
-        Set<Menu> menuHashSet = new HashSet<>(roles.size());
-        roles.forEach(p -> {
-            roleNames.add(p.getName());
-
-            p.getMenus().forEach(p2 -> {
-                menuHashSet.add(BeanUtil.copyProperties(p2, Menu.class));
-            });
-
-        });
-
-        List menuArrayList = new ArrayList<>(menuHashSet);
-        menuArrayList.sort(new Comparator<Menu>() {
-            @Override
-            public int compare(Menu o1, Menu o2) {
-                return Optional.ofNullable(o1.getSortNum()).orElseGet(() ->Integer.MAX_VALUE).compareTo(Optional.ofNullable(o2.getSortNum()).orElseGet(() ->Integer.MAX_VALUE));
-            }
-        });
-        // 处理菜单
-        userDetail.setRoles(roleNames);
-        userDetail.setMenus(menuArrayList);
-
-        return userDetail;
-    }
 }

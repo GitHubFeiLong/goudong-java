@@ -1,10 +1,12 @@
 package com.goudong.authentication.server.service;
 
 import com.goudong.authentication.common.core.LoginResp;
+import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
+import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
 import com.goudong.authentication.server.rest.req.search.BaseUserPage;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
@@ -111,4 +113,12 @@ public interface BaseUserService {
      * @return
      */
     UserDetail getUserDetailByToken(String token);
+
+    /**
+     * 刷新token
+     *
+     * @param token refreshToken
+     * @return 新的token
+     */
+    Token refreshToken(RefreshToken token);
 }

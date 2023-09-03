@@ -294,6 +294,7 @@ export const goudongWebAdminComponent = getComponents()
  * 将
  */
 function getComponents() {
+
   let newArr = []
   treeToArr(goudongWebAdminResource, newArr) // 转成一维数组
   const components = [] // 所有组件（解决动态引入组件有错误）
@@ -304,6 +305,8 @@ function getComponents() {
     }
     components.push(obj)
   })
+  console.log("goudongWebAdminResource", goudongWebAdminResource)
+  console.log("components", components)
   return components;
 }
 

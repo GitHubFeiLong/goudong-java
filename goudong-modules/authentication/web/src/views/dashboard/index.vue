@@ -23,9 +23,11 @@ export default {
     ])
   },
   created() {
-    if (!this.user.roles.includes('admin')) {
+    this.$store.dispatch("user/getUserDetailByToken")
+    if (!this.user.roles.includes('ROLE_APP_SUPER_ADMIN')) {
       this.currentRole = 'editorDashboard'
     }
+
   }
 }
 </script>

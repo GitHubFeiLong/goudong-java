@@ -19,65 +19,66 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to)
 
   // 如果链接上有token就保存
-  console.log(from)
-  console.log(to)
-
+  // console.log(from)
+  console.log(to.path)
   // 接受token的页面
   if (to.path === '/login-success') {
+    console.log(router.options.routes,'登陆之前的路由')
     const { accessToken, refreshToken, accessExpires, refreshExpires } = to.query
     const token = { accessToken, refreshToken, accessExpires, refreshExpires }
     LocalStorageUtil.setToken(token)
     // 获取用户信息
     await store.dispatch('user/getUserDetailByToken').then(data => {
-      next('/')
+      next("/")
+    }).catch(reason => {
+      next("/login")
     })
-    let promise = store.dispatch('permission/generateRoutes');
-    router.addRoutes(promise)
     NProgress.done()
-  }
-
-  if (to.path === '/login') {
+  } else if (to.path === '/login') {
+    console.log("login!!!")
     NProgress.done()
     next()
-  }
-
-  // determine whether the user has logged in
-  const token = LocalStorageUtil.getToken()
-  if (token) {
-    if (to.path === '/login') {
-      // if is logged in, redirect to the home page
-      next({ path: '/' })
-      NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
-    } else {
-      // determine whether the user has obtained his permission roles through getInfo
-      // 当有角色，且已经根据角色添加过路由了就放行，否则需要去计算路由
-      const routes = store.getters.routes && store.getters.routes.length > 0
-      console.log("routes", routes)
-      if (routes) {
-        next()
+  } else {
+    // determine whether the user has logged in
+    const token = LocalStorageUtil.getToken()
+    if (token) {
+      console.log(router.options.routes,'登陆之后的路由')
+      if (to.path === '/login') {
+        // if is logged in, redirect to the home page
+        next({ path: '/' })
+        NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
       } else {
-        // 当页面刷新时会store会清空。
-        try {
-          console.log("开始生成路由")
-          const accessRoutes = await store.dispatch('permission/generateRoutes')
-          router.addRoutes(accessRoutes)
-          next({ ...to, replace: true })
-        } catch (error) {
-          Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
+        const routes = await store.getters.routes && store.getters.routes.length > 1
+        console.log("routes", routes, store.getters.routes)
+        if (routes) {
+          next()
+        } else {
+          // 当页面刷新时会store会清空。
+          try {
+            console.log("开始生成路由")
+            const accessRoutes = await store.dispatch('permission/generateRoutes')
+            await router.addRoutes(accessRoutes)
+            router.options.routes.push(...accessRoutes)
+            console.log(router.options.routes,'添加之后的路由')
+            // router.options.routes = accessRoutes
+            next({ ...to, replace: true })
+          } catch (error) {
+            Message.error(error || 'Has Error')
+            next(`/login?redirect=${to.path}`)
+            NProgress.done()
+          }
         }
       }
-    }
-  } else {
-    /* has no token*/
-    if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
-      next()
     } else {
-      // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
+      /* has no token*/
+      if (whiteList.indexOf(to.path) !== -1) {
+        // in the free login whitelist, go directly
+        next()
+      } else {
+        // other pages that do not have permission to access are redirected to the login page.
+        next(`/login?redirect=${to.path}`)
+        NProgress.done()
+      }
     }
   }
 })

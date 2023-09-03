@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     // 优先加载表格数据
-    this.loadUsername(this.username)
+    // this.loadUsername(this.username)
   },
   methods: {
     loadUsername() {

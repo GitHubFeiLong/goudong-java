@@ -1,5 +1,6 @@
 import { router, constantRoutes } from '@/router'
 import Layout from "@/layout";
+import UserIndex from "@/views/user/index";
 import { goudongWebAdminComponent } from "@/router/modules/goudong-web-admin-router";
 import vueElementAdminRouter from "@/router/modules/vue-element-admin-router";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
@@ -52,7 +53,6 @@ const actions = {
   generateRoutes({ commit }) {
     return new Promise(resolve => {
       let permission_routes = LocalStorageUtil.getPermissionRoutes();
-      console.log("goudongWebAdminComponent", goudongWebAdminComponent)
       // 循环设置组件
       permissionRoutesComponent(permission_routes);
       // permission_routes = constantRoutes.concat(permission_routes)
@@ -75,9 +75,13 @@ function permissionRoutesComponent(permission_routes) {
     if (item.parentId === null || item.parentId === undefined) {
       item.component = Layout
     } else {
-      item.component = goudongWebAdminComponent.find(c => {
+      let com = goudongWebAdminComponent.find(c => {
         return c.permissionId === item.permissionId
-      }).component
+      })
+
+      if (com) {
+        item.component = com.component
+      } 
     }
     if (item.children && item.children.length > 0) {
       permissionRoutesComponent(item.children)

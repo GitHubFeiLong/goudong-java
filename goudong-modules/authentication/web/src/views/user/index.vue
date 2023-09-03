@@ -406,11 +406,11 @@ export default {
   },
   mounted() {
     // 请求头
-    this.headers = {
-      Authorization: BEARER + LocalStorageUtil.getAccessToken()
-    }
+    // this.headers = {
+    //   Authorization: BEARER + LocalStorageUtil.getAccessToken()
+    // }
     // 优先加载表格数据
-    this.loadPageUser()
+    // this.loadPageUser()
     // 强制渲染，解决表格 固定列后，列错位问题
     this.$nextTick(() => {
       this.$refs.table.doLayout()

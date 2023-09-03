@@ -269,11 +269,11 @@ async function refreshingToken(token, config) {
         // 生成token对象
         const newToken = new Token(data.accessToken, data.refreshToken, data.accessExpires, data.refreshExpires)
         // 设置token对象
-        LocalStorageUtil.set(TOKEN_LOCAL_STORAGE, newToken)
+        LocalStorageUtil.setToken(newToken)
         resolve(data)
       }).catch(data => {
         // 刷新令牌失败，直接跳转登录界面
-        store.dispatch('user/resetToken')
+        store.dispatch('user/logout')
         if (!data.dataMap[DO_NOT_HANDLE_ERROR_MESSAGE]) {
           Message({
             message: '登录已过期，请重新登录',

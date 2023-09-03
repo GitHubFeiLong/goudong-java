@@ -1,8 +1,6 @@
 import { getUserDetailApi } from '@/api/user'
 import { resetRouter } from '@/router'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
-import defaultAvatarPng from '@/assets/png/default-avatar.png'
-import store from "@/store";
 import { arrayToTree } from "@/utils/tree";
 
 const state = {
@@ -56,7 +54,7 @@ const actions = {
                   path: item.path,
                   name: item.name,
                   alwaysShow: item.parentId == null ? !item.hide : undefined,
-                  meta: JSON.parse(item.meta),
+                  meta: item.meta ? JSON.parse(item.meta) : {},
                   sortNum: item.sortNum,
                   openModel: item.openModel
                 })
@@ -81,11 +79,19 @@ const actions = {
       }).catch(reason => reject());
     })
   },
-  // 退出
+
+  /**
+   * 退出登录，清除用户缓存信息
+   * @param commit
+   * @param state
+   * @returns {Promise<unknown>}
+   */
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       LocalStorageUtil.removeUser()
       LocalStorageUtil.removeToken()
+      LocalStorageUtil.removePermissionRoutes()
+      LocalStorageUtil.removePermissionButtons()
       resetRouter()
       resolve()
     })

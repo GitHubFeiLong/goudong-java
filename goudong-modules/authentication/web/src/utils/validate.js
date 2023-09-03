@@ -2,6 +2,7 @@
  * Created by PanJiaChen on 16/11/18.
  */
 import { checkUsername, checkPhone, checkEmail } from '@/api/user';
+import { API_PREFIX } from "@/constant/commons";
 /**
  * @param {string} path
  * @returns {Boolean}
@@ -106,7 +107,9 @@ export function validateUrlNotAuthentication(url) {
     return false
   }
   // 不是登录请求，也不是刷新token 的请求
-  return !url?.startsWith('/api/oauth2/authentication/login') && !url?.startsWith('/api/oauth2/authentication/refresh-token')
+  let url1 = `${API_PREFIX}/user/login`
+  let url2 = `${API_PREFIX}/user/refresh-token`
+  return !url?.startsWith(url1) && !url?.startsWith(url2)
 }
 
 /**

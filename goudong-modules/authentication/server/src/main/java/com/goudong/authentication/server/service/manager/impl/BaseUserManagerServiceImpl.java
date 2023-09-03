@@ -1,31 +1,22 @@
 package com.goudong.authentication.server.service.manager.impl;
 
-import com.goudong.authentication.common.core.*;
+import com.goudong.authentication.common.core.Jwt;
+import com.goudong.authentication.common.core.LoginResp;
+import com.goudong.authentication.common.core.Token;
+import com.goudong.authentication.common.core.UserSimple;
 import com.goudong.authentication.server.domain.BaseApp;
-import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
-import com.goudong.authentication.server.rest.req.BaseUserCreate;
-import com.goudong.authentication.server.rest.req.BaseUserUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPage;
+import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.service.BaseAppService;
-import com.goudong.authentication.server.service.BaseRoleService;
 import com.goudong.authentication.server.service.BaseUserService;
-import com.goudong.authentication.server.service.dto.BaseAppDTO;
-import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.BaseUserManagerService;
-import com.goudong.core.lang.PageResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -41,13 +32,11 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
     //~fields
     //==================================================================================================================
     @Resource
-    private BaseUserService userService;
+    private BaseUserService baseUserService;
 
     @Resource
     private BaseAppService baseAppService;
 
-    @Resource
-    private BaseRoleService baseRoleService;
     //~methods
     //==================================================================================================================
     /**
@@ -59,7 +48,7 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      */
     @Override
     public BaseUser findOneByAppIdAndUsername(Long appId, String username) {
-        BaseUser baseUser = userService.findOneByAppIdAndUsername(appId, username);
+        BaseUser baseUser = baseUserService.findOneByAppIdAndUsername(appId, username);
         return baseUser;
     }
 
@@ -92,5 +81,16 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
         loginResp.setHomePage(app.getHomePage());
 
         return loginResp;
+    }
+
+    /**
+     * 刷新token
+     *
+     * @param token refreshToken
+     * @return token
+     */
+    @Override
+    public Token refreshToken(RefreshToken token) {
+        return baseUserService.refreshToken(token);
     }
 }

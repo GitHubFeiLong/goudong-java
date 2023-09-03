@@ -5,10 +5,12 @@ import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
+import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
 import com.goudong.authentication.server.rest.req.search.BaseUserPage;
 import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
+import com.goudong.authentication.server.service.manager.BaseUserManagerService;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import io.swagger.annotations.Api;
@@ -36,6 +38,9 @@ public class BaseUserResource {
     //~fields
     //==================================================================================================================
     @Resource
+    private BaseUserManagerService baseUserManagerService;
+
+    @Resource
     private BaseUserService baseUserService;
 
     //~methods
@@ -49,6 +54,12 @@ public class BaseUserResource {
     })
     public Result<Token> login () {
         return Result.ofSuccess(new Token());
+    }
+
+    @PostMapping("/refreshToken")
+    @ApiOperation(value = "刷新token")
+    public Result<Token> refreshToken (@RequestBody RefreshToken token) {
+        return Result.ofSuccess(baseUserManagerService.refreshToken(token));
     }
 
     @PutMapping("/logout")
@@ -66,6 +77,11 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserService.getUserDetailByToken(token));
     }
 
+
+
+
+    //~
+    //==================================================================================================================
     @PostMapping("/base-user")
     @ApiOperation(value = "新增用户")
     public Result<BaseUserDTO> create(@RequestBody @Validated BaseUserCreate req) {

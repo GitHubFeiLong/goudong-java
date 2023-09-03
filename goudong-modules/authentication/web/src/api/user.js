@@ -16,6 +16,19 @@ export function loginApi(username, password, selectAppId) {
 }
 
 /**
+ * 刷新token
+ * @param refreshToken
+ * @returns {*}
+ */
+export function refresh(refreshToken) {
+  return request({
+    url: `${API_PREFIX}/user/refresh-token?refreshToken=${refreshToken}`,
+    method: 'post',
+    data: {refreshToken: refreshToken}
+  })
+}
+
+/**
  * 根据token获取用户信息
  * @param token
  * @returns {*}
@@ -27,12 +40,7 @@ export function getUserDetailApi(token) {
   })
 }
 
-export function refresh(refreshToken) {
-  return request({
-    url: `/api/oauth2/authentication/refresh-token?refreshToken=${refreshToken}`,
-    method: 'post'
-  })
-}
+
 
 export function getInfo() {
   return request({
