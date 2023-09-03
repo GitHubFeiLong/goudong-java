@@ -1,4 +1,31 @@
 import request from '@/utils/request'
+import {API_PREFIX} from "@/constant/commons";
+
+/**
+ * 列表的分页查询
+ */
+export function pageAppApi(data) {
+  return request({
+    url: `${API_PREFIX}/app/page/base-app`,
+    method: 'post',
+    data,
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//========
 
 export function dropDownAllAppApi() {
   return request({
@@ -7,19 +34,6 @@ export function dropDownAllAppApi() {
     params: page,
   })
 }
-
-//========
-/**
- * 列表的分页查询
- */
-export function pageAppApi(page) {
-  return request({
-    url: `/api/oauth2/base-app`,
-    method: 'get',
-    params: page,
-  })
-}
-
 /**
  * 申请应用
  */

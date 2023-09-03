@@ -2,9 +2,9 @@ package com.goudong.authentication.server.service;
 
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
+import com.goudong.authentication.server.rest.req.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseAppPage;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.core.lang.PageResult;
 
@@ -25,7 +25,12 @@ public interface BaseAppService {
      */
     BaseApp findById(Long id);
 
-
+    /**
+     * 应用分页
+     * @param req
+     * @return
+     */
+    PageResult page(BaseAppPageReq req);
 
 
 
@@ -66,12 +71,7 @@ public interface BaseAppService {
      */
     void delete(Long id);
 
-    /**
-     * 应用分页
-     * @param req
-     * @return
-     */
-    PageResult page(BaseAppPage req);
+
 
     /**
      * 下拉

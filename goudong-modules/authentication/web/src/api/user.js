@@ -41,7 +41,7 @@ export function getUserDetailApi(token) {
 }
 
 
-
+//===
 export function getInfo() {
   return request({
     url: '/api/oauth2/authentication/current-user-info',

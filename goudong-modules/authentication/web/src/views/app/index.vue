@@ -10,7 +10,7 @@
       <div class="filter-item">
         <span class="filter-item-label">状态: </span>
         <el-select
-          v-model="filter.status"
+          v-model="filter.enabled"
           clearable
         >
           <el-option
@@ -111,7 +111,7 @@
       </el-table-column>
       <el-table-column
         label="应用名称"
-        prop="appName"
+        prop="name"
         sortable
       />
       <el-table-column
@@ -131,9 +131,8 @@
         sortable
       >
         <template v-slot="scope">
-          <span v-if="scope.row.status == 0">待审核</span>
-          <span v-else-if="scope.row.status === 1">已通过</span>
-          <span v-else>未通过</span>
+          <span v-if="scope.row.enabled == true">已激活</span>
+          <span v-else>未激活</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -231,7 +230,7 @@
 
 <script>
 
-import { APP_STATUS_ARRAY, DATE_PICKER_DEFAULT_OPTIONS } from "@/constant/commons";
+import { DATE_PICKER_DEFAULT_OPTIONS, ENABLED_ARRAY } from "@/constant/commons";
 import { applyAppApi, auditAppApi, deleteAppApi, pageAppApi } from "@/api/app";
 import * as validate from "@/utils/validate";
 import { deleteUserById, simpleCreateUser } from "@/api/user";
@@ -243,10 +242,11 @@ export default {
   },
   data() {
     return {
-      appStatus: APP_STATUS_ARRAY,
+      appStatus: ENABLED_ARRAY,
       filter: {
-        appName: undefined,
-        status: undefined,
+        id: undefined,
+        name: undefined,
+        enabled: undefined,
         remark: undefined,
         createTime: undefined,
         startCreateTime: undefined,
@@ -306,8 +306,9 @@ export default {
       const pageParam = {
         page: this.app.page,
         size: this.app.size,
-        appName: this.filter.appName,
-        status: this.filter.status,
+        id: this.filter.id,
+        name: this.filter.name,
+        enabled: this.filter.enabled,
         remark: this.filter.remark,
         startCreateTime: this.filter.startCreateTime,
         endCreateTime: this.filter.endCreateTime,

@@ -2,10 +2,11 @@ package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.constant.RoleConst;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
+import com.goudong.authentication.server.rest.req.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseAppPage;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
+import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import io.swagger.annotations.Api;
@@ -32,8 +33,41 @@ import javax.validation.Valid;
 @Secured(value = RoleConst.ROLE_APP_SUPER_ADMIN) // 只有该角色才能处理应用
 public class BaseAppResource {
 
+    //~fields
+    //==================================================================================================================
     @Resource
+    private BaseAppManagerService baseAppManagerService;
+
+    @Resource
+    @Deprecated
     private BaseAppService baseAppService;
+
+    //~methods
+    //==================================================================================================================
+
+    /**
+     * 应用分页
+     * @param req
+     * @return
+     */
+    @PostMapping("/page/base-app")
+    @ApiOperation("分页查询应用")
+    public Result<PageResult<BaseAppPageReq>> page(@RequestBody @Validated BaseAppPageReq req) {
+        return Result.ofSuccess(baseAppManagerService.page(req));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    //==待删除的
 
     /**
      * 新增应用
@@ -71,14 +105,5 @@ public class BaseAppResource {
         return Result.ofSuccess(true);
     }
 
-    /**
-     * 应用分页
-     * @param req
-     * @return
-     */
-    @GetMapping("/base-apps")
-    @ApiOperation("分页查询应用")
-    public Result<PageResult<BaseAppPage>> page(@Validated BaseAppPage req) {
-        return Result.ofSuccess(baseAppService.page(req));
-    }
+
 }

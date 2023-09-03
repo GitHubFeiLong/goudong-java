@@ -42,6 +42,22 @@ public class PageResultUtil {
         return pageResult;
     }
 
+    /**
+     * 转分页结果
+     * @param source
+     * @param basePage
+     * @return
+     */
+    public static PageResult convert(SearchResult source, BasePage basePage, Class resultClazz) {
+        PageResult pageResult = getConverter().basicConvert(source, resultClazz);
+        pageResult.setPage(basePage.getPage().longValue() + 1);
+        pageResult.setSize(basePage.getSize().longValue());
+        // 总页数
+        Long totalPage = pageResult.getTotal() == 0 ? 0L : (long)Math.floor(pageResult.getTotal() / basePage.getSize()) + 1;
+        pageResult.setTotalPage(totalPage);
+        return pageResult;
+    }
+
     public static class SearchResult2PageResultConverter<E> implements PageResultConverter<SearchResult, PageResult, E> {
         @Override
         public PageResult basicConvert(SearchResult source, Class<E> tClazz) {

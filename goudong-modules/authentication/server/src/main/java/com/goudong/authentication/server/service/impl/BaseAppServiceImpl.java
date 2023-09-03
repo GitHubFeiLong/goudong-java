@@ -5,34 +5,35 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.zhxu.bs.BeanSearcher;
 import cn.zhxu.bs.SearchResult;
-import cn.zhxu.bs.util.MapUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.authentication.common.util.JsonUtil;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
+import com.goudong.authentication.server.constant.RoleConst;
+import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.BaseAppRepository;
 import com.goudong.authentication.server.repository.BaseMenuRepository;
 import com.goudong.authentication.server.repository.BaseRoleRepository;
 import com.goudong.authentication.server.repository.BaseUserRepository;
+import com.goudong.authentication.server.rest.req.BaseAppCreate;
+import com.goudong.authentication.server.rest.req.BaseAppPageReq;
+import com.goudong.authentication.server.rest.req.BaseAppUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseAppPage;
+import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
+import com.goudong.authentication.server.service.BaseAppService;
+import com.goudong.authentication.server.service.dto.BaseAppDTO;
+import com.goudong.authentication.server.service.dto.MyAuthentication;
+import com.goudong.authentication.server.service.mapper.BaseAppMapper;
+import com.goudong.authentication.server.util.BeanSearcherUtil;
+import com.goudong.authentication.server.util.PageResultUtil;
+import com.goudong.authentication.server.util.SecurityContextUtil;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.core.ServerException;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.ListUtil;
-import com.goudong.authentication.server.constant.RoleConst;
-import com.goudong.authentication.server.domain.BaseApp;
-import com.goudong.authentication.server.domain.BaseUser;
-import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.service.BaseAppService;
-import com.goudong.authentication.server.service.dto.BaseAppDTO;
-import com.goudong.authentication.server.service.dto.MyAuthentication;
-import com.goudong.authentication.server.service.mapper.BaseAppMapper;
-import com.goudong.authentication.server.util.PageResultUtil;
-import com.goudong.authentication.server.util.SecurityContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -46,7 +47,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -128,8 +128,23 @@ public class BaseAppServiceImpl implements BaseAppService {
         }
     }
 
+    /**
+     * 应用分页
+     * @param req
+     * @return
+     */
+    @Override
+    public PageResult<BaseAppPageResp> page(BaseAppPageReq req) {
+        MyAuthentication authentication = SecurityContextUtil.get();
+        AssertUtil.isTrue(authentication.superAdmin(), () -> ClientException.clientByForbidden());
+        SearchResult<BaseAppPageReq> search = beanSearcher.search(BaseAppPageReq.class, BeanSearcherUtil.getParaMap(req));
+        return PageResultUtil.convert(search, req, BaseAppPageResp.class);
+    }
 
 
+
+    //~以下待删除methods
+    //==================================================================================================================
 
     /**
      * 新增应用
@@ -292,25 +307,7 @@ public class BaseAppServiceImpl implements BaseAppService {
         log.info("删除应用成功！");
     }
 
-    /**
-     * 应用分页
-     * @param req
-     * @return
-     */
-    @Override
-    public PageResult page(BaseAppPage req) {
-        MyAuthentication authentication = (MyAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        AssertUtil.isTrue(authentication.superAdmin(), () -> ClientException.clientByForbidden());
 
-        Map<String, Object> build = MapUtils.builder()
-                .page(req.getPage(), req.getSize())
-                .field(BaseAppPage::getName, req.getName())
-                .orderBy(BaseAppPage::getId).asc()
-                .build();
-
-        SearchResult<BaseAppPage> search = beanSearcher.search(BaseAppPage.class,  build);
-        return PageResultUtil.convert(search, req);
-    }
 
     /**
      * 下拉

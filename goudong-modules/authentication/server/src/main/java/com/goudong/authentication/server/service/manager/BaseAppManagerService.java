@@ -1,6 +1,8 @@
 package com.goudong.authentication.server.service.manager;
 
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.rest.req.BaseAppPageReq;
+import com.goudong.core.lang.PageResult;
 
 /**
  * 类描述：
@@ -22,4 +24,10 @@ public interface BaseAppManagerService {
      */
     BaseApp findById(Long appId);
 
+    /**
+     * 分页查询应用
+     * @param req 查询条件
+     * @return 应用分页
+     */
+    PageResult<BaseAppPageReq> page(BaseAppPageReq req);
 }

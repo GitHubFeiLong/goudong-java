@@ -1,8 +1,5 @@
-import { router, constantRoutes } from '@/router'
 import Layout from "@/layout";
-import UserIndex from "@/views/user/index";
-import { goudongWebAdminComponent } from "@/router/modules/goudong-web-admin-router";
-import vueElementAdminRouter from "@/router/modules/vue-element-admin-router";
+import {goudongWebAdminComponent} from "@/router/modules/goudong-web-admin-router";
 import LocalStorageUtil from "@/utils/LocalStorageUtil";
 
 function hasPermissionByMenus(menus, route) {
@@ -81,7 +78,7 @@ function permissionRoutesComponent(permission_routes) {
 
       if (com) {
         item.component = com.component
-      } 
+      }
     }
     if (item.children && item.children.length > 0) {
       permissionRoutesComponent(item.children)
