@@ -42,7 +42,7 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
      * @return 应用分页
      */
     @Override
-    public PageResult<BaseAppPageReq> page(BaseAppPageReq req) {
+    public PageResult page(BaseAppPageReq req) {
         return baseAppService.page(req);
     }
 

@@ -3,6 +3,7 @@ package com.goudong.authentication.server.rest.req;
 import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.DbType;
 import cn.zhxu.bs.bean.SearchBean;
+import cn.zhxu.bs.operator.Contain;
 import cn.zhxu.bs.operator.GreaterEqual;
 import cn.zhxu.bs.operator.LessEqual;
 import cn.zhxu.bs.operator.StartWith;
@@ -38,15 +39,9 @@ public class BaseAppPageReq extends BasePage {
     private Boolean enabled;
 
     @ApiModelProperty("备注")
+    @DbField(onlyOn = Contain.class)
     private String remark;
 
-    @ApiModelProperty("创建时间-开始时间")
-    @DbField(value = "created_date", type = DbType.DATETIME, onlyOn = GreaterEqual.class)
-    private Date startCreateTime;
-
-    @ApiModelProperty("创建时间-结束时间")
-    @DbField(value = "created_date", type = DbType.DATETIME, onlyOn = LessEqual.class)
-    private Date endCreateTime;
     //~methods
     //==================================================================================================================
 }

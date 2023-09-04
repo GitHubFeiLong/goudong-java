@@ -45,11 +45,6 @@ public class BaseAppResource {
     //~methods
     //==================================================================================================================
 
-    /**
-     * 应用分页
-     * @param req
-     * @return
-     */
     @PostMapping("/page/base-app")
     @ApiOperation("分页查询应用")
     public Result<PageResult<BaseAppPageReq>> page(@RequestBody @Validated BaseAppPageReq req) {
