@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
-import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-router";
 
 /* Router Modules */
 
@@ -43,7 +42,7 @@ export const constantRoutes = [
   },
   {
     path: '/redirect',
-    component: Layout,
+    component: () => import('@/layout'),
     hidden: true,
     children: [
       {
@@ -74,7 +73,7 @@ export const constantRoutes = [
   },
   {
     path: '/',
-    component: Layout,
+    component: () => import('@/layout'),
     redirect: '/dashboard',
     children: [
       {
@@ -87,7 +86,7 @@ export const constantRoutes = [
   },
   {
     path: '/documentation',
-    component: Layout,
+    component: () => import('@/layout'),
     children: [
       {
         path: 'index',
@@ -99,7 +98,7 @@ export const constantRoutes = [
   },
   {
     path: '/guide',
-    component: Layout,
+    component: () => import('@/layout'),
     redirect: '/guide/index',
     hidden: true,
     children: [
@@ -113,7 +112,7 @@ export const constantRoutes = [
   },
   {
     path: '/profile',
-    component: Layout,
+    component: () => import('@/layout'),
     redirect: '/profile/index',
     hidden: true,
     children: [

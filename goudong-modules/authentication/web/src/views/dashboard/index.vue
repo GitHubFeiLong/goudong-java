@@ -23,7 +23,6 @@ export default {
     ])
   },
   created() {
-    this.$store.dispatch("user/getUserDetailByToken")
     if (!this.user.roles.includes('ROLE_APP_SUPER_ADMIN')) {
       this.currentRole = 'editorDashboard'
     }
