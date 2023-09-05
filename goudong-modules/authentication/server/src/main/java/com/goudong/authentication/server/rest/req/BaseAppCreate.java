@@ -28,6 +28,7 @@ public class BaseAppCreate {
      * 应用首页
      */
     @Size(max = 255, message = "首页地址不能超过255")
+    @NotBlank
     @ApiModelProperty(value = "应用首页")
     private String homePage;
 

@@ -52,8 +52,17 @@ public class BaseAppResource {
         return Result.ofSuccess(baseAppManagerService.page(req));
     }
 
-
-
+    /**
+     * 新增应用
+     * @param req
+     * @return
+     */
+    @PostMapping("/base-app")
+    @ApiOperation("新增应用")
+    public Result<BaseAppDTO> create(@Valid @RequestBody BaseAppCreate req) {
+        BaseAppDTO result = baseAppManagerService.save(req);
+        return Result.ofSuccess(result);
+    }
 
 
 
@@ -65,17 +74,7 @@ public class BaseAppResource {
 
     //==待删除的
 
-    /**
-     * 新增应用
-     * @param req
-     * @return
-     */
-    @PostMapping("/base-app")
-    @ApiOperation("新增应用")
-    public Result<BaseAppDTO> create(@Valid @RequestBody BaseAppCreate req) {
-        BaseAppDTO result = baseAppService.save(req);
-        return Result.ofSuccess(result);
-    }
+
 
     /**
      * 修改应用

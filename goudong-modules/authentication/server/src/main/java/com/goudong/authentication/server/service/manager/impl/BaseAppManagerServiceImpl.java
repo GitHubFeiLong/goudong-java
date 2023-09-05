@@ -1,9 +1,11 @@
 package com.goudong.authentication.server.service.manager.impl;
 
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
+import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.core.lang.PageResult;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,17 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
     @Override
     public PageResult<BaseAppPageResp> page(BaseAppPageReq req) {
         return baseAppService.page(req);
+    }
+
+    /**
+     * 新增应用
+     *
+     * @param req 新增应用参数
+     * @return 新增应用对象
+     */
+    @Override
+    public BaseAppDTO save(BaseAppCreate req) {
+        return baseAppService.save(req);
     }
 
 }

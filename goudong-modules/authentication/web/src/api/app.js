@@ -12,7 +12,16 @@ export function pageAppApi(data) {
   })
 }
 
-
+/**
+ * 新增应用
+ */
+export function applyAppApi(data) {
+  return request({
+    url: `${API_PREFIX}/app/base-app`,
+    method: 'post',
+    data
+  })
+}
 
 
 
@@ -34,16 +43,7 @@ export function dropDownAllAppApi() {
     params: page,
   })
 }
-/**
- * 申请应用
- */
-export function applyAppApi(data) {
-  return request({
-    url: `/api/oauth2/base-app`,
-    method: 'post',
-    data
-  })
-}
+
 
 /**
  * 审核应用

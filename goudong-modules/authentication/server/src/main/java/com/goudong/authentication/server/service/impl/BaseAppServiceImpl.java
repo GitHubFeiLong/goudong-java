@@ -140,11 +140,6 @@ public class BaseAppServiceImpl implements BaseAppService {
         return PageResultUtil.convert(search, req, BaseAppPageResp.class);
     }
 
-
-
-    //~以下待删除methods
-    //==================================================================================================================
-
     /**
      * 新增应用
      * @param req
@@ -198,6 +193,13 @@ public class BaseAppServiceImpl implements BaseAppService {
 
         return baseAppMapper.toDto(baseApp);
     }
+
+
+
+    //~以下待删除methods
+    //==================================================================================================================
+
+
 
     /**
      * 修改应用

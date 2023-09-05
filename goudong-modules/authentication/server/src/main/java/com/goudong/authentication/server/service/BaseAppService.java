@@ -33,17 +33,17 @@ public interface BaseAppService {
      */
     PageResult<BaseAppPageResp> page(BaseAppPageReq req);
 
-
+    /**
+     * 新增应用
+     * @param req 新增应用参数
+     * @return 应用
+     */
+    BaseAppDTO save(BaseAppCreate req);
 
 
     //~以下待删除methods
     //==================================================================================================================
-    /**
-     * 新增应用
-     * @param req
-     * @return
-     */
-    BaseAppDTO save(BaseAppCreate req);
+
 
     /**
      * 修改应用

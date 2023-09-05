@@ -1,13 +1,12 @@
 package com.goudong.authentication.common.core;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.authentication.common.util.JsonUtil;
+import com.goudong.boot.web.core.ClientException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.Date;
@@ -100,11 +99,15 @@ public class Jwt {
      * @return
      */
     public UserSimple parseToken(String token) {
-        Claims body = Jwts.parser()
-                .setSigningKey(this.secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-        return JsonUtil.toObject(body.getSubject(), UserSimple.class);
+        try {
+            Claims body = Jwts.parser()
+                    .setSigningKey(this.secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return JsonUtil.toObject(body.getSubject(), UserSimple.class);
+        } catch (ExpiredJwtException e) {
+            throw ClientException.clientByUnauthorized();
+        }
     }
 
 }

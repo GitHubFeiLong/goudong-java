@@ -1,21 +1,16 @@
 package com.goudong.authentication.server.config.security;
 
+import com.goudong.authentication.common.core.Jwt;
 import com.goudong.authentication.common.core.UserSimple;
+import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.domain.BaseApp;
-import com.goudong.authentication.server.service.dto.BaseAppDTO;
+import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.boot.web.core.BasicException;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.ListUtil;
-import com.goudong.authentication.common.core.Jwt;
-import com.goudong.authentication.server.constant.HttpHeaderConst;
-import com.goudong.authentication.server.repository.BaseAppRepository;
-import com.goudong.authentication.server.service.BaseAppService;
-import com.goudong.authentication.server.service.BaseUserService;
-import com.goudong.authentication.server.service.dto.MyAuthentication;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -108,7 +103,8 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             String token = authorization.substring(prefix.length());
 
             Jwt jwt = new Jwt(0, TimeUnit.SECONDS, app.getSecret());
-            UserSimple userSimple = jwt.parseToken(token);
+            UserSimple userSimple = userSimple = jwt.parseToken(token);
+
             log.debug("解析token：{}", userSimple);
 
             MyAuthentication myAuthentication = new MyAuthentication();

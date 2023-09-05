@@ -1,8 +1,10 @@
 package com.goudong.authentication.server.service.manager;
 
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
+import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.core.lang.PageResult;
 
 /**
@@ -31,4 +33,11 @@ public interface BaseAppManagerService {
      * @return 应用分页
      */
     PageResult<BaseAppPageResp> page(BaseAppPageReq req);
+
+    /**
+     * 新增应用
+     * @param req 新增应用参数
+     * @return 新增应用对象
+     */
+    BaseAppDTO save(BaseAppCreate req);
 }

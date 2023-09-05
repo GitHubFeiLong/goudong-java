@@ -12,6 +12,10 @@
         <el-input v-model="filter.name" clearable placeholder="请输入" />
       </div>
       <div class="filter-item">
+        <span class="filter-item-label">首页地址: </span>
+        <el-input v-model="filter.homePage" clearable placeholder="请输入" />
+      </div>
+      <div class="filter-item">
         <span class="filter-item-label">状态: </span>
         <el-select
           v-model="filter.enabled"
@@ -101,18 +105,23 @@
       </el-table-column>
       <el-table-column
         label="应用id"
-        prop="appId"
+        prop="id"
         sortable
       />
       <el-table-column
         label="应用密钥"
-        prop="appSecret"
+        prop="secret"
         sortable
       />
       <el-table-column
         label="应用名称"
         prop="name"
         sortable
+      />
+      <el-table-column
+        label="首页地址"
+        prop="homePage"
+        show-overflow-tooltip
       />
       <el-table-column
         label="状态"
@@ -126,15 +135,15 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="创建时间"
-        prop="createTime"
-        sortable
-      />
-      <el-table-column
         label="备注"
         prop="remark"
         sortable
         show-overflow-tooltip
+      />
+      <el-table-column
+        label="创建时间"
+        prop="createdDate"
+        sortable
       />
       <!--操作-->
       <el-table-column
@@ -184,8 +193,28 @@
     <!--  申请应用弹窗  -->
     <el-dialog title="申请应用" width="600px" :visible.sync="dialog.create.open" @close="dialog.create.open = false">
       <el-form ref="createForm" :model="dialog.create.form.data" :rules="dialog.create.form.rules" label-width="80px">
-        <el-form-item label="应用名" prop="appName">
-          <el-input v-model="dialog.create.form.data.appName" />
+        <el-form-item label="应用名" prop="name">
+          <el-input v-model="dialog.create.form.data.name" placeholder="请输入应用名称" clearable/>
+        </el-form-item>
+        <el-form-item label="首页" prop="homePage">
+          <el-input v-model="dialog.create.form.data.homePage" placeholder="请输入访问应用首页web地址" clearable/>
+        </el-form-item>
+        <el-form-item label="状态" prop="enabled">
+          <el-select
+            v-model="dialog.create.form.data.enabled"
+            placeholder="请选择应用状态"
+            clearable
+          >
+            <el-option
+              v-for="item in appStatus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dialog.create.form.data.remark" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -198,11 +227,10 @@
 
 <script>
 
-import { DATE_PICKER_DEFAULT_OPTIONS, ENABLED_ARRAY } from "@/constant/commons";
+import { ENABLED_ARRAY } from "@/constant/commons";
 import { applyAppApi, auditAppApi, deleteAppApi, pageAppApi } from "@/api/app";
-import * as validate from "@/utils/validate";
-import { deleteUserById, simpleCreateUser } from "@/api/user";
 import { Message } from "element-ui";
+import { WebUrl } from "@/utils/ElementValidatorUtil"
 
 export default {
   name: 'App',
@@ -214,6 +242,7 @@ export default {
       filter: {
         id: undefined,
         name: undefined,
+        homePage: undefined,
         enabled: undefined,
         remark: undefined
       },
@@ -237,11 +266,24 @@ export default {
         create: { // 新增/创建
           open: false, // 是否打开窗口
           form: {
-            data: {}, // 弹窗的数据
+            data: {
+              name: undefined,
+              homePage: undefined,
+              enabled: undefined,
+              remark: undefined
+            }, // 弹窗的数据
             rules: { // 弹窗的规则
-              appName: [
+              name: [
                 { required: true, message: '请填写应用名称', trigger: 'blur' },
               ],
+              homePage: [
+                { required: true, message: '请填写应用首页web地址', trigger: 'blur' },
+                { max: 255, message: '长度在 0 到 255 个字符', trigger: 'blur' },
+                { validator: WebUrl, trigger: 'blur' }
+              ],
+              enabled: [
+                { required: true, message: '请选择应用状态', trigger: 'blur' },
+              ]
             }
           }
         },
@@ -262,10 +304,7 @@ export default {
       const pageParam = {
         page: this.app.page,
         size: this.app.size,
-        id: this.filter.id,
-        name: this.filter.name,
-        enabled: this.filter.enabled,
-        remark: this.filter.remark
+        ...this.filter
       }
       pageAppApi(pageParam).then(data => {
         const content = data.content

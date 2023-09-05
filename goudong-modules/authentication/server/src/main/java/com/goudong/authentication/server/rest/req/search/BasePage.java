@@ -1,7 +1,6 @@
 package com.goudong.authentication.server.rest.req.search;
 
 import cn.zhxu.bs.bean.DbIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,14 +14,12 @@ public class BasePage {
     @NotNull(message = "分页查询page参数必传")
     @Min(value = 1L, message = "分页参数错误，page必须大于等于1")
     @DbIgnore
-    @JsonIgnore
     private Integer page = 1;
 
     @ApiModelProperty(value = "一页显示内容长度", required = true)
     @NotNull(message = "分页查询size参数必传")
     @Min(value = 1L, message = "分页参数错误，size必须大于等于1")
     @DbIgnore
-    @JsonIgnore
     private Integer size = 10;
 
     /**

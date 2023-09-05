@@ -24,6 +24,9 @@ public class BaseAppPageResp {
     @ApiModelProperty("密钥")
     private String secret;
 
+    @ApiModelProperty("首页地址")
+    private String homePage;
+
     @ApiModelProperty("激活状态")
     private Boolean enabled;
 
@@ -31,7 +34,7 @@ public class BaseAppPageResp {
     private String remark;
 
     @ApiModelProperty("创建时间")
-    private Date createTime;
+    private Date createdDate;
     //~methods
     //==================================================================================================================
 }
