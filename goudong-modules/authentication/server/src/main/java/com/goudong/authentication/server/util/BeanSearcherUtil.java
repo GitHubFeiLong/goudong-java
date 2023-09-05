@@ -23,13 +23,35 @@ public class BeanSearcherUtil {
     //==================================================================================================================
 
     /**
-     * 获取 search 的map参数
+     * <pre>
+     *     获取 search 的map参数
+     * </pre>
      * @param req 请求对象
-     * @return beanSearch的查询参数
+     * @return beanSearch的查询参数，不包含前端的自定义查询条件
+     */
+    public static Map<String, Object> getParaMap(Object req) {
+        return getMapBuilder(req).build();
+    }
+
+    /**
+     * <pre>
+     *     获取 search 的map参数
+     * </pre>
+     * @param req 请求对象
+     * @return beanSearch的查询参数，不包含前端的自定义查询条件
      */
     public static Map<String, Object> getParaMap(BasePage req) {
+        return getMapBuilder(req).page(req.getPage(), req.getSize()).build();
+    }
+
+    /**
+     * 将{@code req}转换成{@code MapBuilder}对象
+     * @param req 转换对象
+     * @return {@code MapBuilder}对象
+     */
+    private static MapBuilder getMapBuilder(Object req) {
         MapBuilder builder = MapUtils.builder();
-        Class clazz = req.getClass();
+        Class<?> clazz = req.getClass();
         Field[] declaredFields = clazz.getDeclaredFields();
         for (Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
@@ -51,7 +73,6 @@ public class BeanSearcherUtil {
                 throw new RuntimeException(e);
             }
         }
-
-        return builder.page(req.getPage(), req.getSize()).build();
+        return builder;
     }
 }

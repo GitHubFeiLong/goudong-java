@@ -10,6 +10,7 @@ import cn.zhxu.bs.operator.StartWith;
 import com.goudong.authentication.server.rest.req.search.BasePage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 

@@ -97,9 +97,8 @@ public class BaseAppServiceImpl implements BaseAppService {
     //==================================================================================================================
     /**
      * 根据应用id查询应用
-     *
-     * @param id
-     * @return
+     * @param id 应用id
+     * @return 应用对象
      */
     @Override
     public BaseApp findById(Long id) {
@@ -130,8 +129,8 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     /**
      * 应用分页
-     * @param req
-     * @return
+     * @param req 查询参数
+     * @return 分页结果
      */
     @Override
     public PageResult<BaseAppPageResp> page(BaseAppPageReq req) {

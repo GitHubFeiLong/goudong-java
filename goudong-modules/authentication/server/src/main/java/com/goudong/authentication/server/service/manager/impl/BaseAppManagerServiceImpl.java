@@ -2,6 +2,7 @@ package com.goudong.authentication.server.service.manager.impl;
 
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.rest.req.BaseAppPageReq;
+import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.core.lang.PageResult;
@@ -42,7 +43,7 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
      * @return 应用分页
      */
     @Override
-    public PageResult page(BaseAppPageReq req) {
+    public PageResult<BaseAppPageResp> page(BaseAppPageReq req) {
         return baseAppService.page(req);
     }
 

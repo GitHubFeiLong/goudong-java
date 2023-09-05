@@ -4,8 +4,12 @@
     <!--  查询条件  -->
     <div class="filter-container">
       <div class="filter-item">
+        <span class="filter-item-label">应用ID: </span>
+        <el-input v-model="filter.id" clearable placeholder="请输入" />
+      </div>
+      <div class="filter-item">
         <span class="filter-item-label">应用名称: </span>
-        <el-input v-model="filter.appName" clearable placeholder="请输入" />
+        <el-input v-model="filter.name" clearable placeholder="请输入" />
       </div>
       <div class="filter-item">
         <span class="filter-item-label">状态: </span>
@@ -20,20 +24,6 @@
             :value="item.value"
           />
         </el-select>
-      </div>
-      <div class="filter-item">
-        <span class="filter-item-label">创建日期: </span>
-        <el-date-picker
-          v-model="filter.createTime"
-          :picker-options="pickerOptions"
-          align="center"
-          end-placeholder="结束日期"
-          range-separator="至"
-          start-placeholder="开始日期"
-          type="daterange"
-          unlink-panels
-          value-format="yyyy-MM-dd"
-        />
       </div>
       <div class="filter-item">
         <span class="filter-item-label">备注: </span>
@@ -110,11 +100,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="应用名称"
-        prop="name"
-        sortable
-      />
-      <el-table-column
         label="应用id"
         prop="appId"
         sortable
@@ -122,6 +107,11 @@
       <el-table-column
         label="应用密钥"
         prop="appSecret"
+        sortable
+      />
+      <el-table-column
+        label="应用名称"
+        prop="name"
         sortable
       />
       <el-table-column
@@ -203,28 +193,6 @@
         <el-button type="primary" @click="dialogCreateSubmit()">确 定</el-button>
       </div>
     </el-dialog>
-
-    <!--  审核应用弹窗  -->
-    <el-dialog title="审核应用" width="600px" :visible.sync="dialog.audit.open" @close="dialog.audit.open = false">
-      <el-form ref="createForm" :model="dialog.audit.form.data" :rules="dialog.audit.form.rules" label-width="80px">
-        <el-form-item label="应用名" prop="appName">
-          <el-input v-model="dialog.audit.form.data.appName" disabled />
-        </el-form-item>
-        <el-form-item label="审核结果" prop="status">
-          <el-radio-group v-model="dialog.audit.form.data.status">
-            <el-radio :label="1">通过</el-radio>
-            <el-radio :label="2">拒绝</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="dialog.audit.form.data.remark" clearable />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogAuditCancel()">取 消</el-button>
-        <el-button type="primary" @click="dialogAuditSubmit()">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -247,12 +215,8 @@ export default {
         id: undefined,
         name: undefined,
         enabled: undefined,
-        remark: undefined,
-        createTime: undefined,
-        startCreateTime: undefined,
-        endCreateTime: undefined,
+        remark: undefined
       },
-      pickerOptions: DATE_PICKER_DEFAULT_OPTIONS,
       app: {
         apps: [],
         page: 1,
@@ -262,7 +226,6 @@ export default {
         totalPage: 0,
         pageSizes: this.$globalVariable.PAGE_SIZES
       },
-
       isLoading: false,
       elDropdownItemClass: ['el-dropdown-item--click', undefined, undefined],
       EL_TABLE: {
@@ -282,12 +245,6 @@ export default {
             }
           }
         },
-        audit: {
-          open: false, // 是否打开窗口
-          form: {
-            data: {}, // 弹窗的数据
-          }
-        }
       }
     }
   },
@@ -302,16 +259,13 @@ export default {
   methods: {
     load() {
       this.isLoading = true;
-      this.filterTimeHandler();
       const pageParam = {
         page: this.app.page,
         size: this.app.size,
         id: this.filter.id,
         name: this.filter.name,
         enabled: this.filter.enabled,
-        remark: this.filter.remark,
-        startCreateTime: this.filter.startCreateTime,
-        endCreateTime: this.filter.endCreateTime,
+        remark: this.filter.remark
       }
       pageAppApi(pageParam).then(data => {
         const content = data.content
@@ -340,33 +294,17 @@ export default {
     // 点击查询按钮
     searchFunc() {
       this.app.page = 1
-      this.filterTimeHandler()
       this.load()
     },
     // 点击重置按钮
     resetSearchFilter() {
       // 赋默认值
       this.filter = {
-        appName: undefined,
-        status: undefined,
-        remark: undefined,
-        createTime: undefined,
-        startCreateTime: undefined,
-        endCreateTime: undefined,
+        id: undefined,
+        name: undefined,
+        enabled: undefined,
+        remark: undefined
       };
-    },
-    filterTimeHandler() {
-      const createTime = this.filter.createTime
-      if (createTime && createTime.length > 0) {
-        this.filter.startCreateTime = this.$moment(createTime[0]).format(this.$globalVariable.DATE_TIME_FORMATTER).toString()
-        this.filter.endCreateTime = this.$moment(createTime[1])
-          .add(1, 'd')
-          .subtract(1, 's')
-          .format(this.$globalVariable.DATE_TIME_FORMATTER).toString()
-      } else {
-        this.filter.startCreateTime = undefined
-        this.filter.endCreateTime = undefined
-      }
     },
     // 修改表格大小
     changeElTableSizeCommand(val) {
@@ -419,32 +357,6 @@ export default {
           return false;
         }
       });
-    },
-
-    // 打开审核
-    dialogAudit(row) {
-      this.dialog.audit.open = true
-
-      this.dialog.audit.form.data = {
-        id: row.id,
-        appName: row.appName,
-        status: row.status
-      }
-    },
-    dialogAuditCancel() {
-      this.dialog.audit.open = false
-      this.dialog.audit.form.data = {}
-    },
-    dialogAuditSubmit() {
-      auditAppApi(this.dialog.audit.form.data).then(response => {
-        // 保存成功
-        Message({
-          message: '审核成功',
-          type: 'success',
-        })
-        this.dialogAuditCancel()
-        this.load();
-      })
     },
     // 删除行
     deleteRow(row) {

@@ -4,6 +4,7 @@ import com.goudong.authentication.server.constant.RoleConst;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
+import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
@@ -47,7 +48,7 @@ public class BaseAppResource {
 
     @PostMapping("/page/base-app")
     @ApiOperation("分页查询应用")
-    public Result<PageResult<BaseAppPageReq>> page(@RequestBody @Validated BaseAppPageReq req) {
+    public Result<PageResult<BaseAppPageResp>> page(@RequestBody @Validated BaseAppPageReq req) {
         return Result.ofSuccess(baseAppManagerService.page(req));
     }
 
