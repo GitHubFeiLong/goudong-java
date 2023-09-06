@@ -1,5 +1,7 @@
 package com.goudong.authentication.server.util;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.zhxu.bs.SearchResult;
 import com.goudong.authentication.server.rest.req.search.BasePage;
 import com.goudong.boot.web.core.PageResultConverter;
@@ -7,13 +9,13 @@ import com.goudong.core.lang.PageResult;
 
 public class PageResultUtil {
 
-    private static SearchResult2PageResultConverter converter;
+    private static SearchResult2PageResultConverter<?> converter;
 
     private PageResultUtil() {
 
     }
 
-    public static SearchResult2PageResultConverter getConverter() {
+    public static SearchResult2PageResultConverter<?> getConverter() {
         if (converter != null) {
             return converter;
         }
@@ -21,7 +23,7 @@ public class PageResultUtil {
             if (converter != null) {
                 return converter;
             }
-            converter = new SearchResult2PageResultConverter();
+            converter = new SearchResult2PageResultConverter<Object>();
             return converter;
         }
     }
@@ -32,8 +34,8 @@ public class PageResultUtil {
      * @param basePage
      * @return
      */
-    public static PageResult convert(SearchResult source, BasePage basePage) {
-        PageResult pageResult = getConverter().basicConvert(source, null);
+    public static PageResult<BasePage> convert(SearchResult<?> source, BasePage basePage) {
+        PageResult<BasePage> pageResult = (PageResult<BasePage>) getConverter().basicConvert(source, null);
         pageResult.setPage(basePage.getPage().longValue() + 1);
         pageResult.setSize(basePage.getSize().longValue());
         // 总页数
@@ -48,8 +50,8 @@ public class PageResultUtil {
      * @param basePage
      * @return
      */
-    public static PageResult convert(SearchResult source, BasePage basePage, Class resultClazz) {
-        PageResult pageResult = getConverter().basicConvert(source, resultClazz);
+    public static PageResult convert(SearchResult<?> source, BasePage basePage, Class resultClazz) {
+        PageResult<?> pageResult = getConverter().basicConvert(source, resultClazz);
         pageResult.setPage(basePage.getPage().longValue() + 1);
         pageResult.setSize(basePage.getSize().longValue());
         // 总页数
@@ -58,14 +60,19 @@ public class PageResultUtil {
         return pageResult;
     }
 
-    public static class SearchResult2PageResultConverter<E> implements PageResultConverter<SearchResult, PageResult, E> {
+    public static class SearchResult2PageResultConverter<E> implements PageResultConverter<SearchResult<?>, PageResult<E>, E> {
         @Override
-        public PageResult basicConvert(SearchResult source, Class<E> tClazz) {
-            return new PageResult(source.getTotalCount().longValue(), 0L, 0L, 0L, source.getDataList());
+        public PageResult<E> basicConvert(SearchResult<?> source, Class<E> tClazz) {
+
+            return new PageResult<E>(source.getTotalCount().longValue(),
+                    0L,
+                    0L,
+                    0L,
+                    BeanUtil.copyToList(source.getDataList(), tClazz, CopyOptions.create()));
         }
 
         @Override
-        public PageResult convert(Object source, Class<E> tClazz) {
+        public PageResult<E> convert(Object source, Class<E> tClazz) {
             return null;
         }
     }

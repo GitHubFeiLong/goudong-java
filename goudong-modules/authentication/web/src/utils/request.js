@@ -6,7 +6,7 @@ import Token from '@/pojo/Token'
 import { validateDate, validateUrlAuthentication, validateUrlNotAuthentication } from '@/utils/validate'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
 import { TOKEN_LOCAL_STORAGE } from '@/constant/LocalStorageConst'
-import { refresh } from '@/api/user'
+import { refreshTokenApi } from '@/api/user'
 import { AUTHORIZATION, BEARER, X_APP_ID } from '@/constant/HttpHeaderConst'
 import { DO_NOT_HANDLE_ERROR_MESSAGE } from "@/constant/DataMapConst";
 
@@ -265,7 +265,7 @@ async function refreshingToken(token, config) {
     isRefreshing = true
     return new Promise((resolve, reject) => {
       // 请求刷新令牌
-      refresh(token.refreshToken).then(data => {
+      refreshTokenApi(token.refreshToken).then(data => {
         // 生成token对象
         const newToken = new Token(data.accessToken, data.refreshToken, data.accessExpires, data.refreshExpires)
         // 设置token对象

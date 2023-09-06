@@ -15,7 +15,7 @@ export function pageAppApi(data) {
 /**
  * 新增应用
  */
-export function applyAppApi(data) {
+export function createAppApi(data) {
   return request({
     url: `${API_PREFIX}/app/base-app`,
     method: 'post',
@@ -23,34 +23,12 @@ export function applyAppApi(data) {
   })
 }
 
-
-
-
-
-
-
-
-
-
-
-
-//========
-
-export function dropDownAllAppApi() {
-  return request({
-    url: `/api/oauth2/drop-down/base-app/all-drop-down`,
-    method: 'get',
-    params: page,
-  })
-}
-
-
 /**
- * 审核应用
+ * 修改应用
  */
-export function auditAppApi(data) {
+export function updateAppApi(data) {
   return request({
-    url: `/api/oauth2/base-app/audit`,
+    url: `${API_PREFIX}/app/base-app`,
     method: 'put',
     data
   })
@@ -61,7 +39,7 @@ export function auditAppApi(data) {
  */
 export function deleteAppApi(id) {
   return request({
-    url: `/api/oauth2/base-app/${id}`,
+    url: `${API_PREFIX}/app/base-app/${id}`,
     method: 'delete',
   })
 }

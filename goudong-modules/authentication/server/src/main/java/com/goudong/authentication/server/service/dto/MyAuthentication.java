@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static com.goudong.authentication.server.constant.RoleConst.ROLE_APP_ADMIN;
 import static com.goudong.authentication.server.constant.RoleConst.ROLE_APP_SUPER_ADMIN;
 
 /**
@@ -99,7 +100,16 @@ public class MyAuthentication implements Authentication {
      * @return true 超级管理员，false 不是超级管理员
      */
     public boolean superAdmin() {
-        return this.roles.stream().filter(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN)).findFirst().isPresent();
+//        return this.roles.stream().filter(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN)).findFirst().isPresent();
+        return this.roles.stream().anyMatch(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN));
     }
 
+    /**
+     * 是否是超级管理员
+     * @return true 超级管理员，false 不是超级管理员
+     */
+    public boolean admin() {
+//        return this.roles.stream().filter(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN)).findFirst().isPresent();
+        return this.roles.stream().anyMatch(f -> Objects.equals(f.getAuthority(), ROLE_APP_ADMIN));
+    }
 }

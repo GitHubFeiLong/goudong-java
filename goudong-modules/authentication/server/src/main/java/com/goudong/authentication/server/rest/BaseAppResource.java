@@ -45,18 +45,12 @@ public class BaseAppResource {
 
     //~methods
     //==================================================================================================================
-
     @PostMapping("/page/base-app")
     @ApiOperation("分页查询应用")
     public Result<PageResult<BaseAppPageResp>> page(@RequestBody @Validated BaseAppPageReq req) {
         return Result.ofSuccess(baseAppManagerService.page(req));
     }
 
-    /**
-     * 新增应用
-     * @param req
-     * @return
-     */
     @PostMapping("/base-app")
     @ApiOperation("新增应用")
     public Result<BaseAppDTO> create(@Valid @RequestBody BaseAppCreate req) {
@@ -64,9 +58,19 @@ public class BaseAppResource {
         return Result.ofSuccess(result);
     }
 
+    @PutMapping("/base-app")
+    @ApiOperation("修改应用")
+    public Result<BaseAppDTO> update(@Valid @RequestBody BaseAppUpdate req) {
+        BaseAppDTO result = baseAppManagerService.update(req);
+        return Result.ofSuccess(result);
+    }
 
-
-
+    @DeleteMapping("/base-app/{id}")
+    @ApiOperation("删除应用")
+    public Result<Boolean> delete(@PathVariable Long id) {
+        baseAppManagerService.deleteById(id);
+        return Result.ofSuccess(true);
+    }
 
 
 
@@ -76,29 +80,9 @@ public class BaseAppResource {
 
 
 
-    /**
-     * 修改应用
-     * @param req
-     * @return
-     */
-    @PutMapping("/base-app")
-    @ApiOperation("修改应用")
-    public Result<BaseAppDTO> update(@Valid @RequestBody BaseAppUpdate req) {
-        BaseAppDTO result = baseAppService.update(req);
-        return Result.ofSuccess(result);
-    }
 
-    /**
-     * 删除应用
-     * @param id
-     * @return
-     */
-    @DeleteMapping("/base-app/{id}")
-    @ApiOperation("删除应用")
-    public Result<Boolean> delete(@PathVariable Long id) {
-        baseAppService.delete(id);
-        return Result.ofSuccess(true);
-    }
+
+
 
 
 }

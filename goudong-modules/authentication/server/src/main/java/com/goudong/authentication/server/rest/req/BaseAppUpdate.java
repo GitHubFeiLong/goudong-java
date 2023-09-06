@@ -21,13 +21,6 @@ public class BaseAppUpdate {
     private Long id;
 
     /**
-     * 应用名称
-     */
-    @Size(max = 16)
-    @ApiModelProperty(value = "应用名称")
-    private String name;
-
-    /**
      * 应用首页
      */
     @Size(max = 255)

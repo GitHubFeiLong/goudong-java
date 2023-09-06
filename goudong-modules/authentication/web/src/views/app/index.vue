@@ -5,15 +5,15 @@
     <div class="filter-container">
       <div class="filter-item">
         <span class="filter-item-label">应用ID: </span>
-        <el-input v-model="filter.id" clearable placeholder="请输入" />
+        <el-input v-model="filter.id" clearable placeholder="请输入"/>
       </div>
       <div class="filter-item">
         <span class="filter-item-label">应用名称: </span>
-        <el-input v-model="filter.name" clearable placeholder="请输入" />
+        <el-input v-model="filter.name" clearable placeholder="请输入"/>
       </div>
       <div class="filter-item">
         <span class="filter-item-label">首页地址: </span>
-        <el-input v-model="filter.homePage" clearable placeholder="请输入" />
+        <el-input v-model="filter.homePage" clearable placeholder="请输入"/>
       </div>
       <div class="filter-item">
         <span class="filter-item-label">状态: </span>
@@ -31,7 +31,7 @@
       </div>
       <div class="filter-item">
         <span class="filter-item-label">备注: </span>
-        <el-input v-model="filter.remark" clearable placeholder="请输入" />
+        <el-input v-model="filter.remark" clearable placeholder="请输入"/>
       </div>
       <div class="filter-item">
         <el-button
@@ -51,20 +51,21 @@
     <!--顶部操作栏-->
     <div class="el-table-tool">
       <div class="left-tool">
-        <el-button v-permission="'sys:app:apply'" class="el-button--small" icon="el-icon-plus" type="primary" @click="dialog.create.open=true">
+        <el-button v-permission="'sys:app:apply'" class="el-button--small" icon="el-icon-plus" type="primary"
+                   @click="dialog.create.open=true">
           新增
         </el-button>
       </div>
       <div class="right-tool">
         <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="刷新" placement="top">
           <div class="right-tool-btn" @click="load">
-            <i class="el-icon-refresh-right" />
+            <i class="el-icon-refresh-right"/>
           </div>
         </el-tooltip>
         <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="密度" placement="top">
           <el-dropdown trigger="click" @command="changeElTableSizeCommand">
             <div class="right-tool-btn">
-              <i class="el-icon-s-operation" />
+              <i class="el-icon-s-operation"/>
             </div>
             <el-dropdown-menu slot="dropdown" size="small">
               <el-dropdown-item :class="elDropdownItemClass[0]" command="0,medium">默认</el-dropdown-item>
@@ -157,17 +158,19 @@
               icon="el-icon-edit"
               :underline="false"
               type="primary"
-              :disabled="Number(scope.row.id) === 1667779450730426368 || scope.row.status !== 0"
-              @click="dialogAudit(scope.row)"
-            >审核</el-link>
+              :disabled="Number(scope.row.id) === 1"
+              @click="update(scope.row)"
+            >修改
+            </el-link>
             <el-link
               v-permission="'sys:app:delete'"
               icon="el-icon-delete"
               :underline="false"
               type="danger"
-              :disabled="Number(scope.row.id) === 1667779450730426368"
+              :disabled="Number(scope.row.id) === 1"
               @click="deleteRow(scope.row)"
-            >删除</el-link>
+            >删除
+            </el-link>
           </div>
         </template>
       </el-table-column>
@@ -214,7 +217,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="dialog.create.form.data.remark" />
+          <el-input v-model="dialog.create.form.data.remark"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -222,20 +225,52 @@
         <el-button type="primary" @click="dialogCreateSubmit()">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!--  修改应用弹窗  -->
+    <el-dialog title="修改应用" width="600px" :visible.sync="dialog.update.open" @close="dialogUpdateCancel()">
+      <el-form ref="updateForm" :model="dialog.update.form.data" :rules="dialog.update.form.rules" label-width="80px">
+        <el-form-item label="应用名" prop="name">
+          <el-input v-model="dialog.update.form.data.name" placeholder="请输入应用名称" disabled clearable/>
+        </el-form-item>
+        <el-form-item label="首页" prop="homePage">
+          <el-input v-model="dialog.update.form.data.homePage" placeholder="请输入访问应用首页web地址" clearable/>
+        </el-form-item>
+        <el-form-item label="状态" prop="enabled">
+          <el-select
+            v-model="dialog.update.form.data.enabled"
+            placeholder="请选择应用状态"
+            clearable
+          >
+            <el-option
+              v-for="item in appStatus"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dialog.update.form.data.remark"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogUpdateCancel">取 消</el-button>
+        <el-button type="primary" @click="dialogUpdateSubmit()">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 
-import { ENABLED_ARRAY } from "@/constant/commons";
-import { applyAppApi, auditAppApi, deleteAppApi, pageAppApi } from "@/api/app";
-import { Message } from "element-ui";
-import { WebUrl } from "@/utils/ElementValidatorUtil"
+import {ENABLED_ARRAY} from "@/constant/commons";
+import {createAppApi, updateAppApi, deleteAppApi, pageAppApi} from "@/api/app";
+import {Message} from "element-ui";
+import {WebUrl} from "@/utils/ElementValidatorUtil"
 
 export default {
   name: 'App',
-  components: {
-  },
+  components: {},
   data() {
     return {
       appStatus: ENABLED_ARRAY,
@@ -274,15 +309,40 @@ export default {
             }, // 弹窗的数据
             rules: { // 弹窗的规则
               name: [
-                { required: true, message: '请填写应用名称', trigger: 'blur' },
+                {required: true, message: '请填写应用名称', trigger: 'blur'},
               ],
               homePage: [
-                { required: true, message: '请填写应用首页web地址', trigger: 'blur' },
-                { max: 255, message: '长度在 0 到 255 个字符', trigger: 'blur' },
-                { validator: WebUrl, trigger: 'blur' }
+                {required: true, message: '请填写应用首页web地址', trigger: 'blur'},
+                {max: 255, message: '长度在 0 到 255 个字符', trigger: 'blur'},
+                {validator: WebUrl, trigger: 'blur'}
               ],
               enabled: [
-                { required: true, message: '请选择应用状态', trigger: 'blur' },
+                {required: true, message: '请选择应用状态', trigger: 'blur'},
+              ]
+            }
+          }
+        },
+        update: { // 修改
+          open: false, // 是否打开窗口
+          form: {
+            data: {
+              id: undefined,
+              name: undefined,
+              homePage: undefined,
+              enabled: undefined,
+              remark: undefined
+            }, // 弹窗的数据
+            rules: { // 弹窗的规则
+              name: [
+                {required: true, message: '请填写应用名称', trigger: 'blur'},
+              ],
+              homePage: [
+                {required: true, message: '请填写应用首页web地址', trigger: 'blur'},
+                {max: 255, message: '长度在 0 到 255 个字符', trigger: 'blur'},
+                {validator: WebUrl, trigger: 'blur'}
+              ],
+              enabled: [
+                {required: true, message: '请选择应用状态', trigger: 'blur'},
               ]
             }
           }
@@ -383,13 +443,41 @@ export default {
     dialogCreateSubmit() {
       this.$refs.createForm.validate((valid) => {
         if (valid) {
-          applyAppApi(this.dialog.create.form.data).then(response => {
+          createAppApi(this.dialog.create.form.data).then(response => {
             // 保存成功
             Message({
-              message: '申请成功,等待审核',
+              message: '应用创建成功',
               type: 'success',
             })
             this.dialogCreateCancel()
+            this.load();
+          })
+        } else {
+          return false;
+        }
+      });
+    },
+
+    // 修改
+    update(row) {
+      this.dialog.update.open = true
+      this.dialog.update.form.data = { ...row }
+      this.dialog.update.form.data.enabled = row.enabled ? 1 : 0;
+    },
+    dialogUpdateCancel() {
+      this.dialog.update.open = false
+      this.dialog.update.form.data = {}
+    },
+    dialogUpdateSubmit() {
+      this.$refs.updateForm.validate((valid) => {
+        if (valid) {
+          updateAppApi(this.dialog.update.form.data).then(response => {
+            // 保存成功
+            Message({
+              message: '应用修改成功',
+              type: 'success',
+            })
+            this.dialogUpdateCancel()
             this.load();
           })
         } else {

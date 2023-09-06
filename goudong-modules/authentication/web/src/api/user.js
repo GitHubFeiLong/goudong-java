@@ -20,9 +20,9 @@ export function loginApi(username, password, selectAppId) {
  * @param refreshToken
  * @returns {*}
  */
-export function refresh(refreshToken) {
+export function refreshTokenApi(refreshToken) {
   return request({
-    url: `${API_PREFIX}/user/refresh-token?refreshToken=${refreshToken}`,
+    url: `${API_PREFIX}/user/refresh-token`,
     method: 'post',
     data: {refreshToken: refreshToken}
   })
@@ -41,7 +41,7 @@ export function getUserDetailApi(token) {
 }
 
 
-//===
+//=== shanchu
 export function getInfo() {
   return request({
     url: '/api/oauth2/authentication/current-user-info',

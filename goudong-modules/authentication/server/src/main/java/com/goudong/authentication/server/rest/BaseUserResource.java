@@ -52,19 +52,19 @@ public class BaseUserResource {
             @ApiImplicitParam(name = "username", value = "用户名", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
     })
-    public Result<Token> login () {
+    public Result<Token> login() {
         return Result.ofSuccess(new Token());
     }
 
-    @PostMapping("/refreshToken")
+    @PostMapping("/refresh-token")
     @ApiOperation(value = "刷新token")
-    public Result<Token> refreshToken (@RequestBody RefreshToken token) {
+    public Result<Token> refreshToken(@RequestBody RefreshToken token) {
         return Result.ofSuccess(baseUserManagerService.refreshToken(token));
     }
 
     @PutMapping("/logout")
     @ApiOperation(value = "注销")
-    public Result<Object> logout () {
+    public Result<Object> logout() {
         return Result.ofSuccess();
     }
 

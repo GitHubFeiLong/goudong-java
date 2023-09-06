@@ -22,12 +22,4 @@ public class BaseRoleMenu extends BasePO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // @ManyToOne
-    // @JsonIgnoreProperties("menus")
-    // private BaseRole role;
-
-    // @ManyToOne
-    // @JsonIgnoreProperties("roles")
-    // private BaseMenu menu;
 }

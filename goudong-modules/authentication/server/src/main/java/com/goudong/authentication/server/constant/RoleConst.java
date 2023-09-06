@@ -25,16 +25,6 @@ public class RoleConst {
     //~ 客户端预置角色
     //==================================================================================================================
     /**
-     * 应用理员角色
-     */
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
-
-    /**
-     * 普通用户角色
-     */
-    public static final String ROLE_USER = "ROLE_USER";
-
-    /**
      * 匿名角色
      * 注意，创建角色时不能再创建该同名角色。
      */

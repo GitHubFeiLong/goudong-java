@@ -23,8 +23,4 @@ public class BaseUserRole extends BasePO implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // private Long user_id;
-    //
-    // private Long role_id;
-
 }

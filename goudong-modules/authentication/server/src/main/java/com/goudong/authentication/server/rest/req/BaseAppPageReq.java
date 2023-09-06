@@ -14,8 +14,6 @@ import java.util.Date;
  * 类描述：
  * BeanSearch查询参数和返回值
  * @author cfl
- * @version 1.0
- * @date 2023/7/22 19:59
  */
 @SearchBean(tables="base_app", orderBy = "id asc")
 @Data
@@ -33,6 +31,7 @@ public class BaseAppPageReq extends BasePage {
     private String secret;
 
     @ApiModelProperty("首页地址")
+    @DbField(onlyOn = Contain.class)
     private String homePage;
 
     @ApiModelProperty("激活状态")

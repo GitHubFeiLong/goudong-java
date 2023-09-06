@@ -87,7 +87,6 @@ public class BaseUser extends BasePO implements Serializable {
     @ManyToMany(targetEntity= BaseRole.class, fetch = FetchType.LAZY)
     @JoinTable(name = "base_user_role", joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
-    // @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     private List<BaseRole> roles = new ArrayList<>();
 
     @Override

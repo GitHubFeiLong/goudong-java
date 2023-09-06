@@ -19,7 +19,7 @@ import com.goudong.authentication.server.repository.BaseUserRepository;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
+import com.goudong.authentication.server.rest.req.BaseAppDropDown;
 import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -142,8 +141,8 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     /**
      * 新增应用
-     * @param req
-     * @return
+     * @param req 新增应用参数
+     * @return 应用
      */
     @Override
     public BaseAppDTO save(BaseAppCreate req) {
@@ -194,36 +193,123 @@ public class BaseAppServiceImpl implements BaseAppService {
         return baseAppMapper.toDto(baseApp);
     }
 
+    /**
+     * 修改应用
+     * @param req 修改应用对象
+     * @return 修改应用后的对象
+     */
+    @Override
+    public BaseAppDTO update(BaseAppUpdate req) {
+        BaseApp baseApp = this.findById(req.getId());
 
+        baseApp.setRemark(Optional.ofNullable(req.getRemark()).orElseGet(baseApp::getRemark));
+        baseApp.setHomePage(Optional.ofNullable(req.getHomePage()).orElseGet(baseApp::getHomePage));
+        baseApp.setEnabled(Optional.ofNullable(req.getEnabled()).orElseGet(baseApp::getEnabled));
+        baseAppRepository.save(baseApp);
+
+        cleanCache(req.getId());
+        return baseAppMapper.toDto(baseApp);
+    }
+
+    /**
+     * 删除应用
+     * @param id id
+     * @return 被删除应用
+     */
+    @Override
+    public BaseAppDTO delete(Long id) {
+        AssertUtil.isTrue(baseAppRepository.existsById(id), () -> ClientException.client("应用不存在"));
+        transactionTemplate.execute(status -> {
+            try {
+                // 删除应用
+                baseAppRepository.deleteById(id);
+                // 删除角色
+                int delRoles = baseRoleRepository.deleteByAppId(id);
+                log.info("删除{}个角色", delRoles);
+                int delUsers = baseUserRepository.deleteByAppId(id);
+                log.info("删除{}个用户", delUsers);
+                int delMenus = baseMenuRepository.deleteByAppId(id);
+                log.info("删除{}个菜单", delMenus);
+
+                return true;
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                throw new ServerException("事务异常(删除应用)：" + e.getMessage());
+            }
+        });
+        cleanCache(id);
+        log.info("删除应用成功！");
+        return null;
+    }
+
+    /**
+     * 应用下拉
+     * @param req 下拉参数
+     * @return 用户能访问的应用下拉列表
+     */
+    @Override
+    public List<BaseAppDropDown> dropDown(BaseAppDropDown req) {
+        MyAuthentication authentication = SecurityContextUtil.get();
+        // 不是超级管理员只返回自身应用
+        if (!authentication.superAdmin()) {
+            BaseApp app = findById(authentication.getRealAppId());
+            BaseAppDropDown baseAppDropDown = new BaseAppDropDown();
+            baseAppDropDown.setId(app.getId());
+            baseAppDropDown.setName(app.getName());
+            return ListUtil.newArrayList(baseAppDropDown);
+        }
+        // 超级管理员返回所有应用
+        return allDropDown(req);
+    }
+
+    /**
+     * 应用下拉
+     * @param req 下拉参数
+     * @return 所有应用下拉
+     */
+    @Override
+    public List<BaseAppDropDown> allDropDown(BaseAppDropDown req) {
+        // 超级管理员返回所有应用
+        String key = APP_DROP_DOWN.getFullKey();
+        if (redisTool.hasKey(key)) {
+            return redisTool.getList(APP_DROP_DOWN, BaseAppDropDown.class);
+        }
+        synchronized (this) {
+            if (redisTool.hasKey(key)) {
+                return redisTool.getList(APP_DROP_DOWN, BaseAppDropDown.class);
+            }
+
+            List<BaseAppDropDown> list = beanSearcher.searchAll(BaseAppDropDown.class);
+
+            redisTool.set(APP_DROP_DOWN, list);
+
+            return list;
+        }
+    }
+
+    /**
+     * 删除缓存
+     * @param id
+     */
+    private void cleanCache(Long id) {
+        redisTool.execute(new SessionCallback<Object>() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                redisTool.deleteKey(APP_ID, id);
+                redisTool.deleteKey(APP_DROP_DOWN);
+                operations.exec();
+                return null;
+            }
+        });
+    }
 
     //~以下待删除methods
     //==================================================================================================================
 
 
 
-    /**
-     * 修改应用
-     * @param req
-     * @return
-     */
-    @Override
-    public BaseAppDTO update(BaseAppUpdate req) {
-        BaseApp baseApp = baseAppRepository.findById(req.getId()).orElseThrow(() -> ClientException
-                .builder()
-                .clientMessageTemplate("应用id:{}不存在")
-                .clientMessageParams(req.getId())
-                .build()
-        );
 
-        baseApp.setName(Optional.ofNullable(req.getName()).orElseGet(() -> baseApp.getName()));
-        baseApp.setRemark(Optional.ofNullable(req.getRemark()).orElseGet(() -> baseApp.getRemark()));
-        baseApp.setHomePage(Optional.ofNullable(req.getHomePage()).orElseGet(() -> baseApp.getHomePage()));
-        baseApp.setEnabled(Optional.ofNullable(req.getEnabled()).orElseGet(() -> baseApp.getEnabled()));
-        baseAppRepository.save(baseApp);
-
-        cleanCache(req.getId());
-        return baseAppMapper.toDto(baseApp);
-    }
 
     /**
      * 根据请求头的应用id查询应用
@@ -278,98 +364,13 @@ public class BaseAppServiceImpl implements BaseAppService {
         }
     }
 
-    /**
-     * 删除应用
-     * @param id
-     * @return
-     */
-    @Override
-    public void delete(Long id) {
-        AssertUtil.isTrue(baseAppRepository.existsById(id), () -> ClientException.client("应用不存在"));
-        transactionTemplate.execute(status -> {
-            try {
-                // 删除应用
-                baseAppRepository.deleteById(id);
-                // 删除角色
-                int delRoles = baseRoleRepository.deleteByAppId(id);
-                log.info("删除{}个角色", delRoles);
-                int delUsers = baseUserRepository.deleteByAppId(id);
-                log.info("删除{}个用户", delUsers);
-                int delMenus = baseMenuRepository.deleteByAppId(id);
-                log.info("删除{}个菜单", delMenus);
-
-                return true;
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                throw new ServerException("事务异常(删除应用)：" + e.getMessage());
-            }
-        });
-        cleanCache(id);
-        log.info("删除应用成功！");
-    }
 
 
 
-    /**
-     * 下拉
-     * @param req
-     * @return
-     */
-    @Override
-    public List<BaseAppDropDown> dropDown(BaseAppDropDown req) {
-        MyAuthentication authentication = (MyAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        // 不是超级管理员只返回自身应用
-        if (!authentication.superAdmin()) {
-            BaseAppDTO baseAppDTO = findOne(authentication.getAppId()).get();
-            BaseAppDropDown baseAppDropDown = new BaseAppDropDown();
-            baseAppDropDown.setId(baseAppDTO.getId());
-            baseAppDropDown.setName(baseAppDTO.getName());
-            return ListUtil.newArrayList(baseAppDropDown);
-        }
-        // 超级管理员返回所有应用
-        return allDropDown(req);
-    }
 
-    /**
-     * 下拉
-     *
-     * @param req
-     * @return
-     */
-    @Override
-    public List<BaseAppDropDown> allDropDown(BaseAppDropDown req) {
-        // 超级管理员返回所有应用
-        String key = APP_DROP_DOWN.getFullKey();
-        if (redisTool.hasKey(key)) {
-            return redisTool.getList(APP_DROP_DOWN, BaseAppDropDown.class);
-        }
-        synchronized (this) {
-            if (redisTool.hasKey(key)) {
-                return redisTool.getList(APP_DROP_DOWN, BaseAppDropDown.class);
-            }
 
-            List<BaseAppDropDown> list = beanSearcher.searchAll(BaseAppDropDown.class);
 
-            redisTool.set(APP_DROP_DOWN, list);
 
-            return list;
-        }
-    }
 
-    /**
-     * 删除缓存
-     * @param id
-     */
-    private void cleanCache(Long id) {
-        redisTool.execute(new SessionCallback() {
-            @Override
-            public Object execute(RedisOperations operations) throws DataAccessException {
-                operations.multi();
-                redisTool.deleteKey(APP_ID, id);
-                redisTool.deleteKey(APP_DROP_DOWN);
-                operations.exec();
-                return null;
-            }
-        });
-    }
+
 }

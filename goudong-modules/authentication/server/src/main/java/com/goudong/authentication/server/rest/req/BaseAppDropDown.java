@@ -1,6 +1,7 @@
-package com.goudong.authentication.server.rest.req.search;
+package com.goudong.authentication.server.rest.req;
 
 import cn.zhxu.bs.bean.SearchBean;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -15,7 +16,9 @@ import lombok.Data;
 public class BaseAppDropDown {
     //~fields
     //==================================================================================================================
+    @ApiModelProperty("应用id")
     private Long id;
 
+    @ApiModelProperty("应用名")
     private String name;
 }
