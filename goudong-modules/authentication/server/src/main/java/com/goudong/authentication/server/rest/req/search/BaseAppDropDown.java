@@ -1,6 +1,10 @@
-package com.goudong.authentication.server.rest.req;
+package com.goudong.authentication.server.rest.req.search;
 
+import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.SearchBean;
+import cn.zhxu.bs.operator.Contain;
+import cn.zhxu.bs.operator.StartWith;
+import com.goudong.authentication.server.domain.BaseApp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,7 +13,6 @@ import lombok.Data;
  * 应用下拉
  * @author cfl
  * @version 1.0
- * @date 2023/7/22 19:59
  */
 @SearchBean(tables="base_app", orderBy = "id asc")
 @Data
@@ -21,4 +24,5 @@ public class BaseAppDropDown {
 
     @ApiModelProperty("应用名")
     private String name;
+
 }

@@ -74,7 +74,7 @@ public class BaseUserResource {
             @ApiImplicitParam(name = "token", value = "令牌", required = true),
     })
     public Result<UserDetail> getUserDetailByToken(@PathVariable String token) {
-        return Result.ofSuccess(baseUserService.getUserDetailByToken(token));
+        return Result.ofSuccess(baseUserManagerService.getUserDetailByToken(token));
     }
 
 
@@ -111,11 +111,5 @@ public class BaseUserResource {
     @ApiOperation(value = "分页用户")
     public Result<PageResult<BaseUserPage>> page(@Validated BaseUserPage req) {
         return Result.ofSuccess(baseUserService.page(req));
-    }
-
-    @GetMapping("/base-user/drop-down")
-    @ApiOperation(value = "用户下拉")
-    public Result<List<BaseUserDropDown>> dropDown(BaseUserDropDown req) {
-        return Result.ofSuccess(baseUserService.dropDown(req));
     }
 }

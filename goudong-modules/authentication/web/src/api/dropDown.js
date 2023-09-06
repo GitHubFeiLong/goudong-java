@@ -12,3 +12,15 @@ export function dropDownAllAppApi() {
     method: 'get',
   })
 }
+
+
+/**
+ * 用户下拉
+ * @returns {*}
+ */
+export function dropDownUserApi() {
+  return request({
+    url: `${API_PREFIX}/drop-down/base-user/page`,
+    method: 'get',
+  })
+}

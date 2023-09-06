@@ -1,6 +1,7 @@
 package com.goudong.authentication.server.validation;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.BaseAppService;
 
@@ -34,14 +35,7 @@ public @interface AppValidator {
         public boolean isValid(Long value, ConstraintValidatorContext context) {
             BaseAppService service = Optional.ofNullable(baseAppService).orElseGet(() -> baseAppService = SpringUtil.getBean(BaseAppService.class));
             if (value != null) {
-                Optional<BaseAppDTO> one = service.findOne(value);
-                if (!one.isPresent()) {
-                    if (Objects.equals(context.getDefaultConstraintMessageTemplate(), "")) {
-                        context.disableDefaultConstraintViolation();
-                        context.buildConstraintViolationWithTemplate("应用不存在").addConstraintViolation();
-                    }
-                    return false;
-                }
+                service.findById(value);
             }
 
             return true;

@@ -1,4 +1,4 @@
-package com.goudong.authentication.server.rest.req;
+package com.goudong.authentication.server.rest.req.search;
 
 import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.SearchBean;

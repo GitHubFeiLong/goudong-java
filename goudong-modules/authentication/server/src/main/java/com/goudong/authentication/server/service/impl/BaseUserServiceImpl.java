@@ -5,56 +5,45 @@ import cn.zhxu.bs.BeanSearcher;
 import cn.zhxu.bs.SearchResult;
 import cn.zhxu.bs.operator.InList;
 import cn.zhxu.bs.util.MapUtils;
-import com.goudong.authentication.common.core.*;
-import com.goudong.authentication.common.util.HttpRequestUtil;
-import com.goudong.authentication.server.constant.HttpHeaderConst;
-import com.goudong.authentication.server.domain.BaseApp;
-import com.goudong.authentication.server.domain.BaseMenu;
+import com.goudong.authentication.common.core.LoginResp;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
-import com.goudong.authentication.server.repository.*;
-import com.goudong.authentication.server.rest.req.RefreshToken;
+import com.goudong.authentication.server.repository.BaseUserRepository;
+import com.goudong.authentication.server.rest.req.BaseUserCreate;
+import com.goudong.authentication.server.rest.req.BaseUserUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
 import com.goudong.authentication.server.rest.req.search.BaseUserPage;
 import com.goudong.authentication.server.rest.req.search.SelectUsersRoleNames;
-import com.goudong.authentication.server.service.dto.BaseAppDTO;
+import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
+import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
-import com.goudong.authentication.server.service.dto.LoginDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
+import com.goudong.authentication.server.service.mapper.BaseUserMapper;
+import com.goudong.authentication.server.util.BeanSearcherUtil;
+import com.goudong.authentication.server.util.PageResultUtil;
+import com.goudong.authentication.server.util.SecurityContextUtil;
 import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
-import com.goudong.boot.web.core.ServerException;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
-import com.goudong.authentication.server.rest.req.BaseUserCreate;
-import com.goudong.authentication.server.rest.req.BaseUserUpdate;
-import com.goudong.authentication.server.service.BaseAppService;
-import com.goudong.authentication.server.service.BaseUserService;
-import com.goudong.authentication.server.service.mapper.BaseMenuMapper;
-import com.goudong.authentication.server.service.mapper.BaseUserMapper;
-import com.goudong.authentication.server.util.PageResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.goudong.authentication.server.enums.RedisKeyTemplateProviderEnum.APP_DROP_DOWN;
-import static com.goudong.authentication.server.enums.RedisKeyTemplateProviderEnum.USER_DROP_DOWN;
 
 /**
  * Service Implementation for managing {@link BaseUser}.
@@ -69,9 +58,6 @@ public class BaseUserServiceImpl implements BaseUserService {
     private BaseUserRepository baseUserRepository;
 
     @Resource
-    private BaseAppService baseAppService;
-
-    @Resource
     private BaseUserMapper baseUserMapper;
 
     @Resource
@@ -82,9 +68,6 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     @Resource
     private RedisTool redisTool;
-
-    @Resource
-    private HttpServletRequest httpServletRequest;
 
     //~methods
     //==================================================================================================================
@@ -101,73 +84,58 @@ public class BaseUserServiceImpl implements BaseUserService {
         BaseUser baseUser = baseUserRepository.findByLogin(appId, username);
         // 懒加载,必须使用才能加载
         if (baseUser !=null) {
-            baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
+            List<String> roleNames = baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
         }
         return baseUser;
     }
 
-
     /**
-     * 根据token获取用户信息
-     * @param token
-     * @return
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetail getUserDetailByToken(String token) {
-        BaseAppDTO baseAppDTO = baseAppService.findByHeader().orElseThrow(() -> ClientException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
-
-        Jwt jwt = new Jwt(baseAppDTO.getSecret());
-        UserSimple userSimple = jwt.parseToken(token);
-
-        // 查询用户角色菜单
-        BaseUser baseUser = baseUserRepository.findById(1L).orElseThrow(() -> ClientException.client("用户不存在"));
-
-        UserDetail userDetail = new UserDetail();
-        userDetail.setId(userSimple.getId());
-        userDetail.setAppId(userSimple.getAppId());
-        userDetail.setUsername(userSimple.getUsername());
-
-        List<BaseRole> roles = baseUser.getRoles();
-        List<String> roleNames = new ArrayList<>(roles.size());
-        Set<Menu> menuHashSet = new HashSet<>(roles.size());
-        roles.forEach(p -> {
-            roleNames.add(p.getName());
-
-            p.getMenus().forEach(p2 -> {
-                menuHashSet.add(BeanUtil.copyProperties(p2, Menu.class));
-            });
-
-        });
-
-        List menuArrayList = new ArrayList<>(menuHashSet);
-        menuArrayList.sort(new Comparator<Menu>() {
-            @Override
-            public int compare(Menu o1, Menu o2) {
-                return Optional.ofNullable(o1.getSortNum()).orElseGet(() ->Integer.MAX_VALUE).compareTo(Optional.ofNullable(o2.getSortNum()).orElseGet(() ->Integer.MAX_VALUE));
-            }
-        });
-        // 处理菜单
-        userDetail.setRoles(roleNames);
-        userDetail.setMenus(menuArrayList);
-
-        return userDetail;
-    }
-
-    /**
-     * 刷新token
+     * 根据id查询用户
      *
-     * @param token refreshToken
-     * @return 新的token
+     * @param id 用户id
+     * @return 用户对象
      */
     @Override
-    public Token refreshToken(RefreshToken token) {
-        Long xAppId = HttpRequestUtil.getXAppId();
-        BaseApp app = baseAppService.findById(xAppId);
-        Jwt jwt = new Jwt(1, TimeUnit.DAYS, app.getSecret());
-        UserSimple userSimple = jwt.parseToken(token.getRefreshToken());
-        Token resp = jwt.generateToken(userSimple);
-        return resp;
+    public BaseUser findById(Long id) {
+        // 查询角色，权限使用
+        BaseUser baseUser = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client("用户不存在"));
+        baseUser.getRoles().stream().map(BaseRole::getMenus).collect(Collectors.toList());
+        return baseUser;
+    }
+
+    /**
+     * 根据id查询用户
+     * @param id 用户id
+     * @return 用户对象详细信息（保留角色菜单）
+     */
+    @Override
+    public BaseUser findDetailById(Long id) {
+        // 查询角色，权限使用
+        BaseUser baseUser = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client("用户不存在"));
+        // 简单获取角色和菜单，即可进行查询
+        List<String> roleNames = new ArrayList<>();
+        List<String> menuNames = new ArrayList<>();
+        baseUser.getRoles().forEach(role -> {
+            roleNames.add(role.getName());
+            role.getMenus().forEach(menu -> {
+                menuNames.add(menu.getName());
+            });
+        });
+        return baseUser;
+    }
+
+    /**
+     * 分页获取用户下拉，只返回操作人所在真实应用下的用户
+     *
+     * @param req 请求参数
+     * @return 用户下拉列表
+     */
+    @Override
+    public PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req) {
+        MyAuthentication authentication = SecurityContextUtil.get();
+        req.setRealAppId(authentication.getRealAppId());
+        SearchResult<BaseUserDropDown> search = beanSearcher.search(BaseUserDropDown.class, BeanSearcherUtil.getParaMap(req));
+        return PageResultUtil.convert(search, req, BaseUserDropDownResp.class);
     }
 
 
@@ -179,6 +147,11 @@ public class BaseUserServiceImpl implements BaseUserService {
 
 
 
+
+
+
+
+    // ===========
 
 
     /**
@@ -291,90 +264,38 @@ public class BaseUserServiceImpl implements BaseUserService {
     /**
      * 登录信息
      *
-     * @param id
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public LoginDTO login(Long id) {
-        BaseUser baseUser = baseUserRepository.findById(id).get();
-
-        // List<BaseUserRole> allByUserId = baseUserRoleRepository.findAllByUserId(id);
-        // Set<String> roles = new HashSet<>();
-        // Map<String, BaseMenuDTO> menuMap = new HashMap<>();
-        // allByUserId.stream()
-        //         .flatMap(m -> Stream.of(m.getRole().getMenus()))
-        //         .flatMap(Collection::stream)
-        //         .forEach(p -> {
-        //             // 角色
-        //             String name = p.getRole().getName();
-        //             roles.add(name);
-        //             // 菜单
-        //             BaseMenu menu = p.getMenu();
-        //             if (!menuMap.containsKey(menu.getPermissionId())) {
-        //                 BaseMenuDTO baseMenuDTO = baseMenuMapper.toDto(menu);
-        //                 menuMap.put(menu.getPermissionId(), baseMenuDTO);
-        //             }
-        //         });
-        //
-        // BaseApp baseApp = baseAppRepository.findById(baseUser.getAppId()).orElseThrow(() -> ClientException.client("应用无效"));
-        //
-        // // 创建token
-        // Jwt jwt = new Jwt(1, TimeUnit.DAYS, baseApp.getSecret());
-        // String token = jwt.generateToken(new UserToken(baseUser.getId(), baseApp.getId(), baseUser.getUsername(), roles));
-        //
-        // LoginDTO loginDTO = new LoginDTO();
-        // loginDTO.setId(baseUser.getId());
-        // loginDTO.setAppId(baseUser.getAppId());
-        // loginDTO.setUsername(baseUser.getUsername());
-        // loginDTO.setToken(token);
-        // loginDTO.setRoles(roles);
-        //
-        // List<BaseMenuDTO> menuDTOS = new ArrayList<>(menuMap.values());
-        //
-        // Collections.sort(menuDTOS, (o1, o2) -> ((BaseMenuDTO)o1).getSortNum() - ((BaseMenuDTO)o2).getSortNum());
-        //
-        // // Tree.getInstance().id(BaseMenuDTO::getId).parentId(BaseMenuDTO::getParentId).children(BaseMenuDTO::getChildren).to
-        //
-        // loginDTO.setMenus(menuDTOS);
-
-        // return loginDTO;
-        return null;
-    }
-
-    /**
-     * 登录信息
-     *
      * @param myAuthentication
      * @return
      */
     @Override
     @Transactional(readOnly = true)
     public LoginResp login(MyAuthentication myAuthentication) {
-        log.info("认证成功，添加角色权限");
-        LoginResp loginResp = new LoginResp();
-
-        // 查询角色，权限使用
-        BaseUser baseUser = baseUserRepository.findById(myAuthentication.getId()).get();
-        BaseAppDTO baseAppDTO = baseAppService.findOne(myAuthentication.getAppId()).get();
-
-        // 设置角色
-        List<String> roles = baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
-
-        loginResp.setId(myAuthentication.getId());
-        loginResp.setUsername(myAuthentication.getUsername());
-        loginResp.setAppId(myAuthentication.getAppId());
-        loginResp.setRealAppId(baseUser.getRealAppId());
-        loginResp.setRoles(roles);
-
-        // 创建token
-        Jwt jwt = new Jwt(1, TimeUnit.DAYS, baseAppDTO.getSecret());
-        UserSimple userSimple = new UserSimple(myAuthentication.getId(), myAuthentication.getAppId(), myAuthentication.getRealAppId(), myAuthentication.getUsername(), roles);
-        Token token = jwt.generateToken(userSimple);
-        loginResp.setToken(token);
-        // 设置应用首页地址
-        loginResp.setHomePage(baseAppDTO.getHomePage());
-
-        return loginResp;
+//        log.info("认证成功，添加角色权限");
+//        LoginResp loginResp = new LoginResp();
+//
+//        // 查询角色，权限使用
+//        BaseUser baseUser = baseUserRepository.findById(myAuthentication.getId()).get();
+//        BaseAppDTO baseAppDTO = baseAppService.findOne(myAuthentication.getAppId()).get();
+//
+//        // 设置角色
+//        List<String> roles = baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
+//
+//        loginResp.setId(myAuthentication.getId());
+//        loginResp.setUsername(myAuthentication.getUsername());
+//        loginResp.setAppId(myAuthentication.getAppId());
+//        loginResp.setRealAppId(baseUser.getRealAppId());
+//        loginResp.setRoles(roles);
+//
+//        // 创建token
+//        Jwt jwt = new Jwt(1, TimeUnit.DAYS, baseAppDTO.getSecret());
+//        UserSimple userSimple = new UserSimple(myAuthentication.getId(), myAuthentication.getAppId(), myAuthentication.getRealAppId(), myAuthentication.getUsername(), roles);
+//        Token token = jwt.generateToken(userSimple);
+//        loginResp.setToken(token);
+//        // 设置应用首页地址
+//        loginResp.setHomePage(baseAppDTO.getHomePage());
+//
+//        return loginResp;
+        return null;
     }
 
     /**
@@ -433,34 +354,6 @@ public class BaseUserServiceImpl implements BaseUserService {
         return baseUserDTO;
     }
 
-    /**
-     * 用户下拉选
-     * @param req
-     * @return
-     */
-    @Override
-    public List<BaseUserDropDown> dropDown(BaseUserDropDown req) {
-        MyAuthentication authentication = (MyAuthentication)SecurityContextHolder.getContext().getAuthentication();
-        Long appId = Optional.ofNullable(req.getAppId()).orElseGet(() -> authentication.getAppId());
-        // redis key
-        String key = USER_DROP_DOWN.getFullKey(appId);
-        if (redisTool.hasKey(key)) {
-            return redisTool.getList(USER_DROP_DOWN, BaseUserDropDown.class, appId);
-        }
-        synchronized (this) {
-            if (redisTool.hasKey(key)) {
-                return redisTool.getList(USER_DROP_DOWN, BaseUserDropDown.class, appId);
-            }
-
-            Map<String, Object> build = MapUtils.builder()
-                    .field(BaseUserDropDown::getAppId, appId)
-                    .build();
-            List<BaseUserDropDown> list = beanSearcher.searchAll(BaseUserDropDown.class, build);
-
-            redisTool.set(APP_DROP_DOWN, list, appId);
-            return list;
-        }
-    }
 
 
 }

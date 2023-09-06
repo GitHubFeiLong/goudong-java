@@ -25,7 +25,7 @@
 
 <script>
 
-import { pageUserByField } from "@/api/user";
+import { dropDownUserApi } from '@/api/dropDown';
 
 export default {
   data() {
@@ -40,26 +40,18 @@ export default {
   },
   mounted() {
     // 优先加载表格数据
-    // this.loadUsername(this.username)
+    this.loadUsername(this.username)
   },
   methods: {
     loadUsername() {
       this.loading = true
-      const page = { page: this.page, size: this.size, username: this.username }
-      pageUserByField(page).then(data => {
+      const page = { page: this.page, size: this.size, name: this.username }
+      dropDownUserApi(page).then(data => {
         this.totalPage = Number(data.totalPage)
         const content = data.content
-        if (content && content.length > 0) {
-          // 将value使用逗号拼接起来，用于去重。
-          const existsUsernames = this.usernames.map((item) => {
-            return item.value
-          }).join()
-          content.forEach((user, index, arr) => {
-            if (existsUsernames.indexOf(user.username) === -1) {
-              this.usernames.push({ value: user.username, label: user.username })
-            }
-          })
-        }
+        content.forEach(user => {
+          this.usernames.push({ value: user.id, label: user.name })
+        })
       }).catch(err => {
         console.warn('err', err)
       }).finally(() => {

@@ -1,22 +1,25 @@
 package com.goudong.authentication.server.service.manager.impl;
 
-import com.goudong.authentication.common.core.Jwt;
-import com.goudong.authentication.common.core.LoginResp;
-import com.goudong.authentication.common.core.Token;
-import com.goudong.authentication.common.core.UserSimple;
+import cn.hutool.core.bean.BeanUtil;
+import com.goudong.authentication.common.core.*;
+import com.goudong.authentication.common.util.HttpRequestUtil;
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.RefreshToken;
+import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
+import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.BaseUserManagerService;
+import com.goudong.core.lang.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -48,8 +51,7 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      */
     @Override
     public BaseUser findOneByAppIdAndUsername(Long appId, String username) {
-        BaseUser baseUser = baseUserService.findOneByAppIdAndUsername(appId, username);
-        return baseUser;
+        return baseUserService.findOneByAppIdAndUsername(appId, username);
     }
 
     /**
@@ -91,6 +93,68 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      */
     @Override
     public Token refreshToken(RefreshToken token) {
-        return baseUserService.refreshToken(token);
+        Long xAppId = HttpRequestUtil.getXAppId();
+        BaseApp app = baseAppService.findById(xAppId);
+        Jwt jwt = new Jwt(1, TimeUnit.DAYS, app.getSecret());
+        UserSimple userSimple = jwt.parseToken(token.getRefreshToken());
+        return jwt.generateToken(userSimple);
+    }
+
+    /**
+     * 根据{@code token}获取用户信息
+     *
+     * @param token token
+     * @return 用户信息
+     */
+    @Override
+    public UserDetail getUserDetailByToken(String token) {
+        BaseApp baseApp = baseAppService.findByHeader();
+        Jwt jwt = new Jwt(baseApp.getSecret());
+        UserSimple userSimple = jwt.parseToken(token);
+
+        // 查询用户角色菜单
+        BaseUser baseUser = baseUserService.findDetailById(userSimple.getId());
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setId(baseUser.getId());
+        userDetail.setAppId(baseUser.getAppId());
+        userDetail.setRealAppId(baseUser.getRealAppId());
+        userDetail.setUsername(baseUser.getUsername());
+
+        List<BaseRole> roles = baseUser.getRoles();
+        List<String> roleNames = new ArrayList<>(roles.size());
+        Set<Menu> menuHashSet = new HashSet<>(roles.size());
+        roles.forEach(p -> {
+            roleNames.add(p.getName());
+
+            p.getMenus().forEach(p2 -> {
+                menuHashSet.add(BeanUtil.copyProperties(p2, Menu.class));
+            });
+
+        });
+
+        List<Menu> menuArrayList = new ArrayList<>(menuHashSet);
+        menuArrayList.sort(new Comparator<Menu>() {
+            @Override
+            public int compare(Menu o1, Menu o2) {
+                return Optional.ofNullable(o1.getSortNum()).orElseGet(() ->Integer.MAX_VALUE).compareTo(Optional.ofNullable(o2.getSortNum()).orElseGet(() ->Integer.MAX_VALUE));
+            }
+        });
+        // 处理菜单
+        userDetail.setRoles(roleNames);
+        userDetail.setMenus(menuArrayList);
+
+        return userDetail;
+    }
+
+    /**
+     * 分页获取用户下拉，只返回操作人所在真实应用下的用户
+     *
+     * @param req 请求参数
+     * @return 用户下拉列表
+     */
+    @Override
+    public PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req) {
+        return baseUserService.userDropDown(req);
     }
 }

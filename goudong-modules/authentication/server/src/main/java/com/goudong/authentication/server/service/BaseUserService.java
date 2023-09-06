@@ -1,21 +1,19 @@
 package com.goudong.authentication.server.service;
 
 import com.goudong.authentication.common.core.LoginResp;
-import com.goudong.authentication.common.core.Token;
-import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
-import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
 import com.goudong.authentication.server.rest.req.search.BaseUserPage;
+import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.core.lang.PageResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,6 +33,30 @@ public interface BaseUserService {
      * @return 返回用户
      */
     BaseUser findOneByAppIdAndUsername(Long appId, String username);
+
+    /**
+     * 根据id查询用户
+     * @param id 用户id
+     * @return 用户对象
+     */
+    BaseUser findById(Long id);
+
+    /**
+     * 根据id查询用户
+     * @param id 用户id
+     * @return 用户对象详细信息（保留角色菜单）
+     */
+    @Transactional(readOnly = true)
+    BaseUser findDetailById(Long id);
+
+
+    /**
+     * 分页获取用户下拉，只返回操作人所在真实应用下的用户
+     *
+     * @param req 请求参数
+     * @return 用户下拉列表
+     */
+    PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req);
 
 
     //~待删除methods
@@ -100,25 +122,4 @@ public interface BaseUserService {
     @Deprecated
     BaseUserDTO getById(Long id);
 
-    /**
-     * 用户下拉选
-     * @param req
-     * @return
-     */
-    List<BaseUserDropDown> dropDown(BaseUserDropDown req);
-
-    /**
-     * 根据token获取用户信息
-     * @param token
-     * @return
-     */
-    UserDetail getUserDetailByToken(String token);
-
-    /**
-     * 刷新token
-     *
-     * @param token refreshToken
-     * @return 新的token
-     */
-    Token refreshToken(RefreshToken token);
 }

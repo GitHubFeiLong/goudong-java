@@ -2,6 +2,7 @@ package com.goudong.authentication.server.service.impl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.IdUtil;
 import cn.zhxu.bs.BeanSearcher;
 import cn.zhxu.bs.SearchResult;
@@ -17,10 +18,10 @@ import com.goudong.authentication.server.repository.BaseMenuRepository;
 import com.goudong.authentication.server.repository.BaseRoleRepository;
 import com.goudong.authentication.server.repository.BaseUserRepository;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.BaseAppPageReq;
+import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
+import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.rest.req.BaseAppDropDown;
-import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
+import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
@@ -288,8 +289,20 @@ public class BaseAppServiceImpl implements BaseAppService {
     }
 
     /**
+     * 根据请求头中{@code X-App-Id}，查询应用
+     *
+     * @return baseApp
+     */
+    @Override
+    public BaseApp findByHeader() {
+        Long appId = (Long)httpServletRequest.getAttribute(HttpHeaderConst.X_APP_ID);
+        Assert.notNull(appId, () -> ClientException.client("请求头中应用id不存在"));
+        return this.findById(appId);
+    }
+
+    /**
      * 删除缓存
-     * @param id
+     * @param id 应用id
      */
     private void cleanCache(Long id) {
         redisTool.execute(new SessionCallback<Object>() {
@@ -303,74 +316,4 @@ public class BaseAppServiceImpl implements BaseAppService {
             }
         });
     }
-
-    //~以下待删除methods
-    //==================================================================================================================
-
-
-
-
-
-    /**
-     * 根据请求头的应用id查询应用
-     *
-     * @return
-     */
-    @Override
-    public Optional<BaseAppDTO> findByHeader() {
-        Long appId = (Long)httpServletRequest.getAttribute(HttpHeaderConst.X_APP_ID);
-        return findOne(appId);
-    }
-
-    /**
-     * 根据id查询应用
-     * @param id
-     * @return
-     */
-    @Override
-    @Deprecated
-    public Optional<BaseAppDTO> findOne(Long id) {
-        String key = APP_ID.getFullKey(id);
-        if (redisTool.hasKey(key)) {
-            String appStr = (String)redisTool.get(APP_ID, id);
-            try {
-                BaseAppDTO baseAppDTO = objectMapper.readValue(appStr, BaseAppDTO.class);
-                return Optional.of(baseAppDTO);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        synchronized (this) {
-            if (redisTool.hasKey(key)) {
-                String appStr = (String)redisTool.get(APP_ID, id);
-                try {
-                    BaseAppDTO baseAppDTO = objectMapper.readValue(appStr, BaseAppDTO.class);
-                    return Optional.of(baseAppDTO);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            Optional<BaseAppDTO> baseAppDTO = baseAppRepository.findById(id).map(baseAppMapper::toDto);
-            if (baseAppDTO.isPresent()) {
-                try {
-                    redisTool.set(APP_ID, objectMapper.writeValueAsString(baseAppDTO.get()), id);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            return baseAppDTO;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
 }

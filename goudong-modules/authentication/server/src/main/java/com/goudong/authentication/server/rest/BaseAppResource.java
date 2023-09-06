@@ -2,10 +2,9 @@ package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.constant.RoleConst;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.BaseAppPageReq;
+import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
-import com.goudong.authentication.server.service.BaseAppService;
+import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.core.lang.PageResult;
@@ -39,10 +38,6 @@ public class BaseAppResource {
     @Resource
     private BaseAppManagerService baseAppManagerService;
 
-    @Resource
-    @Deprecated
-    private BaseAppService baseAppService;
-
     //~methods
     //==================================================================================================================
     @PostMapping("/page/base-app")
@@ -71,18 +66,5 @@ public class BaseAppResource {
         baseAppManagerService.deleteById(id);
         return Result.ofSuccess(true);
     }
-
-
-
-
-
-    //==待删除的
-
-
-
-
-
-
-
 
 }

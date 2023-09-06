@@ -4,19 +4,11 @@ import com.goudong.authentication.common.core.LoginResp;
 import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
-import com.goudong.authentication.server.rest.req.BaseUserCreate;
-import com.goudong.authentication.server.rest.req.BaseUserUpdate;
 import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPage;
-import com.goudong.authentication.server.service.dto.BaseUserDTO;
+import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.core.lang.PageResult;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 类描述：
@@ -47,4 +39,18 @@ public interface BaseUserManagerService {
      * @return token
      */
     Token refreshToken(RefreshToken token);
+
+    /**
+     * 根据{@code token}获取用户信息
+     * @param token token
+     * @return 用户信息
+     */
+    UserDetail getUserDetailByToken(String token);
+
+    /**
+     * 分页获取用户下拉，只返回操作人所在真实应用下的用户
+     * @param req 请求参数
+     * @return 用户下拉列表
+     */
+    PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req);
 }

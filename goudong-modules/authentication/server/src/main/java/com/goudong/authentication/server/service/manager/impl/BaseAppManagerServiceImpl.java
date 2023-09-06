@@ -2,10 +2,10 @@ package com.goudong.authentication.server.service.manager.impl;
 
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.BaseAppPageReq;
+import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
+import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.rest.req.BaseAppDropDown;
-import com.goudong.authentication.server.rest.resp.search.BaseAppPageResp;
+import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * 类描述：
  *
- * @Author Administrator
- * @Version 1.0
+ * @author  Administrator
+ * @version 1.0
  */
 @Service
 public class BaseAppManagerServiceImpl implements BaseAppManagerService {
@@ -105,6 +105,16 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
     @Override
     public List<BaseAppDropDown> allDropDown(BaseAppDropDown req) {
         return baseAppService.allDropDown(req);
+    }
+
+    /**
+     * 根据请求头中{@code X-App-Id}，查询应用
+     *
+     * @return baseApp
+     */
+    @Override
+    public BaseApp findByHeader() {
+        return baseAppService.findByHeader();
     }
 
 }
