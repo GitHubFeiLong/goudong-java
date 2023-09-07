@@ -1,6 +1,8 @@
 package com.goudong.authentication.server.rest.req.search;
 
 import cn.zhxu.bs.bean.SearchBean;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -17,10 +19,14 @@ import lombok.Data;
 public class BaseRoleDropDown {
     //~fields
     //==================================================================================================================
-
+    @ApiModelProperty("id")
     private Long id;
 
+    @ApiModelProperty("角色名")
     private String name;
 
-    private Long appId;
+    @ApiModelProperty(value = "应用名", hidden = true)
+    @JsonIgnore
+    private Long appId ;
+
 }

@@ -4,10 +4,10 @@ import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
+import com.goudong.authentication.server.rest.req.BaseUserPageReq;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
 import com.goudong.authentication.server.rest.req.RefreshToken;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPage;
+import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
 import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.manager.BaseUserManagerService;
@@ -22,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 
 /**
@@ -79,7 +78,7 @@ public class BaseUserResource {
 
     @PostMapping("/page/base-user")
     @ApiOperation(value = "分页用户")
-    public Result<PageResult<BaseUserPage>> page(@RequestBody @Validated BaseUserPage req) {
+    public Result<PageResult<BaseUserPageSearchReq>> page(@RequestBody @Validated BaseUserPageReq req) {
         return Result.ofSuccess(baseUserManagerService.page(req));
     }
 

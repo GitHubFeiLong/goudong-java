@@ -3,6 +3,7 @@ package com.goudong.authentication.server.rest.req.search;
 import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.DbIgnore;
 import cn.zhxu.bs.bean.SearchBean;
+import cn.zhxu.bs.operator.Contain;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,19 +19,18 @@ import java.util.List;
  * @date 2023/7/22 19:59
  */
 @SearchBean(
-        tables="base_user bu inner join base_app ba on ba.id = bu.app_id",
+        tables="base_user bu inner join base_app ba on ba.id = bu.app_id inner join base_user_role bur on bur.user_id = bu.id inner join base_role br on br.id = bur.role_id",
         orderBy = "ba.id desc, bu. created_date desc"
 )
 @Data
-public class BaseUserPage extends BasePage {
+public class BaseUserPageSearchReq extends BasePage {
     //~fields
     //==================================================================================================================
-
-    @ApiModelProperty(value = "应用id")
+    @ApiModelProperty(value = "应用id", hidden = true)
     @DbField(value = "ba.id")
     private Long appId;
 
-    @ApiModelProperty("应用名")
+    @ApiModelProperty(value = "应用名", hidden = true)
     @DbField("ba.name")
     private String appName;
 
@@ -39,7 +39,7 @@ public class BaseUserPage extends BasePage {
     private Long id;
 
     @ApiModelProperty("用户名")
-    @DbField("bu.username")
+    @DbField(value = "bu.username", onlyOn = Contain.class)
     private String username;
 
     @ApiModelProperty("用户过期时间")

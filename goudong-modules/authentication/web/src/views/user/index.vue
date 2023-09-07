@@ -21,20 +21,6 @@
         />
       </div>
       <div class="filter-item">
-        <span class="filter-item-label">创建日期: </span>
-        <el-date-picker
-          v-model="filter.createTime"
-          :picker-options="pickerOptions"
-          align="center"
-          end-placeholder="结束日期"
-          range-separator="至"
-          start-placeholder="开始日期"
-          type="daterange"
-          unlink-panels
-          value-format="yyyy-MM-dd"
-        />
-      </div>
-      <div class="filter-item">
         <el-button
           v-permission="'sys:user:query'"
           icon="el-icon-search"
@@ -83,25 +69,6 @@
             </el-dropdown-menu>
           </el-dropdown>
         </el-tooltip>
-        <!--        <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="列设置" placement="top">
-          <div class="right-tool-btn">
-            <i class="el-icon-setting" />
-          </div>
-          &lt;!&ndash;          <el-tree
-            :data="data"
-            show-checkbox
-            default-expand-all
-            node-key="id"
-            ref="tree"
-            highlight-current
-            :props="defaultProps">
-          </el-tree>&ndash;&gt;
-        </el-tooltip>
-        <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="全屏" placement="top">
-          <div class="right-tool-btn">
-            <i class="el-icon-full-screen" />
-          </div>
-        </el-tooltip>-->
       </div>
     </div>
     <!-- 表格  -->
@@ -247,12 +214,6 @@
         width="300"
         prop="roleIds"
       />
-      <el-table-column
-        v-if="false"
-        label="头像"
-        width="300"
-        prop="avatar"
-      />
     </el-table>
     <!-- 分页控件 -->
     <el-pagination
@@ -375,7 +336,7 @@ export default {
     //   Authorization: BEARER + LocalStorageUtil.getAccessToken()
     // }
     // 优先加载表格数据
-    // this.loadPageUser()
+    this.loadPageUser()
     // 强制渲染，解决表格 固定列后，列错位问题
     this.$nextTick(() => {
       this.$refs.table.doLayout()

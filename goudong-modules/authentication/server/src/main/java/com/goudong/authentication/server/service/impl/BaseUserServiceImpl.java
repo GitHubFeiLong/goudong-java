@@ -3,16 +3,19 @@ package com.goudong.authentication.server.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.zhxu.bs.BeanSearcher;
 import cn.zhxu.bs.SearchResult;
+import cn.zhxu.bs.operator.Between;
 import cn.zhxu.bs.operator.InList;
+import cn.zhxu.bs.util.MapBuilder;
 import cn.zhxu.bs.util.MapUtils;
 import com.goudong.authentication.common.core.LoginResp;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.BaseUserRepository;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
+import com.goudong.authentication.server.rest.req.BaseUserPageReq;
 import com.goudong.authentication.server.rest.req.BaseUserUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPage;
+import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
 import com.goudong.authentication.server.rest.req.search.SelectUsersRoleNames;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.authentication.server.service.BaseUserService;
@@ -27,6 +30,7 @@ import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.CollectionUtil;
+import com.goudong.core.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -138,7 +142,53 @@ public class BaseUserServiceImpl implements BaseUserService {
         return PageResultUtil.convert(search, req, BaseUserDropDownResp.class);
     }
 
+    /**
+     * 分页查询用户
+     *
+     * @param req 分页参数
+     * @return 用户分页对象
+     */
+    @Override
+    public PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        MapBuilder builder = MapUtils.builder();
+        builder.page(req.getPage(), req.getSize());
+        builder.field(BaseUserPageSearchReq::getAppId, myAuthentication.getRealAppId());
+        // 其它查询参数
+        if (req.getId() != null) {
+            builder.field(BaseUserPageSearchReq::getId, req.getId());
+        }
+        if (StringUtil.isNotBlank(req.getUsername())) {
+            builder.field(BaseUserPageSearchReq::getUsername, req.getUsername());
+        }
+        if (req.getStartValidTime() != null && req.getEndValidTime() != null) {
+            builder.field(BaseUserPageSearchReq::getValidTime, req.getStartValidTime(), req.getEndValidTime()).op(Between.class);
+        }
 
+        Map<String, Object> build = builder.build();
+        SearchResult<BaseUserPageSearchReq> search = beanSearcher.search(BaseUserPageSearchReq.class,  build);
+
+        if (search.getTotalCount().longValue() > 0) {
+            // 用户id集合
+            List<Long> userIds = search.getDataList().stream().map(BaseUserPageSearchReq::getId).collect(Collectors.toList());
+
+            // 查询角色
+            List<SelectUsersRoleNames> selectUsersRoleNames = beanSearcher.searchAll(SelectUsersRoleNames.class, MapUtils.builder()
+                    .field(SelectUsersRoleNames::getUserId, userIds).op(InList.class)
+                    .build());
+
+            Map<Long, List<SelectUsersRoleNames>> map = selectUsersRoleNames.stream().collect(Collectors.groupingBy(SelectUsersRoleNames::getUserId));
+
+            search.getDataList().stream().forEach(p -> {
+                List<SelectUsersRoleNames> roles = map.get(p.getId());
+                if (CollectionUtil.isNotEmpty(roles)) {
+                    p.setRoles(roles);
+                }
+            });
+        }
+
+        return PageResultUtil.convert(search, req, BaseUserPageSearchReq.class);
+    }
 
 
 
@@ -298,42 +348,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         return null;
     }
 
-    /**
-     * 分页查询用户
-     *
-     * @param req 分页参数
-     * @return 用户分页对象
-     */
-    @Override
-    public PageResult<BaseUserPage> page(BaseUserPage req) {
-        MyAuthentication myAuthentication = SecurityContextUtil.get();
-        Map<String, Object> build = MapUtils.builder()
-                .page(req.getPage(), req.getSize())
-                .field(BaseUserPage::getAppId, myAuthentication.getRealAppId())
-                .build();
-        SearchResult<BaseUserPage> search = beanSearcher.search(BaseUserPage.class,  build);
 
-        if (search.getTotalCount().longValue() > 0) {
-            // 用户id集合
-            List<Long> userIds = search.getDataList().stream().map(BaseUserPage::getId).collect(Collectors.toList());
-
-            // 查询角色
-            List<SelectUsersRoleNames> selectUsersRoleNames = beanSearcher.searchAll(SelectUsersRoleNames.class, MapUtils.builder()
-                    .field(SelectUsersRoleNames::getUserId, userIds).op(InList.class)
-                    .build());
-
-            Map<Long, List<SelectUsersRoleNames>> map = selectUsersRoleNames.stream().collect(Collectors.groupingBy(SelectUsersRoleNames::getUserId));
-
-            search.getDataList().stream().forEach(p -> {
-                List<SelectUsersRoleNames> roles = map.get(p.getId());
-                if (CollectionUtil.isNotEmpty(roles)) {
-                    p.setRoles(roles);
-                }
-            });
-        }
-
-        return PageResultUtil.convert(search, req);
-    }
 
     /**
      * 查询用户id详情

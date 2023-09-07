@@ -6,9 +6,10 @@ import com.goudong.authentication.common.util.HttpRequestUtil;
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
+import com.goudong.authentication.server.rest.req.BaseUserPageReq;
 import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPage;
+import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.BaseUserService;
@@ -166,7 +167,7 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      * @return 用户分页对象
      */
     @Override
-    public PageResult<BaseUserPage> page(BaseUserPage req) {
+    public PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req) {
         return baseUserService.page(req);
     }
 }

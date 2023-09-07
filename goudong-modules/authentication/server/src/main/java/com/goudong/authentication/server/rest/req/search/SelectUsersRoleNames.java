@@ -1,7 +1,6 @@
 package com.goudong.authentication.server.rest.req.search;
 
 import cn.zhxu.bs.bean.DbField;
-import cn.zhxu.bs.bean.DbIgnore;
 import cn.zhxu.bs.bean.SearchBean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,6 +17,7 @@ import lombok.Data;
         tables="base_user_role bur inner join base_role br on bur.role_id = br.id"
 )
 @Data
+@Deprecated
 public class SelectUsersRoleNames {
 
     @ApiModelProperty("角色id")

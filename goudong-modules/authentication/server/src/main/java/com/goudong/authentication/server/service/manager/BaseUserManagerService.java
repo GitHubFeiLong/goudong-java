@@ -4,9 +4,10 @@ import com.goudong.authentication.common.core.LoginResp;
 import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
+import com.goudong.authentication.server.rest.req.BaseUserPageReq;
 import com.goudong.authentication.server.rest.req.RefreshToken;
 import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPage;
+import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.core.lang.PageResult;
@@ -60,5 +61,5 @@ public interface BaseUserManagerService {
      * @param req 分页参数
      * @return 用户分页对象
      */
-    PageResult<BaseUserPage> page(BaseUserPage req);
+    PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req);
 }
