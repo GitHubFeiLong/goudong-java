@@ -77,7 +77,11 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserManagerService.getUserDetailByToken(token));
     }
 
-
+    @PostMapping("/page/base-user")
+    @ApiOperation(value = "分页用户")
+    public Result<PageResult<BaseUserPage>> page(@RequestBody @Validated BaseUserPage req) {
+        return Result.ofSuccess(baseUserManagerService.page(req));
+    }
 
 
     //~
@@ -107,9 +111,5 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserService.delete(id));
     }
 
-    @GetMapping("/base-users")
-    @ApiOperation(value = "分页用户")
-    public Result<PageResult<BaseUserPage>> page(@Validated BaseUserPage req) {
-        return Result.ofSuccess(baseUserService.page(req));
-    }
+
 }

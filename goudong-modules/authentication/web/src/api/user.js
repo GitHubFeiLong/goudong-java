@@ -40,7 +40,18 @@ export function getUserDetailApi(token) {
   })
 }
 
-
+/**
+ * 用户的分页查询
+ * @param data
+ * @returns {*}
+ */
+export function pageUserApi(data) {
+  return request({
+    url: `${API_PREFIX}/user/page/base-user`,
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
@@ -74,18 +85,7 @@ export function pageUserByField(page) {
   })
 }
 
-/**
- * 列表的分页查询
- * @param page : { page, size, username, validTime, createTime }
- * @returns {*}
- */
-export function pageUser(page) {
-  return request({
-    url: `/api/user/base-user/page`,
-    method: 'get',
-    params: page,
-  })
-}
+
 
 /**
  * 检查用户名是否可用

@@ -299,16 +299,17 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
-     * 分页查询
+     * 分页查询用户
      *
-     * @param req
-     * @return
+     * @param req 分页参数
+     * @return 用户分页对象
      */
     @Override
-    public PageResult page(BaseUserPage req) {
+    public PageResult<BaseUserPage> page(BaseUserPage req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
         Map<String, Object> build = MapUtils.builder()
                 .page(req.getPage(), req.getSize())
-                .field(BaseUserPage::getAppId, req.getAppId())
+                .field(BaseUserPage::getAppId, myAuthentication.getRealAppId())
                 .build();
         SearchResult<BaseUserPage> search = beanSearcher.search(BaseUserPage.class,  build);
 

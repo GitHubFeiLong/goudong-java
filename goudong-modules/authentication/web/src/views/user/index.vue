@@ -140,40 +140,6 @@
         sortable
       />
       <el-table-column
-        label="昵称"
-        width="100"
-        prop="nickname"
-        sortable
-        show-overflow-tooltip
-      />
-      <el-table-column
-        label="性别"
-        width="80"
-        prop="sex"
-        align="center"
-        sortable
-      >
-        <template v-slot="scope">
-          <span v-if="scope.row.sex == 1">男性</span>
-          <span v-else-if="scope.row.sex === 2">女性</span>
-          <span v-else>未知</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="手机号"
-        width="130"
-        prop="phone"
-        sortable
-        show-overflow-tooltip
-      />
-      <el-table-column
-        label="邮箱"
-        width="180"
-        prop="email"
-        sortable
-        show-overflow-tooltip
-      />
-      <el-table-column
         label="角色"
         width="120"
         prop="roleNameCn"
@@ -240,7 +206,6 @@
           />
         </template>
       </el-table-column>
-
       <el-table-column
         label="操作"
         width="230"
@@ -330,12 +295,12 @@
 <script>
 import waves from '@/directive/waves' // waves directive
 import {
-  pageUser,
+  pageUserApi,
   deleteUserById,
   resetPasswordApi,
   changeEnabledApi,
   deleteUserByIdsApi,
-  changeLockedApi
+  changeLockedApi,
 } from '@/api/user'
 import { exportExcel } from "@/utils/export";
 import { exportUserApi, exportUserTemplateApi } from "@/api/file";
@@ -477,7 +442,7 @@ export default {
         startCreateTime: this.filter.startCreateTime,
         endCreateTime: this.filter.endCreateTime,
       }
-      pageUser(pageParam).then(data => {
+      pageUserApi(pageParam).then(data => {
         const content = data.content
 
         // 修改分页组件

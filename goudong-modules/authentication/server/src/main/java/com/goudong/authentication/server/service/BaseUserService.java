@@ -58,6 +58,16 @@ public interface BaseUserService {
      */
     PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req);
 
+    /**
+     * 分页查询用户
+     *
+     * @param req 分页参数
+     * @return 用户分页对象
+     */
+    PageResult<BaseUserPage> page(BaseUserPage req);
+
+
+
 
     //~待删除methods
     //==================================================================================================================
@@ -107,12 +117,7 @@ public interface BaseUserService {
      */
     LoginResp login(MyAuthentication myAuthentication);
 
-    /**
-     * 分页查询
-     * @param req
-     * @return
-     */
-    PageResult page(BaseUserPage req);
+
 
     /**
      * 查询用户id详情
