@@ -3,21 +3,16 @@ package com.goudong.authentication.server.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.zhxu.bs.BeanSearcher;
 import cn.zhxu.bs.SearchResult;
-import cn.zhxu.bs.operator.Between;
-import cn.zhxu.bs.operator.InList;
-import cn.zhxu.bs.util.MapBuilder;
-import cn.zhxu.bs.util.MapUtils;
-import com.goudong.authentication.common.core.LoginResp;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.BaseUserRepository;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserPageReq;
-import com.goudong.authentication.server.rest.req.BaseUserUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
-import com.goudong.authentication.server.rest.req.search.SelectUsersRoleNames;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleUpdateReq;
+import com.goudong.authentication.server.rest.req.search.BaseUserDropDownReq;
+import com.goudong.authentication.server.rest.resp.BaseRoleDropDownResp;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
+import com.goudong.authentication.server.rest.resp.BaseUserPageResp;
 import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
@@ -29,22 +24,24 @@ import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.lang.PageResult;
 import com.goudong.core.util.AssertUtil;
-import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static com.goudong.authentication.server.enums.RedisKeyTemplateProviderEnum.APP_DROP_DOWN;
@@ -100,6 +97,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return 用户对象
      */
     @Override
+    @Transactional(readOnly = true)
     public BaseUser findById(Long id) {
         // 查询角色，权限使用
         BaseUser baseUser = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client("用户不存在"));
@@ -113,6 +111,7 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return 用户对象详细信息（保留角色菜单）
      */
     @Override
+    @Transactional(readOnly = true)
     public BaseUser findDetailById(Long id) {
         // 查询角色，权限使用
         BaseUser baseUser = baseUserRepository.findById(id).orElseThrow(() -> ClientException.client("用户不存在"));
@@ -135,10 +134,10 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return 用户下拉列表
      */
     @Override
-    public PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req) {
+    public PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDownReq req) {
         MyAuthentication authentication = SecurityContextUtil.get();
         req.setRealAppId(authentication.getRealAppId());
-        SearchResult<BaseUserDropDown> search = beanSearcher.search(BaseUserDropDown.class, BeanSearcherUtil.getParaMap(req));
+        SearchResult<BaseUserDropDownReq> search = beanSearcher.search(BaseUserDropDownReq.class, BeanSearcherUtil.getParaMap(req));
         return PageResultUtil.convert(search, req, BaseUserDropDownResp.class);
     }
 
@@ -149,59 +148,137 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return 用户分页对象
      */
     @Override
-    public PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req) {
+    @Transactional(readOnly = true)
+    public PageResult<BaseUserPageResp> page(BaseUserPageReq req) {
         MyAuthentication myAuthentication = SecurityContextUtil.get();
-        MapBuilder builder = MapUtils.builder();
-        builder.page(req.getPage(), req.getSize());
-        builder.field(BaseUserPageSearchReq::getAppId, myAuthentication.getRealAppId());
-        // 其它查询参数
-        if (req.getId() != null) {
-            builder.field(BaseUserPageSearchReq::getId, req.getId());
-        }
-        if (StringUtil.isNotBlank(req.getUsername())) {
-            builder.field(BaseUserPageSearchReq::getUsername, req.getUsername());
-        }
-        if (req.getStartValidTime() != null && req.getEndValidTime() != null) {
-            builder.field(BaseUserPageSearchReq::getValidTime, req.getStartValidTime(), req.getEndValidTime()).op(Between.class);
-        }
 
-        Map<String, Object> build = builder.build();
-        SearchResult<BaseUserPageSearchReq> search = beanSearcher.search(BaseUserPageSearchReq.class,  build);
-
-        if (search.getTotalCount().longValue() > 0) {
-            // 用户id集合
-            List<Long> userIds = search.getDataList().stream().map(BaseUserPageSearchReq::getId).collect(Collectors.toList());
-
-            // 查询角色
-            List<SelectUsersRoleNames> selectUsersRoleNames = beanSearcher.searchAll(SelectUsersRoleNames.class, MapUtils.builder()
-                    .field(SelectUsersRoleNames::getUserId, userIds).op(InList.class)
-                    .build());
-
-            Map<Long, List<SelectUsersRoleNames>> map = selectUsersRoleNames.stream().collect(Collectors.groupingBy(SelectUsersRoleNames::getUserId));
-
-            search.getDataList().stream().forEach(p -> {
-                List<SelectUsersRoleNames> roles = map.get(p.getId());
-                if (CollectionUtil.isNotEmpty(roles)) {
-                    p.setRoles(roles);
+        Specification<BaseUser> specification = new Specification<BaseUser>() {
+            @Override
+            public Predicate toPredicate(Root<BaseUser> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> andPredicateList = new ArrayList<>();
+                andPredicateList.add(criteriaBuilder.equal(root.get("realAppId"), myAuthentication.getRealAppId()));
+                //1.获取比较的属性
+                if (req.getId() != null) {
+                    Path<Object> idPath = root.get("id");
+                    andPredicateList.add(criteriaBuilder.equal(idPath, req.getId()));
                 }
-            });
-        }
+                if (StringUtil.isNotBlank(req.getUsername())) {
+                    Path<Object> usernamePath = root.get("username");
+                    andPredicateList.add(criteriaBuilder.like(usernamePath.as(String.class), "%" + req.getUsername() + "%"));
+                }
+                if (req.getStartValidTime() != null && req.getEndValidTime() != null) {
+                    andPredicateList.add(criteriaBuilder.between(root.get("validTime"), req.getStartValidTime(), req.getEndValidTime()));
+                }
 
-        return PageResultUtil.convert(search, req, BaseUserPageSearchReq.class);
+                return criteriaBuilder.and(andPredicateList.toArray(new Predicate[andPredicateList.size()]));
+            }
+        };
+
+        Pageable  pageable = PageRequest.of(req.getPage(), req.getSize(), Sort.by("createdDate").descending());
+        Page<BaseUser> userPage = baseUserRepository.findAll(specification, pageable);
+
+        List<BaseUserPageResp> contents = new ArrayList<>(userPage.getContent().size());
+        AtomicLong serialNumber = new AtomicLong(req.getStartSerialNumber());
+        userPage.getContent().forEach(p -> {
+            List<BaseRoleDropDownResp> roleDropDownRespList = new ArrayList<>(p.getRoles().size());
+            p.getRoles().forEach(role -> {
+                roleDropDownRespList.add(new BaseRoleDropDownResp(role.getId(), role.getName()));
+            });
+            BaseUserPageResp baseUserPageResp = BeanUtil.copyProperties(p, BaseUserPageResp.class);
+            baseUserPageResp.setSerialNumber(serialNumber.getAndIncrement());
+            contents.add(baseUserPageResp);
+        });
+
+        return new PageResult<BaseUserPageResp>(userPage.getTotalElements(),
+                (long)userPage.getTotalPages(),
+                userPage.getPageable().getPageNumber() + 1L,
+                (long)userPage.getPageable().getPageSize(),
+                contents
+        );
+
+    }
+
+    /**
+     * 新增用户
+     *
+     * @param user
+     * @return
+     */
+    @Override
+    public BaseUserDTO save(BaseUser user) {
+        return baseUserMapper.toDto(baseUserRepository.save(user));
+    }
+
+    /**
+     * 批量删除用户
+     *
+     * @param ids 被删除的用户id集合
+     * @return true删除成功；false删除失败
+     */
+    @Override
+    @Transactional
+    public Boolean deleteByIds(List<Long> ids) {
+        List<BaseUser> allById = baseUserRepository.findAllById(ids);
+        baseUserRepository.deleteAll(allById);
+        return true;
+    }
+
+    /**
+     * 重置用户密码
+     *
+     * @param userId 用户id
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean resetPassword(Long userId) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
+        BaseUser user = this.findById(userId);
+        AssertUtil.isEquals(realAppId, user.getRealAppId(), () -> ClientException.clientByForbidden().serverMessage("不能修改其它应用下的用户"));
+        user.setPassword(passwordEncoder.encode("123456"));
+        this.save(user);
+        return true;
+    }
+
+    /**
+     * 修改用户激活状态
+     *
+     * @param userId 用户id
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean changeEnabled(Long userId) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
+        BaseUser user = this.findById(userId);
+        AssertUtil.isEquals(realAppId, user.getRealAppId(), () -> ClientException.clientByForbidden().serverMessage("不能修改其它应用下的用户"));
+        user.setEnabled(!user.getEnabled());
+        this.save(user);
+        return true;
+    }
+
+    /**
+     * 修改用户锁定状态
+     *
+     * @param userId 用户id
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean changeLocked(Long userId) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
+        BaseUser user = this.findById(userId);
+        AssertUtil.isEquals(realAppId, user.getRealAppId(), () -> ClientException.clientByForbidden().serverMessage("不能修改其它应用下的用户"));
+        user.setLocked(!user.getLocked());
+        this.save(user);
+        return true;
     }
 
 
-
-
-
-
-
-
-
-
-
-
-    // ===========
+    // =========== 删除
 
 
     /**
@@ -235,26 +312,8 @@ public class BaseUserServiceImpl implements BaseUserService {
      * @return
      */
     @Override
-    public BaseUserDTO save(BaseUserUpdate req) {
-        MyAuthentication authentication = (MyAuthentication)SecurityContextHolder.getContext().getAuthentication();
-
-        BaseUser baseUser = baseUserRepository.findById(req.getId()).orElseThrow(() -> ClientException.client("用户不存在"));
-
-        // 不是超级管理员不能新增其它app用户只能修改自己app用户
-        if (!authentication.superAdmin()) {
-            AssertUtil.isEquals(authentication.getAppId(), baseUser.getAppId(), () -> ClientException.clientByForbidden("无权修改应用用户"));
-        }
-        baseUser.setRemark(req.getRemark());
-        if (StringUtils.isNotBlank(req.getPassword())) {
-            baseUser.setPassword(passwordEncoder.encode(req.getPassword()));
-        }
-
-        baseUser.setEnabled(Optional.ofNullable(req.getEnabled()).orElseGet(() -> baseUser.getLocked()));
-        baseUser.setLocked(Optional.ofNullable(req.getLocked()).orElseGet(() -> baseUser.getLocked()));
-        baseUser.setValidTime(Optional.ofNullable(req.getValidTime()).orElseGet(() -> baseUser.getValidTime()));
-
-        baseUserRepository.save(baseUser);
-        return baseUserMapper.toDto(baseUser);
+    public BaseUserDTO save(BaseUserSimpleUpdateReq req) {
+       return null;
     }
 
     /**
@@ -309,43 +368,6 @@ public class BaseUserServiceImpl implements BaseUserService {
         baseUserRepository.deleteById(id);
         redisTool.deleteKey(APP_DROP_DOWN, baseUser.getAppId());
         return true;
-    }
-
-    /**
-     * 登录信息
-     *
-     * @param myAuthentication
-     * @return
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public LoginResp login(MyAuthentication myAuthentication) {
-//        log.info("认证成功，添加角色权限");
-//        LoginResp loginResp = new LoginResp();
-//
-//        // 查询角色，权限使用
-//        BaseUser baseUser = baseUserRepository.findById(myAuthentication.getId()).get();
-//        BaseAppDTO baseAppDTO = baseAppService.findOne(myAuthentication.getAppId()).get();
-//
-//        // 设置角色
-//        List<String> roles = baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList());
-//
-//        loginResp.setId(myAuthentication.getId());
-//        loginResp.setUsername(myAuthentication.getUsername());
-//        loginResp.setAppId(myAuthentication.getAppId());
-//        loginResp.setRealAppId(baseUser.getRealAppId());
-//        loginResp.setRoles(roles);
-//
-//        // 创建token
-//        Jwt jwt = new Jwt(1, TimeUnit.DAYS, baseAppDTO.getSecret());
-//        UserSimple userSimple = new UserSimple(myAuthentication.getId(), myAuthentication.getAppId(), myAuthentication.getRealAppId(), myAuthentication.getUsername(), roles);
-//        Token token = jwt.generateToken(userSimple);
-//        loginResp.setToken(token);
-//        // 设置应用首页地址
-//        loginResp.setHomePage(baseAppDTO.getHomePage());
-//
-//        return loginResp;
-        return null;
     }
 
 

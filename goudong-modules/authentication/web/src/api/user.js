@@ -53,76 +53,90 @@ export function pageUserApi(data) {
   })
 }
 
-
-
-//=== shanchu
-export function getInfo() {
+/**
+ * 创建用户
+ * @param user
+ * @returns {*}
+ */
+export function simpleCreateUserApi(user) {
   return request({
-    url: '/api/oauth2/authentication/current-user-info',
-    // url: '/vue-element-admin/user/info',
-    method: 'get'
+    url: `${API_PREFIX}/user/base-user/simple-create`,
+    method: 'post',
+    data: user
   })
 }
 
-export function logout() {
+/**
+ * 修改用户
+ * @param user
+ * @returns {*}
+ */
+export function simpleUpdateUserApi(user) {
   return request({
-    url: '/api/oauth2/authentication/logout',
-    // url: '/vue-element-admin/user/logout',
+    url: `${API_PREFIX}/user/base-user/simple-update`,
+    method: 'put',
+    data: user
+  })
+}
+
+/**
+ * 根据id重置用户密码
+ * @param userId 用户id
+ * @returns {*}
+ */
+export function resetPasswordApi(userId) {
+  return request({
+    url: `${API_PREFIX}/user/base-user/reset-password/${userId}`,
     method: 'put'
   })
 }
 
 /**
- * 根据字段进行分页查询用户
- * @param page
+ * 根据id切换用户激活状态
+ * @param userId 用户id
  * @returns {*}
  */
-export function pageUserByField(page) {
+export function changeEnabledApi(userId) {
   return request({
-    url: '/api/user/base-user/page-field',
-    method: 'get',
-    params: page
-  })
-}
-
-
-
-/**
- * 检查用户名是否可用
- * @param username
- * @returns {*}
- */
-export function checkUsername(username) {
-  return request({
-    url: `/api/user/base-user/check-registry/username/${username}`,
-    method: 'get'
+    url: `${API_PREFIX}/user/base-user/change-locked/${userId}`,
+    method: 'put'
   })
 }
 
 /**
- * 检查手机号是否可用
- * @param phone
+ * 根据id切换用户锁定状态
+ * @param userId 用户id
  * @returns {*}
  */
-export function checkPhone(phone) {
+export function changeLockedApi(userId) {
   return request({
-    url: `/api/user/base-user/check-registry/phone/${phone}`,
-    method: 'get'
+    url: `${API_PREFIX}/user/base-user/change-locked/${userId}`,
+    method: 'put'
   })
 }
 
 /**
- * 检查邮箱号是否可用
- * @param email
+ * 根据id批量删除用户
+ * @param ids 用户id集合
  * @returns {*}
  */
-export function checkEmail(email) {
+export function deleteUserByIdsApi(ids) {
   return request({
-    url: `/api/user/base-user/check-registry/email/${email}`,
-    method: 'get'
+    url: `${API_PREFIX}/user/base-users`,
+    data: ids,
+    method: 'delete'
   })
 }
 
+
+
+
+
+
+
+
+
+// == 删除
 /**
  * 创建用户
  * @param username
@@ -173,54 +187,11 @@ export function deleteUserById(userId) {
   })
 }
 
-/**
- * 根据id批量删除用户
- * @param ids 用户id集合
- * @returns {*}
- */
-export function deleteUserByIdsApi(data) {
-  return request({
-    url: `/api/user/base-user/ids`,
-    params: data,
-    method: 'delete'
-  })
-}
 
-/**
- * 根据id重置用户密码
- * @param userId 用户id
- * @returns {*}
- */
-export function resetPasswordApi(userId) {
-  return request({
-    url: `/api/user/base-user/reset-password/${userId}`,
-    method: 'put'
-  })
-}
 
-/**
- * 根据id切换用户激活状态
- * @param userId 用户id
- * @returns {*}
- */
-export function changeEnabledApi(userId) {
-  return request({
-    url: `/api/user/base-user/change-enabled/${userId}`,
-    method: 'put'
-  })
-}
 
-/**
- * 根据id切换用户锁定状态
- * @param userId 用户id
- * @returns {*}
- */
-export function changeLockedApi(userId) {
-  return request({
-    url: `/api/user/base-user/change-locked/${userId}`,
-    method: 'put'
-  })
-}
+
+
 
 /**
  * 修改用户自己的密码

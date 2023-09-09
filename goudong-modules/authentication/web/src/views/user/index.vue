@@ -4,7 +4,7 @@
     <div class="filter-container">
       <div class="filter-item">
         <span class="filter-item-label">用户账号: </span>
-        <UsernameSelect ref="UsernameSelect" @getUsername="getUsername" />
+        <UserSelect ref="userSelectRef" @getSelectedUser="getSelectedUser" />
       </div>
       <div class="filter-item">
         <span class="filter-item-label">有效日期: </span>
@@ -93,13 +93,8 @@
       />
       <el-table-column
         label="序号"
-        width="50"
-        align="center"
-      >
-        <template v-slot="scope">
-          {{ (user.page - 1) * user.size + (scope.$index + 1) }}
-        </template>
-      </el-table-column>
+        prop="serialNumber"
+      />
       <el-table-column
         label="用户名"
         width="75"
@@ -108,14 +103,13 @@
       />
       <el-table-column
         label="角色"
-        width="120"
-        prop="roleNameCn"
+        min-width="50"
         sortable
         show-overflow-tooltip
       >
         <template v-slot="scope">
-          <span v-for="item in scope.row.roleNameCn" :key="item">
-            <el-tag size="small">{{ item }}</el-tag>
+          <span v-for="item in scope.row.roles" :key="item.id">
+            <el-tag size="small">{{ item.name }}</el-tag> <br>
           </span>
         </template>
       </el-table-column>
@@ -263,35 +257,26 @@ import {
   deleteUserByIdsApi,
   changeLockedApi,
 } from '@/api/user'
-import { exportExcel } from "@/utils/export";
 import { exportUserApi, exportUserTemplateApi } from "@/api/file";
 import { isNotEmpty, isTrue } from "@/utils/assertUtil";
 import { beforeUploadExcel } from "@/utils/updateUtil";
-import LocalStorageUtil from "@/utils/LocalStorageUtil";
-import { BEARER } from "@/constant/HttpHeaderConst";
-
-import * as aes from '@/utils/aes'
-import { encrypt } from "@/utils/aes";
 import { DATE_PICKER_DEFAULT_OPTIONS } from "@/constant/commons";
 
 export default {
   name: 'UserPage',
   directives: { waves },
   components: {
-    UsernameSelect: () => import('@/components/User/UsernameSelect'),
+    UserSelect: () => import('@/components/User/UserSelect'),
     CreateUserDialog: () => import('@/views/user/components/CreateUserDialog'),
     EditUserDialog: () => import('@/views/user/components/EditUserDialog')
   },
   data() {
     return {
       filter: {
-        username: undefined,
+        id: undefined,
         validTime: undefined,
-        createTime: undefined,
         startValidTime: undefined,
         endValidTime: undefined,
-        startCreateTime: undefined,
-        endCreateTime: undefined,
       },
       pickerOptions: DATE_PICKER_DEFAULT_OPTIONS,
       // 导入用户
@@ -320,21 +305,10 @@ export default {
       },
       // 复选框选中的用户
       checkUserIds: [],
-      // 表格属性
-      /* tableAttr: {
-        columns:[
-          {}
-        ]
-      }*/
-
       headers: {}, // 请求头
     }
   },
   mounted() {
-    // 请求头
-    // this.headers = {
-    //   Authorization: BEARER + LocalStorageUtil.getAccessToken()
-    // }
     // 优先加载表格数据
     this.loadPageUser()
     // 强制渲染，解决表格 固定列后，列错位问题
@@ -343,8 +317,9 @@ export default {
     })
   },
   methods: {
-    getUsername(ev) {
-      this.filter.username = ev
+    // 用户下拉
+    getSelectedUser(user) {
+      this.filter.id = user ? user.value : undefined;
     },
     // 点击查询按钮
     searchFunc() {
@@ -354,16 +329,13 @@ export default {
     // 点击重置按钮
     resetSearchFilter() {
       // 清空子组件（用户名下拉）值
-      this.$refs.UsernameSelect.clear();
+      this.$refs.userSelectRef.clear();
       // 赋默认值
       this.filter = {
-        username: undefined,
+        id: undefined,
         validTime: undefined,
-        createTime: undefined,
         startValidTime: undefined,
         endValidTime: undefined,
-        startCreateTime: undefined,
-        endCreateTime: undefined,
       };
     },
     filterTimeHandler() {
@@ -397,11 +369,9 @@ export default {
       const pageParam = {
         page: this.user.page,
         size: this.user.size,
-        username: this.filter.username,
+        id: this.filter.id,
         startValidTime: this.filter.startValidTime,
         endValidTime: this.filter.endValidTime,
-        startCreateTime: this.filter.startCreateTime,
-        endCreateTime: this.filter.endCreateTime,
       }
       pageUserApi(pageParam).then(data => {
         const content = data.content
@@ -419,11 +389,6 @@ export default {
         content.forEach((item, index, arr) => {
           const column = {
             ...item,
-          }
-
-          if (item.roles && item.roles.length > 0) {
-            column['roleNameCn'] = item.roles.map(m => m.roleNameCn)
-            column['roleIds'] = item.roles.map(m => m.id)
           }
           this.user.users.push(column)
         })
@@ -543,11 +508,12 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            deleteUserByIdsApi({ ids: this.checkUserIds.join(",") }).then(data => {
+            deleteUserByIdsApi(this.checkUserIds).then(data => {
               this.$message.success("删除成功")
               this.loadPageUser()
             })
-          }).catch(() => {
+          }).catch(reason => {
+            console.error(reason)
             this.$message.info("已取消删除");
           })
         }).catch(() => {});
@@ -564,7 +530,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteUserById(userId).then(data => {
+        deleteUserByIdsApi([userId]).then(data => {
           this.$message.success("删除成功")
           this.loadPageUser()
         })

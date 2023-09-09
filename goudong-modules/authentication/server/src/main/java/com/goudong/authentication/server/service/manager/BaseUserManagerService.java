@@ -5,12 +5,17 @@ import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserPageReq;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleCreateReq;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleUpdateReq;
 import com.goudong.authentication.server.rest.req.RefreshToken;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
+import com.goudong.authentication.server.rest.req.search.BaseUserDropDownReq;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
+import com.goudong.authentication.server.rest.resp.BaseUserPageResp;
+import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.core.lang.PageResult;
+
+import java.util.List;
 
 /**
  * 类描述：
@@ -54,12 +59,54 @@ public interface BaseUserManagerService {
      * @param req 请求参数
      * @return 用户下拉列表
      */
-    PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req);
+    PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDownReq req);
 
     /**
      * 分页查询用户
      * @param req 分页参数
      * @return 用户分页对象
      */
-    PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req);
+    PageResult<BaseUserPageResp> page(BaseUserPageReq req);
+
+    /**
+     * 简单方式创建用户
+     * @param req 用户信息
+     * @return 用户对象
+     */
+    BaseUserDTO simpleCreateUser(BaseUserSimpleCreateReq req);
+
+    /**
+     * 简单方式修改用户
+     * @param req
+     * @return
+     */
+    BaseUserDTO simpleUpdateUser(BaseUserSimpleUpdateReq req);
+
+    /**
+     * 批量删除用户
+     * @param ids 被删除的用户id集合
+     * @return true删除成功；false删除失败
+     */
+    Boolean deleteByIds(List<Long> ids);
+
+    /**
+     * 重置用户密码
+     * @param userId 用户id
+     * @return
+     */
+    Boolean resetPassword(Long userId);
+
+    /**
+     * 修改用户激活状态
+     * @param userId 用户id
+     * @return
+     */
+    Boolean changeEnabled(Long userId);
+
+    /**
+     * 修改用户锁定状态
+     * @param userId 用户id
+     * @return
+     */
+    Boolean changeLocked(Long userId);
 }

@@ -29,4 +29,12 @@ public class BasePage {
     public Integer getPage() {
         return page - 1;
     }
+
+    /**
+     * 分页起始序号
+     * @return
+     */
+    public Long getStartSerialNumber() {
+        return (long)(this.page - 1) * size + 1;
+    }
 }

@@ -3,11 +3,11 @@ package com.goudong.authentication.server.rest;
 import com.goudong.authentication.common.core.Token;
 import com.goudong.authentication.common.core.UserDetail;
 import com.goudong.authentication.server.domain.BaseUser;
-import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserPageReq;
-import com.goudong.authentication.server.rest.req.BaseUserUpdate;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleCreateReq;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleUpdateReq;
 import com.goudong.authentication.server.rest.req.RefreshToken;
-import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
+import com.goudong.authentication.server.rest.resp.BaseUserPageResp;
 import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.manager.BaseUserManagerService;
@@ -22,6 +22,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 
 
 /**
@@ -78,18 +80,52 @@ public class BaseUserResource {
 
     @PostMapping("/page/base-user")
     @ApiOperation(value = "分页用户")
-    public Result<PageResult<BaseUserPageSearchReq>> page(@RequestBody @Validated BaseUserPageReq req) {
+    public Result<PageResult<BaseUserPageResp>> page(@RequestBody @Validated BaseUserPageReq req) {
         return Result.ofSuccess(baseUserManagerService.page(req));
     }
+    @PostMapping("/base-user/simple-create")
+    @ApiOperation(value = "简单新增用户")
+    public Result<BaseUserDTO> simpleCreateUser(@RequestBody @Validated BaseUserSimpleCreateReq req) {
+        return Result.ofSuccess(baseUserManagerService.simpleCreateUser(req));
+    }
+
+    @PutMapping("/base-user/simple-update")
+    @ApiOperation(value = "修改用户")
+    public Result<BaseUserDTO> update(@RequestBody @Validated BaseUserSimpleUpdateReq req) {
+        return Result.ofSuccess(baseUserManagerService.simpleUpdateUser(req));
+    }
+
+    @DeleteMapping("/base-users")
+    @ApiOperation(value = "批量删除用户")
+    public Result<Boolean> deleteByIds(@RequestBody @NotNull Long[] ids) {
+        return Result.ofSuccess(baseUserManagerService.deleteByIds(Arrays.asList(ids)));
+    }
+
+    @PutMapping("/base-user/reset-password/{userId}")
+    @ApiOperation(value = "重置密码")
+    public Result<Boolean> resetPassword(@PathVariable Long userId) {
+        return Result.ofSuccess(baseUserManagerService.resetPassword(userId));
+    }
+
+    @PutMapping("/base-user/change-enabled/{userId}")
+    @ApiOperation(value = "修改激活状态")
+    public Result<Boolean> changeEnabled(@PathVariable Long userId) {
+        return Result.ofSuccess(baseUserManagerService.changeEnabled(userId));
+    }
+
+    @PutMapping("/base-user/change-locked/{userId}")
+    @ApiOperation(value = "修改锁定状态")
+    public Result<Boolean> changeLocked(@PathVariable Long userId) {
+        return Result.ofSuccess(baseUserManagerService.changeLocked(userId));
+    }
+
+
+
 
 
     //~
     //==================================================================================================================
-    @PostMapping("/base-user")
-    @ApiOperation(value = "新增用户")
-    public Result<BaseUserDTO> create(@RequestBody @Validated BaseUserCreate req) {
-        return Result.ofSuccess(baseUserService.save(req));
-    }
+
 
     // @GetMapping("/base-user/{id}")
     @ApiOperation(value = "查询用户详情", hidden = true)
@@ -98,11 +134,7 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserService.getById(id));
     }
 
-    @PutMapping("/base-user")
-    @ApiOperation(value = "修改用户")
-    public Result<BaseUserDTO> update(@RequestBody @Validated BaseUserUpdate req) {
-        return Result.ofSuccess(baseUserService.save(req));
-    }
+
 
     @DeleteMapping("/base-user/{id}")
     @ApiOperation(value = "删除用户")

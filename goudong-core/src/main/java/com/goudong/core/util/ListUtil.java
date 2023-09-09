@@ -1,5 +1,6 @@
 package com.goudong.core.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,5 +47,19 @@ public class ListUtil {
             list.add(i);
         }
         return list;
+    }
+
+    /**
+     * 将集合转为数组(深拷贝)
+     * @param collection 集合
+     * @return 数组
+     * @param <T> 集合泛型
+     */
+    public static <T> T[] toArray(List<T> collection) {
+        T[] ts = (T[]) Array.newInstance(collection.getClass(), collection.size());
+        for (int i = 0, size = collection.size(); i < size; i++) {
+            ts[i] = collection.get(i);
+        }
+        return ts;
     }
 }

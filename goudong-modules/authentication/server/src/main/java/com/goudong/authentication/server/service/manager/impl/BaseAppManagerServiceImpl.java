@@ -2,9 +2,9 @@ package com.goudong.authentication.server.service.manager.impl;
 
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
+import com.goudong.authentication.server.rest.req.search.BaseAppDropDownReq;
+import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
@@ -92,7 +92,7 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
      * @return 用户能访问的应用列表
      */
     @Override
-    public List<BaseAppDropDown> appDropDown(BaseAppDropDown req) {
+    public List<BaseAppDropDownReq> appDropDown(BaseAppDropDownReq req) {
         return baseAppService.dropDown(req);
     }
 
@@ -103,7 +103,7 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
      * @return 所有应用
      */
     @Override
-    public List<BaseAppDropDown> allDropDown(BaseAppDropDown req) {
+    public List<BaseAppDropDownReq> allDropDown(BaseAppDropDownReq req) {
         return baseAppService.allDropDown(req);
     }
 

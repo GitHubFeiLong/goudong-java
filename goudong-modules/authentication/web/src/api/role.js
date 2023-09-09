@@ -5,13 +5,17 @@ import request from '@/utils/request'
  * @param page
  * @returns {*}
  */
-export function pageRole(page) {
+export function pageRoleApi(page) {
   return request({
     url: '/api/user/base-role/page',
     method: 'get',
     params: page
   })
 }
+
+
+//////////// 删除
+
 
 /**
  * 新增角色

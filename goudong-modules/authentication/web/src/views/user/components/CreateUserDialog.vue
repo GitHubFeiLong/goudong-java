@@ -5,17 +5,11 @@
       <el-form-item label="用户名" prop="username">
         <el-input v-model="user.username" clearable />
       </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="user.phone" clearable />
-      </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="user.email" clearable />
-      </el-form-item>
       <el-form-item label="登录密码" prop="password">
         <el-input v-model="user.password" clearable />
       </el-form-item>
       <el-form-item label="角色" prop="roleIds">
-        <RoleSelect ref="roleSelectRef" :role-multiple="roleSelect.roleMultiple" @getSelectRoleIds="getSelectRoleIds" />
+        <RoleSelect ref="roleSelectRef" :role-multiple="true" @getSelectRoles="getSelectRoles" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -27,8 +21,9 @@
 
 <script>
 import * as validate from '@/utils/validate'
-import { simpleCreateUser } from '@/api/user'
+import { simpleCreateUserApi } from '@/api/user'
 import { Message } from "element-ui"
+import { ComplexPwd } from "@/utils/ElementValidatorUtil";
 
 export default {
   name: 'CreateUserDialog',
@@ -51,24 +46,16 @@ export default {
       },
       rules: {
         username: [
-          { required: true, validator: validate.username, trigger: 'blur' },
-        ],
-        phone: [
-          { required: true, validator: validate.phone, trigger: 'blur' }
-        ],
-        email: [
-          { required: true, validator: validate.email, trigger: 'blur' }
+          { required: true, trigger: 'blur', message: '请输入用户名' },
         ],
         password: [
-          { required: true, trigger: 'blur', message: '请输入登录密码' }
+          { required: true, trigger: 'blur', message: '请输入登录密码' },
+          {validator: ComplexPwd, trigger: 'blur'}
         ],
         roleIds: [
           { type: 'array', required: true, message: '请至少选择一个角色', trigger: 'blur' }
         ],
       },
-      roleSelect: {
-        roleMultiple: true,
-      }
     };
   },
   watch: {
@@ -81,7 +68,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          simpleCreateUser(this.user).then(response => {
+          simpleCreateUserApi(this.user).then(response => {
             // 保存成功
             Message({
               message: '保存成功',
@@ -101,8 +88,8 @@ export default {
       this.$refs[formName].resetFields();
     },
     // 获取子组件的角色
-    getSelectRoleIds(roleIds) {
-      this.user.roleIds = roleIds;
+    getSelectRoles(selectedRoles) {
+      this.user.roleIds = selectedRoles.map(item=>item.value);
     },
     close() {
       this.$emit("update:createUserDialog", false)

@@ -18,9 +18,9 @@ import com.goudong.authentication.server.repository.BaseMenuRepository;
 import com.goudong.authentication.server.repository.BaseRoleRepository;
 import com.goudong.authentication.server.repository.BaseUserRepository;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
+import com.goudong.authentication.server.rest.req.search.BaseAppDropDownReq;
+import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
@@ -249,15 +249,15 @@ public class BaseAppServiceImpl implements BaseAppService {
      * @return 用户能访问的应用下拉列表
      */
     @Override
-    public List<BaseAppDropDown> dropDown(BaseAppDropDown req) {
+    public List<BaseAppDropDownReq> dropDown(BaseAppDropDownReq req) {
         MyAuthentication authentication = SecurityContextUtil.get();
         // 不是超级管理员只返回自身应用
         if (!authentication.superAdmin()) {
             BaseApp app = findById(authentication.getRealAppId());
-            BaseAppDropDown baseAppDropDown = new BaseAppDropDown();
-            baseAppDropDown.setId(app.getId());
-            baseAppDropDown.setName(app.getName());
-            return ListUtil.newArrayList(baseAppDropDown);
+            BaseAppDropDownReq baseAppDropDownReq = new BaseAppDropDownReq();
+            baseAppDropDownReq.setId(app.getId());
+            baseAppDropDownReq.setName(app.getName());
+            return ListUtil.newArrayList(baseAppDropDownReq);
         }
         // 超级管理员返回所有应用
         return allDropDown(req);
@@ -269,18 +269,18 @@ public class BaseAppServiceImpl implements BaseAppService {
      * @return 所有应用下拉
      */
     @Override
-    public List<BaseAppDropDown> allDropDown(BaseAppDropDown req) {
+    public List<BaseAppDropDownReq> allDropDown(BaseAppDropDownReq req) {
         // 超级管理员返回所有应用
         String key = APP_DROP_DOWN.getFullKey();
         if (redisTool.hasKey(key)) {
-            return redisTool.getList(APP_DROP_DOWN, BaseAppDropDown.class);
+            return redisTool.getList(APP_DROP_DOWN, BaseAppDropDownReq.class);
         }
         synchronized (this) {
             if (redisTool.hasKey(key)) {
-                return redisTool.getList(APP_DROP_DOWN, BaseAppDropDown.class);
+                return redisTool.getList(APP_DROP_DOWN, BaseAppDropDownReq.class);
             }
 
-            List<BaseAppDropDown> list = beanSearcher.searchAll(BaseAppDropDown.class);
+            List<BaseAppDropDownReq> list = beanSearcher.searchAll(BaseAppDropDownReq.class);
 
             redisTool.set(APP_DROP_DOWN, list);
 

@@ -2,7 +2,7 @@
 <template>
   <div class="role-select-container">
     <el-select
-      v-model="roleIds"
+      v-model="selectedRoles"
       v-load-more="loadMore"
       :loading="loading"
       clearable
@@ -16,7 +16,7 @@
         v-for="item in roles"
         :key="item.value"
         :label="item.label"
-        :value="item.value"
+        :value="{value: item.value, label: item.label}"
       />
     </el-select>
   </div>
@@ -24,7 +24,7 @@
 
 <script>
 
-import { pageRole } from "@/api/role";
+import { dropDownRoleApi } from "@/api/dropDown";
 
 export default {
   name: 'RoleSelect',
@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      roleIds: [], // 选中的角色id集合
+      selectedRoles: [], // 选中的角色id集合
       loading: false,
       roles: [],
       page: 1,
@@ -59,7 +59,8 @@ export default {
   watch: {
     // 监听
     defaultRoles() {
-      this.roleIds = this.defaultRoles
+      console.log("defaultRoles", defaultRoles)
+      this.selectedRoles = this.defaultRoles
     },
   },
   mounted() {
@@ -68,26 +69,27 @@ export default {
   methods: {
     loadRole() {
       this.loading = true
-      const page = { page: this.page, size: this.size, roleNameCn: this.roleNameCn }
-      pageRole(page).then(data => {
+      const page = { page: this.page, size: this.size }
+      dropDownRoleApi(page).then(data => {
         this.totalPage = Number(data.totalPage)
         const content = data.content
         if (content && content.length > 0) {
           content.forEach((role, index, arr) => {
-            this.roles.push({ value: role.id, label: role.roleNameCn })
+            this.roles.push({ value: role.id, label: role.name })
           })
         }
         // 第一次时请求接口数据还未过来，默认值设置不生效，所以这里再次设置下。
-        this.roleIds = this.defaultRoles
+        this.selectedRoles = this.defaultRoles
       }).catch(err => {
         console.warn('err', err)
       }).finally(() => {
         this.loading = false
       })
     },
-    change(roleId) {
+    change(selectedRoles) {
+      console.log("change", selectedRoles)
       // 给父组件传递值
-      this.$emit('getSelectRoleIds', roleId)
+      this.$emit('getSelectRoles', selectedRoles)
     },
     // 下拉滚动分页
     loadMore: function() {
@@ -99,7 +101,7 @@ export default {
     },
     // 清除已选择的
     reset() {
-      this.roleIds = []
+      this.selectedRoles = []
     }
   }
 }

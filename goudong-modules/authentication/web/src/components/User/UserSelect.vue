@@ -2,20 +2,20 @@
 <template>
   <div class="username-select-container">
     <el-select
-      v-model="username"
+      v-model="selectedUser"
       v-load-more="loadMore"
       style="width: 230px;"
       :loading="loading"
       clearable
-      filterable
       placeholder="请输入用户名"
       @change="change"
+      @clear="clear"
     >
       <el-option
-        v-for="item in usernames"
+        v-for="item in users"
         :key="item.value"
         :label="item.label"
-        :value="item.value"
+        :value="{value: item.value, label: item.label}"
       />
     </el-select>
   </div>
@@ -23,14 +23,14 @@
 
 <script>
 
-import { pageUserByField } from "@/api/user";
+import { dropDownUserApi } from '@/api/dropDown';
 
 export default {
   data() {
     return {
-      username: undefined,
+      selectedUser: undefined,
       loading: false,
-      usernames: [],
+      users: [],
       page: 1,
       size: 10,
       totalPage: undefined, // 下拉总页码
@@ -38,45 +38,46 @@ export default {
   },
   mounted() {
     // 优先加载表格数据
-    this.loadUsername(this.username)
+    this.loadUser()
   },
   methods: {
-    loadUsername() {
+    // 加载用户
+    loadUser() {
       this.loading = true
-      const page = { page: this.page, size: this.size, username: this.username }
-      pageUserByField(page).then(data => {
-        console.log("userselect", data)
+      const page = { page: this.page, size: this.size }
+      dropDownUserApi(page).then(data => {
         this.totalPage = Number(data.totalPage)
         const content = data.content
-        if (content && content.length > 0) {
-          // 将value使用逗号拼接起来，用于去重。
-          const existsUsernames = this.usernames.map((item) => {
-            return item.value
-          }).join()
-          content.forEach((user, index, arr) => {
-            if (existsUsernames.indexOf(user.username) === -1) {
-              this.usernames.push({ value: user.id, label: user.username })
-            }
-          })
-        }
+        content.forEach(user => {
+          this.users.push({ value: user.id, label: user.name })
+        })
       }).catch(err => {
         console.warn('err', err)
       }).finally(() => {
         this.loading = false
       })
     },
-    change(id) {
+    // 修改选项
+    change(selectedUser) {
+      console.log(selectedUser)
       // 给父组件传递值
-      this.$emit('getUserId', id)
-      console.log(id)
+      this.$emit('getSelectedUser', selectedUser)
     },
+    // 继续加载
     loadMore: function() {
       // 总页数大于当前页，请求下一页数据
       if (this.totalPage > this.page) {
         this.page += 1;
-        this.loadUsername();
+        this.loadUser();
       }
-    }
+    },
+    // 父组件调用清除组件值 this.$refs.userSelectRef.clear();
+    clear() {
+      // 去掉框中的值
+      this.selectedUser = undefined;
+      // 给父组件传递值
+      this.$emit('getSelectedUser', this.selectedUser)
+    },
   }
 }
 </script>

@@ -2,7 +2,7 @@ package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.rest.req.BaseRoleCreate;
 import com.goudong.authentication.server.rest.req.BaseRoleUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseRoleDropDown;
+import com.goudong.authentication.server.rest.req.search.BaseRoleDropDownReq;
 import com.goudong.authentication.server.rest.req.search.BaseRolePage;
 import com.goudong.authentication.server.service.BaseRoleService;
 import com.goudong.authentication.server.service.dto.BaseRoleDTO;
@@ -64,7 +64,7 @@ public class BaseRoleResource {
 
     @GetMapping("/base-role/drop-down")
     @ApiOperation(value = "角色下拉")
-    public Result<List<BaseRoleDropDown>> dropDown(BaseRoleDropDown req) {
+    public Result<List<BaseRoleDropDownReq>> dropDown(BaseRoleDropDownReq req) {
         return Result.ofSuccess(baseRoleService.dropDown(req));
     }
 }

@@ -1,8 +1,6 @@
 package com.goudong.authentication.server.rest.req.search;
 
-import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.SearchBean;
-import cn.zhxu.bs.operator.Contain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,20 +10,22 @@ import lombok.Data;
  * 角色下拉分页
  * @author cfl
  * @version 1.0
+ * @date 2023/7/22 19:59
  */
-@SearchBean(tables="base_user", orderBy = "username asc")
+@SearchBean(
+        tables="base_role", orderBy = "id asc"
+)
 @Data
-public class BaseUserDropDown extends BasePage{
+public class BaseRoleDropDownReq extends BasePage{
     //~fields
     //==================================================================================================================
-    @ApiModelProperty("用户id")
+    @ApiModelProperty("id")
     private Long id;
 
-    @ApiModelProperty("用户名")
-    @DbField(value = "username", onlyOn = Contain.class)
+    @ApiModelProperty("角色名")
     private String name;
 
     @ApiModelProperty(value = "应用名", hidden = true)
     @JsonIgnore
-    private Long realAppId ;
+    private Long appId ;
 }

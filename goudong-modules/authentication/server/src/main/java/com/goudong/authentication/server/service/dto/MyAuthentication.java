@@ -100,7 +100,6 @@ public class MyAuthentication implements Authentication {
      * @return true 超级管理员，false 不是超级管理员
      */
     public boolean superAdmin() {
-//        return this.roles.stream().filter(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN)).findFirst().isPresent();
         return this.roles.stream().anyMatch(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN));
     }
 

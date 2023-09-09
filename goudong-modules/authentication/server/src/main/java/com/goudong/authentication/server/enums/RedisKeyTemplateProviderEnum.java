@@ -1,7 +1,8 @@
 package com.goudong.authentication.server.enums;
 
-import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
+import com.goudong.authentication.server.rest.req.search.BaseAppDropDownReq;
+import com.goudong.authentication.server.rest.req.search.BaseUserDropDownReq;
+import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
 import com.goudong.boot.redis.core.RedisKeyProvider;
 import org.springframework.data.redis.connection.DataType;
 
@@ -29,19 +30,19 @@ public enum RedisKeyTemplateProviderEnum  implements RedisKeyProvider {
     /**
      * app下拉
      */
-    APP_DROP_DOWN("server:app:drop-down", DataType.LIST, BaseAppDropDown.class, 24, TimeUnit.HOURS),
+    APP_DROP_DOWN("server:app:drop-down", DataType.LIST, BaseAppDropDownReq.class, 24, TimeUnit.HOURS),
 
     // 缓存用户
     //==================================================================================================================
     /**
      * 用户下拉
      */
-    USER_DROP_DOWN("server:user:drop-down:${appId}", DataType.LIST, BaseUserDropDown.class, 24, TimeUnit.HOURS),
+    USER_DROP_DOWN("server:user:drop-down:${appId}", DataType.LIST, BaseUserDropDownResp.class, 24, TimeUnit.HOURS),
 
 
     // 缓存角色
     //==================================================================================================================
-    ROLE_DROP_DOWN("server:role:drop-down:${appId}", DataType.LIST, BaseUserDropDown.class, 24, TimeUnit.HOURS),
+    ROLE_DROP_DOWN("server:role:drop-down:${appId}", DataType.LIST, BaseUserDropDownReq.class, 24, TimeUnit.HOURS),
     ;
 
     public String key;

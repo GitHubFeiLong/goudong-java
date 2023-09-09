@@ -3,16 +3,18 @@ package com.goudong.authentication.server.rest.req;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 修改用户
  */
 @Data
-public class BaseUserUpdate implements Serializable {
+public class BaseUserSimpleUpdateReq implements Serializable {
 
     /**
      * 用户id
@@ -21,19 +23,16 @@ public class BaseUserUpdate implements Serializable {
     @ApiModelProperty(value = "用户id", required = true)
     private Long id;
 
-    /**
-     * 密码
-     */
-    @Size(max = 32)
-    @ApiModelProperty(value = "密码")
-    private String password;
+    @NotNull
+    @NotEmpty
+    @ApiModelProperty(value = "角色", required = true)
+    private List<Long> roleIds;
 
     /**
-     * 备注
+     * 有效截止时间
      */
-    @Size(max = 255)
-    @ApiModelProperty(value = "备注")
-    private String remark;
+    @ApiModelProperty(value = "有效截止时间")
+    private Date validTime;
 
     /**
      * 激活状态：true 激活；false 未激活
@@ -48,9 +47,9 @@ public class BaseUserUpdate implements Serializable {
     private Boolean locked;
 
     /**
-     * 有效截止时间
+     * 备注
      */
-    @ApiModelProperty(value = "有效截止时间")
-    private Date validTime;
-
+    @Size(max = 255)
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

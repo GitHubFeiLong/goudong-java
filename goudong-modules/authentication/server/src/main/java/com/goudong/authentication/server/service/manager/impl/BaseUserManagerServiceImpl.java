@@ -1,24 +1,36 @@
 package com.goudong.authentication.server.service.manager.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import com.goudong.authentication.common.core.*;
 import com.goudong.authentication.common.util.HttpRequestUtil;
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserPageReq;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleCreateReq;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleUpdateReq;
 import com.goudong.authentication.server.rest.req.RefreshToken;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
+import com.goudong.authentication.server.rest.req.search.BaseUserDropDownReq;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
+import com.goudong.authentication.server.rest.resp.BaseUserPageResp;
 import com.goudong.authentication.server.service.BaseAppService;
+import com.goudong.authentication.server.service.BaseRoleService;
 import com.goudong.authentication.server.service.BaseUserService;
+import com.goudong.authentication.server.service.dto.BaseUserDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.BaseUserManagerService;
+import com.goudong.authentication.server.util.SecurityContextUtil;
+import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.lang.PageResult;
+import com.goudong.core.util.AssertUtil;
+import com.goudong.core.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -41,6 +53,12 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
 
     @Resource
     private BaseAppService baseAppService;
+
+    @Resource
+    private BaseRoleService baseRoleService;
+
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     //~methods
     //==================================================================================================================
@@ -109,6 +127,7 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      * @return 用户信息
      */
     @Override
+    @Transactional(readOnly = true)
     public UserDetail getUserDetailByToken(String token) {
         BaseApp baseApp = baseAppService.findByHeader();
         Jwt jwt = new Jwt(baseApp.getSecret());
@@ -156,7 +175,7 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      * @return 用户下拉列表
      */
     @Override
-    public PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req) {
+    public PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDownReq req) {
         return baseUserService.userDropDown(req);
     }
 
@@ -167,7 +186,102 @@ public class BaseUserManagerServiceImpl implements BaseUserManagerService {
      * @return 用户分页对象
      */
     @Override
-    public PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req) {
+    public PageResult<BaseUserPageResp> page(BaseUserPageReq req) {
         return baseUserService.page(req);
+    }
+
+    /**
+     * 简单方式创建用户
+     *
+     * @param req 用户信息
+     * @return 用户对象
+     */
+    @Override
+    public BaseUserDTO simpleCreateUser(BaseUserSimpleCreateReq req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
+
+        BaseUser user = new BaseUser();
+        user.setAppId(realAppId);
+        user.setRealAppId(realAppId);
+        user.setUsername(req.getUsername());
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setEnabled(true);
+        user.setLocked(false);
+        user.setValidTime(DateUtil.parse("2099-12-31 00:00:00", DatePattern.NORM_DATETIME_FORMATTER));
+        user.setRemark(req.getRemark());
+        user.setRoles(baseRoleService.listByIds(req.getRoleIds())); // 设置角色
+
+        return baseUserService.save(user);
+    }
+
+    /**
+     * 简单方式修改用户
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public BaseUserDTO simpleUpdateUser(BaseUserSimpleUpdateReq req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
+        BaseUser user = baseUserService.findById(req.getId());
+        AssertUtil.isEquals(realAppId, user.getRealAppId(), () -> ClientException.clientByForbidden().serverMessage("不能修改其它应用下的用户"));
+        if (CollectionUtil.isNotEmpty(req.getRoleIds())) {
+            List<BaseRole> baseRoles = baseRoleService.listByIds(req.getRoleIds());
+            baseRoles.forEach(p -> AssertUtil.isEquals(realAppId, p.getAppId(), () -> ClientException.clientByForbidden().serverMessage("不能使用其它应用下的角色")));
+            user.setRoles(baseRoles);
+        }
+
+        user.setEnabled(Optional.ofNullable(req.getEnabled()).orElseGet(() -> user.getLocked()));
+        user.setLocked(Optional.ofNullable(req.getLocked()).orElseGet(() -> user.getLocked()));
+        user.setValidTime(Optional.ofNullable(req.getValidTime()).orElseGet(() -> user.getValidTime()));
+        user.setRemark(Optional.ofNullable(req.getRemark()).orElseGet(() -> user.getRemark()));
+
+        return baseUserService.save(user);
+    }
+
+    /**
+     * 批量删除用户
+     *
+     * @param ids 被删除的用户id集合
+     * @return true删除成功；false删除失败
+     */
+    @Override
+    public Boolean deleteByIds(List<Long> ids) {
+        return baseUserService.deleteByIds(ids);
+    }
+
+    /**
+     * 重置用户密码
+     *
+     * @param userId 用户id
+     * @return
+     */
+    @Override
+    public Boolean resetPassword(Long userId) {
+        return baseUserService.resetPassword(userId);
+    }
+
+    /**
+     * 修改用户激活状态
+     *
+     * @param userId 用户id
+     * @return
+     */
+    @Override
+    public Boolean changeEnabled(Long userId) {
+        return baseUserService.changeEnabled(userId);
+    }
+
+    /**
+     * 修改用户锁定状态
+     *
+     * @param userId 用户id
+     * @return
+     */
+    @Override
+    public Boolean changeLocked(Long userId) {
+        return baseUserService.changeLocked(userId);
     }
 }

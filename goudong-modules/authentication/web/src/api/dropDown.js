@@ -18,9 +18,22 @@ export function dropDownAllAppApi() {
  * 用户下拉
  * @returns {*}
  */
-export function dropDownUserApi() {
+export function dropDownUserApi(params) {
   return request({
     url: `${API_PREFIX}/drop-down/base-user/page`,
     method: 'get',
+    params: params
+  })
+}
+
+/**
+ * 角色下拉
+ * @returns {*}
+ */
+export function dropDownRoleApi(params) {
+  return request({
+    url: `${API_PREFIX}/drop-down/base-role/page`,
+    method: 'get',
+    params: params
   })
 }

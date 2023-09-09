@@ -1,20 +1,18 @@
 package com.goudong.authentication.server.service;
 
-import com.goudong.authentication.common.core.LoginResp;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseUserCreate;
 import com.goudong.authentication.server.rest.req.BaseUserPageReq;
-import com.goudong.authentication.server.rest.req.BaseUserUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseUserDropDown;
-import com.goudong.authentication.server.rest.req.search.BaseUserPageSearchReq;
+import com.goudong.authentication.server.rest.req.BaseUserSimpleUpdateReq;
+import com.goudong.authentication.server.rest.req.search.BaseUserDropDownReq;
 import com.goudong.authentication.server.rest.resp.BaseUserDropDownResp;
+import com.goudong.authentication.server.rest.resp.BaseUserPageResp;
 import com.goudong.authentication.server.service.dto.BaseUserDTO;
-import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.core.lang.PageResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -47,7 +45,6 @@ public interface BaseUserService {
      * @param id 用户id
      * @return 用户对象详细信息（保留角色菜单）
      */
-    @Transactional(readOnly = true)
     BaseUser findDetailById(Long id);
 
 
@@ -57,7 +54,7 @@ public interface BaseUserService {
      * @param req 请求参数
      * @return 用户下拉列表
      */
-    PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDown req);
+    PageResult<BaseUserDropDownResp> userDropDown(BaseUserDropDownReq req);
 
     /**
      * 分页查询用户
@@ -65,9 +62,45 @@ public interface BaseUserService {
      * @param req 分页参数
      * @return 用户分页对象
      */
-    PageResult<BaseUserPageSearchReq> page(BaseUserPageReq req);
+    PageResult<BaseUserPageResp> page(BaseUserPageReq req);
 
+    /**
+     * 新增用户
+     * @param user
+     * @return
+     */
+    BaseUserDTO save(BaseUser user);
 
+    /**
+     * 批量删除用户
+     *
+     * @param ids 被删除的用户id集合
+     * @return true删除成功；false删除失败
+     */
+    Boolean deleteByIds(List<Long> ids);
+
+    /**
+     * 重置用户密码
+     * @param userId 用户id
+     * @return
+     */
+    Boolean resetPassword(Long userId);
+
+    /**
+     * 修改用户激活状态
+     *
+     * @param userId 用户id
+     * @return
+     */
+    Boolean changeEnabled(Long userId);
+
+    /**
+     * 修改用户锁定状态
+     *
+     * @param userId 用户id
+     * @return
+     */
+    Boolean changeLocked(Long userId);
 
 
     //~待删除methods
@@ -84,7 +117,7 @@ public interface BaseUserService {
      * @param req
      * @return
      */
-    BaseUserDTO save(BaseUserUpdate req);
+    BaseUserDTO save(BaseUserSimpleUpdateReq req);
 
     /**
      * Get all the baseUsers.
@@ -111,13 +144,6 @@ public interface BaseUserService {
      */
     Boolean delete(Long id);
 
-    /**
-     * 登录信息
-     * @param myAuthentication
-     * @return
-     */
-    LoginResp login(MyAuthentication myAuthentication);
-
 
 
     /**
@@ -127,5 +153,6 @@ public interface BaseUserService {
      */
     @Deprecated
     BaseUserDTO getById(Long id);
+
 
 }

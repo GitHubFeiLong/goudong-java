@@ -2,9 +2,9 @@ package com.goudong.authentication.server.service.manager;
 
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
-import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
-import com.goudong.authentication.server.rest.req.search.BaseAppDropDown;
+import com.goudong.authentication.server.rest.req.search.BaseAppDropDownReq;
+import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.core.lang.PageResult;
@@ -64,14 +64,14 @@ public interface BaseAppManagerService {
      * @param req 查询条件
      * @return 用户能访问的应用列表
      */
-    List<BaseAppDropDown> appDropDown(BaseAppDropDown req);
+    List<BaseAppDropDownReq> appDropDown(BaseAppDropDownReq req);
 
     /**
      * 所有应用下拉
      * @param req 查询条件
      * @return 所有应用
      */
-    List<BaseAppDropDown> allDropDown(BaseAppDropDown req);
+    List<BaseAppDropDownReq> allDropDown(BaseAppDropDownReq req);
 
     /**
      * 根据请求头中{@code X-App-Id}，查询应用

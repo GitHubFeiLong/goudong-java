@@ -1,6 +1,5 @@
 package com.goudong.authentication.server.rest.resp;
 
-import com.goudong.authentication.server.rest.req.search.BasePage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,13 +16,16 @@ import java.util.List;
  */
 
 @Data
-public class BaseUserPageResp extends BasePage {
+public class BaseUserPageResp {
     //~fields
     //==================================================================================================================
-    @ApiModelProperty(value = "应用id", hidden = true)
+    @ApiModelProperty(value = "序号")
+    private Long serialNumber;
+
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    @ApiModelProperty(value = "应用名", hidden = true)
+    @ApiModelProperty(value = "应用名")
     private String appName;
 
     @ApiModelProperty("用户名")
@@ -48,5 +50,5 @@ public class BaseUserPageResp extends BasePage {
     private Date createdDate;
 
     @ApiModelProperty("角色")
-    private List<String> roles = new ArrayList<>(0);
+    private List<BaseRoleDropDownResp> roles = new ArrayList<>(0);
 }

@@ -1,14 +1,13 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import {Message} from 'element-ui'
 import Router from '@/router/index'
 import store from '@/store/index'
 import Token from '@/pojo/Token'
-import { validateDate, validateUrlAuthentication, validateUrlNotAuthentication } from '@/utils/validate'
+import {validateDate, validateUrlNotAuthentication} from '@/utils/validate'
 import LocalStorageUtil from '@/utils/LocalStorageUtil'
-import { TOKEN_LOCAL_STORAGE } from '@/constant/LocalStorageConst'
-import { refreshTokenApi } from '@/api/user'
-import { AUTHORIZATION, BEARER, X_APP_ID } from '@/constant/HttpHeaderConst'
-import { DO_NOT_HANDLE_ERROR_MESSAGE } from "@/constant/DataMapConst";
+import {refreshTokenApi} from '@/api/user'
+import {AUTHORIZATION, BEARER, X_APP_ID} from '@/constant/HttpHeaderConst'
+import {DO_NOT_HANDLE_ERROR_MESSAGE} from "@/constant/DataMapConst";
 
 // 按照axios官方提示需要引入这两步
 const CancelToken = axios.CancelToken;
@@ -41,6 +40,7 @@ const service = axios.create({
     },
     delete: {
       'X-Client-Side': 'browser',
+      'Content-Type': 'application/json;',
     },
     patch: {
       'X-Client-Side': 'browser',

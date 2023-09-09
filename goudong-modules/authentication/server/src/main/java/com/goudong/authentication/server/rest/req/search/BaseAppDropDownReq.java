@@ -1,10 +1,6 @@
 package com.goudong.authentication.server.rest.req.search;
 
-import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.SearchBean;
-import cn.zhxu.bs.operator.Contain;
-import cn.zhxu.bs.operator.StartWith;
-import com.goudong.authentication.server.domain.BaseApp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,7 +12,7 @@ import lombok.Data;
  */
 @SearchBean(tables="base_app", orderBy = "id asc")
 @Data
-public class BaseAppDropDown {
+public class BaseAppDropDownReq {
     //~fields
     //==================================================================================================================
     @ApiModelProperty("应用id")
