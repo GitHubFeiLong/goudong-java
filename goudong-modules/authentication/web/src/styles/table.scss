@@ -215,5 +215,8 @@
 }
 
 .el-table--border th:first-child .cell, .el-table--border td:first-child .cell{
-  padding: 0;
+  .selection{
+    padding: 0; // 表格第一列设置padding 0
+  }
+
 }

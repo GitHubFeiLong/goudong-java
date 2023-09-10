@@ -93,6 +93,7 @@
         type="selection"
         header-align="center"
         align="center"
+        class-name="selection"
       />
       <el-table-column
         fixed
@@ -264,7 +265,7 @@
 <script>
 
 import {ENABLED_ARRAY} from "@/constant/commons";
-import {createAppApi, updateAppApi, deleteAppApi, pageAppApi} from "@/api/app";
+import {createAppApi, deleteAppApi, pageAppApi, updateAppApi} from "@/api/app";
 import {Message} from "element-ui";
 import {WebUrl} from "@/utils/ElementValidatorUtil"
 

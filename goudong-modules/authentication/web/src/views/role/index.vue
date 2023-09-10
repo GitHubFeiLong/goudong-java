@@ -77,6 +77,7 @@
         type="selection"
         header-align="center"
         align="center"
+        class-name="selection"
       />
       <el-table-column
         label="序号"
@@ -168,16 +169,28 @@
     <!--编辑角色权限弹窗-->
     <EditRoleMenuDialog :edit-role-menu-dialog.sync="editRoleMenuDialog" :edit-role-menu-info="editRoleMenuInfo" />
     <!--  拥有角色的详细用户弹窗  -->
-    <el-dialog title="角色下用户" :visible.sync="roleUserDialog" width="400px">
+    <el-dialog :title="roleUserDialog.title" :visible.sync="roleUserDialog.visible" width="460px">
       <el-table
-        :data="roleUserDialogData"
+        :data="roleUserDialog.data"
         row-key="id"
         style="width: 100%"
-        height="350"
+        max-height="480"
         border
+        :header-cell-style="{background:'#FAFAFA', color:'#000', height: '30px',}"
+        :header-row-class-name="EL_TABLE.size"
+        :size="EL_TABLE.size"
       >
-
         <el-table-column
+          class-name="a"
+          label="序号"
+          width="50"
+        >
+          <template v-slot="scope">
+            {{ scope.$index + 1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          class-name="a"
           label="用户ID"
           prop="id"
         />
@@ -227,11 +240,14 @@ export default {
       checkRoleIds: [],
       createRoleDialog: false, // 创建角色弹窗
       editRoleDialog: false, // 编辑角色弹窗
-      roleUserDialog: false, // 角色下的用户信息弹窗
       editRoleInfo: undefined, // 编辑角色弹窗的数据
       editRoleMenuDialog: false, // 编辑角色权限弹窗
       editRoleMenuInfo: {}, // 编辑角色权限弹窗的数据
-      roleUserDialogData: {}, // 角色下的用户信息
+      roleUserDialog:{ // 角色下的用户信息弹窗
+        title: '',
+        visible: false,
+        data: undefined
+      },
       elDropdownItemClass: ['el-dropdown-item--click', undefined, undefined],
       EL_TABLE: {
         // 显示大小
@@ -325,8 +341,9 @@ export default {
     },
     showUsers(row){
       console.log(row.users)
-      this.roleUserDialogData = row.users
-      this.roleUserDialog = true
+      this.roleUserDialog.title = `角色 ${row.name} 拥有 ${row.users.length} 人`
+      this.roleUserDialog.data = row.users
+      this.roleUserDialog.visible = true
     },
     generate(item) {
       const obj = {

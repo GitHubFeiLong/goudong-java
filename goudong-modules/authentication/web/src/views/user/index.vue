@@ -90,6 +90,7 @@
         type="selection"
         header-align="center"
         align="center"
+        class-name="selection"
       />
       <el-table-column
         label="序号"
