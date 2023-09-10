@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getRoleById, updatePermissions } from '@/api/role'
+import { getPermissionListByIdApi, changePermissionApi } from '@/api/role'
 
 export default {
   name: 'EditRoleMenuDialog',
@@ -61,7 +61,7 @@ export default {
       this.visible = this.editRoleMenuDialog;
       if (this.visible) {
         // 查询角色的信息及权限
-        getRoleById(this.editRoleMenuInfo.id).then(data => {
+        getPermissionListByIdApi(this.editRoleMenuInfo.id).then(data => {
           this.menus = data.permission;
           this.defaultCheckedKeys = [];
           this.checkStrictly = true
@@ -89,8 +89,13 @@ export default {
       const ids = [];
       ids.push(...halfCheckedKeys, ...checkedKeys);
 
+      let data = {
+        id: this.editRoleMenuInfo.id,
+        menuIds: ids
+      }
+      console.log(data)
       // 调用接口
-      updatePermissions(this.editRoleMenuInfo.id, ids).then(response => {
+      changePermissionApi(data).then(response => {
         this.$message.success("修改成功");
         this.close();
       })

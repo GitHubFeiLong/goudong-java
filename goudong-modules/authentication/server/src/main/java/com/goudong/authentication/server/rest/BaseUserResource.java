@@ -95,11 +95,7 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserManagerService.simpleUpdateUser(req));
     }
 
-    @DeleteMapping("/base-users")
-    @ApiOperation(value = "批量删除用户")
-    public Result<Boolean> deleteByIds(@RequestBody @NotNull Long[] ids) {
-        return Result.ofSuccess(baseUserManagerService.deleteByIds(Arrays.asList(ids)));
-    }
+
 
     @PutMapping("/base-user/reset-password/{userId}")
     @ApiOperation(value = "重置密码")
@@ -120,7 +116,11 @@ public class BaseUserResource {
     }
 
 
-
+    @DeleteMapping("/base-users")
+    @ApiOperation(value = "批量删除用户")
+    public Result<Boolean> deleteByIds(@RequestBody @NotNull Long[] ids) {
+        return Result.ofSuccess(baseUserManagerService.deleteByIds(Arrays.asList(ids)));
+    }
 
 
     //~

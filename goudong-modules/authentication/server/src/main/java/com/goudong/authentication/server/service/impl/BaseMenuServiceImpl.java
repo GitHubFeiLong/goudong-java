@@ -5,6 +5,7 @@ import com.goudong.authentication.server.repository.BaseMenuRepository;
 import com.goudong.authentication.server.service.BaseMenuService;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import com.goudong.authentication.server.service.mapper.BaseMenuMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,24 +13,48 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link BaseMenu}.
  */
+@Slf4j
 @Service
 @Transactional
 public class BaseMenuServiceImpl implements BaseMenuService {
 
-    private final Logger log = LoggerFactory.getLogger(BaseMenuServiceImpl.class);
+    //~fields
+    //==================================================================================================================
+    @Resource
+    private BaseMenuRepository baseMenuRepository;
+    @Resource
+    private BaseMenuMapper baseMenuMapper;
 
-    private final BaseMenuRepository baseMenuRepository;
+    //~methods
+    //==================================================================================================================
 
-    private final BaseMenuMapper baseMenuMapper;
+    /**
+     * 查询应用下所有菜单
+     *
+     * @param appId 应用id
+     * @return 菜单集合
+     */
+    @Override
+    public List<BaseMenuDTO> findAllByAppId(Long appId) {
+        return baseMenuMapper.toDto(baseMenuRepository.findAllByAppId(appId));
+    }
 
-    public BaseMenuServiceImpl(BaseMenuRepository baseMenuRepository, BaseMenuMapper baseMenuMapper) {
-        this.baseMenuRepository = baseMenuRepository;
-        this.baseMenuMapper = baseMenuMapper;
+    /**
+     * 查询菜单
+     *
+     * @param ids 菜单id集合
+     * @return 菜单集合
+     */
+    @Override
+    public List<BaseMenu> findAllById(List<Long> ids) {
+        return baseMenuRepository.findAllById(ids);
     }
 
     /**

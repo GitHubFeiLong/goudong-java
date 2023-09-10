@@ -1,11 +1,15 @@
 package com.goudong.authentication.server.service;
 
 import com.goudong.authentication.server.domain.BaseRole;
-import com.goudong.authentication.server.rest.req.BaseRoleCreate;
-import com.goudong.authentication.server.rest.req.BaseRoleUpdate;
+import com.goudong.authentication.server.domain.BaseUser;
+import com.goudong.authentication.server.rest.req.BaseRoleCreateReq;
+import com.goudong.authentication.server.rest.req.BaseRolePageReq;
+import com.goudong.authentication.server.rest.req.BaseRoleUpdateReq;
 import com.goudong.authentication.server.rest.req.search.BaseRoleDropDownReq;
 import com.goudong.authentication.server.rest.req.search.BaseRolePage;
 import com.goudong.authentication.server.rest.resp.BaseRoleDropDownResp;
+import com.goudong.authentication.server.rest.resp.BaseRolePageResp;
+import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import com.goudong.authentication.server.service.dto.BaseRoleDTO;
 import com.goudong.core.lang.PageResult;
 import org.springframework.data.domain.Page;
@@ -35,22 +39,59 @@ public interface BaseRoleService {
      */
     List<BaseRole> listByIds(List<Long> ids);
 
+    /**
+     * 分页查询角色列表
+     *
+     * @param req 条件查询参数
+     * @return 角色分页列表
+     */
+    PageResult<BaseRolePageResp> page(BaseRolePageReq req);
+
+    /**
+     * 保存角色
+     *
+     * @param req 角色信息
+     * @return 保存后对象
+     */
+    BaseRoleDTO save(BaseRoleCreateReq req);
+
+    /**
+     * 修改角色
+     *
+     * @param req 需要修改的角色信息
+     * @return 修改后角色信息
+     */
+    BaseRoleDTO update(BaseRoleUpdateReq req);
+
+
+    /**
+     * 批量删除角色
+     *
+     * @param ids 删除的id集合
+     * @return true删除成功；false删除失败
+     */
+    Boolean deleteByIds(List<Long> ids);
+
+    /**
+     * 根据id查询角色
+     * @param id 角色id
+     * @return 角色对象
+     */
+    BaseRole findById(Long id);
+
+
+
 
     // 待删除
 
-    /**
-     * 新增角色
-     * @param req
-     * @return
-     */
-    BaseRoleDTO save(BaseRoleCreate req);
+
 
     /**
      * 修改角色
      * @param req
      * @return
      */
-    BaseRoleDTO save(BaseRoleUpdate req);
+    BaseRoleDTO save(BaseRoleUpdateReq req);
 
     /**
      * Get all the baseRoles.
@@ -85,11 +126,9 @@ public interface BaseRoleService {
     PageResult page(BaseRolePage req);
 
     /**
-     * 角色下拉
-     * @param req
-     * @return
+     * 查询登录用户所拥有的权限
+     * @return 权限集合
      */
-    List<BaseRoleDropDownReq> dropDown(BaseRoleDropDownReq req);
-
+    List<BaseMenuDTO> listPermissionsByLoginUser();
 
 }

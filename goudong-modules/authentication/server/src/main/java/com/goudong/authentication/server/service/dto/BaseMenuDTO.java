@@ -1,6 +1,7 @@
 package com.goudong.authentication.server.service.dto;
 
 import com.goudong.authentication.server.domain.BaseMenu;
+import com.goudong.core.util.tree.v2.TreeInterface;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @ApiModel(description = "菜单表")
 @Data
-public class BaseMenuDTO implements Serializable {
+public class BaseMenuDTO implements TreeInterface<Long, Long, BaseMenuDTO>, Comparable<BaseMenuDTO>, Serializable{
 
     private Long id;
 
@@ -125,6 +126,19 @@ public class BaseMenuDTO implements Serializable {
     @ApiModelProperty(value = "最后修改人")
     private String lastModifiedBy;
 
-
+    @ApiModelProperty(value = "子菜单")
     private List<BaseMenuDTO> children;
+
+    @ApiModelProperty(value = "是否拥有该菜单权限")
+    private boolean checked;
+
+    @Override
+    public void setChildren(List children) {
+        this.children = children;
+    }
+
+    @Override
+    public int compareTo(BaseMenuDTO o) {
+        return this.getSortNum().compareTo(o.getSortNum());
+    }
 }

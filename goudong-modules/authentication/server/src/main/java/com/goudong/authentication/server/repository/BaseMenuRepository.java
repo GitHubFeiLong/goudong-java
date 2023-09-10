@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 /**
  * Spring Data  repository for the BaseMenu entity.
@@ -23,4 +25,11 @@ public interface BaseMenuRepository extends JpaRepository<BaseMenu, Long>, JpaSp
     @Modifying
     @Query(nativeQuery = true, value = "delete from base_menu where app_id = ?1")
     int deleteByAppId(Long appId);
+
+    /**
+     * 查询应用下所有菜单
+     * @param appId 应用id
+     * @return 菜单集合
+     */
+    List<BaseMenu> findAllByAppId(Long appId);
 }

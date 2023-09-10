@@ -4,11 +4,7 @@
     <div class="filter-container">
       <div class="filter-item">
         <span class="filter-item-label">角色名称: </span>
-        <RoleNameSelect ref="RoleNameSelect" clearable @getRoleName="getRoleName" />
-      </div>
-      <div class="filter-item">
-        <span class="filter-item-label">角色标识: </span>
-        <el-input v-model="filter.roleName" clearable placeholder="请输入" />
+        <RoleSelect ref="roleSelectRef" :role-multiple="true" @getSelectRoles="getSelectRoles" />
       </div>
       <div class="filter-item">
         <span class="filter-item-label">备注: </span>
@@ -84,27 +80,26 @@
       />
       <el-table-column
         label="序号"
-        min-width="50"
+        prop="serialNumber"
       >
-        <template v-slot="scope">
-          {{ (role.page - 1) * role.size + (scope.$index + 1) }}
-        </template>
       </el-table-column>
       <el-table-column
         label="角色名称"
-        prop="roleNameCn"
-        sortable
-      />
-      <el-table-column
-        label="角色标识"
-        prop="roleName"
+        prop="name"
         sortable
       />
       <el-table-column
         label="用户数量"
-        prop="userNumbers"
+        prop="userNumber"
         sortable
-      />
+      >
+        <template v-slot="scope">
+          <el-link :underline="false"
+                   type="primary"
+                   @click="showUsers(scope.row)">{{scope.row.userNumber}}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         label="备注"
         prop="remark"
@@ -112,7 +107,7 @@
       />
       <el-table-column
         label="创建时间"
-        prop="createTime"
+        prop="createdDate"
         sortable
       />
       <el-table-column
@@ -148,6 +143,13 @@
           </div>
         </template>
       </el-table-column>
+      <!--隐藏-->
+      <el-table-column
+        v-if="false"
+        label="用户集合"
+        width="300"
+        prop="users"
+      />
     </el-table>
     <!-- 分页控件 -->
     <el-pagination
@@ -165,21 +167,40 @@
     <EditRoleDialog :edit-role-dialog.sync="editRoleDialog" :edit-role-info="editRoleInfo" />
     <!--编辑角色权限弹窗-->
     <EditRoleMenuDialog :edit-role-menu-dialog.sync="editRoleMenuDialog" :edit-role-menu-info="editRoleMenuInfo" />
+    <!--  拥有角色的详细用户弹窗  -->
+    <el-dialog title="角色下用户" :visible.sync="roleUserDialog" width="400px">
+      <el-table
+        :data="roleUserDialogData"
+        row-key="id"
+        style="width: 100%"
+        height="350"
+        border
+      >
+
+        <el-table-column
+          label="用户ID"
+          prop="id"
+        />
+        <el-table-column
+          label="用户名"
+          prop="name"
+        />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import waves from '@/directive/waves' // waves directive
-import { deleteRoleByIdsApi, pageRole, removeRole } from '@/api/role'
+import { deleteRoleByIdsApi, pageRoleApi } from '@/api/role'
 import { initMenuApi } from '@/api/menu'
 
-import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-router";
 import { isNotEmpty } from "@/utils/assertUtil";
 
 export default {
   name: 'RolePage',
   components: {
-    RoleNameSelect: () => import('@/components/Role/RoleNameSelect'),
+    RoleSelect: () => import('@/components/User/RoleSelect'),
     CreateRoleDialog: () => import('@/views/role/components/CreateRoleDialog'),
     EditRoleDialog: () => import('@/views/role/components/EditRoleDialog'),
     EditRoleMenuDialog: () => import('@/views/role/components/EditRoleMenuDialog'),
@@ -198,17 +219,19 @@ export default {
         pageSizes: this.$globalVariable.PAGE_SIZES
       },
       filter: {
-        roleNameCn: undefined,
-        roleName: undefined,
+        ids: [],
+        name: undefined,
         remark: undefined,
       },
       // 复选框选中的用户
       checkRoleIds: [],
       createRoleDialog: false, // 创建角色弹窗
       editRoleDialog: false, // 编辑角色弹窗
+      roleUserDialog: false, // 角色下的用户信息弹窗
       editRoleInfo: undefined, // 编辑角色弹窗的数据
       editRoleMenuDialog: false, // 编辑角色权限弹窗
       editRoleMenuInfo: {}, // 编辑角色权限弹窗的数据
+      roleUserDialogData: {}, // 角色下的用户信息
       elDropdownItemClass: ['el-dropdown-item--click', undefined, undefined],
       EL_TABLE: {
         // 显示大小
@@ -221,8 +244,9 @@ export default {
     this.loadPageRole()
   },
   methods: {
-    getRoleName(ev) {
-      this.filter.roleNameCn = ev
+    getSelectRoles(selectedRoles) {
+      console.log("selectedRoles", selectedRoles)
+      this.filter.ids = selectedRoles.map(role => role.value)
     },
     searchFunc() {
       // 点击查询按钮
@@ -232,7 +256,7 @@ export default {
     // 点击重置按钮
     resetSearchFilter() {
       // 清空子组件（用户名下拉）值
-      this.$refs.RoleNameSelect.clear();
+      this.$refs.roleSelectRef.reset();
       // 赋默认值
       this.filter = {};
     },
@@ -241,13 +265,12 @@ export default {
       const pageParam = {
         page: this.role.page,
         size: this.role.size,
-        roleNameCn: this.filter.roleNameCn,
-        roleName: this.filter.roleName,
+        ids: this.filter.ids,
+        name: this.filter.name,
         remark: this.filter.remark,
       }
-      pageRole(pageParam).then(data => {
+      pageRoleApi(pageParam).then(data => {
         const content = data.content
-
         // 修改分页组件
         this.role.page = Number(data.page)
         this.role.size = Number(data.size)
@@ -260,12 +283,8 @@ export default {
         // 添加到数据集合
         content.forEach((item, index, arr) => {
           const column = {
-            id: item.id,
-            roleName: item.roleName,
-            roleNameCn: item.roleNameCn,
-            userNumbers: item.userNumbers,
-            remark: item.remark,
-            createTime: item.createTime,
+            userNumber: item.users.length,
+            ...item
           }
           this.role.roles.push(column)
         })
@@ -303,6 +322,11 @@ export default {
       console.log(`当前页: ${val}`)
       this.role.page = val
       this.loadPageRole()
+    },
+    showUsers(row){
+      console.log(row.users)
+      this.roleUserDialogData = row.users
+      this.roleUserDialog = true
     },
     generate(item) {
       const obj = {
@@ -352,7 +376,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            deleteRoleByIdsApi({ ids: this.checkRoleIds.join(",") }).then(data => {
+            deleteRoleByIdsApi(ids).then(data => {
               this.$message.success("删除成功")
               this.loadPageUser()
             })
@@ -361,11 +385,6 @@ export default {
           })
         }).catch(() => {});
     },
-    // 修改角色
-    editRole(row) {
-      this.editRoleInfo = row
-      this.editRoleDialog = true
-    },
     // 删除角色
     deleteRole(id) {
       this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
@@ -373,13 +392,18 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        removeRole(id).then(response => {
+        deleteRoleByIdsApi([id]).then(response => {
           this.$message.success("删除成功")
           this.loadPageRole()
         })
       }).catch(() => {
         this.$message.info("已取消删除");
       })
+    },
+    // 修改角色
+    editRole(row) {
+      this.editRoleInfo = row
+      this.editRoleDialog = true
     },
     // 设置权限
     editRoleMenu(row) {

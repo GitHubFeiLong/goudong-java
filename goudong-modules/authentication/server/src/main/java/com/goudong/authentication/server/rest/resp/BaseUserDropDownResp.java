@@ -1,7 +1,9 @@
 package com.goudong.authentication.server.rest.resp;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 类描述：
@@ -10,6 +12,8 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseUserDropDownResp {
     //~fields
     //==================================================================================================================

@@ -109,6 +109,9 @@ public class MyAuthentication implements Authentication {
      */
     public boolean admin() {
 //        return this.roles.stream().filter(f -> Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN)).findFirst().isPresent();
-        return this.roles.stream().anyMatch(f -> Objects.equals(f.getAuthority(), ROLE_APP_ADMIN));
+        return this.roles.stream().anyMatch(f -> {
+            System.out.println("比较：" + f.getAuthority());
+            return Objects.equals(f.getAuthority(), ROLE_APP_ADMIN) || Objects.equals(f.getAuthority(), ROLE_APP_SUPER_ADMIN);
+        });
     }
 }

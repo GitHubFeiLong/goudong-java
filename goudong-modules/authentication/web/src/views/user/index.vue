@@ -123,7 +123,7 @@
       <el-table-column
         label="创建时间"
         width="170"
-        prop="createTime"
+        prop="createdDate"
         show-overflow-tooltip
         sortable
       />
@@ -201,13 +201,6 @@
           </div>
         </template>
       </el-table-column>
-      <!--隐藏-->
-      <el-table-column
-        v-if="false"
-        label="角色id集合"
-        width="300"
-        prop="roleIds"
-      />
     </el-table>
     <!-- 分页控件 -->
     <el-pagination

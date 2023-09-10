@@ -2,8 +2,8 @@
 <template>
   <el-dialog title="编角色" width="600px" :visible.sync="visible" @close="close">
     <el-form ref="editRoleForm" :model="role" :rules="rules" label-width="80px">
-      <el-form-item label="角色名称" prop="roleNameCn">
-        <el-input v-model="role.roleNameCn" clearable disabled />
+      <el-form-item label="角色名称" prop="name">
+        <el-input v-model="role.name" clearable />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="role.remark" clearable />
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { editRole } from '@/api/role'
+import { editRole, updateRoleApi } from '@/api/role'
 
 export default {
   name: 'EditUserDialog',
@@ -42,12 +42,12 @@ export default {
     return {
       visible: false,
       role: {
-        roleNameCn: '',
+        name: '',
         remark: '',
       },
       rules: {
-        roleNameCn: [
-          { required: true, min: 1, max: 64, message: '角色名称限制1~64字符', trigger: 'blur' },
+        name: [
+          { required: true, min: 4, max: 16, message: '角色名称限制4~16字符', trigger: 'blur' },
         ],
         remark: [
           { required: false, max: 255, message: '备注限制最多255字符', triangle: 'blur' }
@@ -61,13 +61,13 @@ export default {
       if (this.visible) {
         this.role = {
           id: this.editRoleInfo.id,
-          roleNameCn: this.editRoleInfo.roleNameCn,
+          name: this.editRoleInfo.name,
           remark: this.editRoleInfo.remark,
         }
       } else {
         this.role = {
           id: undefined,
-          roleNameCn: undefined,
+          name: undefined,
           remark: undefined,
         }
       }
@@ -84,7 +84,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          editRole(this.role).then(data => {
+          updateRoleApi(this.role).then(data => {
             this.$message.success("保存成功")
             // 关闭弹框
             this.close();

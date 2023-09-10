@@ -59,7 +59,7 @@ export default {
   watch: {
     // 监听
     defaultRoles() {
-      console.log("defaultRoles", defaultRoles)
+      console.log("defaultRoles", this.defaultRoles)
       this.selectedRoles = this.defaultRoles
     },
   },

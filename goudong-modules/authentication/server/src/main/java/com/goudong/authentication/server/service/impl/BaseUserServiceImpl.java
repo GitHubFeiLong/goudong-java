@@ -218,7 +218,10 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     @Transactional
     public Boolean deleteByIds(List<Long> ids) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
         List<BaseUser> allById = baseUserRepository.findAllById(ids);
+        allById.forEach(p -> AssertUtil.isEquals(realAppId, p.getRealAppId(), () -> ClientException.clientByForbidden().serverMessage("不能删除其它应用下的用户")));
         baseUserRepository.deleteAll(allById);
         return true;
     }

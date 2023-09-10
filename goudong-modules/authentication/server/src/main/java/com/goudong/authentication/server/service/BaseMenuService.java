@@ -5,12 +5,27 @@ import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Service Interface for managing {@link BaseMenu}.
  */
 public interface BaseMenuService {
+
+    /**
+     * 查询应用下所有菜单
+     * @param appId 应用id
+     * @return 菜单集合
+     */
+    List<BaseMenuDTO> findAllByAppId(Long appId);
+
+    /**
+     * 查询菜单
+     * @param ids 菜单id集合
+     * @return 菜单集合
+     */
+    List<BaseMenu> findAllById(List<Long> ids);
 
     /**
      * Save a baseMenu.
@@ -43,4 +58,6 @@ public interface BaseMenuService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+
 }
