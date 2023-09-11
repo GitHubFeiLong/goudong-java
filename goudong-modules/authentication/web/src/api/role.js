@@ -1,12 +1,12 @@
 import request from '@/utils/request'
-import { API_PREFIX } from "@/constant/commons";
+import {API_PREFIX} from "@/constant/commons";
 
 /**
  * 根据字段进行分页查询角色
  * @param page
  * @returns {*}
  */
-export function pageRoleApi(page) {
+export function pageRolesApi(page) {
   return request({
     url: `${API_PREFIX}/role/page/base-roles`,
     method: 'post',

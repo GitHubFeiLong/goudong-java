@@ -265,7 +265,7 @@
 <script>
 
 import {ENABLED_ARRAY} from "@/constant/commons";
-import {createAppApi, deleteAppApi, pageAppApi, updateAppApi} from "@/api/app";
+import {createAppApi, deleteAppApi, pageAppsApi, updateAppApi} from "@/api/app";
 import {Message} from "element-ui";
 import {WebUrl} from "@/utils/ElementValidatorUtil"
 
@@ -367,7 +367,7 @@ export default {
         size: this.app.size,
         ...this.filter
       }
-      pageAppApi(pageParam).then(data => {
+      pageAppsApi(pageParam).then(data => {
         const content = data.content
 
         // 修改分页组件

@@ -41,9 +41,6 @@ public class BaseUserResource {
     @Resource
     private BaseUserManagerService baseUserManagerService;
 
-    @Resource
-    private BaseUserService baseUserService;
-
     //~methods
     //==================================================================================================================
     @PostMapping("/login")
@@ -78,7 +75,7 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserManagerService.getUserDetailByToken(token));
     }
 
-    @PostMapping("/page/base-user")
+    @PostMapping("/page/base-users")
     @ApiOperation(value = "分页用户")
     public Result<PageResult<BaseUserPageResp>> page(@RequestBody @Validated BaseUserPageReq req) {
         return Result.ofSuccess(baseUserManagerService.page(req));
@@ -94,8 +91,6 @@ public class BaseUserResource {
     public Result<BaseUserDTO> update(@RequestBody @Validated BaseUserSimpleUpdateReq req) {
         return Result.ofSuccess(baseUserManagerService.simpleUpdateUser(req));
     }
-
-
 
     @PutMapping("/base-user/reset-password/{userId}")
     @ApiOperation(value = "重置密码")
@@ -115,32 +110,9 @@ public class BaseUserResource {
         return Result.ofSuccess(baseUserManagerService.changeLocked(userId));
     }
 
-
     @DeleteMapping("/base-users")
     @ApiOperation(value = "批量删除用户")
     public Result<Boolean> deleteByIds(@RequestBody @NotNull Long[] ids) {
         return Result.ofSuccess(baseUserManagerService.deleteByIds(Arrays.asList(ids)));
     }
-
-
-    //~
-    //==================================================================================================================
-
-
-    // @GetMapping("/base-user/{id}")
-    @ApiOperation(value = "查询用户详情", hidden = true)
-    @Deprecated
-    public Result<BaseUserDTO> getById(@PathVariable Long id) {
-        return Result.ofSuccess(baseUserService.getById(id));
-    }
-
-
-
-    @DeleteMapping("/base-user/{id}")
-    @ApiOperation(value = "删除用户")
-    public Result<Boolean> delete(@PathVariable Long id) {
-        return Result.ofSuccess(baseUserService.delete(id));
-    }
-
-
 }

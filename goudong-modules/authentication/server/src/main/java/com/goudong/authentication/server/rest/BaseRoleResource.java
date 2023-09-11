@@ -77,7 +77,4 @@ public class BaseRoleResource {
     public Result<Boolean> changePermission(@RequestBody @Validated BaseRoleChangePermissionReq req) {
         return Result.ofSuccess(baseRoleManagerService.changePermission(req));
     }
-
-
-
 }

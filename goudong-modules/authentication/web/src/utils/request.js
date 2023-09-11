@@ -138,7 +138,11 @@ service.interceptors.response.use(response => {
       duration: 5 * 1000
     })
     // 清空用户登录状态
-    store.dispatch('user/resetToken')
+    LocalStorageUtil.removeUser()
+    LocalStorageUtil.removeToken()
+    LocalStorageUtil.removePermissionRoutes()
+    LocalStorageUtil.removePermissionButtons()
+
     // 跳转到登录页
     Router.push({ path: '/login' })
     return Promise.reject(result)

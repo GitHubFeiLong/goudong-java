@@ -45,9 +45,9 @@ export function getUserDetailApi(token) {
  * @param data
  * @returns {*}
  */
-export function pageUserApi(data) {
+export function pageUsersApi(data) {
   return request({
-    url: `${API_PREFIX}/user/page/base-user`,
+    url: `${API_PREFIX}/user/page/base-users`,
     method: 'post',
     data: data,
   })

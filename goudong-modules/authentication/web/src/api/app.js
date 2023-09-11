@@ -4,9 +4,9 @@ import {API_PREFIX} from "@/constant/commons";
 /**
  * 列表的分页查询
  */
-export function pageAppApi(data) {
+export function pageAppsApi(data) {
   return request({
-    url: `${API_PREFIX}/app/page/base-app`,
+    url: `${API_PREFIX}/app/page/base-apps`,
     method: 'post',
     data,
   })

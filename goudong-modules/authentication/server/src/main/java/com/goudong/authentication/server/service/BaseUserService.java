@@ -47,7 +47,6 @@ public interface BaseUserService {
      */
     BaseUser findDetailById(Long id);
 
-
     /**
      * 分页获取用户下拉，只返回操作人所在真实应用下的用户
      *
@@ -65,7 +64,7 @@ public interface BaseUserService {
     PageResult<BaseUserPageResp> page(BaseUserPageReq req);
 
     /**
-     * 新增用户
+     * 新增/修改用户
      * @param user
      * @return
      */
@@ -101,58 +100,4 @@ public interface BaseUserService {
      * @return
      */
     Boolean changeLocked(Long userId);
-
-
-    //~待删除methods
-    //==================================================================================================================
-    /**
-     * 新增用户
-     * @param req
-     * @return
-     */
-    BaseUserDTO save(BaseUserCreate req);
-
-    /**
-     * 修改用户
-     * @param req
-     * @return
-     */
-    BaseUserDTO save(BaseUserSimpleUpdateReq req);
-
-    /**
-     * Get all the baseUsers.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<BaseUserDTO> findAll(Pageable pageable);
-
-
-
-    /**
-     * Get the "id" baseUser.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    Optional<BaseUserDTO> findOne(Long id);
-
-    /**
-     * Delete the "id" baseUser.
-     *
-     * @param id the id of the entity.
-     */
-    Boolean delete(Long id);
-
-
-
-    /**
-     * 查询用户id详情
-     * @param id
-     * @return
-     */
-    @Deprecated
-    BaseUserDTO getById(Long id);
-
-
 }

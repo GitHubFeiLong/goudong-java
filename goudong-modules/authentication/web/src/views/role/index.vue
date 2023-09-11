@@ -205,7 +205,7 @@
 
 <script>
 import waves from '@/directive/waves' // waves directive
-import { deleteRoleByIdsApi, pageRoleApi } from '@/api/role'
+import { deleteRoleByIdsApi, pageRolesApi } from '@/api/role'
 import { initMenuApi } from '@/api/menu'
 
 import { isNotEmpty } from "@/utils/assertUtil";
@@ -285,7 +285,7 @@ export default {
         name: this.filter.name,
         remark: this.filter.remark,
       }
-      pageRoleApi(pageParam).then(data => {
+      pageRolesApi(pageParam).then(data => {
         const content = data.content
         // 修改分页组件
         this.role.page = Number(data.page)

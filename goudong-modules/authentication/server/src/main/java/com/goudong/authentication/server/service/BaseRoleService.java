@@ -63,7 +63,6 @@ public interface BaseRoleService {
      */
     BaseRoleDTO update(BaseRoleUpdateReq req);
 
-
     /**
      * 批量删除角色
      *
@@ -78,52 +77,6 @@ public interface BaseRoleService {
      * @return 角色对象
      */
     BaseRole findById(Long id);
-
-
-
-
-    // 待删除
-
-
-
-    /**
-     * 修改角色
-     * @param req
-     * @return
-     */
-    BaseRoleDTO save(BaseRoleUpdateReq req);
-
-    /**
-     * Get all the baseRoles.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<BaseRoleDTO> findAll(Pageable pageable);
-
-
-    /**
-     * Get the "id" baseRole.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    Optional<BaseRoleDTO> findOne(Long id);
-
-    /**
-     * 删除角色
-     * @param id
-     * @return
-     */
-    boolean delete(Long id);
-
-
-    /**
-     * 分页角色
-     * @param req
-     * @return
-     */
-    PageResult page(BaseRolePage req);
 
     /**
      * 查询登录用户所拥有的权限

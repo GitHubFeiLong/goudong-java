@@ -40,7 +40,7 @@ public class BaseAppResource {
 
     //~methods
     //==================================================================================================================
-    @PostMapping("/page/base-app")
+    @PostMapping("/page/base-apps")
     @ApiOperation("分页查询应用")
     public Result<PageResult<BaseAppPageResp>> page(@RequestBody @Validated BaseAppPageReq req) {
         return Result.ofSuccess(baseAppManagerService.page(req));

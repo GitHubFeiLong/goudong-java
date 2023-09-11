@@ -17,7 +17,6 @@ import java.util.List;
 public interface BaseAppService {
     //~methods
     //==================================================================================================================
-
     /**
      * 根据应用id查询应用
      * @param id 应用id
@@ -72,8 +71,4 @@ public interface BaseAppService {
      * @return baseApp
      */
     BaseApp findByHeader();
-
-    //~以下待删除methods
-    //==================================================================================================================
-
 }

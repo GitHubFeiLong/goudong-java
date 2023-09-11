@@ -244,7 +244,7 @@
 <script>
 import waves from '@/directive/waves' // waves directive
 import {
-  pageUserApi,
+  pageUsersApi,
   deleteUserById,
   resetPasswordApi,
   changeEnabledApi,
@@ -367,7 +367,7 @@ export default {
         startValidTime: this.filter.startValidTime,
         endValidTime: this.filter.endValidTime,
       }
-      pageUserApi(pageParam).then(data => {
+      pageUsersApi(pageParam).then(data => {
         const content = data.content
 
         // 修改分页组件
