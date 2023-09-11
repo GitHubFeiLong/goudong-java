@@ -1,47 +1,194 @@
 <!--菜单页面-->
 <template>
   <div class="app-container">
-    <el-container class="app-container-main">
-      <el-header height="76px">
-        <el-button v-permission="'sys:menu:init'" icon="el-icon-edit" type="primary" @click="initMenu">初始菜单</el-button>
-        <el-button v-permission="'sys:menu:add'" icon="el-icon-plus" type="primary" @click="addMenu">新增</el-button>
-        <el-button @click="expandedTree(true)">展开全部</el-button>
-        <el-button @click="expandedTree(false)">折叠全部</el-button>
-      </el-header>
-      <el-container class="app-inner-container">
-        <el-aside width="230px">
-          <div class="menu-filter-div">
-            <el-input
-              v-model="filterText"
-              placeholder="输入关键字进行过滤"
-            />
+    <!--  查询条件  -->
+    <div class="filter-container">
+      <div class="filter-item">
+        <span class="filter-item-label">用户账号: </span>
+      </div>
+      <div class="filter-item">
+        <span class="filter-item-label">有效日期: </span>
+      </div>
+      <div class="filter-item">
+        <div class="filter-item">
+          <!--不加icon会小一个像素的高度-->
+          <el-button icon="el-icon-setting" >重置</el-button>
+        </div>
+      </div>
+    </div>
+    <!--顶部操作栏-->
+    <div class="el-table-tool">
+      <div class="left-tool">
+        <el-button v-permission="'sys:menu:init'" class="el-button--small" icon="el-icon-edit" type="primary"
+                   @click="initMenu"
+        >初始菜单
+        </el-button>
+        <el-button v-permission="'sys:menu:add'" class="el-button--small" icon="el-icon-plus" type="primary"
+                   @click="addMenu"
+        >新增
+        </el-button>
+      </div>
+      <div class="right-tool">
+        <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="刷新" placement="top">
+          <div class="right-tool-btn">
+            <i class="el-icon-refresh-right"/>
           </div>
-          <el-tree
-            ref="menuTree"
-            class="my-tree"
-            :props="props"
-            :data="menus"
-            :filter-node-method="filterNode"
-            :expand-on-click-node="false"
-            :highlight-current="highlightCurrent"
-            default-expand-all
-            node-key="id"
-            @node-click="menuNodeClick"
-          >
-            <template v-slot="{ node, data }">
-              <span>
-                <i v-if="data.type === 1" class="el-icon-folder" />
-                <svg-icon v-else icon-class="iconfont-anniuquanxiang" />
-                <span class="el-tree-node-span">{{ data.name }}</span>
-              </span>
-            </template>
-          </el-tree>
-        </el-aside>
-        <el-main class="detail">
-          <DetailMenu v-show="selectMenu.menuFullName !== ''" :select-menu="selectMenu" :refresh-menu="load" />
-        </el-main>
-      </el-container>
-    </el-container>
+        </el-tooltip>
+        <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="密度" placement="top">
+          <el-dropdown trigger="click" @command="changeElTableSizeCommand">
+            <div class="right-tool-btn">
+              <i class="el-icon-s-operation"/>
+            </div>
+            <el-dropdown-menu slot="dropdown" size="small">
+              <el-dropdown-item :class="table.elDropdownItemClass[0]" command="0,medium">默认</el-dropdown-item>
+              <el-dropdown-item :class="table.elDropdownItemClass[1]" command="1,small">中等</el-dropdown-item>
+              <el-dropdown-item :class="table.elDropdownItemClass[2]" command="2,mini">紧凑</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-tooltip>
+      </div>
+    </div>
+    <!-- 表格  -->
+    <el-table
+      ref="table"
+      v-loading="table.isLoading"
+      border
+      :data="table.data"
+      row-key="id"
+      style="width: 100%"
+      :header-cell-style="{background:'#FAFAFA', color:'#000', height: '30px',}"
+      :header-row-class-name="table.EL_TABLE.size"
+      :size="table.EL_TABLE.size"
+    >
+      <el-table-column
+        width="55"
+        type="selection"
+        header-align="center"
+        align="center"
+        class-name="selection"
+      />
+      <el-table-column
+        label="序号"
+        prop="serialNumber"
+      />
+      <el-table-column
+        label="用户名"
+        width="75"
+        prop="username"
+        sortable
+      />
+      <el-table-column
+        label="角色"
+        min-width="50"
+        sortable
+        show-overflow-tooltip
+      >
+        <template v-slot="scope">
+          <span v-for="item in scope.row.roles" :key="item.id">
+            <el-tag size="small">{{ item.name }}</el-tag> <br>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="账号有效期"
+        width="170"
+        prop="validTime"
+        show-overflow-tooltip
+        sortable
+      />
+      <el-table-column
+        label="创建时间"
+        width="170"
+        prop="createdDate"
+        show-overflow-tooltip
+        sortable
+      />
+      <el-table-column
+        label="备注"
+        min-width="180"
+        prop="remark"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        label="激活"
+        width="80"
+        prop="enabled"
+        align="center"
+      >
+        <template v-slot="scope">
+          <el-switch
+            v-model="scope.row.enabled"
+            :disabled="permissionDisabled('sys:user:enable')"
+            :active-value="true"
+            :inactive-value="false"
+            @change="changeEnabled(scope.row)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="锁定"
+        width="80"
+        prop="locked"
+        align="center"
+      >
+        <template v-slot="scope">
+          <el-switch
+            v-model="scope.row.locked"
+            :disabled="permissionDisabled('sys:user:lock')"
+            :active-value="true"
+            :inactive-value="false"
+            active-color="#F56C6C"
+            inactive-color="#C0CCDA"
+            @change="changeLocked(scope.row)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        width="230"
+        align="center"
+      >
+        <template v-slot="scope">
+          <div class="el-link-parent">
+            <el-link
+              v-permission="'sys:user:edit'"
+              icon="el-icon-edit"
+              :underline="false"
+              type="primary"
+              :disabled="Number(scope.row.id) <= 2147483647"
+              @click="editUser(scope.row)"
+            >编辑</el-link>
+            <el-link
+              v-permission="'sys:user:reset-password'"
+              icon="el-icon-key"
+              :underline="false"
+              type="warning"
+              :disabled="Number(scope.row.id) <= 2147483647"
+              @click="resetPassword(scope.row)"
+            >重置密码</el-link>
+            <el-link
+              v-permission="'sys:user:delete'"
+              icon="el-icon-delete"
+              :underline="false"
+              type="danger"
+              :disabled="Number(scope.row.id) <= 2147483647"
+              @click="deleteUser(scope.row)"
+            >删除</el-link>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 分页控件 -->
+    <el-pagination
+      :current-page="table.page"
+      :pager-count="table.pagerCount"
+      :page-size="table.size"
+      :page-sizes="table.pageSizes"
+      :total="table.total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
 
     <!--  新增菜单弹窗  -->
     <CreateMenuDialog :create-menu-dialog.sync="createMenuDialog" :refresh-menu="load" />
@@ -73,43 +220,40 @@ export default {
       },
       // menuVisible: false,
       createMenuDialog: false, // 创建菜单弹窗
+      table: {
+        isLoading: false,
+        data: [],
+        page: undefined,
+        pagerCount: undefined,
+        size: undefined,
+        pageSizes: undefined,
+        total: undefined,
+        elDropdownItemClass: ['el-dropdown-item--click', undefined, undefined],
+        EL_TABLE: {
+          // 显示大小
+          size: 'medium'
+        },
+      },
+
+
     }
   },
   watch: {
-    filterText(val) {
-      this.$refs.menuTree.filter(val);
-    }
+
   },
   mounted() {
-    this.load()
+    // this.load()
   },
   methods: {
     load() {
       listMenuApi().then(data => {
         this.menus = data;
-
         // 将菜单中的接口过滤
         const arr2 = menuTreeHandler(this.menus)
         this.$store.dispatch('menu/setAllMenus', arr2);
       })
     },
-    expandedTree(flag) { // 展开或收缩菜单tree
-      const nodes = this.$refs.menuTree.store.nodesMap;
-      console.log(nodes)
-      for (const i in nodes) {
-        nodes[i].expanded = flag;
-      }
-    },
-    filterNode(value, data, node) {
-      if (!value) return true;
-      const _array = []; // 这里使用数组存储 只是为了存储值。
-      this.getReturnNode(node, _array, value);
-      let result = false;
-      _array.forEach(item => {
-        result = result || item;
-      });
-      return result;
-    },
+
     getReturnNode(node, _array, value) {
       const isPass =
         node.data &&
@@ -119,22 +263,6 @@ export default {
       if (!isPass && node.level !== 1 && node.parent) {
         this.getReturnNode(node.parent, _array, value);
       }
-    },
-    menuNodeClick(data, node) { // 菜单节点被点击
-      // console.log(data)
-      // console.log(node)
-      this.selectMenu = { ...data }
-      this.selectMenu.menuFullName = this.getMenuAllName(node)
-    },
-    getMenuAllName(node) {
-      if (node) {
-        if (node.level !== 1) {
-          return this.getMenuAllName(node.parent) + " / " + node.data.name
-        } else {
-          return node.data.name;
-        }
-      }
-      return ""
     },
     // 推送菜单
     initMenu() {
@@ -186,6 +314,35 @@ export default {
     },
     addMenu() { // 新增菜单
       this.createMenuDialog = true
+    },
+
+    // 修改表格大小
+    changeElTableSizeCommand(val) {
+      const args = val.split(",");
+      const idx = Number(args[0]);
+      console.log(args)
+      this.table.elDropdownItemClass.map((value, index, array) => {
+        if (index === idx) {
+          array[index] = "el-dropdown-item--click";
+        } else {
+          array[index] = undefined;
+        }
+      })
+      console.log(this.table.elDropdownItemClass)
+      this.table.elDropdownItemClass[args[0]]
+      this.table.EL_TABLE.size = args[1];
+    },
+    // 更改每页显示多少条
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+      this.table.size = val
+      // this.loadPageUser()
+    },
+    // 修改当前页码
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.table.page = val
+      // this.loadPageUser()
     },
   }
 }
