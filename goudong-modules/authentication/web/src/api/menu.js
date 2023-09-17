@@ -1,5 +1,19 @@
 import request from '@/utils/request'
 
+import {API_PREFIX} from "@/constant/commons";
+
+/**
+ * 获取所有菜单
+ * @returns {*}
+ */
+export function listMenuApi(data) {
+  return request({
+    url: `${API_PREFIX}/menu/base-menus`,
+    data,
+    method: 'post'
+  })
+}
+
 /**
  * 初始化菜单
  * @param data
@@ -10,17 +24,6 @@ export function initMenuApi(data) {
     url: `/api/user/base-menu/init`,
     method: 'post',
     data
-  })
-}
-
-/**
- * 获取所有菜单
- * @returns {*}
- */
-export function listMenuApi() {
-  return request({
-    url: `/api/user/base-menu/tree`,
-    method: 'get'
   })
 }
 

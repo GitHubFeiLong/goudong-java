@@ -1,27 +1,20 @@
 package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.domain.BaseMenu;
-import com.goudong.authentication.server.rest.req.BaseRoleChangePermissionReq;
+import com.goudong.authentication.server.rest.req.BaseMenuGetAllReq;
 import com.goudong.authentication.server.rest.req.BaseRoleCreateReq;
-import com.goudong.authentication.server.rest.req.BaseRolePageReq;
 import com.goudong.authentication.server.rest.req.BaseRoleUpdateReq;
-import com.goudong.authentication.server.rest.resp.BaseRolePageResp;
-import com.goudong.authentication.server.rest.resp.BaseRolePermissionListResp;
-import com.goudong.authentication.server.service.BaseMenuService;
+import com.goudong.authentication.server.rest.resp.BaseMenuGetAllResp;
 import com.goudong.authentication.server.service.dto.BaseRoleDTO;
 import com.goudong.authentication.server.service.manager.BaseMenuManagerService;
-import com.goudong.core.lang.PageResult;
 import com.goudong.core.lang.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 
 /**
  * REST controller for managing {@link BaseMenu}.
@@ -38,10 +31,10 @@ public class BaseMenuResource {
     //~methods
     //==================================================================================================================
 
-    @PostMapping("/page/base-menus")
-    @ApiOperation(value = "分页菜单")
-    public Result<PageResult<BaseRolePageResp>> page(@RequestBody @Validated BaseRolePageReq req) {
-        return Result.ofSuccess(null);
+    @PostMapping("/base-menus")
+    @ApiOperation(value = "查询所有菜单")
+    public Result<BaseMenuGetAllResp> getAll(@RequestBody @Validated BaseMenuGetAllReq req) {
+        return Result.ofSuccess(baseMenuManagerService.getAll(req));
     }
 
     @PostMapping("/base-menu")

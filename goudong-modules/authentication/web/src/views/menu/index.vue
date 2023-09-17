@@ -4,16 +4,41 @@
     <!--  查询条件  -->
     <div class="filter-container">
       <div class="filter-item">
-        <span class="filter-item-label">用户账号: </span>
+        <span class="filter-item-label">菜单名称: </span>
+        <el-input v-model="filter.name" clearable placeholder="请输入" />
       </div>
       <div class="filter-item">
-        <span class="filter-item-label">有效日期: </span>
+        <span class="filter-item-label">菜单类型: </span>
+        <el-select v-model="filter.type" clearable>
+          <el-option
+            v-for="item in menuTypeArray"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </div>
       <div class="filter-item">
-        <div class="filter-item">
-          <!--不加icon会小一个像素的高度-->
-          <el-button icon="el-icon-setting" >重置</el-button>
-        </div>
+        <span class="filter-item-label">权限标识: </span>
+        <el-input v-model="filter.permissionId" clearable placeholder="请输入" />
+      </div>
+      <div class="filter-item">
+        <span class="filter-item-label">资源路径: </span>
+        <el-input v-model="filter.path" clearable placeholder="请输入" />
+      </div>
+      <div class="filter-item">
+        <el-button
+          v-permission="'sys:user:query'"
+          icon="el-icon-search"
+          type="primary"
+          @click="searchFunc"
+        >
+          查询
+        </el-button>
+      </div>
+      <div class="filter-item">
+        <!--不加icon会小一个像素的高度-->
+        <el-button icon="el-icon-setting" @click="resetSearchFilter">重置</el-button>
       </div>
     </div>
     <!--顶部操作栏-->
@@ -61,39 +86,50 @@
       :size="table.EL_TABLE.size"
     >
       <el-table-column
-        width="55"
-        type="selection"
-        header-align="center"
-        align="center"
-        class-name="selection"
-      />
-      <el-table-column
         label="序号"
         prop="serialNumber"
       />
       <el-table-column
-        label="用户名"
+        label="权限标识"
         width="75"
-        prop="username"
+        prop="permissionId"
         sortable
       />
       <el-table-column
-        label="角色"
+        label="名称"
         min-width="50"
+        prop="name"
         sortable
         show-overflow-tooltip
-      >
-        <template v-slot="scope">
-          <span v-for="item in scope.row.roles" :key="item.id">
-            <el-tag size="small">{{ item.name }}</el-tag> <br>
-          </span>
-        </template>
-      </el-table-column>
+      />
       <el-table-column
-        label="账号有效期"
+        label="类型"
         width="170"
-        prop="validTime"
-        show-overflow-tooltip
+        prop="type"
+        sortable
+      />
+      <el-table-column
+        label="资源路径"
+        width="170"
+        prop="path"
+        sortable
+      />
+      <el-table-column
+        label="请求方式"
+        width="170"
+        prop="method"
+        sortable
+      />
+      <el-table-column
+        label="排序"
+        width="170"
+        prop="sortNum"
+        sortable
+      />
+      <el-table-column
+        label="是否是隐藏菜单"
+        width="170"
+        prop="hide"
         sortable
       />
       <el-table-column
@@ -109,40 +145,6 @@
         prop="remark"
         show-overflow-tooltip
       />
-      <el-table-column
-        label="激活"
-        width="80"
-        prop="enabled"
-        align="center"
-      >
-        <template v-slot="scope">
-          <el-switch
-            v-model="scope.row.enabled"
-            :disabled="permissionDisabled('sys:user:enable')"
-            :active-value="true"
-            :inactive-value="false"
-            @change="changeEnabled(scope.row)"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="锁定"
-        width="80"
-        prop="locked"
-        align="center"
-      >
-        <template v-slot="scope">
-          <el-switch
-            v-model="scope.row.locked"
-            :disabled="permissionDisabled('sys:user:lock')"
-            :active-value="true"
-            :inactive-value="false"
-            active-color="#F56C6C"
-            inactive-color="#C0CCDA"
-            @change="changeLocked(scope.row)"
-          />
-        </template>
-      </el-table-column>
       <el-table-column
         label="操作"
         width="230"
@@ -199,6 +201,7 @@
 import { initMenuApi, listMenuApi } from "@/api/menu";
 import { menuTreeHandler } from "@/utils/tree";
 import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-router";
+import { MENU_TYPE_ARRAY } from "@/constant/commons"
 
 export default {
   name: 'MenuPage',
@@ -208,12 +211,21 @@ export default {
   },
   data() {
     return {
+
+      menuTypeArray: MENU_TYPE_ARRAY,
+      filter: {
+        name: undefined,
+        type: undefined,
+        permissionId: undefined,
+        path: undefined,
+      },
       filterText: undefined,
       menus: [],
       props: {
         label: 'name',
         children: 'children'
       },
+
       highlightCurrent: true, // 高亮显示  不让背景消失
       selectMenu: { // 当前选中的菜单
         menuFullName: ''
@@ -242,15 +254,17 @@ export default {
 
   },
   mounted() {
-    // this.load()
+    this.load()
   },
   methods: {
     load() {
-      listMenuApi().then(data => {
+
+      listMenuApi(this.filter).then(data => {
+        console.log("data")
         this.menus = data;
         // 将菜单中的接口过滤
-        const arr2 = menuTreeHandler(this.menus)
-        this.$store.dispatch('menu/setAllMenus', arr2);
+        // const arr2 = menuTreeHandler(this.menus)
+        // this.$store.dispatch('menu/setAllMenus', arr2);
       })
     },
 
@@ -277,6 +291,13 @@ export default {
       initMenuApi(menus).then(data => {
         this.$message.success("推送成功")
       })
+    },
+    // 查询
+    searchFunc() {
+      alert("1");
+    },
+    resetSearchFilter() {
+      this.filter = {}
     },
     generate(item) {
       const obj = {

@@ -48,3 +48,12 @@ export const DATE_PICKER_DEFAULT_OPTIONS = {
     }
   }]
 }
+
+/**
+ * 菜单类型
+ */
+export const MENU_TYPE_ARRAY = [
+  { label: '菜单', value: 1 },
+  { label: '按钮', value: 2 },
+  { label: '接口', value: 3 },
+]
