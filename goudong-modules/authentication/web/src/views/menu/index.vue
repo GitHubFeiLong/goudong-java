@@ -246,8 +246,6 @@ export default {
           size: 'medium'
         },
       },
-
-
     }
   },
   watch: {

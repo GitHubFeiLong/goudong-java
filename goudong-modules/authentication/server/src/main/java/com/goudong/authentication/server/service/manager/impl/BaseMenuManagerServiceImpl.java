@@ -32,18 +32,18 @@ public class BaseMenuManagerServiceImpl implements BaseMenuManagerService {
     //~methods
     //==================================================================================================================
     /**
-     * 分页查询菜单
-     *
-     * @param req 分页参数
-     * @return 分页结果
+     * 查询所有菜单
+     * @param req 查询条件
+     * @return 树形结构的菜单
      */
     @Override
     public BaseMenuGetAllResp getAll(BaseMenuGetAllReq req) {
         MyAuthentication myAuthentication = SecurityContextUtil.get();
         Long appId = myAuthentication.getRealAppId();
         List<BaseMenuDTO> allByAppId = baseMenuService.findAllByAppId(appId);
+        BaseMenuGetAllResp baseMenuGetAllResp = new BaseMenuGetAllResp();
         if (CollectionUtil.isEmpty(allByAppId)) {
-            return new BaseMenuGetAllResp();
+            return baseMenuGetAllResp;
         }
         // 排序
         allByAppId.sort(new Comparator<BaseMenuDTO>() {
@@ -53,6 +53,7 @@ public class BaseMenuManagerServiceImpl implements BaseMenuManagerService {
             }
         });
         List<BaseMenuDTO> tree = Tree.getInstance().toTree(allByAppId);
-        return null;
+        baseMenuGetAllResp.setRecords(tree);
+        return baseMenuGetAllResp;
     }
 }

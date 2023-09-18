@@ -17,9 +17,9 @@ public interface BaseMenuManagerService {
     //==================================================================================================================
 
     /**
-     * 分页查询菜单
-     * @param req 分页参数
-     * @return 分页结果
+     * 查询所有菜单
+     * @param req 查询条件
+     * @return 树形结构的菜单
      */
     BaseMenuGetAllResp getAll(BaseMenuGetAllReq req);
 }
