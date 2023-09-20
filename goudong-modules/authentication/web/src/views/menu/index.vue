@@ -85,22 +85,17 @@
       :header-row-class-name="table.EL_TABLE.size"
       :size="table.EL_TABLE.size"
     >
-      <el-table-column
-        label="序号"
-        prop="serialNumber"
-      />
-      <el-table-column
-        label="权限标识"
-        width="75"
-        prop="permissionId"
-        sortable
-      />
-      <el-table-column
+    <el-table-column
         label="名称"
         min-width="50"
         prop="name"
         sortable
         show-overflow-tooltip
+      />
+      <el-table-column
+        label="权限标识"
+        prop="permissionId"
+        sortable
       />
       <el-table-column
         label="类型"
@@ -258,8 +253,8 @@ export default {
     load() {
 
       listMenuApi(this.filter).then(data => {
-        console.log("data")
-        this.menus = data;
+        console.log("data", data.records)
+        this.table.data = data.records;
         // 将菜单中的接口过滤
         // const arr2 = menuTreeHandler(this.menus)
         // this.$store.dispatch('menu/setAllMenus', arr2);
