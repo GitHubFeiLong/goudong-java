@@ -87,52 +87,52 @@
     >
     <el-table-column
         label="名称"
-        min-width="50"
+        min-width="150"
         prop="name"
-        sortable
         show-overflow-tooltip
       />
       <el-table-column
         label="权限标识"
+        min-width="150"
         prop="permissionId"
-        sortable
+        show-overflow-tooltip
       />
       <el-table-column
         label="类型"
-        width="170"
         prop="type"
-        sortable
-      />
+      >
+        <template v-slot="scope">
+          <span v-if="scope.row.type === 1">菜单</span>
+          <span v-else-if="scope.row.type === 2">按钮</span>
+          <span v-else-if="scope.row.type === 3">接口</span>
+          <span v-else>未知类型</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="资源路径"
         width="170"
         prop="path"
-        sortable
       />
       <el-table-column
         label="请求方式"
         width="170"
         prop="method"
-        sortable
       />
       <el-table-column
         label="排序"
         width="170"
         prop="sortNum"
-        sortable
       />
       <el-table-column
         label="是否是隐藏菜单"
         width="170"
         prop="hide"
-        sortable
       />
       <el-table-column
         label="创建时间"
         width="170"
         prop="createdDate"
         show-overflow-tooltip
-        sortable
       />
       <el-table-column
         label="备注"
