@@ -40,7 +40,10 @@ public class BaseMenuManagerServiceImpl implements BaseMenuManagerService {
     public BaseMenuGetAllResp getAll(BaseMenuGetAllReq req) {
         MyAuthentication myAuthentication = SecurityContextUtil.get();
         Long appId = myAuthentication.getRealAppId();
-        List<BaseMenuDTO> allByAppId = baseMenuService.findAllByAppId(appId);
+        req.setAppId(appId);
+//        List<BaseMenuDTO> allByAppId = baseMenuService.findAllByAppId(appId);
+        List<BaseMenuDTO> allByAppId = baseMenuService.findAll(req);
+
         BaseMenuGetAllResp baseMenuGetAllResp = new BaseMenuGetAllResp();
         if (CollectionUtil.isEmpty(allByAppId)) {
             return baseMenuGetAllResp;
@@ -53,6 +56,7 @@ public class BaseMenuManagerServiceImpl implements BaseMenuManagerService {
             }
         });
         List<BaseMenuDTO> tree = Tree.getInstance().toTree(allByAppId);
+
         baseMenuGetAllResp.setRecords(tree);
         return baseMenuGetAllResp;
     }

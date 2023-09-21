@@ -1,6 +1,7 @@
 package com.goudong.authentication.server.service;
 
 import com.goudong.authentication.server.domain.BaseMenu;
+import com.goudong.authentication.server.rest.req.BaseMenuGetAllReq;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 
 import java.util.List;
@@ -23,6 +24,14 @@ public interface BaseMenuService {
      * @return 菜单集合
      */
     List<BaseMenu> findAllById(List<Long> ids);
+
+    /**
+     * 查询指定条件下的菜单
+     * @param req 条件
+     * @return 菜单集合
+     */
+    @Deprecated
+    List<BaseMenuDTO> findAll(BaseMenuGetAllReq req);
     // ==shanchu
 
 

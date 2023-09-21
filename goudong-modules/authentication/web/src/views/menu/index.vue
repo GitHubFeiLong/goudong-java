@@ -48,10 +48,15 @@
                    @click="initMenu"
         >初始菜单
         </el-button>
+        <el-button class="el-button--small" icon="el-icon-s-promotion" type="primary"
+                   @click="switchOpenDrag"
+        >{{ switchButtonName }}
+        </el-button>
         <el-button v-permission="'sys:menu:add'" class="el-button--small" icon="el-icon-plus" type="primary"
                    @click="addMenu"
         >新增
         </el-button>
+
       </div>
       <div class="right-tool">
         <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="刷新" placement="top">
@@ -85,7 +90,16 @@
       :header-row-class-name="table.EL_TABLE.size"
       :size="table.EL_TABLE.size"
     >
-    <el-table-column
+      <el-table-column
+        v-if="openDrag"
+        type="index"
+        label="拖拽"
+        width="60"
+        align="center"
+      >
+        <i class="el-icon-s-promotion handle" />
+      </el-table-column>
+      <el-table-column
         label="名称"
         min-width="150"
         prop="name"
@@ -115,22 +129,30 @@
       />
       <el-table-column
         label="请求方式"
-        width="170"
+        width="100"
         prop="method"
-      />
+        align="left"
+        show-overflow-tooltip
+      >
+        <template v-slot="scope">
+          <span v-for="item in getMethod(scope.row)" :key="item">
+            <el-tag size="small">{{ item }}</el-tag> <br>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="排序"
-        width="170"
+        width="50"
         prop="sortNum"
       />
       <el-table-column
-        label="是否是隐藏菜单"
-        width="170"
+        label="隐藏"
+        width="50"
         prop="hide"
       />
       <el-table-column
         label="创建时间"
-        width="170"
+        width="150"
         prop="createdDate"
         show-overflow-tooltip
       />
@@ -175,18 +197,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页控件 -->
-    <el-pagination
-      :current-page="table.page"
-      :pager-count="table.pagerCount"
-      :page-size="table.size"
-      :page-sizes="table.pageSizes"
-      :total="table.total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
-
     <!--  新增菜单弹窗  -->
     <CreateMenuDialog :create-menu-dialog.sync="createMenuDialog" :refresh-menu="load" />
   </div>
@@ -197,6 +207,7 @@ import { initMenuApi, listMenuApi } from "@/api/menu";
 import { menuTreeHandler } from "@/utils/tree";
 import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-router";
 import { MENU_TYPE_ARRAY } from "@/constant/commons"
+import Sortable from 'sortablejs';
 
 export default {
   name: 'MenuPage',
@@ -206,7 +217,6 @@ export default {
   },
   data() {
     return {
-
       menuTypeArray: MENU_TYPE_ARRAY,
       filter: {
         name: undefined,
@@ -214,33 +224,25 @@ export default {
         permissionId: undefined,
         path: undefined,
       },
-      filterText: undefined,
-      menus: [],
       props: {
         label: 'name',
         children: 'children'
-      },
-
-      highlightCurrent: true, // 高亮显示  不让背景消失
-      selectMenu: { // 当前选中的菜单
-        menuFullName: ''
       },
       // menuVisible: false,
       createMenuDialog: false, // 创建菜单弹窗
       table: {
         isLoading: false,
-        data: [],
-        page: undefined,
-        pagerCount: undefined,
-        size: undefined,
-        pageSizes: undefined,
-        total: undefined,
+        rawData: [], // 初始数据
+        data: [], // 渲染的数据
+        activeRows: [], // 转换为列表的数据
         elDropdownItemClass: ['el-dropdown-item--click', undefined, undefined],
         EL_TABLE: {
           // 显示大小
           size: 'medium'
         },
       },
+      openDrag: false, // 开启拖拽
+      switchButtonName: '开启拖拽', // 拖拽的按钮文字
     }
   },
   watch: {
@@ -248,19 +250,66 @@ export default {
   },
   mounted() {
     this.load()
+    this.rowDrop()
   },
   methods: {
+    // 切换拖拽
+    switchOpenDrag() {
+      // 状态取反
+      this.openDrag = !this.openDrag;
+      this.switchButtonName = this.openDrag ? "关闭拖拽" : "开启拖拽"
+    },
     load() {
-
-      listMenuApi(this.filter).then(data => {
+      this.table.isLoading = true;
+      listMenuApi({}).then(data => {
         console.log("data", data.records)
         this.table.data = data.records;
-        // 将菜单中的接口过滤
-        // const arr2 = menuTreeHandler(this.menus)
-        // this.$store.dispatch('menu/setAllMenus', arr2);
+        this.table.rawData = data.records;
+      }).finally(() => {
+        this.table.isLoading = false
       })
     },
-
+    getMethod(row) {
+      if (row.method) {
+        console.log(row.method);
+        console.log(JSON.parse(row.method));
+        return JSON.parse(row.method)
+      }
+      return []
+    },
+    // 将树数据转化为平铺数据
+    treeToTile(treeData, childKey = 'children') {
+      const arr = []
+      const expanded = data => {
+        if (data && data.length > 0) {
+          data.filter(d => d).forEach(e => {
+            arr.push(e)
+            expanded(e[childKey] || [])
+          })
+        }
+      }
+      expanded(treeData)
+      return arr
+    },
+    // 行拖拽
+    rowDrop() {
+      console.log("123123");
+      const tbody = document.querySelector('.el-table__body-wrapper tbody')
+      const _this = this
+      Sortable.create(tbody, {
+        //  指定父元素下可被拖拽的子元素
+        handle: ".handle",
+        onMove: () => {
+          _this.table.activeRows = this.treeToTile(_this.table.data) // 把树形的结构转为列表再进行拖拽
+        },
+        onEnd({ newIndex, oldIndex }) {
+          console.log(newIndex, oldIndex);
+          const currRow = _this.table.activeRows.splice(oldIndex, 1)[0]
+          console.log(currRow);
+          _this.table.activeRows.splice(newIndex, 0, currRow)
+        }
+      })
+    },
     getReturnNode(node, _array, value) {
       const isPass =
         node.data &&
@@ -287,10 +336,28 @@ export default {
     },
     // 查询
     searchFunc() {
-      alert("1");
+      console.log(JSON.stringify(this.table.data));
+      console.log(JSON.stringify(this.table.rawData));
+      // 筛选
+      this.table.data.filter((item) => {
+        return this.menuFilter(item);
+      })
+      console.log(JSON.stringify(this.table.rawData));
+    },
+    menuFilter(menu) {
+      if (menu.children) {
+        menu.children.filter((item) => {
+          return this.menuFilter(item);
+        })
+      }
+      if (this.filter.name && menu.name.indexOf(this.filter.name) !== -1) {
+        return true;
+      } 
+      return false;
     },
     resetSearchFilter() {
       this.filter = {}
+      this.table.data = this.table.rawData
     },
     generate(item) {
       const obj = {

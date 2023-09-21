@@ -24,4 +24,7 @@ public class BaseMenuGetAllReq {
 
     @ApiModelProperty("资源路径")
     private String path;
+
+    @ApiModelProperty(value = "资源路径", hidden = true)
+    private Long appId;
 }
