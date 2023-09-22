@@ -114,6 +114,7 @@
       <el-table-column
         label="类型"
         prop="type"
+        max-width="50"
       >
         <template v-slot="scope">
           <span v-if="scope.row.type === 1">菜单</span>
@@ -149,7 +150,11 @@
         label="隐藏"
         width="50"
         prop="hide"
-      />
+      >
+        <template v-slot="scope">
+          <span>{{ scope.row.hide ? '隐藏' : '可见' }}</span>
+        </template>
+    </el-table-column>
       <el-table-column
         label="创建时间"
         width="150"
@@ -158,7 +163,7 @@
       />
       <el-table-column
         label="备注"
-        min-width="180"
+        width="100"
         prop="remark"
         show-overflow-tooltip
       />
@@ -234,12 +239,13 @@ export default {
         isLoading: false,
         rawData: [], // 初始数据
         data: [], // 渲染的数据
-        activeRows: [], // 转换为列表的数据
+        activeRows: [], // 转换为列表(一维数组)的数据
         elDropdownItemClass: ['el-dropdown-item--click', undefined, undefined],
         EL_TABLE: {
           // 显示大小
           size: 'medium'
         },
+        sort_able: undefined,
       },
       openDrag: false, // 开启拖拽
       switchButtonName: '开启拖拽', // 拖拽的按钮文字
@@ -250,7 +256,6 @@ export default {
   },
   mounted() {
     this.load()
-    this.rowDrop()
   },
   methods: {
     // 切换拖拽
@@ -258,6 +263,11 @@ export default {
       // 状态取反
       this.openDrag = !this.openDrag;
       this.switchButtonName = this.openDrag ? "关闭拖拽" : "开启拖拽"
+      if (!this.openDrag) {
+        this.cancelRowDrop()
+      } else {
+        this.rowDrop()
+      }
     },
     load() {
       this.table.isLoading = true;
@@ -271,8 +281,6 @@ export default {
     },
     getMethod(row) {
       if (row.method) {
-        console.log(row.method);
-        console.log(JSON.parse(row.method));
         return JSON.parse(row.method)
       }
       return []
@@ -293,22 +301,38 @@ export default {
     },
     // 行拖拽
     rowDrop() {
-      console.log("123123");
       const tbody = document.querySelector('.el-table__body-wrapper tbody')
       const _this = this
-      Sortable.create(tbody, {
+      this.sort_able = Sortable.create(tbody, {
         //  指定父元素下可被拖拽的子元素
         handle: ".handle",
         onMove: () => {
           _this.table.activeRows = this.treeToTile(_this.table.data) // 把树形的结构转为列表再进行拖拽
         },
         onEnd({ newIndex, oldIndex }) {
-          console.log(newIndex, oldIndex);
-          const currRow = _this.table.activeRows.splice(oldIndex, 1)[0]
-          console.log(currRow);
-          _this.table.activeRows.splice(newIndex, 0, currRow)
+          // 1. 校验只能同级
+          if (_this.table.activeRows[newIndex].parentId !== _this.table.activeRows[oldIndex].parentId) {
+            _this.$message.error("只能同级进行移动");
+            _this.cancelRowDrop()
+            _this.load();
+            _this.$refs.table.doLayout();
+            return;
+          } else {
+            console.log(newIndex, oldIndex);
+            const currRow = _this.table.activeRows.splice(oldIndex, 1)[0]
+            console.log(currRow);
+            _this.table.activeRows.splice(newIndex, 0, currRow)
+          }
         }
       })
+    },
+    // 取消拖拽
+    cancelRowDrop() {
+      if (this.sort_able) {
+        this.openDrag = false;
+        this.switchButtonName = this.openDrag ? "关闭拖拽" : "开启拖拽"
+        this.sort_able.destroy()
+      }
     },
     getReturnNode(node, _array, value) {
       const isPass =
@@ -336,28 +360,42 @@ export default {
     },
     // 查询
     searchFunc() {
-      console.log(JSON.stringify(this.table.data));
-      console.log(JSON.stringify(this.table.rawData));
       // 筛选
-      this.table.data.filter((item) => {
-        return this.menuFilter(item);
+      const arr = []
+      this.table.rawData.filter((item) => {
+        return this.menuFilter(item, arr);
       })
-      console.log(JSON.stringify(this.table.rawData));
+      this.table.data = arr
+      console.log(JSON.stringify(arr));
     },
-    menuFilter(menu) {
+    menuFilter(menu, arr) {
+      // 本节点满足条件，直接添加到数组arr。
+      let flag = true
+      // 菜单名
+      flag = flag && (!this.filter.name || (this.filter.name && menu.name.indexOf(this.filter.name) !== -1))
+      // 菜单类型
+      flag = flag && (!this.filter.type || (this.filter.type && menu.type === this.filter.type))
+      // 权限标识
+      flag = flag && (!this.filter.permissionId || (this.filter.permissionId && menu.permissionId.indexOf(this.filter.permissionId) !== -1))
+      // 资源路径
+      flag = flag && (!this.filter.path || (this.filter.path && menu.path.indexOf(this.filter.path) !== -1))
+      // 所有条件满足，添加到集合
+      if (flag) {
+        arr.push(menu)
+        return true;
+      }
+      // 本节点不满足条件，继续遍历子节点
       if (menu.children) {
         menu.children.filter((item) => {
-          return this.menuFilter(item);
+          return this.menuFilter(item, arr);
         })
       }
-      if (this.filter.name && menu.name.indexOf(this.filter.name) !== -1) {
-        return true;
-      } 
       return false;
     },
     resetSearchFilter() {
       this.filter = {}
-      this.table.data = this.table.rawData
+      // 重新加载
+      this.load();
     },
     generate(item) {
       const obj = {
@@ -396,7 +434,6 @@ export default {
     addMenu() { // 新增菜单
       this.createMenuDialog = true
     },
-
     // 修改表格大小
     changeElTableSizeCommand(val) {
       const args = val.split(",");
@@ -412,18 +449,6 @@ export default {
       console.log(this.table.elDropdownItemClass)
       this.table.elDropdownItemClass[args[0]]
       this.table.EL_TABLE.size = args[1];
-    },
-    // 更改每页显示多少条
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-      this.table.size = val
-      // this.loadPageUser()
-    },
-    // 修改当前页码
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-      this.table.page = val
-      // this.loadPageUser()
     },
   }
 }
