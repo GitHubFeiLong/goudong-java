@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,8 +83,6 @@ public class BaseMenu extends BasePO implements Serializable {
     /**
      * 排序字段（值越小越靠前，仅仅针对前端路由）
      */
-    @Min(value = 1)
-    @Max(value = 2147483647)
     @Column(name = "sort_num", nullable = false)
     private Integer sortNum;
 

@@ -1,11 +1,12 @@
 package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.domain.BaseMenu;
+import com.goudong.authentication.server.rest.req.BaseMenuChangeSortNumReq;
+import com.goudong.authentication.server.rest.req.BaseMenuCreateReq;
 import com.goudong.authentication.server.rest.req.BaseMenuGetAllReq;
-import com.goudong.authentication.server.rest.req.BaseRoleCreateReq;
-import com.goudong.authentication.server.rest.req.BaseRoleUpdateReq;
+import com.goudong.authentication.server.rest.req.BaseMenuUpdateReq;
 import com.goudong.authentication.server.rest.resp.BaseMenuGetAllResp;
-import com.goudong.authentication.server.service.dto.BaseRoleDTO;
+import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import com.goudong.authentication.server.service.manager.BaseMenuManagerService;
 import com.goudong.core.lang.Result;
 import io.swagger.annotations.Api;
@@ -14,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * REST controller for managing {@link BaseMenu}.
@@ -39,26 +39,26 @@ public class BaseMenuResource {
 
     @PostMapping("/base-menu")
     @ApiOperation(value = "新增菜单")
-    public Result<BaseRoleDTO> create(@RequestBody @Validated BaseRoleCreateReq req) {
-        return Result.ofSuccess(null);
+    public Result<BaseMenuDTO> save(@RequestBody @Validated BaseMenuCreateReq req) {
+        return Result.ofSuccess(baseMenuManagerService.save(req));
     }
 
     @PutMapping("/base-menu")
     @ApiOperation(value = "修改菜单")
-    public Result<BaseRoleDTO> update(@RequestBody @Validated BaseRoleUpdateReq req) {
-        return Result.ofSuccess(null);
+    public Result<BaseMenuDTO> update(@RequestBody @Validated BaseMenuUpdateReq req) {
+        return Result.ofSuccess(baseMenuManagerService.update(req));
     }
 
-    @PutMapping("/base-menu/sort_num")
+    @PutMapping("/base-menu/sort-num")
     @ApiOperation(value = "修改菜单排序")
-    public Result<BaseRoleDTO> changeSortNum(@RequestBody @Validated BaseRoleUpdateReq req) {
-        return Result.ofSuccess(null);
+    public Result<Boolean> changeSortNum(@RequestBody @Validated BaseMenuChangeSortNumReq req) {
+        return Result.ofSuccess(baseMenuManagerService.changeSortNum(req));
     }
 
-    @DeleteMapping("/base-menus")
-    @ApiOperation(value = "批量删除菜单")
-    public Result<Boolean> delete(@RequestBody @NotNull Long[] ids) {
-        return Result.ofSuccess(null);
+    @DeleteMapping("/base-menu/{id}")
+    @ApiOperation(value = "删除菜单", notes = "如果是父节点，那么就会删除它及它下面的所有子节点")
+    public Result<Boolean> delete(@PathVariable Long id) {
+        return Result.ofSuccess(baseMenuManagerService.deleteById(id));
     }
 
 }

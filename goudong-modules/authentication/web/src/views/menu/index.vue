@@ -84,6 +84,7 @@
       v-loading="table.isLoading"
       border
       :data="table.data"
+      :key="dataKey"
       row-key="id"
       style="width: 100%"
       :header-cell-style="{background:'#FAFAFA', color:'#000', height: '30px',}"
@@ -91,11 +92,11 @@
       :size="table.EL_TABLE.size"
     >
       <el-table-column
-        v-if="openDrag"
         type="index"
         label="拖拽"
         width="60"
         align="center"
+        :class-name="switchClassName"
       >
         <i class="el-icon-s-promotion handle" />
       </el-table-column>
@@ -175,7 +176,7 @@
         <template v-slot="scope">
           <div class="el-link-parent">
             <el-link
-              v-permission="'sys:user:edit'"
+              v-permission="'sys:menu:edit'"
               icon="el-icon-edit"
               :underline="false"
               type="primary"
@@ -183,20 +184,12 @@
               @click="editUser(scope.row)"
             >编辑</el-link>
             <el-link
-              v-permission="'sys:user:reset-password'"
-              icon="el-icon-key"
-              :underline="false"
-              type="warning"
-              :disabled="Number(scope.row.id) <= 2147483647"
-              @click="resetPassword(scope.row)"
-            >重置密码</el-link>
-            <el-link
-              v-permission="'sys:user:delete'"
+              v-permission="'sys:menu:delete'"
               icon="el-icon-delete"
               :underline="false"
               type="danger"
               :disabled="Number(scope.row.id) <= 2147483647"
-              @click="deleteUser(scope.row)"
+              @click="deleteMenu(scope.row)"
             >删除</el-link>
           </div>
         </template>
@@ -208,11 +201,12 @@
 </template>
 
 <script>
-import { initMenuApi, listMenuApi } from "@/api/menu";
+import { changeSortNumApi, deleteMenuByIdApi, initMenuApi, listMenuApi } from "@/api/menu";
 import { menuTreeHandler } from "@/utils/tree";
 import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-router";
 import { MENU_TYPE_ARRAY } from "@/constant/commons"
 import Sortable from 'sortablejs';
+import { deleteRoleByIdsApi } from "@/api/role";
 
 export default {
   name: 'MenuPage',
@@ -223,6 +217,7 @@ export default {
   data() {
     return {
       menuTypeArray: MENU_TYPE_ARRAY,
+      dataKey: new Date().getTime(),
       filter: {
         name: undefined,
         type: undefined,
@@ -235,6 +230,7 @@ export default {
       },
       // menuVisible: false,
       createMenuDialog: false, // 创建菜单弹窗
+      updateMenuDialog: false, // 创建菜单弹窗
       table: {
         isLoading: false,
         rawData: [], // 初始数据
@@ -249,6 +245,7 @@ export default {
       },
       openDrag: false, // 开启拖拽
       switchButtonName: '开启拖拽', // 拖拽的按钮文字
+      switchClassName: 'close-switch-drag', // 拖拽列得class
     }
   },
   watch: {
@@ -265,8 +262,11 @@ export default {
       this.switchButtonName = this.openDrag ? "关闭拖拽" : "开启拖拽"
       if (!this.openDrag) {
         this.cancelRowDrop()
+        this.switchClassName = "close-switch-drag"
       } else {
         this.rowDrop()
+        this.switchClassName = "open-switch-drag"
+
       }
     },
     load() {
@@ -275,6 +275,7 @@ export default {
         console.log("data", data.records)
         this.table.data = data.records;
         this.table.rawData = data.records;
+        this.$store.dispatch('menu/setAllMenus', data.records)
       }).finally(() => {
         this.table.isLoading = false
       })
@@ -313,15 +314,19 @@ export default {
           // 1. 校验只能同级
           if (_this.table.activeRows[newIndex].parentId !== _this.table.activeRows[oldIndex].parentId) {
             _this.$message.error("只能同级进行移动");
-            _this.cancelRowDrop()
-            _this.load();
-            _this.$refs.table.doLayout();
+            _this.dataKey=new Date().getTime()
+            _this.switchOpenDrag()
             return;
           } else {
-            console.log(newIndex, oldIndex);
+            const beforeId = _this.table.activeRows[oldIndex].id
+            const afterId = _this.table.activeRows[newIndex].id
+            console.log(oldIndex, newIndex);
+            console.log(beforeId, afterId);
             const currRow = _this.table.activeRows.splice(oldIndex, 1)[0]
-            console.log(currRow);
             _this.table.activeRows.splice(newIndex, 0, currRow)
+            changeSortNumApi({beforeId: beforeId, afterId: afterId}).then(data => {
+              _this.load();
+            })
           }
         }
       })
@@ -434,6 +439,23 @@ export default {
     addMenu() { // 新增菜单
       this.createMenuDialog = true
     },
+    updateMenu() { // 修改菜单
+      this.updateMenuDialog = true
+    },
+    deleteMenu(row) { // 删除菜单
+      this.$confirm(`此操作将永久删除”${row.name}“整个菜单, 是否继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteMenuByIdApi(row.id).then(response => {
+          this.$message.success("删除成功")
+          this.load()
+        })
+      }).catch(() => {
+        this.$message.info("已取消删除");
+      })
+    },
     // 修改表格大小
     changeElTableSizeCommand(val) {
       const args = val.split(",");
@@ -455,29 +477,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '@/styles/variables.scss';
-.app-container-main{
-  .el-header{
-    padding: 20px 20px;
-    border-bottom: 1px solid $borderColor;
+
+::v-deep .open-switch-drag{
+  cursor: move;
+  .cell {
+
   }
-  .app-inner-container {
-    min-height: calc(100vh - 126px);
-    padding: 0 20px;
-    aside{
-      background-color: #fff;
-      position: relative;
-      border-right: 1px solid $borderColor;
-      padding: 0 20px 0 0;
-      .menu-filter-div{
-        padding: 20px 0 20px 0;
-      }
-      .el-tree {
-        .el-tree-node-span {
-          display: inline-block;
-          margin-left: 5px;
-        }
-      }
-    }
+}
+::v-deep .close-switch-drag{
+  cursor: not-allowed;
+  .cell {
+    opacity: 0.4;
   }
 }
 

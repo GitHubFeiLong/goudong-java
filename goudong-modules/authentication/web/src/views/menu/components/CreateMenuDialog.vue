@@ -6,7 +6,7 @@
         <el-col :span="12">
           <el-form-item label="上级菜单:" prop="parentId">
             <!--  选择器选项以树形控件展示  -->
-            <el-select ref="selectParentMenu" v-model="parentMenu.id" placeholder="请选择上级菜单">
+            <el-select ref="selectParentMenu" v-model="parentMenu.id" placeholder="请选择上级菜单" clearable>
               <el-option :key="parentMenu.id" :value="parentMenu.id" :label="parentMenu.name" hidden />
               <el-tree
                 :data="menuData"
@@ -22,9 +22,7 @@
         <el-col :span="12">
           <el-form-item label="菜单类型:" prop="type">
             <el-radio-group v-model="menu.type">
-              <el-radio :label="0">接口</el-radio>
-              <el-radio :label="1">菜单</el-radio>
-              <el-radio :label="2">按钮</el-radio>
+              <el-radio v-for="item in menuTypes" :label="item.value">{{item.label}}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -36,11 +34,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="打开方式:" prop="openModel">
-            <el-radio-group v-model="menu.openModel">
-              <el-radio :label="0">内链</el-radio>
-              <el-radio :label="1">外链</el-radio>
-            </el-radio-group>
+          <el-form-item label="权限标识:" prop="permissionId">
+            <el-input v-model="menu.permissionId" placeholder="请输入权限标识" clearable :disabled="menu.type === 0" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -48,35 +43,6 @@
       <el-row>
         <el-col :span="24">
           <div class="cutting-line el-divider el-divider--horizontal" />
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="菜单图标:" prop="remark" :class="iconInputClass">
-            <el-select v-model="menu.icon" popper-class="icon-el-select" :popper-append-to-body="false" placeholder="请选择菜单图标" disabled clearable>
-              <template #prefix>
-                <span style="padding-left: 5px; color: #606266 ">
-                  <i :class="menu.icon" />
-                </span>
-              </template>
-              <el-option
-                v-for="item in icons"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-                <el-tooltip placement="top">
-                  <div slot="content">{{ item }}</div>
-                  <i :class="item" />
-                </el-tooltip>
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="权限标识:" prop="permissionId">
-            <el-input v-model="menu.permissionId" placeholder="请输入权限标识" clearable :disabled="menu.type === 0" />
-          </el-form-item>
         </el-col>
       </el-row>
       <el-row>
@@ -127,8 +93,8 @@
       </el-row>
     </el-form>
     <el-form ref="addMenuForm2" :model="menu" :rules="rules" label-width="100px" label-position="right">
-      <el-form-item label="菜单元数据:" prop="metadata">
-        <el-input v-model="menu.metadata" type="textarea" :rows="5" placeholder="请输入JSON格式的路由元数据" :disabled="menu.type === 0" />
+      <el-form-item label="菜单元数据:" prop="meta">
+        <el-input v-model="menu.meta" type="textarea" :rows="5" placeholder="请输入JSON格式的路由元数据" :disabled="menu.type === 0" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -140,7 +106,7 @@
 
 <script>
 
-import { EL_ICONS } from "@/constant/commons";
+import { EL_ICONS, HTTP_METHOD_ARRAY, MENU_TYPE_ARRAY } from "@/constant/commons";
 import { isJSON } from "@/utils/validate";
 import { addMenuApi, initMenuApi } from "@/api/menu";
 export default {
@@ -161,7 +127,7 @@ export default {
     }
   },
   data() {
-    const validateMetadata = (rule, value, callback) => {
+    const validateMeta = (rule, value, callback) => {
       isJSON(value).then(boo => {
         console.log(boo)
         if (!boo) {
@@ -187,17 +153,9 @@ export default {
         label: '路由地址:',
         placeholder: '请输入路由地址'
       },
-      methods: [
-        { value: 'GET', label: 'GET' },
-        { value: 'POST', label: 'POST' },
-        { value: 'PUT', label: 'PUT' },
-        { value: 'DELETE', label: 'DELETE' },
-        { value: 'HEAD', label: 'HEAD' },
-        { value: 'PATCH', label: 'PATCH' },
-        { value: 'OPTIONS', label: 'OPTIONS' },
-        { value: 'TRACE', label: 'TRACE' },
-      ],
+      methods: HTTP_METHOD_ARRAY,
       visible: false,
+      menuTypes: MENU_TYPE_ARRAY,
       menu: {
         parentId: undefined,
         type: 0,
@@ -209,7 +167,7 @@ export default {
         method: undefined,
         sortNum: 0,
         hide: true,
-        metadata: undefined,
+        meta: undefined,
         remark: '',
       },
       rules: {
@@ -222,8 +180,8 @@ export default {
         sortNum: [
           { required: true, type: 'number', min: 1, max: 99999, message: '请输入排序号', trigger: 'blur' }
         ],
-        metadata: [
-          { required: false, message: '请输入正确的JSON格式', trigger: 'blur', validator: validateMetadata }
+        meta: [
+          { required: false, message: '请输入正确的JSON格式', trigger: 'blur', validator: validateMeta }
         ]
       }
     };
@@ -233,9 +191,6 @@ export default {
       this.visible = this.createMenuDialog;
       if (this.visible) {
         this.menuData = this.$store.getters.allMenus;
-        if (this.icons.length === 0) {
-          // this.icons = EL_ICONS
-        }
       }
     },
     'menu.type'() {
@@ -249,7 +204,7 @@ export default {
           break;
         case 1:
           this.menu.method = undefined
-          this.menu.metadata = undefined
+          this.menu.meta = undefined
           this.menu.hide = false
           this.routePath = {
             label: '路由地址:',
@@ -261,13 +216,6 @@ export default {
           break;
       }
     },
-    'menu.icon'() {
-      // if (this.menu.icon !== '') {
-      //   this.iconInputClass = 'icon-input-class';
-      // } else {
-      //   this.iconInputClass = 'default-icon-input-class';
-      // }
-    }
   },
   methods: {
     handleMenuNodeClick(data) {
@@ -290,14 +238,12 @@ export default {
         parentId: undefined,
         type: 0,
         name: undefined,
-        openModel: 0,
-        icon: '',
         permissionId: undefined,
         path: undefined,
         method: undefined,
         sortNum: 0,
         hide: false,
-        metadata: undefined,
+        meta: undefined,
         remark: '',
       }
       this.close();

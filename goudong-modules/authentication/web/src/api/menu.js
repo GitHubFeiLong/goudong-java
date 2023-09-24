@@ -34,7 +34,7 @@ export function initMenuApi(data) {
  */
 export function addMenuApi(data) {
   return request({
-    url: `/api/user/base-menu`,
+    url: `${API_PREFIX}/menu/base-menu`,
     method: 'post',
     data
   })
@@ -58,9 +58,22 @@ export function updateMenuApi(data) {
  * @param id
  * @returns {*}
  */
-export function deleteMenuApi(id) {
+export function deleteMenuByIdApi(id) {
   return request({
-    url: `/api/user/base-menu/${id}`,
+    url: `${API_PREFIX}/menu/base-menu/${id}`,
     method: 'delete',
+  })
+}
+
+/**
+ * 修改排序
+ * @param data
+ * @returns {*}
+ */
+export function changeSortNumApi(data) {
+  return request({
+    url: `${API_PREFIX}/menu/base-menu/sort-num`,
+    method: 'put',
+    data: data,
   })
 }

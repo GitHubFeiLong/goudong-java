@@ -2,7 +2,8 @@ const getters = {
   sidebar: state => state.app.sidebar,
   device: state => state.app.device,
   routes: state => state.permission.routes,
-  user: state => state.user.user
+  user: state => state.user.user,
+  allMenus: state => state.menu.allMenus, // 应用所有菜单
   // size: state => state.app.size,
   // visitedViews: state => state.tagsView.visitedViews,
   // cachedViews: state => state.tagsView.cachedViews,
@@ -11,6 +12,6 @@ const getters = {
   // introduction: state => state.user.introduction,
   // roles: state => state.user.roles,
   // menus: state => state.user.menus,
-  // allMenus: state => state.menu.allMenus,
+
 }
 export default getters

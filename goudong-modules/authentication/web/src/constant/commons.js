@@ -19,6 +19,20 @@ export const ENABLED_ARRAY = [
 ];
 
 /**
+ * http 请求方法
+ */
+export const HTTP_METHOD_ARRAY = [
+  { value: 'GET', label: 'GET' },
+  { value: 'POST', label: 'POST' },
+  { value: 'PUT', label: 'PUT' },
+  { value: 'DELETE', label: 'DELETE' },
+  { value: 'HEAD', label: 'HEAD' },
+  { value: 'PATCH', label: 'PATCH' },
+  { value: 'OPTIONS', label: 'OPTIONS' },
+  { value: 'TRACE', label: 'TRACE' },
+];
+
+/**
  * 日期组件的显示样式
  */
 export const DATE_PICKER_DEFAULT_OPTIONS = {

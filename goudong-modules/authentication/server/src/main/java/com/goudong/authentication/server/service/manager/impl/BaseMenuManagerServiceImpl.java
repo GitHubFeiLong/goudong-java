@@ -1,6 +1,9 @@
 package com.goudong.authentication.server.service.manager.impl;
 
+import com.goudong.authentication.server.rest.req.BaseMenuChangeSortNumReq;
+import com.goudong.authentication.server.rest.req.BaseMenuCreateReq;
 import com.goudong.authentication.server.rest.req.BaseMenuGetAllReq;
+import com.goudong.authentication.server.rest.req.BaseMenuUpdateReq;
 import com.goudong.authentication.server.rest.resp.BaseMenuGetAllResp;
 import com.goudong.authentication.server.service.BaseMenuService;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
@@ -28,6 +31,7 @@ public class BaseMenuManagerServiceImpl implements BaseMenuManagerService {
     //==================================================================================================================
     @Resource
     private BaseMenuService baseMenuService;
+
 
     //~methods
     //==================================================================================================================
@@ -59,6 +63,50 @@ public class BaseMenuManagerServiceImpl implements BaseMenuManagerService {
 
         baseMenuGetAllResp.setRecords(tree);
         return baseMenuGetAllResp;
+    }
+
+    /**
+     * 新增菜单
+     *
+     * @param req 菜单参数
+     * @return 新增后菜单
+     */
+    @Override
+    public BaseMenuDTO save(BaseMenuCreateReq req) {
+        return baseMenuService.save(req);
+    }
+
+    /**
+     * 更新菜单
+     *
+     * @param req 被修改菜单
+     * @return 修改后菜单
+     */
+    @Override
+    public BaseMenuDTO update(BaseMenuUpdateReq req) {
+        return baseMenuService.update(req);
+    }
+
+    /**
+     * 删除菜单，如果菜单是父节点，就会删除它及它下面的所有子节点
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Boolean deleteById(Long id) {
+        return baseMenuService.deleteById(id);
+    }
+
+    /**
+     * 修改排序
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public Boolean changeSortNum(BaseMenuChangeSortNumReq req) {
+        return baseMenuService.changeSortNum(req);
     }
 }
 

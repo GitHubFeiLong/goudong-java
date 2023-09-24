@@ -32,4 +32,16 @@ public interface BaseMenuRepository extends JpaRepository<BaseMenu, Long>, JpaSp
      * @return 菜单集合
      */
     List<BaseMenu> findAllByAppId(Long appId);
+
+    /**
+     * 修改排序
+     * @param appId 应用id
+     * @param parentId 父级菜单id
+     * @param minSortNum 排序最小
+     * @param maxSortNum 排序最大
+     * @param incr 增量
+     */
+    @Modifying
+    @Query(nativeQuery = true, value = "update base_menu set sort_num = sort_num + ?5 where app_id=?1 and parent_id=?2 and sort_num >= ?3 and sort_num <= ?4 ")
+    void updateSortNum(Long appId, Long parentId, Integer minSortNum, Integer maxSortNum, int incr);
 }
