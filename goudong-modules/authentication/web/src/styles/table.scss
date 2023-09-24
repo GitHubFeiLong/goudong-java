@@ -184,6 +184,14 @@
             }
 
           }
+          td{
+            .cell{
+              .copy_column_class {
+                cursor: pointer;
+              }
+            }
+          }
+
         }
       }
     }

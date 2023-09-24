@@ -65,7 +65,9 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-              />
+              >
+                <el-tag size="small" :class="item.label" class="http_method_tag">{{ item.label }}</el-tag> <br>
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -265,7 +267,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+@import '@/styles/variables.scss';
 .cutting-line{
   margin: 8px 0 30px 0;
 }
@@ -317,6 +319,42 @@ export default {
     font-size: 19px;
     position: absolute;
   }
+}
+.http_method_tag{
+  width: 70px;
+  text-align: center;
+}
+::v-deep .GET{
+  background-color: $GET;
+  color: #fff
+}
+::v-deep .POST{
+  background-color: $POST;
+  color: #fff
+}
+::v-deep .PUT{
+  background-color: $PUT;
+  color: #fff
+}
+::v-deep .DELETE{
+  background-color: $DELETE;
+  color: #fff
+}
+::v-deep .PATCH{
+  background-color: $PATCH;
+  color: #fff
+}
+::v-deep .OPTIONS{
+  background-color: $OPTIONS;
+  color: #fff
+}
+::v-deep .TRACE{
+  background-color: $TRACE;
+  color: #fff
+}
+::v-deep .HEAD{
+  background-color: $HEAD;
+  color: #fff
 }
 
 </style>

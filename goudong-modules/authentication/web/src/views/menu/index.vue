@@ -128,7 +128,14 @@
         label="资源路径"
         width="170"
         prop="path"
-      />
+        show-overflow-tooltip
+      >
+        <template v-slot="scope">
+          <span class="copy_column_class el-icon-document-copy" @click="copyPath(scope.row)">
+            <span style="width: 5px; display: inline-block;"></span>{{scope.row.path}}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="请求方式"
         width="100"
@@ -138,7 +145,7 @@
       >
         <template v-slot="scope">
           <span v-for="item in getMethod(scope.row)" :key="item">
-            <el-tag size="small">{{ item }}</el-tag> <br>
+            <el-tag size="small" :class="item" class="http_method_tag">{{ item }}</el-tag> <br>
           </span>
         </template>
       </el-table-column>
@@ -207,6 +214,7 @@ import { goudongWebAdminResource } from "@/router/modules/goudong-web-admin-rout
 import { MENU_TYPE_ARRAY } from "@/constant/commons"
 import Sortable from 'sortablejs';
 import { deleteRoleByIdsApi } from "@/api/role";
+import { copyText } from "@/utils/StringUtil";
 
 export default {
   name: 'MenuPage',
@@ -456,6 +464,9 @@ export default {
         this.$message.info("已取消删除");
       })
     },
+    copyPath(row) { // 拷贝资源路径
+      copyText(row.path, this)
+    },
     // 修改表格大小
     changeElTableSizeCommand(val) {
       const args = val.split(",");
@@ -490,5 +501,40 @@ export default {
     opacity: 0.4;
   }
 }
-
+.http_method_tag{
+  width: 70px;
+  text-align: center;
+}
+::v-deep .GET{
+  background-color: $GET;
+  color: #fff
+}
+::v-deep .POST{
+  background-color: $POST;
+  color: #fff
+}
+::v-deep .PUT{
+  background-color: $PUT;
+  color: #fff
+}
+::v-deep .DELETE{
+  background-color: $DELETE;
+  color: #fff
+}
+::v-deep .PATCH{
+  background-color: $PATCH;
+  color: #fff
+}
+::v-deep .OPTIONS{
+  background-color: $OPTIONS;
+  color: #fff
+}
+::v-deep .TRACE{
+  background-color: $TRACE;
+  color: #fff
+}
+::v-deep .HEAD{
+  background-color: $HEAD;
+  color: #fff
+}
 </style>

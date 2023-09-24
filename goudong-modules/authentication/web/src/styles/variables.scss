@@ -22,6 +22,16 @@ $subMenuHover:#001528;
 
 $sideBarWidth: 210px;
 
+// 请求方式
+$GET: #61affe;
+$POST: #49cc90;
+$PUT: #fca130;
+$DELETE: #f93e3e;
+$PATCH: #50e3c2;
+$OPTIONS: #0d5aa7;
+$TRACE: #f792c2;
+$HEAD: #9012fe;
+
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
 :export {

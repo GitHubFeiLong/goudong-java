@@ -61,4 +61,10 @@ public class BaseMenuResource {
         return Result.ofSuccess(baseMenuManagerService.deleteById(id));
     }
 
+    @RequestMapping("/base-menu11/{id}")
+    @ApiOperation(value = "demo", notes = "如果是父节点，那么就会删除它及它下面的所有子节点")
+    public Result<Boolean> dele123te(@PathVariable Long id) {
+        return Result.ofSuccess(baseMenuManagerService.deleteById(id));
+    }
+
 }
