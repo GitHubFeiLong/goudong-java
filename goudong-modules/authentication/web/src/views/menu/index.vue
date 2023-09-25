@@ -188,7 +188,7 @@
               :underline="false"
               type="primary"
               :disabled="Number(scope.row.id) <= 2147483647"
-              @click="editUser(scope.row)"
+              @click="updateMenu(scope.row)"
             >编辑</el-link>
             <el-link
               v-permission="'sys:menu:delete'"
@@ -204,6 +204,8 @@
     </el-table>
     <!--  新增菜单弹窗  -->
     <CreateMenuDialog :create-menu-dialog.sync="createMenuDialog" :refresh-menu="load" />
+    <!--  修改菜单弹窗  -->
+    <UpdateMenuDialog :update-menu-dialog.sync="updateMenuDialog" :refresh-menu="load" />
   </div>
 </template>
 
@@ -220,6 +222,7 @@ export default {
   name: 'MenuPage',
   components: {
     CreateMenuDialog: () => import('@/views/menu/components/CreateMenuDialog'),
+    UpdateMenuDialog: () => import('@/views/menu/components/UpdateMenuDialog'),
     DetailMenu: () => import('@/views/menu/components/DetailMenu'),
   },
   data() {
