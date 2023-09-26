@@ -160,7 +160,7 @@ export default {
       menuTypes: MENU_TYPE_ARRAY,
       menu: {
         parentId: undefined,
-        type: 0,
+        type: 1,
         name: undefined,
         openModel: 0,
         icon: '',
@@ -168,7 +168,7 @@ export default {
         path: undefined,
         method: undefined,
         sortNum: 0,
-        hide: true,
+        hide: false,
         meta: undefined,
         remark: '',
       },
@@ -193,6 +193,11 @@ export default {
       this.visible = this.createMenuDialog;
       if (this.visible) {
         this.menuData = this.$store.getters.allMenus;
+      }
+    },
+    'parentMenu.id'(){
+      if (this.parentMenu.id == "") {
+        this.parentMenu.name = ''
       }
     },
     'menu.type'() {

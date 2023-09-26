@@ -122,12 +122,20 @@ export default {
         return false;
       }
     },
+    UpdateMenuData:{ // 修改菜单得数据
+      required: false,
+      type: Object,
+      default: function() {
+        return {}
+      }
+    },
     // 父组件刷新菜单数据
     refreshMenu: {
       type: Function,
       default: null
     }
   },
+
   data() {
     const validateMeta = (rule, value, callback) => {
       isJSON(value).then(boo => {
@@ -192,6 +200,21 @@ export default {
       this.visible = this.UpdateMenuDialog;
       if (this.visible) {
         this.menuData = this.$store.getters.allMenus;
+
+        console.log(this.UpdateMenuData)
+        this.menu = {...this.UpdateMenuData}
+        this.menu = {
+          parentId: this.UpdateMenuData.parentId,
+          type: this.UpdateMenuData.type,
+          name: this.UpdateMenuData.name,
+          permissionId: this.UpdateMenuData.permissionId,
+          path: this.UpdateMenuData.path,
+          method: this.UpdateMenuData.method,
+          sortNum: this.UpdateMenuData.sortNum,
+          hide: this.UpdateMenuData.hide,
+          meta: this.UpdateMenuData.meta,
+          remark: this.UpdateMenuData.remark,
+        }
       }
     },
     'menu.type'() {

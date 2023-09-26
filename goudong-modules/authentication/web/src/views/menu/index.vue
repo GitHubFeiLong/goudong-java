@@ -52,6 +52,8 @@
                    @click="switchOpenDrag"
         >{{ switchButtonName }}
         </el-button>
+        <el-button class="el-button--small" type="primary" @click="openTable(true)">展开</el-button>
+        <el-button class="el-button--small" type="primary" @click="openTable(false)">折叠</el-button>
         <el-button v-permission="'sys:menu:add'" class="el-button--small" icon="el-icon-plus" type="primary"
                    @click="addMenu"
         >新增
@@ -85,6 +87,7 @@
       border
       :data="table.data"
       :key="dataKey"
+      :expand-row-keys="table.expandKeys"
       row-key="id"
       style="width: 100%"
       :header-cell-style="{background:'#FAFAFA', color:'#000', height: '30px',}"
@@ -205,7 +208,7 @@
     <!--  新增菜单弹窗  -->
     <CreateMenuDialog :create-menu-dialog.sync="createMenuDialog" :refresh-menu="load" />
     <!--  修改菜单弹窗  -->
-    <UpdateMenuDialog :update-menu-dialog.sync="updateMenuDialog" :refresh-menu="load" />
+    <UpdateMenuDialog :update-menu-dialog.sync="updateMenuDialog" :update-menu-data="updateMenuData" :refresh-menu="load" />
   </div>
 </template>
 
@@ -242,7 +245,9 @@ export default {
       // menuVisible: false,
       createMenuDialog: false, // 创建菜单弹窗
       updateMenuDialog: false, // 创建菜单弹窗
+      updateMenuData: undefined, // 修改菜单得数据
       table: {
+        expandKeys: undefined,
         isLoading: false,
         rawData: [], // 初始数据
         data: [], // 渲染的数据
@@ -266,6 +271,20 @@ export default {
     this.load()
   },
   methods: {
+    openTable(flag) { // 展开/折叠
+      this.$nextTick(() => {
+        this.handleArr(this.table.data, flag);
+      });
+
+    },
+    handleArr(arr, flag) {
+      arr.forEach(i => {
+        this.$refs.table.toggleRowExpansion(i, flag);
+        if (i.children) {
+          this.handleArr(i.children);
+        }
+      });
+    },
     // 切换拖拽
     switchOpenDrag() {
       // 状态取反
@@ -287,6 +306,9 @@ export default {
         this.table.data = data.records;
         this.table.rawData = data.records;
         this.$store.dispatch('menu/setAllMenus', data.records)
+
+        // this.table.expandKeys = data.records.map(m => m.id);
+
       }).finally(() => {
         this.table.isLoading = false
       })
@@ -450,8 +472,10 @@ export default {
     addMenu() { // 新增菜单
       this.createMenuDialog = true
     },
-    updateMenu() { // 修改菜单
+    updateMenu(row) { // 修改菜单
+      this.UpdateMenuData = row
       this.updateMenuDialog = true
+      console.log("row", this.UpdateMenuData)
     },
     deleteMenu(row) { // 删除菜单
       this.$confirm(`此操作将永久删除”${row.name}“整个菜单, 是否继续?`, '提示', {
