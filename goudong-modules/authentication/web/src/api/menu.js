@@ -47,7 +47,7 @@ export function addMenuApi(data) {
  */
 export function updateMenuApi(data) {
   return request({
-    url: `/api/user/base-menu`,
+    url: `${API_PREFIX}/menu/base-menu`,
     method: 'put',
     data
   })

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from "@/store";
 /* Layout */
 
 /* Router Modules */
@@ -144,6 +145,9 @@ export const router = createRouter()
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
+  // 清除上次生成的路由
+  // store.commit('permission/SET_ROUTES', [])
+  store.commit('permission/SET_CREATED_ROUTES', false)
 }
 
 export default router

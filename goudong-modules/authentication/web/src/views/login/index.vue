@@ -138,6 +138,7 @@ export default {
             const { homePage, token } = data
             const {accessToken, refreshToken, accessExpires, refreshExpires} = token
             const url = `${homePage}?accessToken=${accessToken}&refreshToken=${refreshToken}&accessExpires=${accessExpires}&refreshExpires=${refreshExpires}`
+            console.log(url)
             window.location.href = url
           }).finally(() => {
             this.loading = false

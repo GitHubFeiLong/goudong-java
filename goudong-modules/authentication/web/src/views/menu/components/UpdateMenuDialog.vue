@@ -1,7 +1,7 @@
 <!--修改菜单的弹框-->
 <template>
   <el-dialog title="修改菜单" width="720px" :visible.sync="visible" @close="close">
-    <el-form ref="addMenuForm1" :model="menu" :rules="rules" label-width="100px" :inline="true" label-position="right">
+    <el-form ref="updateMenuForm" :model="menu" :rules="rules" label-width="100px" :inline="true" label-position="right">
       <el-row>
         <el-col :span="12">
           <el-form-item label="上级菜单:" prop="parentId">
@@ -34,7 +34,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="权限标识:" prop="permissionId">
+          <el-form-item label="权限标识:" :prop="(menu.type === 1 || menu.type === 2) ? 'permissionId' : 'notPermissionId'">
             <el-input v-model="menu.permissionId" placeholder="请输入权限标识" clearable :disabled="menu.type === 0" />
           </el-form-item>
         </el-col>
@@ -47,16 +47,15 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item :label="routePath.label" prop="path">
+          <el-form-item :label="routePath.label" :prop="(menu.type === 1 || menu.type === 3) ? 'path' : 'notPath'">
             <el-input v-model="menu.path" :placeholder="routePath.placeholder" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="请求方式:" prop="method">
+          <el-form-item label="请求方式:" :prop="menu.type === 3 ? 'method' : 'notMethod'">
             <el-select
               v-model="menu.method"
               multiple
-              collapse-tags
               placeholder="请选择请求方式"
               :disabled="menu.type === 1"
             >
@@ -66,7 +65,7 @@
                 :label="item.label"
                 :value="item.value"
               >
-                <el-tag size="small" :class="item.label" class="http_method_tag">{{ item.label }}</el-tag> <br>
+                <el-tag size="small" :class="item.label" class="http_method_tag">{{ item.label }}</el-tag>
               </el-option>
             </el-select>
           </el-form-item>
@@ -110,7 +109,8 @@
 
 import { EL_ICONS, HTTP_METHOD_ARRAY, MENU_TYPE_ARRAY } from "@/constant/commons";
 import { isJSON } from "@/utils/validate";
-import { addMenuApi, initMenuApi } from "@/api/menu";
+import { addMenuApi, initMenuApi, updateMenuApi } from "@/api/menu";
+import { treeToArr } from "@/utils/tree";
 export default {
   name: 'UpdateMenuDialog',
   props: {
@@ -183,6 +183,18 @@ export default {
         name: [
           { required: true, message: '请输入菜单名称', trigger: 'blur' }
         ],
+        type:[
+          { required: true, message: '请选择菜单类型', trigger: 'blur' }
+        ],
+        permissionId: [
+          { required: true, max: 255, message: '权限标识必填', trigger: 'blur' }
+        ],
+        path: [
+          { required: true, max: 255, message: '路由或接口地址必填', trigger: 'blur' }
+        ],
+        method:[
+          { required: true, message: '接口请求方式必填', trigger: 'blur' }
+        ],
         remark: [
           { required: false, max: 255, message: '备注限制最多255字符', trigger: 'blur' }
         ],
@@ -197,29 +209,35 @@ export default {
   },
   watch: {
     UpdateMenuDialog() {
+      console.log("UpdateMenuData 值：", this.UpdateMenuData)
       this.visible = this.UpdateMenuDialog;
       if (this.visible) {
         this.menuData = this.$store.getters.allMenus;
-
-        console.log(this.UpdateMenuData)
         this.menu = {...this.UpdateMenuData}
-        this.menu = {
-          parentId: this.UpdateMenuData.parentId,
-          type: this.UpdateMenuData.type,
-          name: this.UpdateMenuData.name,
-          permissionId: this.UpdateMenuData.permissionId,
-          path: this.UpdateMenuData.path,
-          method: this.UpdateMenuData.method,
-          sortNum: this.UpdateMenuData.sortNum,
-          hide: this.UpdateMenuData.hide,
-          meta: this.UpdateMenuData.meta,
-          remark: this.UpdateMenuData.remark,
+
+        if (this.UpdateMenuData.parentId) {
+          // 上级菜单
+          let allMenuArr = [];
+          treeToArr(this.menuData, allMenuArr);
+          this.parentMenu.id = this.menu.parentId
+          this.parentMenu.name = allMenuArr.filter((e) => e.id===this.menu.parentId)[0].name
         }
+
+        // 请求方式
+        if (this.UpdateMenuData.method) {
+          this.menu.method = JSON.parse(this.menu.method)
+        }
+
       }
     },
     'menu.type'() {
+      // 修改菜单类型时，去除之前得验证
+      if (this.$refs.updateMenuForm) {
+        this.$refs.updateMenuForm.clearValidate();
+      }
+
       switch (this.menu.type) {
-        case 0:
+        case 3:
           this.menu.hide = true
           this.routePath = {
             label: '接口地址:',
@@ -236,7 +254,6 @@ export default {
           }
           break;
         default:
-          this.menu.icon = ''
           break;
       }
     },
@@ -273,14 +290,21 @@ export default {
       this.close();
     },
     submitForm() {
-      console.log(this.menu)
-      let data = { ...this.menu };
-      data.method = JSON.stringify(this.menu.method);
-      addMenuApi(data).then(data => {
-        this.$message.success("添加成功");
-        this.refreshMenu();
-        this.close();
-      })
+
+      this.$refs['updateMenuForm'].validate((valid) => {
+        if (valid) {
+          console.log(this.menu)
+          let data = { ...this.menu };
+          data.method = JSON.stringify(this.menu.method);
+          updateMenuApi(data).then(data => {
+            this.$message.success("修改成功");
+            this.refreshMenu();
+            this.close();
+          })
+        } else {
+          return false;
+        }
+      });
     },
     close() {
       this.$emit("update:updateMenuDialog", false)
@@ -378,5 +402,14 @@ export default {
   background-color: $HEAD;
   color: #fff
 }
-
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected::after {
+  position: absolute;
+  right: 20px;
+  font-family: "element-icons";
+  content: "";
+  font-size: 12px;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 </style>

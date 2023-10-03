@@ -114,7 +114,13 @@
         min-width="150"
         prop="permissionId"
         show-overflow-tooltip
-      />
+      >
+        <template v-slot="scope">
+          <span class="copy_column_class el-icon-document-copy" @click="copyPermissionId(scope.row)">
+            <span style="width: 5px; display: inline-block;"></span>{{scope.row.permissionId}}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="类型"
         prop="type"
@@ -301,12 +307,12 @@ export default {
     },
     load() {
       this.table.isLoading = true;
+      this.dataKey = new Date().getTime();
       listMenuApi({}).then(data => {
         console.log("data", data.records)
         this.table.data = data.records;
         this.table.rawData = data.records;
         this.$store.dispatch('menu/setAllMenus', data.records)
-
         // this.table.expandKeys = data.records.map(m => m.id);
 
       }).finally(() => {
@@ -473,9 +479,9 @@ export default {
       this.createMenuDialog = true
     },
     updateMenu(row) { // 修改菜单
-      this.UpdateMenuData = row
+      this.updateMenuData = row
       this.updateMenuDialog = true
-      console.log("row", this.UpdateMenuData)
+      console.log("row", this.updateMenuData)
     },
     deleteMenu(row) { // 删除菜单
       this.$confirm(`此操作将永久删除”${row.name}“整个菜单, 是否继续?`, '提示', {
@@ -490,6 +496,9 @@ export default {
       }).catch(() => {
         this.$message.info("已取消删除");
       })
+    },
+    copyPermissionId(row) { // 拷贝权限标识
+      copyText(row.permissionId, this)
     },
     copyPath(row) { // 拷贝资源路径
       copyText(row.path, this)

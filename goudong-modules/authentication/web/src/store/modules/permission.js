@@ -33,11 +33,15 @@ export function filterAsyncRoutes(routes, menus) {
 
 const state = {
   routes: [],
+  createdRoutes: false,
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.routes = routes
+  },
+  SET_CREATED_ROUTES: (state, flag) => {
+    state.createdRoutes = flag
   },
 }
 
@@ -57,6 +61,7 @@ const actions = {
       // 必须放在最后 404
       permission_routes.push({ path: '*', redirect: '/404', hidden: true })
       commit('SET_ROUTES', permission_routes)
+      commit('SET_CREATED_ROUTES', true)
       console.log("permission_routes", permission_routes)
       resolve(permission_routes)
     })
@@ -69,9 +74,9 @@ const actions = {
  */
 function permissionRoutesComponent(permission_routes) {
   permission_routes.forEach(item => {
-    if (item.parentId === null || item.parentId === undefined) {
+    if (item.parentId === null || item.parentId === undefined) { // 顶级菜单
       item.component = Layout
-    } else {
+    } else { // 次级菜单
       let com = goudongWebAdminComponent.find(c => {
         return c.permissionId === item.permissionId
       })
