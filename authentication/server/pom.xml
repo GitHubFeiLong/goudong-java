@@ -5,12 +5,13 @@
     <parent>
         <artifactId>authentication</artifactId>
         <groupId>com.goudong</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.goudong</groupId>
     <artifactId>server</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -23,7 +24,7 @@
         <dependency>
             <groupId>com.goudong</groupId>
             <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
@@ -149,24 +150,34 @@
 
     <build>
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
-                    <executable>true</executable>
+                    <fork>true</fork>
+                    &lt;!&ndash;当服务器安装了unzip，是用vim app.jar 就可以编辑jar内的文件了&ndash;&gt;
+                    <executable>false</executable>
+                    <mainClass>com.goudong.authentication.server.AuthenticationServerApplication</mainClass>
                     <includeSystemScope>true</includeSystemScope>
                 </configuration>
-            </plugin>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>-->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.xxx.AppMain</mainClass>
+                            <mainClass>com.goudong.authentication.server.AuthenticationServerApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -180,6 +191,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
