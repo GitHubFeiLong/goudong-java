@@ -3,7 +3,7 @@
   <div class="username-select-container">
     <el-select
       v-model="selectedUser"
-      v-load-more="loadMore"
+      v-loadmore="loadMore"
       style="width: 230px;"
       :loading="loading"
       clearable
@@ -24,8 +24,10 @@
 <script>
 
 import { dropDownUserApi } from '@/api/dropDown';
+import {loadmore} from '@/directive/select/index'
 
 export default {
+  directives: { loadmore },
   data() {
     return {
       selectedUser: undefined,
@@ -64,7 +66,8 @@ export default {
       this.$emit('getSelectedUser', selectedUser)
     },
     // 继续加载
-    loadMore: function() {
+    loadMore: function () {
+      console.log(111)
       // 总页数大于当前页，请求下一页数据
       if (this.totalPage > this.page) {
         this.page += 1;

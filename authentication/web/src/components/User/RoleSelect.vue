@@ -3,7 +3,7 @@
   <div class="role-select-container">
     <el-select
       v-model="selectedRoles"
-      v-load-more="loadMore"
+      v-loadmore="loadMore"
       :loading="loading"
       clearable
       filterable
@@ -25,8 +25,9 @@
 <script>
 
 import { dropDownRoleApi } from "@/api/dropDown";
-
+import {loadmore} from '@/directive/select/index'
 export default {
+  directives:{loadmore},
   name: 'RoleSelect',
   props: {
     // 角色是否是多选
