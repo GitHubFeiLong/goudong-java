@@ -1,13 +1,16 @@
 package com.goudong.authentication.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.authentication.server.config.MyErrorAttributes;
 import com.goudong.authentication.server.enums.DatabaseKeyEnum;
 import com.goudong.boot.redis.EnableCommonsRedisConfig;
 import com.goudong.boot.web.EnableCommonsWebMvcConfig;
+import com.goudong.boot.web.aop.ApiLogAop;
 import com.goudong.boot.web.bean.DatabaseKey;
 import com.goudong.boot.web.bean.DatabaseKeyInterface;
 import com.goudong.boot.web.core.ErrorAttributesService;
 import com.goudong.boot.web.core.LogApplicationStartup;
+import com.goudong.boot.web.properties.ApiLogProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -78,4 +81,13 @@ public class AuthenticationServerApplication {
         return new MyErrorAttributes(request);
     }
 
+    /**
+     * 接口日志切面
+     * @param environment
+     * @return
+     */
+    @Bean
+    public ApiLogAop apiLogAop(Environment environment, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
+        return new ApiLogAop(environment, objectMapper, apiLogProperties);
+    }
 }
