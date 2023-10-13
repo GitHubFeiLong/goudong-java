@@ -33,6 +33,9 @@ import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.boot.web.core.ServerException;
 import com.goudong.core.lang.PageResult;
+import com.goudong.core.security.cer.CertificateUtil;
+import com.goudong.core.security.rsa.RSAKeySizeEnum;
+import com.goudong.core.security.rsa.RSAUtil;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.ListUtil;
 import org.slf4j.Logger;
@@ -46,6 +49,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.security.KeyPair;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -160,6 +165,11 @@ public class BaseAppServiceImpl implements BaseAppService {
         baseApp.setHomePage(req.getHomePage());
         baseApp.setSecret(UUID.randomUUID().toString().replace("-", ""));
         baseApp.setEnabled(req.getEnabled());
+        // 生成公钥私钥和证书
+        CertificateUtil.Cer cer = CertificateUtil.create("goudong", req.getName(), 30);
+        baseApp.setRsaPrivateKey(Base64.getEncoder().encodeToString(cer.getKeyPair().getPrivate().getEncoded()));
+        baseApp.setRsaPublicKey(Base64.getEncoder().encodeToString(cer.getKeyPair().getPublic().getEncoded()));
+
 
         // 新增应用管理员
         BaseUser baseUser = new BaseUser();

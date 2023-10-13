@@ -103,7 +103,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             String token = authorization.substring(prefix.length());
 
             Jwt jwt = new Jwt(0, TimeUnit.SECONDS, app.getSecret());
-            UserSimple userSimple = userSimple = jwt.parseToken(token);
+            UserSimple userSimple = jwt.parseToken(token);
 
             log.debug("解析token：{}", userSimple);
 

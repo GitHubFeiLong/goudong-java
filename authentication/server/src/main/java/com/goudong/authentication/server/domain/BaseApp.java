@@ -54,6 +54,28 @@ public class BaseApp extends BasePO implements Serializable {
     @NotNull
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    /**
+     * rsa私钥（Base64）
+     */
+    @NotNull
+    @Column(name = "rsa_private_key", nullable = false, length = 2048)
+    private String rsaPrivateKey;
+
+
+    /**
+     * rsa公钥（Base64）
+     */
+    @NotNull
+    @Column(name = "rsa_public_key", nullable = false, length = 2048)
+    private String rsaPublicKey;
+
+    /**
+     * 证书（Base64）
+     */
+    @NotNull
+    @Column(name = "cert", nullable = false, length = 2048)
+    private String cert;
     /**
      * 备注
      */

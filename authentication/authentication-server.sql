@@ -222,4 +222,9 @@ CREATE TABLE `base_user_role`  (
 INSERT INTO `base_user_role` VALUES (1, 1, 1, NULL, NULL, NULL, NULL);
 INSERT INTO `base_user_role` VALUES (11, 1687091289242869760, 2, NULL, NULL, NULL, NULL);
 
+ALTER TABLE `authentication-server`.`base_app`
+    ADD COLUMN `rsa_private_key` varchar(2048) NOT NULL COMMENT '私钥' AFTER `enabled`,
+ADD COLUMN `rsa_public_key` varchar(2048) NOT NULL COMMENT '公钥' AFTER `rsa_private_key`
+    ADD COLUMN `cert` varchar(2048) NOT NULL COMMENT '证书' AFTER `rsa_public_key`,;
+
 SET FOREIGN_KEY_CHECKS = 1;
