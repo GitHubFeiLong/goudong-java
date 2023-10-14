@@ -55,6 +55,10 @@
                    @click="dialog.create.open=true">
           新增
         </el-button>
+        <el-button class="el-button--small" icon="el-icon-document" type="primary"
+                   @click="dialog.createCert.open=true">
+          创建证书
+        </el-button>
       </div>
       <div class="right-tool">
         <el-tooltip class="right-tool-btn-tooltip" effect="dark" content="刷新" placement="top">
@@ -155,6 +159,13 @@
         <template v-slot="scope">
           <div class="el-link-parent">
             <el-link
+              icon="el-icon-edit"
+              :underline="false"
+              type="primary"
+              @click="dialogCertOpen(scope.row)"
+            >证书
+            </el-link>
+            <el-link
               v-permission="'sys:app:audit'"
               icon="el-icon-edit"
               :underline="false"
@@ -201,7 +212,7 @@
           <el-input v-model="dialog.create.form.data.name" placeholder="请输入应用名称" clearable/>
         </el-form-item>
         <el-form-item label="首页" prop="homePage">
-          <el-input v-model="dialog.create.form.data.homePage" placeholder="请输入访问应用首页web地址" clearable/>
+          <el-input v-model="dialog.create.form.data.homePage" placeholder="请输入访问应用首页web地址"  clearable/>
         </el-form-item>
         <el-form-item label="状态" prop="enabled">
           <el-select
@@ -259,15 +270,88 @@
         <el-button type="primary" @click="dialogUpdateSubmit()">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!--  新增证书  -->
+    <el-dialog title="新增证书" width="600px" :visible.sync="dialog.createCert.open" @close="dialog.createCert.open = false">
+      <el-form ref="createCert" :model="dialog.createCert.form.data" :rules="dialog.createCert.form.rules" label-width="80px">
+        <el-form-item label="选择应用" prop="appId">
+          <el-select v-model="dialog.createCert.form.data.appId" placeholder="请选择应用" clearable>
+            <el-option
+              v-for="item in apps"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="截止时间" prop="validTime">
+          <el-date-picker v-model="dialog.createCert.form.data.validTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="请选择证书的截止时间" :picker-options="dialog.createCert.pickerOptions" clearable />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dialog.createCert.form.data.remark" placeholder="请输入备注" clearable />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="createCertCancel">取 消</el-button>
+        <el-button type="primary" @click="createCertSubmit()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!--  应用证书列表  -->
+    <el-dialog title="证书" width="600px" :visible.sync="dialog.cert.open" @close="dialog.cert.open = false">
+      <el-table
+        :data="dialog.cert.data"
+        row-key="id"
+        style="width: 100%"
+        max-height="480"
+        border
+        :header-cell-style="{background:'#FAFAFA', color:'#000', height: '30px',}"
+        :header-row-class-name="EL_TABLE.size"
+        :size="EL_TABLE.size"
+      >
+        <el-table-column
+          class-name="a"
+          label="序号"
+          width="50"
+        >
+          <template v-slot="scope">
+            {{ scope.$index + 1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="序列号"
+          prop="serialNumber"
+        />
+        <el-table-column
+          label="截止时间"
+          prop="validTime"
+        />
+        <el-table-column
+          align="center"
+          label="操作"
+        >
+          <template v-slot="scope">
+            <el-link
+              icon="el-icon-download"
+              :underline="false"
+              type="primary"
+              @click="downloadCert(scope.row)"
+            >下载
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 
 import {ENABLED_ARRAY} from "@/constant/commons";
-import {createAppApi, deleteAppApi, pageAppsApi, updateAppApi} from "@/api/app";
+import {createAppApi, createCertApi, deleteAppApi, listCertsApi, pageAppsApi, updateAppApi} from "@/api/app";
+import { dropDownAllAppApi } from '@/api/dropDown';
 import {Message} from "element-ui";
-import {WebUrl} from "@/utils/ElementValidatorUtil"
+import {FutureTime, WebUrl} from "@/utils/ElementValidatorUtil"
 
 export default {
   name: 'App',
@@ -297,6 +381,7 @@ export default {
         // 显示大小
         size: 'medium'
       },
+      apps: [],
       // 弹窗相关
       dialog: {
         create: { // 新增/创建
@@ -348,6 +433,30 @@ export default {
             }
           }
         },
+        createCert:{ // 创建证书
+          open: false, // 是否打开窗口
+          pickerOptions: {
+            disabledDate(v) {
+              return v.getTime() < new Date().getTime() - 86400000;//  - 86400000是否包括当天
+            }
+          },
+          form:{
+            data: {},
+            rules: {
+              appId: [
+                {required: true, message: '请选择应用', trigger: 'blur'},
+              ],
+              validTime: [
+                {required: true, message: '请填写过期时间', trigger: 'blur'},
+                {validator: FutureTime, trigger: 'blur'},
+              ],
+            }
+          },
+        },
+        cert:{ // 证书列表
+          open: false, // 是否打开窗口
+          data:[]
+        }
       }
     }
   },
@@ -357,6 +466,11 @@ export default {
     // 强制渲染，解决表格 固定列后，列错位问题
     this.$nextTick(() => {
       this.$refs.table.doLayout()
+    })
+    // 获取应用下拉
+    dropDownAllAppApi().then(data => {
+      console.log(data);
+      this.apps = data
     })
   },
   methods: {
@@ -501,6 +615,62 @@ export default {
         this.$message.info("已取消删除");
       })
     },
+    // 创建证书 -- 取消
+    createCertCancel(){
+      this.dialog.createCert.open = false;
+      this.dialog.createCert.form.data = {};
+    },
+    // 创建证书 -- 提交
+    createCertSubmit(){
+      console.log("创建证书：", this.dialog.createCert.form.data)
+      this.$refs.createCert.validate((valid) => {
+        console.log("valid", valid)
+        if (valid) {
+          createCertApi(this.dialog.createCert.form.data).then(response => {
+            // 保存成功
+            Message({
+              message: '创建成功',
+              type: 'success',
+            })
+            this.createCertCancel()
+          })
+        } else {
+          return false;
+        }
+      });
+    },
+
+    dialogCertOpen(row) {
+      console.log("查询证书" + row)
+      listCertsApi(row.id).then(certs => {
+        console.log(certs)
+        this.dialog.cert.data = certs.map(m => {
+          return {serialNumber: m.serialNumber, validTime: m.validTime, cert: m.cert, appName: row.name}
+        })
+        this.dialog.cert.open = true;
+      })
+    },
+    // 下载证书
+    downloadCert(row) {
+      console.log(row)
+      // 获取响应数据
+      const blob = new Blob(
+        [row.cert], // 将获取到的二进制文件转成blob
+        { type: 'charset=utf-8' } // 有时候打开文档会出现乱码，设置一下字符编码
+      );
+      // 获取文件名
+      let filename = row.appName + ".cer";
+
+      // 转成文件流之后，可以通过模拟点击实现下载效果
+      const element = document.createElement('a'); // js创建一个a标签
+      const href = window.URL.createObjectURL(blob); 					// 文档流转化成Base64
+      element.href = href;
+      element.download = filename; 								// 下载后文件名
+      document.body.appendChild(element);
+      element.click(); 												// 点击下载
+      document.body.removeChild(element); 							// 下载完成移除元素
+      window.URL.revokeObjectURL(href);
+    }
   }
 }
 </script>

@@ -1,10 +1,12 @@
 package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.constant.RoleConst;
+import com.goudong.authentication.server.rest.req.BaseAppCertCreateReq;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
+import com.goudong.authentication.server.service.dto.BaseAppCertDTO;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.core.lang.PageResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 类描述：
@@ -67,4 +70,15 @@ public class BaseAppResource {
         return Result.ofSuccess(true);
     }
 
+    @GetMapping("/base-app-certs/{appId}")
+    @ApiOperation("应用证书列表")
+    public Result<List<BaseAppCertDTO>> listCertsByAppId(@PathVariable Long appId) {
+        return Result.ofSuccess(baseAppManagerService.listCertsByAppId(appId));
+    }
+
+    @PostMapping("/base-app-cert")
+    @ApiOperation("新增证书")
+    public Result<BaseAppCertDTO> createCert(@RequestBody @Validated BaseAppCertCreateReq req) {
+        return Result.ofSuccess(baseAppManagerService.createCert(req));
+    }
 }

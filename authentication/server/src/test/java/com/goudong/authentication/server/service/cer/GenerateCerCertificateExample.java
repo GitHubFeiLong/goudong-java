@@ -27,6 +27,6 @@ public class GenerateCerCertificateExample {
     //~methods
     //==================================================================================================================
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException, CertificateException, SignatureException, InvalidKeyException, NoSuchProviderException {
-        CertificateUtil.create("goudong", "应用三", 365);
+        CertificateUtil.create("goudong", "应用三", new Date());
     }
 }

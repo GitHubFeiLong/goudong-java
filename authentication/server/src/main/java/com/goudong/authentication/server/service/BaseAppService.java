@@ -22,6 +22,13 @@ public interface BaseAppService {
      * @param id 应用id
      * @return 应用对象
      */
+    BaseApp getById(Long id);
+
+    /**
+     * 根据应用id查询应用
+     * @param id 应用id
+     * @return 应用对象
+     */
     BaseApp findById(Long id);
 
     /**
@@ -33,10 +40,10 @@ public interface BaseAppService {
 
     /**
      * 新增应用
-     * @param req 新增应用参数
+     * @param app 新增应用参数
      * @return 应用
      */
-    BaseAppDTO save(BaseAppCreate req);
+    BaseAppDTO save(BaseApp app);
 
     /**
      * 修改应用
@@ -71,4 +78,17 @@ public interface BaseAppService {
      * @return baseApp
      */
     BaseApp findByHeader();
+
+    /**
+     * 判断应用是否存在
+     * @param appId 应用id
+     * @return true 应用存在；false 应用不存在
+     */
+    boolean isExist(Long appId);
+
+    /**
+     * 清除缓存
+     * @param id 应用id
+     */
+    void cleanCache(Long id);
 }

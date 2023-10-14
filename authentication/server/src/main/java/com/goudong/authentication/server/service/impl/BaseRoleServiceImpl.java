@@ -274,4 +274,14 @@ public class BaseRoleServiceImpl implements BaseRoleService {
 
         return BeanUtil.copyToList(values, BaseMenuDTO.class, CopyOptions.create());
     }
+
+    /**
+     * 查询应用管理员角色
+     *
+     * @return
+     */
+    @Override
+    public BaseRole findByAppAdmin() {
+        return baseRoleRepository.findByAppAdmin();
+    }
 }

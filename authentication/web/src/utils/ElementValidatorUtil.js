@@ -44,7 +44,17 @@ module.exports = {
   }, BankCard(rule, value, callback) {
     let reg = /^([1-9]{1})(\d{14}|\d{18})$/
     matching(value, callback, reg, '请输入正确的银行卡')
-  }
+  },FutureTime(rule, value, callback) {
+    if (value instanceof Date) {
+      if (new Date().getTime() > value.getTime()) {
+        callback(new Error("请输入正确的时间"))
+      } else {
+        callback()
+      }
+    } else {
+      callback()
+    }
+  },
 }
 
 /**

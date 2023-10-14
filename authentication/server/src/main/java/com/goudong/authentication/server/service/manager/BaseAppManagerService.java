@@ -1,11 +1,13 @@
 package com.goudong.authentication.server.service.manager;
 
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.rest.req.BaseAppCertCreateReq;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
 import com.goudong.authentication.server.rest.req.search.BaseAppDropDownReq;
 import com.goudong.authentication.server.rest.req.search.BaseAppPageReq;
 import com.goudong.authentication.server.rest.resp.BaseAppPageResp;
+import com.goudong.authentication.server.service.dto.BaseAppCertDTO;
 import com.goudong.authentication.server.service.dto.BaseAppDTO;
 import com.goudong.core.lang.PageResult;
 
@@ -78,4 +80,18 @@ public interface BaseAppManagerService {
      * @return baseApp
      */
     BaseApp findByHeader();
+
+    /**
+     * 查询应用的所有证书
+     * @param appId 应用id
+     * @return 应用所有证书
+     */
+    List<BaseAppCertDTO> listCertsByAppId(Long appId);
+
+    /**
+     * 创建证书
+     * @param req 创建参数
+     * @return 证书记录
+     */
+    BaseAppCertDTO createCert(BaseAppCertCreateReq req);
 }

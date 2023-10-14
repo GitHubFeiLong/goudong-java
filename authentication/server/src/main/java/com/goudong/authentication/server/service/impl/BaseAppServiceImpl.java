@@ -1,6 +1,7 @@
 package com.goudong.authentication.server.service.impl;
 
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.IdUtil;
@@ -12,6 +13,7 @@ import com.goudong.authentication.common.util.JsonUtil;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.constant.RoleConst;
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.domain.BaseAppCert;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.repository.BaseAppRepository;
 import com.goudong.authentication.server.repository.BaseMenuRepository;
@@ -50,10 +52,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.security.KeyPair;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.security.cert.CertificateEncodingException;
+import java.util.*;
 
 import static com.goudong.authentication.server.enums.RedisKeyTemplateProviderEnum.APP_DROP_DOWN;
 import static com.goudong.authentication.server.enums.RedisKeyTemplateProviderEnum.APP_ID;
@@ -100,6 +100,19 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     //~methods
     //==================================================================================================================
+
+    /**
+     * 根据应用id查询应用
+     *
+     * @param id 应用id
+     * @return 应用对象
+     */
+    @Override
+    public BaseApp getById(Long id) {
+        BaseApp baseApp = baseAppRepository.findById(id).orElseThrow(() -> ClientException.client("应用不存在"));
+        return baseApp;
+    }
+
     /**
      * 根据应用id查询应用
      * @param id 应用id
@@ -147,61 +160,13 @@ public class BaseAppServiceImpl implements BaseAppService {
 
     /**
      * 新增应用
-     * @param req 新增应用参数
+     *
+     * @param app 新增应用参数
      * @return 应用
      */
     @Override
-    public BaseAppDTO save(BaseAppCreate req) {
-        AssertUtil.isFalse(req.getName().equals(RoleConst.ROLE_APP_SUPER_ADMIN), () -> ClientException.client("应用已存在"));
-        AssertUtil.isFalse(req.getName().equals(RoleConst.ROLE_APP_ADMIN), () -> ClientException.client("应用已存在"));
-
-        MyAuthentication authentication = SecurityContextUtil.get();
-
-        // 新增应用
-        BaseApp baseApp = new BaseApp();
-        baseApp.setId(IdUtil.getSnowflake().nextId());
-        baseApp.setName(req.getName());
-        baseApp.setRemark(req.getRemark());
-        baseApp.setHomePage(req.getHomePage());
-        baseApp.setSecret(UUID.randomUUID().toString().replace("-", ""));
-        baseApp.setEnabled(req.getEnabled());
-        // 生成公钥私钥和证书
-        CertificateUtil.Cer cer = CertificateUtil.create("goudong", req.getName(), 30);
-        baseApp.setRsaPrivateKey(Base64.getEncoder().encodeToString(cer.getKeyPair().getPrivate().getEncoded()));
-        baseApp.setRsaPublicKey(Base64.getEncoder().encodeToString(cer.getKeyPair().getPublic().getEncoded()));
-
-
-        // 新增应用管理员
-        BaseUser baseUser = new BaseUser();
-        // 用户所在应用
-        baseUser.setAppId(authentication.getRealAppId());
-        // 用户真实所在应用
-        baseUser.setRealAppId(baseApp.getId());
-        baseUser.setUsername(req.getName());
-        baseUser.setPassword(passwordEncoder.encode("123456"));
-        baseUser.setEnabled(true);
-        baseUser.setLocked(false);
-        baseUser.setValidTime(DateUtil.parse("2099-12-31 00:00:00", DatePattern.NORM_DATETIME_FORMATTER));
-        baseUser.setRemark("应用管理员");
-
-        // 设置角色
-        baseUser.setRoles(ListUtil.newArrayList(baseRoleRepository.findByAppAdmin()));
-
-        transactionTemplate.execute(status -> {
-            try {
-                // 新增应用
-                baseAppRepository.save(baseApp);
-                // 新增管理用户
-                baseUserRepository.save(baseUser);
-                cleanCache(baseApp.getId());
-                return true;
-            } catch (Exception e) {
-                status.setRollbackOnly();
-                throw ServerException.server("创建应用失败", e);
-            }
-        });
-
-        return baseAppMapper.toDto(baseApp);
+    public BaseAppDTO save(BaseApp app) {
+        return baseAppMapper.toDto(baseAppRepository.save(app));
     }
 
     /**
@@ -311,10 +276,21 @@ public class BaseAppServiceImpl implements BaseAppService {
     }
 
     /**
+     * 判断应用是否存在
+     *
+     * @param appId 应用id
+     * @return true 应用存在；false 应用不存在
+     */
+    @Override
+    public boolean isExist(Long appId) {
+        return baseAppRepository.existsById(appId);
+    }
+
+    /**
      * 删除缓存
      * @param id 应用id
      */
-    private void cleanCache(Long id) {
+    public void cleanCache(Long id) {
         redisTool.execute(new SessionCallback<Object>() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {

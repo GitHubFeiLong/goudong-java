@@ -79,4 +79,10 @@ public interface BaseRoleService {
      */
     List<BaseMenuDTO> listPermissionsByLoginUser();
 
+    /**
+     * 查询应用管理员角色
+     * @return
+     */
+    BaseRole findByAppAdmin();
+
 }

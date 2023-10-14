@@ -2,16 +2,17 @@ package com.goudong.authentication.server.domain;
 
 
 import cn.zhxu.bs.bean.SearchBean;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 应用表
@@ -56,29 +57,29 @@ public class BaseApp extends BasePO implements Serializable {
     private Boolean enabled;
 
     /**
-     * rsa私钥（Base64）
-     */
-    @NotNull
-    @Column(name = "rsa_private_key", nullable = false, length = 2048)
-    private String rsaPrivateKey;
-
-
-    /**
-     * rsa公钥（Base64）
-     */
-    @NotNull
-    @Column(name = "rsa_public_key", nullable = false, length = 2048)
-    private String rsaPublicKey;
-
-    /**
-     * 证书（Base64）
-     */
-    @NotNull
-    @Column(name = "cert", nullable = false, length = 2048)
-    private String cert;
-    /**
      * 备注
      */
     @Column(name = "remark")
     private String remark;
+
+    /**
+     * 证书
+     * 级联保存、更新、删除、刷新;延迟加载。当删除应用，会级联删除该应用的所有证书
+     * 拥有mappedBy注解的实体类为关系被维护端
+     * mappedBy="baseApp"中的baseApp是BaseAppCert中的baseApp属性
+     */
+    @OneToMany(mappedBy = "baseApp", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<BaseAppCert> certs = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "BaseApp{" +
+                "secret='" + secret + '\'' +
+                ", name='" + name + '\'' +
+                ", homePage='" + homePage + '\'' +
+                ", enabled=" + enabled +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
 }

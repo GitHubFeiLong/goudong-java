@@ -31,10 +31,10 @@ public class CertificateUtil {
      * 创建证书
      * @param issuer 颁发者
      * @param subject 使用者
-     * @param validDays 有效天
+     * @param validTime 有效截止时间
      * @return cert
      */
-    public static Cer create(String issuer, String subject, Integer validDays) {
+    public static Cer create(String issuer, String subject, Date validTime) {
         try {
             // 生成密钥对
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -44,7 +44,6 @@ public class CertificateUtil {
             // 创建证书信息
             X509CertInfo certInfo = new X509CertInfo();
             Date startDate = new Date();
-            Date endDate = new Date(startDate.getTime() + validDays * 24 * 60 * 60 * 1000L);// 有效期1年
 
             // 设置证书版本
             CertificateVersion certVersion = new CertificateVersion(2);
@@ -62,7 +61,7 @@ public class CertificateUtil {
             certInfo.set(X509CertInfo.SUBJECT, new X500Name("CN="  + Optional.ofNullable(subject).orElseGet(() -> "Subject")));
 
             // 设置证书有效期
-            CertificateValidity certValidity = new CertificateValidity(startDate, endDate);
+            CertificateValidity certValidity = new CertificateValidity(startDate, validTime);
             certInfo.set(X509CertInfo.VALIDITY, certValidity);
 
             // 设置证书公钥
@@ -77,13 +76,13 @@ public class CertificateUtil {
             // 创建证书对象
             X509CertImpl cert = new X509CertImpl(certInfo);
             cert.sign(keyPair.getPrivate(), "SHA256withRSA");
-//            String encode = Base64.getEncoder().encodeToString(cert.getEncoded());
-//            System.out.println(encode);
+           String encode = Base64.getEncoder().encodeToString(cert.getEncoded());
+           System.out.println(encode);
 
             // 将证书保存到文件
-//            OutputStream outputStream = new FileOutputStream("certificate.cer");
-//            outputStream.write(Base64.getDecoder().decode(encode));
-//            outputStream.close();
+           // OutputStream outputStream = new FileOutputStream("certificate.cer");
+           // outputStream.write(Base64.getDecoder().decode(encode));
+           // outputStream.close();
 
             System.out.println("证书生成成功！");
             return new Cer(cert, keyPair);

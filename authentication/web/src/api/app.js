@@ -43,3 +43,24 @@ export function deleteAppApi(id) {
     method: 'delete',
   })
 }
+
+/**
+ * 新增证书
+ */
+export function createCertApi(data) {
+  return request({
+    url: `${API_PREFIX}/app/base-app-cert`,
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 查询证书
+ */
+export function listCertsApi(appId) {
+  return request({
+    url: `${API_PREFIX}/app/base-app-certs/${appId}`,
+    method: 'get'
+  })
+}
