@@ -336,7 +336,21 @@
               :underline="false"
               type="primary"
               @click="downloadCert(scope.row)"
-            >下载
+            >证书
+            </el-link>
+            <el-link
+              icon="el-icon-download"
+              :underline="false"
+              type="primary"
+              @click="downloadPublicKey(scope.row)"
+            >公钥
+            </el-link>
+            <el-link
+              icon="el-icon-download"
+              :underline="false"
+              type="primary"
+              @click="downloadPrivateKey(scope.row)"
+            >私钥
             </el-link>
           </template>
         </el-table-column>
@@ -352,6 +366,7 @@ import {createAppApi, createCertApi, deleteAppApi, listCertsApi, pageAppsApi, up
 import { dropDownAllAppApi } from '@/api/dropDown';
 import {Message} from "element-ui";
 import {FutureTime, WebUrl} from "@/utils/ElementValidatorUtil"
+import * as fileUtil from "@/utils/fileUtil";
 
 export default {
   name: 'App',
@@ -641,36 +656,27 @@ export default {
     },
 
     dialogCertOpen(row) {
-      console.log("查询证书" + row)
       listCertsApi(row.id).then(certs => {
         console.log(certs)
         this.dialog.cert.data = certs.map(m => {
-          return {serialNumber: m.serialNumber, validTime: m.validTime, cert: m.cert, appName: row.name}
+          return {serialNumber: m.serialNumber, validTime: m.validTime, cert: m.cert, appName: row.name, privateKey: m.privateKey, publicKey: m.publicKey}
         })
         this.dialog.cert.open = true;
       })
     },
     // 下载证书
     downloadCert(row) {
-      console.log(row)
-      // 获取响应数据
-      const blob = new Blob(
-        [row.cert], // 将获取到的二进制文件转成blob
-        { type: 'charset=utf-8' } // 有时候打开文档会出现乱码，设置一下字符编码
-      );
-      // 获取文件名
-      let filename = row.appName + ".cer";
+      fileUtil.download(row.cert,  row.appName + ".cer")
+    },
+    // 下载公钥
+    downloadPublicKey(row) {
+      fileUtil.download(row.publicKey,  row.appName + "_public_key.pem")
+    },
+    // 下载私钥
+    downloadPrivateKey(row) {
+      fileUtil.download(row.privateKey,  row.appName + "_private_key.pem")
+    },
 
-      // 转成文件流之后，可以通过模拟点击实现下载效果
-      const element = document.createElement('a'); // js创建一个a标签
-      const href = window.URL.createObjectURL(blob); 					// 文档流转化成Base64
-      element.href = href;
-      element.download = filename; 								// 下载后文件名
-      document.body.appendChild(element);
-      element.click(); 												// 点击下载
-      document.body.removeChild(element); 							// 下载完成移除元素
-      window.URL.revokeObjectURL(href);
-    }
   }
 }
 </script>

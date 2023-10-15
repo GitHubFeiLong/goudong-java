@@ -34,10 +34,8 @@ import com.goudong.core.util.ListUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.security.cert.CertificateEncodingException;
 import java.util.*;
 
@@ -237,10 +235,6 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
     @Override
     public List<BaseAppCertDTO> listCertsByAppId(Long appId) {
         List<BaseAppCertDTO> certDTOS = baseAppCertService.listCertsByAppId(appId);
-        certDTOS.forEach(p -> {
-            // 私钥不显示
-            p.setPrivateKey(null);
-        });
         return certDTOS;
     }
 

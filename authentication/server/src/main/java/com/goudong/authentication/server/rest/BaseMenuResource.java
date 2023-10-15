@@ -61,4 +61,7 @@ public class BaseMenuResource {
         return Result.ofSuccess(baseMenuManagerService.deleteById(id));
     }
 
+    // TODO 权限校验接口
+    // @PostMapping("/checkPermission")
+
 }
