@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.authentication.server.constant.CommonConst;
 import com.goudong.authentication.server.domain.BaseMenu;
+import com.goudong.authentication.server.domain.BaseRole;
+import com.goudong.authentication.server.enums.RedisKeyTemplateProviderEnum;
 import com.goudong.authentication.server.repository.BaseMenuRepository;
 import com.goudong.authentication.server.rest.req.BaseMenuChangeSortNumReq;
 import com.goudong.authentication.server.rest.req.BaseMenuCreateReq;
@@ -14,8 +16,10 @@ import com.goudong.authentication.server.rest.req.BaseMenuUpdateReq;
 import com.goudong.authentication.server.service.BaseMenuService;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
+import com.goudong.authentication.server.service.dto.PermissionDTO;
 import com.goudong.authentication.server.service.mapper.BaseMenuMapper;
 import com.goudong.authentication.server.util.SecurityContextUtil;
+import com.goudong.boot.redis.core.RedisTool;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.StringUtil;
@@ -23,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -54,6 +59,9 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     private TransactionTemplate transactionTemplate;
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Resource
+    private RedisTool redisTool;
     //~methods
     //==================================================================================================================
 
@@ -225,6 +233,41 @@ public class BaseMenuServiceImpl implements BaseMenuService {
             return true;
         }
         return true;
+    }
+
+    /**
+     * 查询应用下所有菜单
+     *
+     * @param appId 应用id
+     * @return 菜单集合
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public List<PermissionDTO> findAllPermission(Long appId) {
+        String key = RedisKeyTemplateProviderEnum.APP_PERMISSION.getFullKey(appId);
+        if (Boolean.TRUE.equals(redisTool.hasKey(key))) { // 存在缓存直接取缓存
+            return (List<PermissionDTO>)redisTool.get(RedisKeyTemplateProviderEnum.APP_PERMISSION, appId);
+        }
+        synchronized (this) {
+            if (Boolean.TRUE.equals(redisTool.hasKey(key))) { // 存在缓存直接取缓存
+                return (List<PermissionDTO>)redisTool.get(RedisKeyTemplateProviderEnum.APP_PERMISSION, appId);
+            }
+
+            // 查询
+            List<BaseMenu> allByAppId = baseMenuRepository.findAllByAppId(appId);
+            List<PermissionDTO> list = new ArrayList<>(allByAppId.size());
+
+            allByAppId.forEach(p -> {
+                PermissionDTO permissionDTO = BeanUtil.copyProperties(p, PermissionDTO.class, "roles");
+                permissionDTO.setRoles(p.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList()));
+                list.add(permissionDTO);
+            });
+
+            // 设置到缓存
+            redisTool.set(RedisKeyTemplateProviderEnum.APP_PERMISSION, list, appId);
+
+            return list;
+        }
     }
 
     /**

@@ -2,14 +2,12 @@ package com.goudong.core.security.cer;
 
 import sun.security.x509.*;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.cert.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -91,6 +89,48 @@ public class CertificateUtil {
         }
     }
 
+    /**
+     * 加载证书
+     * @param inputStream 证书的输入流
+     * @return 证书
+     */
+    public static X509Certificate loadCertificate(InputStream inputStream) {
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X509");
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(inputStream);
+            // 检查证书是否有效期内
+            cert.checkValidity();
+            return cert;
+        } catch (CertificateExpiredException e) {
+            throw new RuntimeException("证书已过期", e);
+        } catch (CertificateNotYetValidException e) {
+            throw new RuntimeException("证书尚未生效", e);
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 加载证书
+     * @param encode Base64编码后的证书
+     * @return 证书
+     */
+    public static X509Certificate loadCertificate(String encode) {
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X509");
+
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(Base64.getDecoder().decode(encode)));
+            // 检查证书是否有效期内
+            cert.checkValidity();
+            return cert;
+        } catch (CertificateExpiredException e) {
+            throw new RuntimeException("证书已过期", e);
+        } catch (CertificateNotYetValidException e) {
+            throw new RuntimeException("证书尚未生效", e);
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * 类描述：
      * 生成证书相关信息

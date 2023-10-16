@@ -6,6 +6,7 @@ import com.goudong.authentication.server.rest.req.BaseMenuCreateReq;
 import com.goudong.authentication.server.rest.req.BaseMenuGetAllReq;
 import com.goudong.authentication.server.rest.req.BaseMenuUpdateReq;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
+import com.goudong.authentication.server.service.dto.PermissionDTO;
 
 import java.util.List;
 
@@ -71,7 +72,12 @@ public interface BaseMenuService {
      * @return
      */
     Boolean changeSortNum(BaseMenuChangeSortNumReq req);
-    // ==shanchu
 
+    /**
+     * 查询应用下所有菜单
+     * @param appId 应用id
+     * @return 菜单集合
+     */
+    List<PermissionDTO> findAllPermission(Long appId);
 
 }
