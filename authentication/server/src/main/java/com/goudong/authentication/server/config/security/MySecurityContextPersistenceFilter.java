@@ -4,6 +4,8 @@ import com.goudong.authentication.common.core.Jwt;
 import com.goudong.authentication.common.core.UserSimple;
 import com.goudong.authentication.server.constant.HttpHeaderConst;
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.domain.BaseRole;
+import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.BaseAppManagerService;
 import com.goudong.boot.web.core.BasicException;
@@ -16,6 +18,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -27,7 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -66,7 +71,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = httpServletRequest.getRequestURI();
-        // 本次请求是白名单，不需要进行后面的token校验
+        // 本次请求是静态资源，不需要进行后面的token校验
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         boolean staticUri = STATIC_URIS.stream()
                 .filter(f -> antPathMatcher.match(f, requestURI))
@@ -76,37 +81,44 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             return;
         }
 
-        Long appId = getAppId(httpServletRequest);
-        // 设置应用id到请求属性中，供后续使用
-        httpServletRequest.setAttribute(HttpHeaderConst.X_APP_ID, appId);
-        // 获取认证用户，并将其设置到 SecurityContext中
-        try {
-            Optional<String> first = IGNORE_URIS.stream()
-                    .filter(f -> antPathMatcher.match(f, requestURI))
-                    .findFirst();
-            if (first.isPresent()) {
-                filterChain.doFilter(httpServletRequest, httpServletResponse);
-                return;
-            }
+        // 本次请求时白名单，直接放行
+        Optional<String> first = IGNORE_URIS.stream()
+                .filter(f -> antPathMatcher.match(f, requestURI))
+                .findFirst();
+        if (first.isPresent()) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+            return;
+        }
 
+        String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        AssertUtil.isNotBlank(authorization, () -> ClientException.clientByUnauthorized());
+        Pattern pattern = Pattern.compile("(Bearer || GOUDONG-SHA256withRSA ).*");
+        Matcher matcher = pattern.matcher(authorization);
+        AssertUtil.isTrue(matcher.matches(), "请求头Authorization格式错误");
+        String model = matcher.group(1);
+        UserSimple userSimple;
+        if (model.equals("Bearer ")) { // 直接解析token
+            Long appId = getAppId(httpServletRequest);
+            // 设置应用id到请求属性中，供后续使用
+            httpServletRequest.setAttribute(HttpHeaderConst.X_APP_ID, appId);
             BaseApp app = baseAppManagerService.findById(appId);
             AssertUtil.isTrue(app.getEnabled(), () -> ClientException
                     .builder()
                     .clientMessageTemplate("X-App-Id:{}未激活")
                     .clientMessageParams(appId)
                     .build());
-
-            String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-            AssertUtil.isNotBlank(authorization, () -> ClientException.clientByUnauthorized());
-            String prefix = "Bearer ";
-            AssertUtil.isTrue(authorization.startsWith(prefix), () -> ClientException.client("请求头" + HttpHeaders.AUTHORIZATION + "格式错误"));
-            String token = authorization.substring(prefix.length());
-
-            Jwt jwt = new Jwt(0, TimeUnit.SECONDS, app.getSecret());
-            UserSimple userSimple = jwt.parseToken(token);
+            String token = authorization.substring(8);
+            Jwt jwt = new Jwt(app.getSecret());
+            userSimple = jwt.parseToken(token);
 
             log.debug("解析token：{}", userSimple);
+        } else {
+            userSimple = getAppAdminUser(authorization);
+        }
 
+
+        // 获取认证用户，并将其设置到 SecurityContext中
+        try {
             MyAuthentication myAuthentication = new MyAuthentication();
             myAuthentication.setId(userSimple.getId());
             myAuthentication.setAppId(userSimple.getAppId());
@@ -128,7 +140,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
      * @param httpServletRequest
      * @return
      */
-    private Long getAppId(HttpServletRequest httpServletRequest) {
+    public Long getAppId(HttpServletRequest httpServletRequest) {
         // 先校验请求头应用Id
         String appIdStr = httpServletRequest.getHeader(HttpHeaderConst.X_APP_ID);
         AssertUtil.isNotBlank(appIdStr, () -> BasicException.client(String.format("请求头%s丢失", HttpHeaderConst.X_APP_ID)));
@@ -137,6 +149,33 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
         } catch (NumberFormatException e) {
             throw BasicException.client(String.format("请求头%s=%s无效", HttpHeaderConst.X_APP_ID, appIdStr));
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public UserSimple getAppAdminUser (String authentication) {
+        // 提取关键信息
+        // 使用正则表达式，提取关键信息
+        Pattern pattern = Pattern.compile("GOUDONG-SHA256withRSA appid=\"(\\d+)\",serial_number=\"(.*)\",timestamp=\"(\\d+)\",nonce_str=\"(.*)\" signature=\"(.*)\"");
+        Matcher matcher = pattern.matcher(authentication);
+        AssertUtil.isTrue(matcher.matches(), "请求头格式错误");
+        Long appId =  Long.parseLong(matcher.group(1));             // 应用id
+
+        // 查询应用证书
+        BaseApp baseApp = baseAppManagerService.findById(appId);
+        AssertUtil.isNotNull(baseApp, () -> BasicException.client(String.format("应用id=%s不存在", appId)));
+
+        // 查询应用管理员
+        BaseUser baseUser = baseAppManagerService.findAppAdminUser(baseApp.getId(), baseApp.getName());
+        AssertUtil.isNotNull(baseUser, () -> BasicException.client(String.format("应用%s管理员不存在", baseApp.getName())));
+
+        // 构造实体
+        UserSimple userSimple = new UserSimple();
+        userSimple.setId(baseUser.getId());
+        userSimple.setAppId(baseUser.getAppId());
+        userSimple.setRealAppId(baseUser.getRealAppId());
+        userSimple.setUsername(baseUser.getUsername());
+        userSimple.setRoles(baseUser.getRoles().stream().map(BaseRole::getName).collect(Collectors.toList()));
+        return userSimple;
     }
 
 }

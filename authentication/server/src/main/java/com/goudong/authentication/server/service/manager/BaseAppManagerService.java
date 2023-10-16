@@ -1,6 +1,7 @@
 package com.goudong.authentication.server.service.manager;
 
 import com.goudong.authentication.server.domain.BaseApp;
+import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseAppCertCreateReq;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
 import com.goudong.authentication.server.rest.req.BaseAppUpdate;
@@ -94,4 +95,12 @@ public interface BaseAppManagerService {
      * @return 证书记录
      */
     BaseAppCertDTO createCert(BaseAppCertCreateReq req);
+
+    /**
+     * 查询应用的管理员
+     * @param appId 应用id
+     * @param name 应用名
+     * @return
+     */
+    BaseUser findAppAdminUser(Long appId, String name);
 }

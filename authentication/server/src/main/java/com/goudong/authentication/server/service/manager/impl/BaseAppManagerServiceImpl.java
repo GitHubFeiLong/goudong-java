@@ -33,6 +33,8 @@ import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.ListUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
@@ -278,6 +280,18 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
         });
 
         return baseAppCertMapper.toDto(cert);
+    }
+
+    /**
+     * 查询应用的管理员
+     * @param appId 应用id
+     * @param name 应用名
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    public BaseUser findAppAdminUser(Long appId, String name) {
+        return baseUserService.findOneByAppIdAndUsername(appId, name);
     }
 
 }
