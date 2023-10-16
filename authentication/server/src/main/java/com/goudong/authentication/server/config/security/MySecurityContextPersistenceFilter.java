@@ -18,8 +18,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -151,7 +149,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    // @Transactional(propagation = Propagation.REQUIRED)
     public UserSimple getAppAdminUser (String authentication) {
         // 提取关键信息
         // 使用正则表达式，提取关键信息
