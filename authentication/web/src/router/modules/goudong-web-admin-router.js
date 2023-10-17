@@ -1,6 +1,7 @@
 /** 自定义的菜单路由配置 **/
 
 import {treeToArr} from "@/utils/tree";
+import {API_PREFIX} from "@/constant/commons";
 
 /**
  * 预先定义好的所有资源
@@ -54,7 +55,7 @@ export const goudongWebAdminResource = [
             name: '查询用户',
             type: 2,
             openModel: 0,
-            path: '/api/user/base-user/page',
+            path: `${API_PREFIX}/user/page/base-users`,
             method: '["GET"]',
             permissionId: 'sys:user:query',
           },
@@ -62,7 +63,7 @@ export const goudongWebAdminResource = [
             name: '新增用户',
             type: 2,
             openModel: 0,
-            path: '/api/user/base-user/simple-create-user',
+            path: `${API_PREFIX}/user/base-user/simple-create`,
             method: '["POST"]',
             permissionId: 'sys:user:add',
           },
@@ -70,7 +71,7 @@ export const goudongWebAdminResource = [
             name: '删除用户',
             type: 2,
             openModel: 0,
-            path: '/api/user/base-user/*',
+            path: `${API_PREFIX}/user/base-users`,
             method: '["DELETE"]',
             permissionId: 'sys:user:delete',
           },

@@ -74,8 +74,8 @@ public class CertificateUtil {
             // 创建证书对象
             X509CertImpl cert = new X509CertImpl(certInfo);
             cert.sign(keyPair.getPrivate(), "SHA256withRSA");
-           String encode = Base64.getEncoder().encodeToString(cert.getEncoded());
-           System.out.println(encode);
+            String encode = Base64.getEncoder().encodeToString(cert.getEncoded());
+            System.out.println(encode);
 
             // 将证书保存到文件
            // OutputStream outputStream = new FileOutputStream("certificate.cer");
