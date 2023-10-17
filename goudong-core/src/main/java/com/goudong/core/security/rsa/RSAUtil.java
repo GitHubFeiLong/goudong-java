@@ -49,6 +49,8 @@ public class RSAUtil {
     public static final String ALGORITHM = "RSA";
     /**
      * 签名名称
+     * SHA256WithRSA
+     * MD5withRSA
      */
     public static final String SIGNATURE_ALGORITHM = "MD5withRSA";
 

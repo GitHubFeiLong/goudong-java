@@ -1,5 +1,6 @@
 package com.goudong.authentication.server.service.manager.impl;
 
+import com.goudong.authentication.common.core.AuthorizationContext;
 import com.goudong.authentication.common.core.Jwt;
 import com.goudong.authentication.common.core.UserSimple;
 import com.goudong.authentication.common.util.HttpRequestUtil;
@@ -9,8 +10,10 @@ import com.goudong.authentication.server.service.BaseAppCertService;
 import com.goudong.authentication.server.service.BaseAppService;
 import com.goudong.authentication.server.service.BaseMenuService;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
+import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.dto.PermissionDTO;
 import com.goudong.authentication.server.service.manager.PermissionManagerService;
+import com.goudong.authentication.server.util.SecurityContextUtil;
 import com.goudong.boot.web.core.ClientException;
 import com.goudong.core.security.cer.CertificateUtil;
 import com.goudong.core.util.AssertUtil;
@@ -65,37 +68,31 @@ public class PermissionManagerServiceImpl implements PermissionManagerService {
     @Override
     @Transactional(readOnly = true)
     public List<PermissionDTO> listPermission() {
-        String authentication = Optional.ofNullable(httpServletRequest.getHeader("Authorization"))
+        String authorization = Optional.ofNullable(httpServletRequest.getHeader("Authorization"))
                 .orElseThrow(() -> ClientException.client("请求头Authorization丢失"));
-        Long xAppId = HttpRequestUtil.getXAppId();
 
-        // 查询应用证书
-        BaseApp baseApp = Optional.ofNullable(baseAppService.getById(xAppId)).orElseThrow(() -> ClientException.client("应用不存在"));
-        AssertUtil.isTrue(Boolean.TRUE.equals(baseApp.getEnabled()), () -> ClientException.client("应用未激活"));
 
         // 校验请求头
-        if (authentication.startsWith("Bearer ")) {
-            String token = authentication.substring(8);
-            Jwt jwt = new Jwt(baseApp.getSecret());
-            UserSimple userSimple = jwt.parseToken(token);
+        if (authorization.startsWith("Bearer ")) {
+            Long xAppId = HttpRequestUtil.getXAppId();
+            MyAuthentication myAuthentication = SecurityContextUtil.get();
             return baseMenuService.findAllPermission(xAppId);
         }
 
-        //
-        if (authentication.startsWith("GOUDONG-SHA256withRSA")) {
-            // 提取关键信息
-            // 使用正则表达式，提取关键信息
-            Pattern pattern = Pattern.compile("GOUDONG-SHA256withRSA appid=\"(\\d+)\",serial_number=\"(.*)\",timestamp=\"(\\d+)\",nonce_str=\"(.*)\" signature=\"(.*)\"");
-            Matcher matcher = pattern.matcher(authentication);
-            AssertUtil.isTrue(matcher.matches(), "请求头格式错误");
-            Long appId =  Long.parseLong(matcher.group(1));             // 应用id
-            String serialNumber =  matcher.group(2);                    // 证书序列号
-            long timestamp =  Long.parseLong(matcher.group(3));         // 时间戳
-            String nonceStr =  matcher.group(4);                        // 随机字符串
-            String signature =  matcher.group(5);                       // 签名
 
+        if (authorization.startsWith("GOUDONG-SHA256withRSA")) {
+            AuthorizationContext authorizationContext = AuthorizationContext.get(authorization);
+
+            Long appId =  authorizationContext.getAppid();                  // 应用id
+            String serialNumber =  authorizationContext.getSerialNumber();  // 证书序列号
+            long timestamp =  authorizationContext.getTimestamp();          // 时间戳
+            String nonceStr =  authorizationContext.getNonceStr();          // 随机字符串
+            String signature =  authorizationContext.getSignature();        // 签名
+
+            // 查询应用
+            BaseApp baseApp = Optional.ofNullable(baseAppService.getById(appId)).orElseThrow(() -> ClientException.client("应用不存在"));
+            AssertUtil.isTrue(Boolean.TRUE.equals(baseApp.getEnabled()), () -> ClientException.client("应用未激活"));
             // 查询应用证书
-            AssertUtil.isTrue(Objects.equals(xAppId, appId), () -> ClientException.client("应用id不匹配"));
             BaseAppCert baseAppCert = baseApp.getCerts().stream().filter(f -> f.getSerialNumber().equals(serialNumber)).findFirst().orElseThrow(() -> ClientException.client("证书不存在"));
             AssertUtil.isTrue(baseAppCert.getValidTime().after(new Date()), () -> ClientException.client("证书已过期"));
 

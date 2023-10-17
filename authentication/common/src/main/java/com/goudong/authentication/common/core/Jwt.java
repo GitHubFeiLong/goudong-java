@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -34,14 +35,10 @@ public class Jwt {
     /**
      * 密钥
      */
-    private String secretKey;
+    private final String secretKey;
 
     public Jwt(String secretKey) {
-        try {
-            this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
     /**
      * 构造方法，创建jwt实例
@@ -52,11 +49,7 @@ public class Jwt {
     public Jwt(long time, TimeUnit timeUnit, String secretKey) {
         this.time = time;
         this.timeUnit = timeUnit;
-        try {
-            this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

@@ -105,7 +105,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
                     .clientMessageTemplate("X-App-Id:{}未激活")
                     .clientMessageParams(appId)
                     .build());
-            String token = authorization.substring(8);
+            String token = authorization.substring(7);
             Jwt jwt = new Jwt(app.getSecret());
             userSimple = jwt.parseToken(token);
 
@@ -122,7 +122,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
             myAuthentication.setAppId(userSimple.getAppId());
             myAuthentication.setRealAppId(userSimple.getRealAppId());
             myAuthentication.setUsername(userSimple.getUsername());
-            myAuthentication.setRoles(userSimple.getRoles().stream().map(m -> new SimpleGrantedAuthority(m)).collect(Collectors.toList()));
+            myAuthentication.setRoles(userSimple.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
             // 官网建议，避免跨多个线程的竞态条件
             SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
             emptyContext.setAuthentication(myAuthentication);
@@ -153,7 +153,7 @@ public class MySecurityContextPersistenceFilter extends OncePerRequestFilter {
     public UserSimple getAppAdminUser (String authentication) {
         // 提取关键信息
         // 使用正则表达式，提取关键信息
-        Pattern pattern = Pattern.compile("GOUDONG-SHA256withRSA appid=\"(\\d+)\",serial_number=\"(.*)\",timestamp=\"(\\d+)\",nonce_str=\"(.*)\" signature=\"(.*)\"");
+        Pattern pattern = Pattern.compile("GOUDONG-SHA256withRSA appid=\"(\\d+)\",serial_number=\"(.*)\",timestamp=\"(\\d+)\",nonce_str=\"(.*)\",signature=\"(.*)\"");
         Matcher matcher = pattern.matcher(authentication);
         AssertUtil.isTrue(matcher.matches(), "请求头格式错误");
         Long appId =  Long.parseLong(matcher.group(1));             // 应用id
