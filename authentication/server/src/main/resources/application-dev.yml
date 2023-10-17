@@ -4,8 +4,8 @@ logging:
     cn.zhxu.bs: DEBUG
     com.goudong: DEBUG
     com.zhy.authentication.server: DEBUG
-    org.apache.tomcat: DEBUG
-    org.apache.tomcat.jdbc.pool: DEBUG
+#    org.apache.tomcat: DEBUG
+#    org.apache.tomcat.jdbc.pool: DEBUG
 
 server:
   port: 8080

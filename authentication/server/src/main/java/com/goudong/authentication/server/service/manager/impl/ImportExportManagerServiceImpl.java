@@ -1,8 +1,6 @@
 package com.goudong.authentication.server.service.manager.impl;
 
 import com.goudong.authentication.server.service.manager.ImportExportManagerService;
-import com.goudong.boot.web.core.ClientException;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.Objects;
 
 /**
  * 类描述：
@@ -34,7 +31,7 @@ public class ImportExportManagerServiceImpl implements ImportExportManagerServic
 
     //~methods
     //==================================================================================================================
-    public void exportTemplateHandler(String fileName) throws IOException {
+    public void exportTemplateHandler(HttpServletResponse response, String fileName) throws IOException {
         ServletOutputStream outputStream = response.getOutputStream();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream fileInputStream = loader.getResourceAsStream(PREFIX_DIR + fileName);

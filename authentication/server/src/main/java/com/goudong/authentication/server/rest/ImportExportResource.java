@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -31,8 +33,8 @@ public class ImportExportResource {
 
     @GetMapping("/export-user-template")
     @ApiOperation("用户模板导出")
-    public void exportUserTemplate() throws IOException {
-        importExportManagerService.exportTemplateHandler("template-user.xlsx");
+    public void exportUserTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        importExportManagerService.exportTemplateHandler(response, "template-user.xlsx");
     }
 
 //    @GetMapping("/export-user")
@@ -49,13 +51,13 @@ public class ImportExportResource {
 
     @GetMapping("/export-role-template")
     @ApiOperation("角色模板导出")
-    public void exportRoleTemplate() throws IOException {
-        importExportManagerService.exportTemplateHandler("template-role.xlsx");
+    public void exportRoleTemplate(HttpServletResponse response) throws IOException {
+        importExportManagerService.exportTemplateHandler(response, "template-role.xlsx");
     }
 
     @GetMapping("/export-menu-template")
     @ApiOperation("菜单模板导出")
-    public void exportMenuTemplate() throws IOException {
-        importExportManagerService.exportTemplateHandler("template-menu.xlsx");
+    public void exportMenuTemplate(HttpServletResponse response) throws IOException {
+        importExportManagerService.exportTemplateHandler(response, "template-menu.xlsx");
     }
 }
