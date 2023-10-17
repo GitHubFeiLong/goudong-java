@@ -16,4 +16,10 @@ public interface PermissionManagerService {
      * @return 权限列表
      */
     List<PermissionDTO> listPermission();
+
+    /**
+     * 检查是否有权限
+     * @return
+     */
+    Boolean checkPermission();
 }

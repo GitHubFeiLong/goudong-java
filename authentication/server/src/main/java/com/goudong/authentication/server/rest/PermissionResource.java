@@ -36,4 +36,10 @@ public class PermissionResource {
     public Result<List<PermissionDTO>> listPermission() {
         return Result.ofSuccess(permissionManagerService.listPermission());
     }
+
+    @PostMapping("/checkPermission")
+    @ApiOperation(value = "校验权限")
+    public Result<Boolean> checkPermission() {
+        return Result.ofSuccess(permissionManagerService.checkPermission());
+    }
 }

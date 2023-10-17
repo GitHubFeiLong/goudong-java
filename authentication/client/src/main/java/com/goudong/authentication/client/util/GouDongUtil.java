@@ -51,6 +51,34 @@ public class GouDongUtil {
     }
 
     /**
+     * 检查是否能访问
+     * @param uri 资源uri
+     * @param method 请求方式
+     * @param userRoles 用户角色
+     * @return true有权限；false没权限
+     */
+    private boolean check(String uri, String method, List<String> userRoles, List<PermissionDTO> permissionDTOList) {
+        // 查询应用菜单权限
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        List<String> permissionRoles = permissionDTOList.parallelStream().filter(f -> {
+                    if (f.getType() == 2 || f.getType() == 3) { // 按钮和接口
+                        return antPathMatcher.match(f.getPath(), uri) && f.getMethod().toUpperCase().contains(method.toUpperCase());
+                    }
+                    return false;
+                })
+                // 扁平化角色
+                .flatMap(m -> m.getRoles().stream())
+                .collect(Collectors.toList());
+
+        log.info("url={}，method={}，用户权限={}，需要权限={}", uri, method, userRoles, permissionRoles);
+        if (CollectionUtil.isEmpty(permissionRoles)) {
+            return true;
+        }
+
+        return permissionRoles.stream().anyMatch(userRoles::contains);
+    }
+
+    /**
      * 加载证书
      * @param inputStream 证书的输入流
      * @return 证书

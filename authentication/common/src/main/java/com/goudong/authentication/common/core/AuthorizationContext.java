@@ -50,6 +50,9 @@ public class AuthorizationContext {
      */
     private String signature;
 
+    /**
+     * token
+     */
     private String token;
 
     //~methods
