@@ -187,6 +187,17 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     }
 
     /**
+     * 批量保存角色
+     *
+     * @param roles
+     * @return 插入的角色
+     */
+    @Override
+    public List<BaseRoleDTO> saveAll(List<BaseRole> roles) {
+        return baseRoleMapper.toDto(baseRoleRepository.saveAll(roles));
+    }
+
+    /**
      * 修改角色
      *
      * @param req 需要修改的角色信息

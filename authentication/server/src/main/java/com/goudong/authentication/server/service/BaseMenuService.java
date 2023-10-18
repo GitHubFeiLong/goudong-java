@@ -52,6 +52,13 @@ public interface BaseMenuService {
     BaseMenuDTO save(BaseMenuCreateReq req);
 
     /**
+     * 批量保存菜单
+     * @param menus
+     * @return
+     */
+    List<BaseMenuDTO> saveAll(List<BaseMenu> menus);
+
+    /**
      * 更新菜单
      * @param req
      * @return
@@ -79,5 +86,6 @@ public interface BaseMenuService {
      * @return 菜单集合
      */
     List<PermissionDTO> findAllPermission(Long appId);
+
 
 }

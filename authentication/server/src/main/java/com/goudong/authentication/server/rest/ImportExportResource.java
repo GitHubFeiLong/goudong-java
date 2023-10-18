@@ -1,5 +1,7 @@
 package com.goudong.authentication.server.rest;
 
+import com.goudong.authentication.server.rest.req.BaseMenuImportReq;
+import com.goudong.authentication.server.rest.req.BaseRoleImportReq;
 import com.goudong.authentication.server.rest.req.BaseUserImportReq;
 import com.goudong.authentication.server.rest.resp.BaseImportResp;
 import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
@@ -40,7 +42,7 @@ public class ImportExportResource {
 
     @GetMapping("/export-user-template")
     @ApiOperation("用户模板导出")
-    public void exportUserTemplate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void exportUserTemplate(HttpServletResponse response) throws IOException {
         importExportManagerService.exportTemplateHandler(response, "template-user.xlsx");
     }
 
@@ -63,9 +65,23 @@ public class ImportExportResource {
         importExportManagerService.exportTemplateHandler(response, "template-role.xlsx");
     }
 
+    @PostMapping("/import-role")
+    @ApiOperation("角色导入")
+    @ResponseBody
+    public Result<Boolean> importRole(@Validated BaseRoleImportReq req) {
+        return Result.ofSuccess(importExportManagerService.importRole(req));
+    }
+
     @GetMapping("/export-menu-template")
     @ApiOperation("菜单模板导出")
     public void exportMenuTemplate(HttpServletResponse response) throws IOException {
         importExportManagerService.exportTemplateHandler(response, "template-menu.xlsx");
+    }
+
+    @PostMapping("/import-menu")
+    @ApiOperation("菜单导入")
+    @ResponseBody
+    public Result<Boolean> importMenu(@Validated BaseMenuImportReq req) {
+        return Result.ofSuccess(importExportManagerService.importMenu(req));
     }
 }

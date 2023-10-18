@@ -1,5 +1,7 @@
 package com.goudong.authentication.server.service.manager;
 
+import com.goudong.authentication.server.rest.req.BaseMenuImportReq;
+import com.goudong.authentication.server.rest.req.BaseRoleImportReq;
 import com.goudong.authentication.server.rest.req.BaseUserImportReq;
 import com.goudong.authentication.server.rest.resp.BaseImportResp;
 import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
@@ -28,5 +30,19 @@ public interface ImportExportManagerService {
      * @param req 导入参数
      * @return 导入结果
      */
-    boolean importUser(BaseUserImportReq req);
+    Boolean importUser(BaseUserImportReq req);
+
+    /**
+     * 导入角色
+     * @param req
+     * @return
+     */
+    Boolean importRole(BaseRoleImportReq req);
+
+    /**
+     * 导入菜单
+     * @param req
+     * @return
+     */
+    Boolean importMenu(BaseMenuImportReq req);
 }

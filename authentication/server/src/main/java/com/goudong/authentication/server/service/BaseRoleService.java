@@ -51,6 +51,12 @@ public interface BaseRoleService {
     BaseRoleDTO save(BaseRoleCreateReq req);
 
     /**
+     * 批量保存角色
+     * @param roles
+     */
+    List<BaseRoleDTO> saveAll(List<BaseRole> roles);
+
+    /**
      * 修改角色
      *
      * @param req 需要修改的角色信息
@@ -84,5 +90,6 @@ public interface BaseRoleService {
      * @return
      */
     BaseRole findByAppAdmin();
+
 
 }

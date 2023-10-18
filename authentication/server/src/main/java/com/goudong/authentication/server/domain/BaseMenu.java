@@ -75,7 +75,7 @@ public class BaseMenu extends BasePO implements Serializable {
     private String path;
 
     /**
-     * 请求方式
+     * 请求方式 GET,POST,PUT,DELETE,HEAD,PATCH,OPTIONS,TRACE
      */
     @Column(name = "method")
     private String method;
@@ -110,4 +110,10 @@ public class BaseMenu extends BasePO implements Serializable {
     @JoinTable(name = "base_role_menu", joinColumns = {@JoinColumn(name = "menu_id")},
             inverseJoinColumns={@JoinColumn(name = "role_id")})
     private List<BaseRole> roles = new ArrayList<>();
+
+    /**
+     * 上级权限标识
+     */
+    @Transient
+    private String parentPermissionId;
 }

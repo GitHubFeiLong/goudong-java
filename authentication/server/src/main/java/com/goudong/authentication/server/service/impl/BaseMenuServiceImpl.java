@@ -156,6 +156,17 @@ public class BaseMenuServiceImpl implements BaseMenuService {
     }
 
     /**
+     * 批量保存菜单
+     *
+     * @param menus
+     * @return
+     */
+    @Override
+    public List<BaseMenuDTO> saveAll(List<BaseMenu> menus) {
+        return baseMenuMapper.toDto(baseMenuRepository.saveAll(menus));
+    }
+
+    /**
      * 更新菜单
      *
      * @param req

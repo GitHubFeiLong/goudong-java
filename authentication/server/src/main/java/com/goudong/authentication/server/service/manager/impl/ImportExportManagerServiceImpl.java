@@ -1,11 +1,16 @@
 package com.goudong.authentication.server.service.manager.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.goudong.authentication.server.easyexcel.listener.BaseRoleImportExcelListener;
 import com.goudong.authentication.server.easyexcel.listener.BaseUserImportExcelListener;
+import com.goudong.authentication.server.easyexcel.template.BaseRoleImportExcelTemplate;
+import com.goudong.authentication.server.rest.req.BaseMenuImportReq;
+import com.goudong.authentication.server.rest.req.BaseRoleImportReq;
 import com.goudong.authentication.server.rest.req.BaseUserImportReq;
 import com.goudong.authentication.server.rest.resp.BaseImportResp;
 import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
 import com.goudong.authentication.server.easyexcel.template.BaseUserImportExcelTemplate;
+import com.goudong.authentication.server.service.BaseRoleService;
 import com.goudong.authentication.server.service.BaseUserService;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.ImportExportManagerService;
@@ -40,6 +45,9 @@ public class ImportExportManagerServiceImpl implements ImportExportManagerServic
 
     @Resource
     private BaseUserService baseUserService;
+
+    @Resource
+    private BaseRoleService baseRoleService;
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -84,11 +92,55 @@ public class ImportExportManagerServiceImpl implements ImportExportManagerServic
      * @return 导入结果
      */
     @Override
-    public boolean importUser(BaseUserImportReq req) {
+    public Boolean importUser(BaseUserImportReq req) {
         MyAuthentication myAuthentication = SecurityContextUtil.get();
         try {
             EasyExcel.read(req.getFile().getInputStream(), BaseUserImportExcelTemplate.class,
                     new BaseUserImportExcelListener(myAuthentication, baseUserService, transactionTemplate, passwordEncoder))
+                    .sheet()
+                    // 第二行开始解析
+                    .headRowNumber(2)
+                    .doRead();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+    /**
+     * 导出角色
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public Boolean importRole(BaseRoleImportReq req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        try {
+            EasyExcel.read(req.getFile().getInputStream(), BaseRoleImportExcelTemplate.class,
+                            new BaseRoleImportExcelListener(myAuthentication, baseRoleService, transactionTemplate))
+                    .sheet()
+                    // 第二行开始解析
+                    .headRowNumber(2)
+                    .doRead();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+    /**
+     * 导入菜单
+     *
+     * @param req
+     * @return
+     */
+    @Override
+    public Boolean importMenu(BaseMenuImportReq req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        try {
+            EasyExcel.read(req.getFile().getInputStream(), BaseRoleImportExcelTemplate.class,
+                            new BaseRoleImportExcelListener(myAuthentication, baseRoleService, transactionTemplate))
                     .sheet()
                     // 第二行开始解析
                     .headRowNumber(2)
