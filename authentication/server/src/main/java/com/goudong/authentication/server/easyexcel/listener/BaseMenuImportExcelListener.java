@@ -5,11 +5,8 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.goudong.authentication.server.config.MyIdentifierGenerator;
 import com.goudong.authentication.server.domain.BaseMenu;
-import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.easyexcel.template.BaseMenuImportExcelTemplate;
-import com.goudong.authentication.server.easyexcel.template.BaseRoleImportExcelTemplate;
 import com.goudong.authentication.server.service.BaseMenuService;
-import com.goudong.authentication.server.service.BaseRoleService;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.boot.web.core.ClientException;
@@ -20,7 +17,6 @@ import com.goudong.core.util.CollectionUtil;
 import com.goudong.core.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
@@ -156,7 +152,10 @@ public class BaseMenuImportExcelListener implements ReadListener<BaseMenuImportE
 
         // 填充id和
         map2.forEach((k,v)->{
-
+            if (map1.containsKey(k)) {
+                BaseMenuDTO baseMenuDTO = map1.get(k);
+                v.setId(baseMenuDTO.getId());
+            }
         });
 
         // 将菜单转成map，
