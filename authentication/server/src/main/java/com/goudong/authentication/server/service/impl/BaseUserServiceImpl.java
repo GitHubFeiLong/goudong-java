@@ -204,6 +204,16 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     /**
+     * 批量新增/修改用户
+     * @param users 用户
+     * @return
+     */
+    @Override
+    public List<BaseUserDTO> saveAll(List<BaseUser> users) {
+        return baseUserMapper.toDto(baseUserRepository.saveAll(users));
+    }
+
+    /**
      * 批量删除用户
      *
      * @param ids 被删除的用户id集合

@@ -66,6 +66,13 @@ public interface BaseUserService {
     BaseUserDTO save(BaseUser user);
 
     /**
+     * 批量新增/修改用户
+     * @param users 用户
+     * @return
+     */
+    List<BaseUserDTO> saveAll(List<BaseUser> users);
+
+    /**
      * 批量删除用户
      *
      * @param ids 被删除的用户id集合

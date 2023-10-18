@@ -1,7 +1,18 @@
 package com.goudong.authentication.server.service.manager.impl;
 
+import com.alibaba.excel.EasyExcel;
+import com.goudong.authentication.server.easyexcel.listener.BaseUserImportExcelListener;
+import com.goudong.authentication.server.rest.req.BaseUserImportReq;
+import com.goudong.authentication.server.rest.resp.BaseImportResp;
+import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
+import com.goudong.authentication.server.easyexcel.template.BaseUserImportExcelTemplate;
+import com.goudong.authentication.server.service.BaseUserService;
+import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.authentication.server.service.manager.ImportExportManagerService;
+import com.goudong.authentication.server.util.SecurityContextUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -23,14 +34,25 @@ public class ImportExportManagerServiceImpl implements ImportExportManagerServic
     //~fields
     //==================================================================================================================
     public static final String PREFIX_DIR = "templates/";
-    @Resource
-    private HttpServletRequest request;
 
     @Resource
-    private HttpServletResponse response;
+    private TransactionTemplate transactionTemplate;
+
+    @Resource
+    private BaseUserService baseUserService;
+
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     //~methods
     //==================================================================================================================
+
+
+    /**
+     * 导出"resources/templates/"下指定文件（{@code fileName}）
+     * @param response 响应对象
+     * @param fileName 文件名
+     */
     public void exportTemplateHandler(HttpServletResponse response, String fileName) throws IOException {
         ServletOutputStream outputStream = response.getOutputStream();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -53,5 +75,27 @@ public class ImportExportManagerServiceImpl implements ImportExportManagerServic
         // 关闭输入流和输出流
         fileInputStream.close();
         outputStream.close();
+    }
+
+    /**
+     * 导入用户
+     *
+     * @param req 导入参数
+     * @return 导入结果
+     */
+    @Override
+    public boolean importUser(BaseUserImportReq req) {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        try {
+            EasyExcel.read(req.getFile().getInputStream(), BaseUserImportExcelTemplate.class,
+                    new BaseUserImportExcelListener(myAuthentication, baseUserService, transactionTemplate, passwordEncoder))
+                    .sheet()
+                    // 第二行开始解析
+                    .headRowNumber(2)
+                    .doRead();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 }

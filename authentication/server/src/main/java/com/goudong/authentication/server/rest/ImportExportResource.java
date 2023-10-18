@@ -1,11 +1,18 @@
 package com.goudong.authentication.server.rest;
 
+import com.goudong.authentication.server.rest.req.BaseUserImportReq;
+import com.goudong.authentication.server.rest.resp.BaseImportResp;
+import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
 import com.goudong.authentication.server.service.manager.ImportExportManagerService;
+import com.goudong.core.lang.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -37,16 +44,17 @@ public class ImportExportResource {
         importExportManagerService.exportTemplateHandler(response, "template-user.xlsx");
     }
 
+    @PostMapping("/import-user")
+    @ApiOperation("用户导入")
+    @ResponseBody
+    public Result<Boolean> importUser(@Validated BaseUserImportReq req) {
+        return Result.ofSuccess(importExportManagerService.importUser(req));
+    }
+
 //    @GetMapping("/export-user")
 //    @ApiOperation("用户导出")
-//    public void exportUser() {
-//        return importExportManagerService.exportUser();
-//    }
-
-//    @PostMapping("/import-user")
-//    @ApiOperation("用户导入")
-//    public void importUser() {
-//        return importExportManagerService.importUser();
+//    public void exportUser(HttpServletResponse response,) {
+//        return importExportManagerService.exportUser(response);
 //    }
 
     @GetMapping("/export-role-template")

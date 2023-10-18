@@ -8,10 +8,7 @@ import com.goudong.boot.web.enumerate.ClientExceptionEnum;
 import com.goudong.core.util.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -126,6 +123,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
             return new DisabledException("用户未激活");
         });
 
+        AssertUtil.isFalse(user.getLocked(), () -> {
+            log.warn("根据X-App-Id查询用户，用户已锁定");
+            return new LockedException("用户已锁定");
+        });
+
         AssertUtil.isTrue(user.getValidTime().after(new Date()), () -> {
             log.warn("选择了应用,账户已过期");
             return new AccountExpiredException("账户已过期");
@@ -177,6 +179,11 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
         AssertUtil.isTrue(user.getEnabled(), () -> {
             log.warn("根据X-App-Id查询用户，用户未激活");
             return new DisabledException("用户未激活");
+        });
+
+        AssertUtil.isFalse(user.getLocked(), () -> {
+            log.warn("根据X-App-Id查询用户，用户已锁定");
+            return new LockedException("用户已锁定");
         });
 
         AssertUtil.isTrue(user.getValidTime().after(new Date()), () -> {
