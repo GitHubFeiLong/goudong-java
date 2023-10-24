@@ -7,6 +7,7 @@ import cn.hutool.core.util.IdUtil;
 import com.goudong.authentication.server.constant.RoleConst;
 import com.goudong.authentication.server.domain.BaseApp;
 import com.goudong.authentication.server.domain.BaseAppCert;
+import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.domain.BaseUser;
 import com.goudong.authentication.server.rest.req.BaseAppCertCreateReq;
 import com.goudong.authentication.server.rest.req.BaseAppCreate;
@@ -31,6 +32,7 @@ import com.goudong.core.lang.PageResult;
 import com.goudong.core.security.cer.CertificateUtil;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.ListUtil;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -152,8 +154,14 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
         baseUser.setValidTime(DateUtil.parse("2099-12-31 00:00:00", DatePattern.NORM_DATETIME_FORMATTER));
         baseUser.setRemark("应用管理员");
 
+        // 创建角色
+        BaseRole baseRole = new BaseRole();
+        baseRole.setAppId(baseApp.getId());
+        baseRole.setName(RoleConst.ROLE_APP_ADMIN);
+        baseRole.setRemark("应用管理员角色");
+
         // 设置角色
-        baseUser.setRoles(ListUtil.newArrayList(baseRoleService.findByAppAdmin()));
+        baseUser.setRoles(ListUtil.newArrayList(baseRole));
         // 设置证书
         baseApp.setCerts(ListUtil.newArrayList(baseAppCert));
 
@@ -161,6 +169,8 @@ public class BaseAppManagerServiceImpl implements BaseAppManagerService {
             try {
                 // 新增应用
                 baseAppService.save(baseApp);
+                // 新增角色
+                baseRoleService.save(baseRole);
                 // 新增管理用户
                 baseUserService.save(baseUser);
                 baseAppService.cleanCache(baseApp.getId());

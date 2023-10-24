@@ -51,6 +51,14 @@ public interface BaseRoleService {
     BaseRoleDTO save(BaseRoleCreateReq req);
 
     /**
+     * 保存角色
+     *
+     * @param req 角色信息
+     * @return 保存后对象
+     */
+    BaseRoleDTO save(BaseRole req);
+
+    /**
      * 批量保存角色
      * @param roles
      */
@@ -89,7 +97,12 @@ public interface BaseRoleService {
      * 查询应用管理员角色
      * @return
      */
+    @Deprecated
     BaseRole findByAppAdmin();
 
-
+    /**
+     * 查询登录用户真实的应用管理员角色
+     * @return 角色
+     */
+    BaseRole findAppAdmin();
 }

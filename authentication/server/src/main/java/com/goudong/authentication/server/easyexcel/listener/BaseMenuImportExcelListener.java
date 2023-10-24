@@ -5,8 +5,10 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.goudong.authentication.server.config.MyIdentifierGenerator;
 import com.goudong.authentication.server.domain.BaseMenu;
+import com.goudong.authentication.server.domain.BaseRole;
 import com.goudong.authentication.server.easyexcel.template.BaseMenuImportExcelTemplate;
 import com.goudong.authentication.server.service.BaseMenuService;
+import com.goudong.authentication.server.service.BaseRoleService;
 import com.goudong.authentication.server.service.dto.BaseMenuDTO;
 import com.goudong.authentication.server.service.dto.MyAuthentication;
 import com.goudong.boot.web.core.ClientException;
@@ -45,9 +47,14 @@ public class BaseMenuImportExcelListener implements ReadListener<BaseMenuImportE
     private MyAuthentication myAuthentication;
 
     /**
-     * 角色服务
+     * 菜单服务
      */
     private BaseMenuService baseMenuService;
+
+    /**
+     * 菜单服务
+     */
+    private BaseRoleService baseRoleService;
 
     /**
      * 实物
@@ -69,9 +76,11 @@ public class BaseMenuImportExcelListener implements ReadListener<BaseMenuImportE
     //==================================================================================================================
     public BaseMenuImportExcelListener(MyAuthentication myAuthentication,
                                        BaseMenuService baseMenuService,
+                                       BaseRoleService baseRoleService,
                                        TransactionTemplate transactionTemplate) {
         this.myAuthentication = myAuthentication;
         this.baseMenuService = baseMenuService;
+        this.baseRoleService = baseRoleService;
         this.transactionTemplate = transactionTemplate;
         this.types = new HashMap<>(3);
         this.types.put("菜单", 1);
@@ -138,11 +147,16 @@ public class BaseMenuImportExcelListener implements ReadListener<BaseMenuImportE
             }
         }
 
+        // 获取本次导入菜单的父菜单标识不在本次导入的菜单标识中。(如果currentHaveNotParentPermissionIds有值，就需要校验数据库是否有值)
+        Collection<String> currentHaveNotParentPermissionIds = CollectionUtil.subtract(parentPermissionIds, map2.keySet());
+
         // 查询所有菜单
         List<BaseMenuDTO> allMenuDTOList = baseMenuService.findAllByAppId(myAuthentication.getRealAppId());
         Map<String, BaseMenuDTO> map1 = new HashMap<>();
-        AtomicInteger sortNumAtomicInteger = new AtomicInteger(0);
+        AtomicInteger sortNumAtomicInteger = new AtomicInteger(1);
         for (BaseMenuDTO baseMenuDTO : allMenuDTOList) {
+            AssertUtil.isFalse(map2.containsKey(baseMenuDTO.getPermissionId()), () -> ClientException.client("菜单权限标识已存在").serverMessage(baseMenuDTO.getPermissionId()));
+
             map1.put(baseMenuDTO.getPermissionId(), baseMenuDTO);
             // 找最大的排序号
             if (baseMenuDTO.getSortNum() > sortNumAtomicInteger.get()) {
@@ -150,68 +164,27 @@ public class BaseMenuImportExcelListener implements ReadListener<BaseMenuImportE
             }
         }
 
-        // 填充id和
-        map2.forEach((k,v)->{
-            if (map1.containsKey(k)) {
-                BaseMenuDTO baseMenuDTO = map1.get(k);
-                v.setId(baseMenuDTO.getId());
-            }
-        });
-
-        // 将菜单转成map，
-        Map<String, BaseMenu> map = cachedDataList.stream()
-                // 转成map
-                .collect(Collectors.toMap(BaseMenu::getPermissionId, p -> p, (k1, k2) -> k1));
-
-
-        // 将前端传递的菜单进行转成一维，并填充id和parentId属性建立父子关系
-        List<BaseMenuPO> pos = new ArrayList<>();
-        AtomicInteger sortNumAtomic = new AtomicInteger(1);
-        req.stream().forEach(p -> {
-            convert(sortNumAtomic, p, null, map, pos);
-        });
-
-        // 多余的菜单id（需要删除）
-        List<Long> needlessMenuIds = new ArrayList<>();
-        Date now = new Date();
-        Long userId = GoudongContext.get().getUserId();
-
-        pos.stream().forEach(p->{
-            // 获取原始菜单
-            String key = key(p);
-            BaseMenuPO poByMap = map.get(key);
-            if (poByMap != null) { // 原始菜单中有时，就需要修改
-                // 其他子节点也需要修改父节点id
-                p.setUpdateTime(now);
-                p.setUpdateUserId(userId);
-                // 使用过了就删除,最后map中剩下的就是数据库中多余的，
-                map.remove(key);
-            }
-        });
-
-        // 原始中多余的菜单进行删除
-        if (!map.isEmpty()) {
-            map.forEach((k,v)->{
-                needlessMenuIds.add(v.getId());
-            });
-
-            // 删除角色菜单中间表
-            baseMenuRepository.deleteRoleMenu(needlessMenuIds);
-            // 删除菜单表
-            baseMenuRepository.deleteByIdIn(needlessMenuIds);
+        // 将数据库现存菜单的permissionId校验
+        if (CollectionUtil.isNotEmpty(currentHaveNotParentPermissionIds)) {
+            List<String> notFoundPermissionId = currentHaveNotParentPermissionIds.stream().filter(f -> !map1.containsKey(f)).collect(Collectors.toList());
+            AssertUtil.isTrue(CollectionUtil.isEmpty(notFoundPermissionId), () -> ClientException.client().clientMessage("导入菜单失败，存在父菜单标识不在本次导入的菜单标识中，请检查").serverMessage(notFoundPermissionId.toString()));
         }
 
-        // 批量保存或更新
-        baseMenuRepository.saveAll(pos);
+        // 填充id和
+        map2.forEach((k,v)->{
+            // 填充排序号
+            v.setSortNum(sortNumAtomicInteger.getAndIncrement());
+            // 填充parentId
+            if (StringUtil.isNotBlank(v.getParentPermissionId())) {
+                if (map2.containsKey(v.getParentPermissionId())) {
+                    v.setParentId(map2.get(v.getParentPermissionId()).getId());
+                }  else if (map1.containsKey(v.getParentPermissionId())) {
+                    v.setParentId(map1.get(v.getParentPermissionId()).getId());
+                }
+            }
+        });
 
-        // 查询admin拥有的角色
-        BaseRolePO baseRolePO = baseRoleRepository.findById(1L).orElseThrow(()-> ClientException.client(ClientExceptionEnum.NOT_FOUND, "管理员角色不存在"));
-        // 修改角色
-        List<BaseMenuPO> addMenus = CollectionUtil.subtract(pos, baseRolePO.getMenus()).stream().collect(Collectors.toList());
-        baseRolePO.setMenus(addMenus);
 
-        // 删除redis中的所有菜单，和redis中角色的菜单权限。
-        redisTool.deleteKeysByPattern(RedisKeyProviderEnum.MENU_ROLE);
 
 
         updateData();
@@ -226,6 +199,10 @@ public class BaseMenuImportExcelListener implements ReadListener<BaseMenuImportE
             transactionTemplate.execute(status -> {
                 try {
                     baseMenuService.saveAll(cachedDataList);
+                    // 将菜单绑定到应用的管理员角色
+                    BaseRole appAdmin = baseRoleService.findAppAdmin();
+                    // 将菜单权限赋予管理员
+                    appAdmin.setMenus(cachedDataList);
                     return true;
                 }catch (Exception e) {
                     status.setRollbackOnly();

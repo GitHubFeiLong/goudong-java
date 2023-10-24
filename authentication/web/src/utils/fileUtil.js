@@ -1,3 +1,6 @@
+import { AUTHORIZATION, X_APP_ID } from "@/constant/HttpHeaderConst";
+import LocalStorageUtil from "@/utils/LocalStorageUtil";
+
 export function download(content, fileName) {
   // 获取响应数据
   const blob = new Blob(
@@ -13,4 +16,14 @@ export function download(content, fileName) {
   element.click();                    // 点击下载
   document.body.removeChild(element); // 下载完成移除元素
   window.URL.revokeObjectURL(href);
+}
+
+/**
+ * 上传前填充http请求头
+ * @param headers
+ */
+export function beforeUploadFillHttpHeader(headers) {
+  // 请求头
+  headers[AUTHORIZATION] = "Bearer " + LocalStorageUtil.getToken().accessToken
+  headers[X_APP_ID] = 1; // 固定值
 }

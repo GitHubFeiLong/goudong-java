@@ -44,10 +44,10 @@
         <el-button v-permission="'sys:user:delete'" class="el-button--small" icon="el-icon-delete" type="danger" @click="deleteUsers">
           删除
         </el-button>
-        <el-button v-permission="'sys:user:import'" class="el-button--small" icon="el-icon-upload2" @click="importUserDialog=true">
+        <el-button class="el-button--small" icon="el-icon-upload2" @click="importUserDialog=true">
           导入
         </el-button>
-        <el-button v-permission="'sys:user:export'" class="el-button--small" icon="el-icon-download" @click="exportExcel">
+        <el-button class="el-button--small" icon="el-icon-download" @click="exportExcel">
           导出
         </el-button>
       </div>
@@ -219,7 +219,7 @@
     <el-dialog title="导入用户" :visible.sync="importUserDialog" custom-class="el-dialog-import-table">
       <el-upload
         class="el-dialog-import-table-upload"
-        action="/api/file/user/import/user"
+        :action="importUserAction"
         drag
         :show-file-list="false"
         :multiple="false"
@@ -254,7 +254,10 @@ import {
 import { exportUserApi, exportUserTemplateApi } from "@/api/file";
 import { isNotEmpty, isTrue } from "@/utils/assertUtil";
 import { beforeUploadExcel } from "@/utils/updateUtil";
-import { DATE_PICKER_DEFAULT_OPTIONS } from "@/constant/commons";
+import {API_PREFIX, DATE_PICKER_DEFAULT_OPTIONS} from "@/constant/commons";
+import LocalStorageUtil from "@/utils/LocalStorageUtil";
+import { AUTHORIZATION, X_APP_ID } from "@/constant/HttpHeaderConst";
+import {beforeUploadFillHttpHeader} from "@/utils/fileUtil";
 
 export default {
   name: 'UserPage',
@@ -275,6 +278,7 @@ export default {
       pickerOptions: DATE_PICKER_DEFAULT_OPTIONS,
       // 导入用户
       importUserDialog: false,
+      importUserAction: `${API_PREFIX}/import-export/import-user`,
       // 新增用户 子组件新增用户 弹框显示变量
       createUserDialog: false,
       // 修改用户 子组件弹框 弹框显示变量
@@ -544,6 +548,8 @@ export default {
     // 导入用户之前
     beforeUploadUserExcel(file) {
       beforeUploadExcel(file);
+      beforeUploadFillHttpHeader(this.headers);
+      console.log("this.headers", this.headers)
     },
     // 导入用户成功
     uploadUserExcelSuccess(data, file, fileList) {
@@ -551,6 +557,7 @@ export default {
     },
     // 上传失败
     uploadUserExcelError(err, file, fileList) {
+      console.error("导入失败", err)
       // 获取失败的信息
       const errMessage = JSON.parse(err["message"]);
       if (errMessage.clientMessage) {

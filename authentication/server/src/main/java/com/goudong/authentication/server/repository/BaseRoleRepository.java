@@ -30,4 +30,12 @@ public interface BaseRoleRepository extends JpaRepository<BaseRole, Long>, JpaSp
     @Modifying
     @Query(nativeQuery = true, value = "delete from base_role where app_id = ?1")
     int deleteByAppId(Long appId);
+
+    /**
+     * 查询指定应用的管理员角色
+     * @param appId 应用id
+     * @return 角色对象
+     */
+    @Query("from BaseRole where appId=?1 and name='ROLE_APP_ADMIN'")
+    BaseRole findAppAdminByAppId(Long appId);
 }

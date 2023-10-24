@@ -187,6 +187,17 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     }
 
     /**
+     * 保存角色
+     *
+     * @param req 角色信息
+     * @return 保存后对象
+     */
+    @Override
+    public BaseRoleDTO save(BaseRole req) {
+        return baseRoleMapper.toDto(baseRoleRepository.save(req));
+    }
+
+    /**
      * 批量保存角色
      *
      * @param roles
@@ -294,5 +305,17 @@ public class BaseRoleServiceImpl implements BaseRoleService {
     @Override
     public BaseRole findByAppAdmin() {
         return baseRoleRepository.findByAppAdmin();
+    }
+
+    /**
+     * 查询登录用户真实的应用管理员角色
+     *
+     * @return 角色
+     */
+    @Override
+    public BaseRole findAppAdmin() {
+        MyAuthentication myAuthentication = SecurityContextUtil.get();
+        Long realAppId = myAuthentication.getRealAppId();
+        return baseRoleRepository.findAppAdminByAppId(realAppId);
     }
 }

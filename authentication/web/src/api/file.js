@@ -1,5 +1,6 @@
 import request from "@/utils/request";
 import {exportExcel} from "@/utils/export";
+import {API_PREFIX} from "@/constant/commons";
 
 /**
  * 上传单文件
@@ -23,7 +24,7 @@ export function simpleUpload(file) {
  */
 export function exportUserTemplateApi() {
   return request({
-    url: `/api/file/user-server/template/user`,
+    url: `${API_PREFIX}/import-export/export-user-template`,
     method: 'get',
     responseType: 'blob',
   }).then(response => {
@@ -38,7 +39,7 @@ export function exportUserTemplateApi() {
  */
 export function exportUserApi(data) {
   return request({
-    url: `/api/file/user-server/export/user`,
+    url: `${API_PREFIX}/import-export/export-user`,
     method: 'get',
     params: data,
     responseType: 'blob',
