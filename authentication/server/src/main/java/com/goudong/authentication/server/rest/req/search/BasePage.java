@@ -10,6 +10,9 @@ import javax.validation.constraints.NotNull;
 @Data
 public class BasePage {
 
+    @ApiModelProperty(value = "是否开启分页")
+    private Boolean openPage = true;
+
     @ApiModelProperty(value = "第几页,从1开始", required = true)
     @NotNull(message = "分页查询page参数必传")
     @Min(value = 1L, message = "分页参数错误，page必须大于等于1")

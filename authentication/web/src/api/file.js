@@ -40,8 +40,8 @@ export function exportUserTemplateApi() {
 export function exportUserApi(data) {
   return request({
     url: `${API_PREFIX}/import-export/export-user`,
-    method: 'get',
-    params: data,
+    method: 'post',
+    data,
     responseType: 'blob',
   }).then(response => {
     exportExcel(response)

@@ -168,12 +168,40 @@ public class BaseUserServiceImpl implements BaseUserService {
             }
         };
 
-        Pageable  pageable = PageRequest.of(req.getPage(), req.getSize(), Sort.by("createdDate").descending());
-        Page<BaseUser> userPage = baseUserRepository.findAll(specification, pageable);
+        // 单独创建排序对象
+        Sort createdDateDesc = Sort.by("createdDate").descending();
 
-        List<BaseUserPageResp> contents = new ArrayList<>(userPage.getContent().size());
+        // 开启分页，就需要分页查询
+        if (req.getOpenPage()) {
+            Pageable pageable = PageRequest.of(req.getPage(), req.getSize(), createdDateDesc);
+            Page<BaseUser> userPage = baseUserRepository.findAll(specification, pageable);
+
+            List<BaseUserPageResp> contents = new ArrayList<>(userPage.getContent().size());
+            AtomicLong serialNumber = new AtomicLong(req.getStartSerialNumber());
+            userPage.getContent().forEach(p -> {
+                List<BaseRoleDropDownResp> roleDropDownRespList = new ArrayList<>(p.getRoles().size());
+                p.getRoles().forEach(role -> {
+                    roleDropDownRespList.add(new BaseRoleDropDownResp(role.getId(), role.getName()));
+                });
+                BaseUserPageResp baseUserPageResp = BeanUtil.copyProperties(p, BaseUserPageResp.class);
+                baseUserPageResp.setSerialNumber(serialNumber.getAndIncrement());
+                contents.add(baseUserPageResp);
+            });
+
+            return new PageResult<BaseUserPageResp>(userPage.getTotalElements(),
+                    (long)userPage.getTotalPages(),
+                    userPage.getPageable().getPageNumber() + 1L,
+                    (long)userPage.getPageable().getPageSize(),
+                    contents
+            );
+        }
+
+        // 没开启分页，就需要查询所有
+        List<BaseUser> users = baseUserRepository.findAll(specification, createdDateDesc);
+
+        List<BaseUserPageResp> contents = new ArrayList<>(users.size());
         AtomicLong serialNumber = new AtomicLong(req.getStartSerialNumber());
-        userPage.getContent().forEach(p -> {
+        users.forEach(p -> {
             List<BaseRoleDropDownResp> roleDropDownRespList = new ArrayList<>(p.getRoles().size());
             p.getRoles().forEach(role -> {
                 roleDropDownRespList.add(new BaseRoleDropDownResp(role.getId(), role.getName()));
@@ -183,13 +211,12 @@ public class BaseUserServiceImpl implements BaseUserService {
             contents.add(baseUserPageResp);
         });
 
-        return new PageResult<BaseUserPageResp>(userPage.getTotalElements(),
-                (long)userPage.getTotalPages(),
-                userPage.getPageable().getPageNumber() + 1L,
-                (long)userPage.getPageable().getPageSize(),
+        return new PageResult<BaseUserPageResp>((long)users.size(),
+                1L,
+                1L,
+                (long)users.size(),
                 contents
         );
-
     }
 
     /**

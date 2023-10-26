@@ -2,6 +2,7 @@ package com.goudong.authentication.server.service.manager;
 
 import com.goudong.authentication.server.rest.req.BaseMenuImportReq;
 import com.goudong.authentication.server.rest.req.BaseRoleImportReq;
+import com.goudong.authentication.server.rest.req.BaseUserExportReq;
 import com.goudong.authentication.server.rest.req.BaseUserImportReq;
 import com.goudong.authentication.server.rest.resp.BaseImportResp;
 import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
@@ -24,13 +25,20 @@ public interface ImportExportManagerService {
      */
     void exportTemplateHandler(HttpServletResponse response, String fileName) throws IOException;
 
-
     /**
      * 导入用户
      * @param req 导入参数
      * @return 导入结果
      */
     Boolean importUser(BaseUserImportReq req);
+
+    /**
+     * 导出用户
+     * @param response 响应
+     * @param req 查询参数
+     * @return 导出结果
+     */
+    void exportUser(HttpServletResponse response, BaseUserExportReq req);
 
     /**
      * 导入角色

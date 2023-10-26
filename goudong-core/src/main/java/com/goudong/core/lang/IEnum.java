@@ -18,7 +18,7 @@ public interface IEnum<ID, T extends IEnum> {
 
     /**
      * 获取枚举成员的唯一标识
-     * @return
+     * @return 枚举成员的唯一标识
      */
     ID getId();
 
@@ -55,7 +55,7 @@ public interface IEnum<ID, T extends IEnum> {
      * @param <T>
      */
     @SuppressWarnings(value = "all")
-    static <T extends IEnum> T getById(Class<? extends Enum> clazz, Object id) {
+    static <T extends IEnum> T getById(Class<T> clazz, Object id) {
         try {
             Method method = clazz.getDeclaredMethod("values");
             Object invoke = method.invoke(null);
@@ -72,6 +72,5 @@ public interface IEnum<ID, T extends IEnum> {
 
         throw new IllegalArgumentException(MessageFormatUtil.format("根据标识{}，未找到{}枚举成员", id, clazz.getName()));
     }
-
 }
 

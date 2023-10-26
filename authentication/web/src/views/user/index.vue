@@ -554,6 +554,9 @@ export default {
     // 导入用户成功
     uploadUserExcelSuccess(data, file, fileList) {
       console.log("上传成功")
+      this.importUserDialog = false
+      this.$message.success("上传成功")
+      this.loadPageUser()
     },
     // 上传失败
     uploadUserExcelError(err, file, fileList) {
@@ -569,10 +572,17 @@ export default {
     // 导出用户
     exportExcel() {
       this.filterTimeHandler();
+      const pageParam = {
+        id: this.filter.id,
+        startValidTime: this.filter.startValidTime,
+        endValidTime: this.filter.endValidTime,
+      }
       // 如果勾选了就导出勾选的
       const data = {
-        ...this.filter,
-        ids: this.checkUserIds.join(",")
+        ids: this.checkUserIds,
+        pageReq: { // 查询条件
+          ...pageParam
+        },
       }
       exportUserApi(data);
     }

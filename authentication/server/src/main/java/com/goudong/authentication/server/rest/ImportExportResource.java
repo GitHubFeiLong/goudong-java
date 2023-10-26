@@ -2,6 +2,7 @@ package com.goudong.authentication.server.rest;
 
 import com.goudong.authentication.server.rest.req.BaseMenuImportReq;
 import com.goudong.authentication.server.rest.req.BaseRoleImportReq;
+import com.goudong.authentication.server.rest.req.BaseUserExportReq;
 import com.goudong.authentication.server.rest.req.BaseUserImportReq;
 import com.goudong.authentication.server.rest.resp.BaseImportResp;
 import com.goudong.authentication.server.rest.resp.BaseUserImportResp;
@@ -11,10 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,11 +51,11 @@ public class ImportExportResource {
         return Result.ofSuccess(importExportManagerService.importUser(req));
     }
 
-//    @GetMapping("/export-user")
-//    @ApiOperation("用户导出")
-//    public void exportUser(HttpServletResponse response,) {
-//        return importExportManagerService.exportUser(response);
-//    }
+    @PostMapping("/export-user")
+    @ApiOperation("用户导出")
+    public void exportUser(HttpServletResponse response, @RequestBody BaseUserExportReq req) {
+        importExportManagerService.exportUser(response, req);
+    }
 
     @GetMapping("/export-role-template")
     @ApiOperation("角色模板导出")
