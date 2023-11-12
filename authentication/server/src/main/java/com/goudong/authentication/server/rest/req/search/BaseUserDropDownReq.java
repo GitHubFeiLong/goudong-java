@@ -3,6 +3,7 @@ package com.goudong.authentication.server.rest.req.search;
 import cn.zhxu.bs.bean.DbField;
 import cn.zhxu.bs.bean.SearchBean;
 import cn.zhxu.bs.operator.Contain;
+import cn.zhxu.bs.operator.Equal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class BaseUserDropDownReq extends BasePage{
     private String name;
 
     @ApiModelProperty(value = "应用名", hidden = true)
+    @DbField(value = "real_app_id", onlyOn = Equal.class)
     @JsonIgnore
     private Long realAppId ;
 }

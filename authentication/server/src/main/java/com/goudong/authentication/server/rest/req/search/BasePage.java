@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 public class BasePage {
 
     @ApiModelProperty(value = "是否开启分页")
+    @DbIgnore
     private Boolean openPage = true;
 
     @ApiModelProperty(value = "第几页,从1开始", required = true)
