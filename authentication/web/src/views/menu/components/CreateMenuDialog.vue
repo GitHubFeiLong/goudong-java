@@ -216,21 +216,20 @@ export default {
     'menu.type'() {
       // 修改菜单类型时，去除之前得验证
       this.$refs.addMenuForm1.clearValidate();
-      switch (this.menu.type) {
+      switch (this.menu.type) { // 1：菜单；2：按钮；3：接口
+        case 1:
+          this.menu.method = undefined
+          this.menu.hide = false
+          this.routePath = {
+            label: '路由地址:',
+            placeholder: '请输入路由地址'
+          }
+          break;
         case 3:
           this.menu.hide = true
           this.routePath = {
             label: '接口地址:',
             placeholder: '请输入接口地址'
-          }
-          break;
-        case 1:
-          this.menu.method = undefined
-          this.menu.meta = undefined
-          this.menu.hide = false
-          this.routePath = {
-            label: '路由地址:',
-            placeholder: '请输入路由地址'
           }
           break;
         default:

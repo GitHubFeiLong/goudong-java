@@ -214,7 +214,6 @@ export default {
       if (this.visible) {
         this.menuData = this.$store.getters.allMenus;
         this.menu = {...this.UpdateMenuData}
-
         if (this.UpdateMenuData.parentId) {
           // 上级菜单
           let allMenuArr = [];
@@ -226,6 +225,8 @@ export default {
         // 请求方式
         if (this.UpdateMenuData.method) {
           this.menu.method = JSON.parse(this.menu.method)
+        } else {
+          this.menu.method = [];
         }
 
       }
@@ -236,21 +237,20 @@ export default {
         this.$refs.updateMenuForm.clearValidate();
       }
 
-      switch (this.menu.type) {
+      switch (this.menu.type) { // 1：菜单；2：按钮；3：接口
+        case 1:
+          this.menu.method = undefined
+          this.menu.hide = false
+          this.routePath = {
+            label: '路由地址:',
+            placeholder: '请输入路由地址'
+          }
+          break;
         case 3:
           this.menu.hide = true
           this.routePath = {
             label: '接口地址:',
             placeholder: '请输入接口地址'
-          }
-          break;
-        case 1:
-          this.menu.method = undefined
-          this.menu.meta = undefined
-          this.menu.hide = false
-          this.routePath = {
-            label: '路由地址:',
-            placeholder: '请输入路由地址'
           }
           break;
         default:
@@ -275,22 +275,10 @@ export default {
         id: '',
         name: ''
       }
-      this.menu = {
-        parentId: undefined,
-        type: 0,
-        name: undefined,
-        permissionId: undefined,
-        path: undefined,
-        method: undefined,
-        sortNum: 0,
-        hide: false,
-        meta: undefined,
-        remark: '',
-      }
+      this.menu = {}
       this.close();
     },
     submitForm() {
-
       this.$refs['updateMenuForm'].validate((valid) => {
         if (valid) {
           console.log(this.menu)
