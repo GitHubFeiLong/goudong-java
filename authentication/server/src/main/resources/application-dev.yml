@@ -44,7 +44,13 @@ spring:
     port: 6379
     password: 123456
     timeout: 3000
-
+  ## flyway数据迁移
+  flyway:
+    #是否开启
+    enabled: true
+    baseline-version: 0
+    baseline-on-migrate: true
+    table: flyway_schema_history
 knife4j:
   enable: true         # 是否开启Knife4j增强模式，默认值为false
   production: false    # 生产环境开启
