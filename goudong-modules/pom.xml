@@ -29,6 +29,7 @@
         <module>easyexcel-demo</module>
         <module>netty</module>
         <module>authentication</module>
+        <module>spring-statemachine-demo</module>
     </modules>
     <dependencies>
         <dependency>

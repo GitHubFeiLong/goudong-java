@@ -1,0 +1,36 @@
+logging:
+  level:
+    ROOT: INFO
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+spring:
+  main:
+    allow-bean-definition-overriding: true #重命名其中一个 bean 或启用覆盖
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false #工程中的资源文件建立映射
+  application:
+    name: app-server #微服务名
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://127.0.0.1:3306/spring_statemachine?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    username: root
+    password: l(=8gp_04h*&
+  redis:
+    database: 0   # Redis数据库索引（默认为0）
+    host: 127.0.0.1 # Redis服务器地址
+    port: 6379
+    password: 123456
+    timeout: 3000
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: id_worker
+  type-aliases-package: com.goudong.spring.statemachine.demo.domain
