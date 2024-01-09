@@ -30,6 +30,7 @@
         <module>netty</module>
         <module>authentication</module>
         <module>spring-statemachine-demo</module>
+        <module>magic</module>
     </modules>
     <dependencies>
         <dependency>
