@@ -47,7 +47,7 @@ spring:
   ## flyway数据迁移
   flyway:
     #是否开启
-    enabled: true
+    enabled: false
     baseline-version: 0
     baseline-on-migrate: true
     table: flyway_schema_history
