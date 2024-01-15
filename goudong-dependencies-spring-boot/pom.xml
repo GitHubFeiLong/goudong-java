@@ -20,8 +20,8 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <!--框架-->
-        <spring-boot-starter.version>2.3.8.RELEASE</spring-boot-starter.version>
-        <spring-boot.version>2.3.8.RELEASE</spring-boot.version>
+        <spring-boot-starter.version>2.5.15</spring-boot-starter.version>
+        <spring-boot.version>2.5.15</spring-boot.version>
         <spring-cloud-dependencies.version>Hoxton.SR12</spring-cloud-dependencies.version>
         <spring-cloud-alibaba-dependencies.version>2.2.7.RELEASE</spring-cloud-alibaba-dependencies.version>
         <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
@@ -33,7 +33,7 @@
         <fastjson.version>1.2.75</fastjson.version>
         <java-jwt.version>3.16.0</java-jwt.version>
         <jjwt.version>0.9.1</jjwt.version>
-        <hutool-all.version>5.8.17</hutool-all.version>
+        <hutool-all.version>5.8.25</hutool-all.version>
         <dysmsapi20170525.version>2.0.1</dysmsapi20170525.version>
         <aliyun-java-sdk-core.version>4.5.16</aliyun-java-sdk-core.version>
         <dnsjava.version>3.3.1</dnsjava.version>
@@ -44,7 +44,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <Sdk4J.version>2.0</Sdk4J.version>
         <log4j-web.version>2.14.0</log4j-web.version>
-        <redisson-spring-boot-starter.version>3.14.0</redisson-spring-boot-starter.version>
+        <redisson-spring-boot-starter.version>3.15.6</redisson-spring-boot-starter.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <quartz.version>2.3.2</quartz.version>
         <httpclient.version>4.5.13</httpclient.version>

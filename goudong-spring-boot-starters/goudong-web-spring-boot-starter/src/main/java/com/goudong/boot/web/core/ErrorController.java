@@ -49,11 +49,7 @@ public class ErrorController extends AbstractErrorController {
         return new ResponseEntity<>(body, status);
     }
 
-    /**
-     * @deprecated
-     */
-    @Override
     public String getErrorPath() {
-        return null;
+        return "error";
     }
 }
