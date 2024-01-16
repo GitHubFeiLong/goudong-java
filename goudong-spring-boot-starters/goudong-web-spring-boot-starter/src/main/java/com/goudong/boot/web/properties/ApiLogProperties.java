@@ -128,6 +128,7 @@ public class ApiLogProperties {
          * <ol>
          *     <li>请求头中X-Api-Result-Length的配置优先级最高</li>
          *     <li>其次是配置的resultsLength，默认值是700</li>
+         *     <li>当值是负数时，会打印完整的返回值</li>
          * </ol>
          */
         private int resultsLength = 700;

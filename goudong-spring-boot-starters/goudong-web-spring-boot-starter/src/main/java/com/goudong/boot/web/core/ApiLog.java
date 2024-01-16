@@ -90,7 +90,7 @@ public class ApiLog {
 
         Supplier<String> s = () -> "";
         StringBuilder sb = new StringBuilder();
-        sb.append("\n-------------------------------------------------------------\n");
+        sb.append("\n----------------------------------------------------------------------------------------------------\n");
 
 
         if (typeEnabled.getIp()) {
@@ -138,7 +138,9 @@ public class ApiLog {
             }
 
             // 获取最终需要打印得返回值
-            resultStr = resultStr.length() > maxResultStrLength ? resultStr.substring(0, maxResultStrLength) : resultStr;
+            if (maxResultStrLength >= 0) {
+                resultStr = resultStr.length() > maxResultStrLength ? resultStr.substring(0, maxResultStrLength) : resultStr;
+            }
             sb.append("Results   : ").append(resultStr).append("\n");
         }
 
@@ -161,7 +163,7 @@ public class ApiLog {
             }
         }
 
-        sb.append("-------------------------------------------------------------\n");
+        sb.append("----------------------------------------------------------------------------------------------------\n");
         return sb.toString();
     }
 

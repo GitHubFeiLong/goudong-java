@@ -44,7 +44,7 @@ public class LogApplicationStartup {
         StringBuilder allMessage = new StringBuilder();
 
         allMessage.append(
-            String.format("\n---------------------------------------------------------------------------" +
+            String.format("\n----------------------------------------------------------------------------------------------------" +
                             "\n\tApplication '%s' is running,耗时:%ss! Access URLs:" +
                             "\n\tLocal: \t\t%s://localhost:%s%s" +
                             "\n\tExternal: \t%s://%s:%s%s",
@@ -91,7 +91,7 @@ public class LogApplicationStartup {
             );
         }
 
-        allMessage.append("\n---------------------------------------------------------------------------");
+        allMessage.append("\n----------------------------------------------------------------------------------------------------");
         log.info(allMessage.toString());
     }
 
