@@ -220,7 +220,7 @@ public class ApiLogAop {
                 data.put(name, request.getHeader(name));
                 continue;
             }
-            if (name.indexOf("x-") != -1 && !headParams.containsKey(name)) {
+            if (name.contains("x-") && !headParams.containsKey(name)) {
                 data.put(name, request.getHeader(name));
                 continue;
             }
