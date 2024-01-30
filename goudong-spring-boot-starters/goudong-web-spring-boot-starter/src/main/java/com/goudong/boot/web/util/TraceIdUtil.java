@@ -2,6 +2,7 @@ package com.goudong.boot.web.util;
 
 import org.slf4j.MDC;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -40,7 +41,7 @@ public class TraceIdUtil {
      * @return
      */
     public static String get() {
-        return MDC.get(TRACE_ID);
+        return Optional.ofNullable(MDC.get(TRACE_ID)).orElseGet(() -> "");
     }
 
     /**

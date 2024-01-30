@@ -93,23 +93,23 @@ public class ApiLog {
         sb.append("\n----------------------------------------------------------------------------------------------------\n");
 
 
-        if (typeEnabled.getIp()) {
-            sb.append("IP        : ").append(Optional.ofNullable(ip).orElseGet(s)).append("\n");
+        if (typeEnabled.getIp() && ip != null) {
+            sb.append("IP        : ").append(ip).append("\n");
         }
 
-        if (typeEnabled.getUri()) {
-            sb.append("URI       : ").append(Optional.ofNullable(uri).orElseGet(s)).append("\n");
+        if (typeEnabled.getUri() && uri != null) {
+            sb.append("URI       : ").append(uri).append("\n");
         }
 
-        if (typeEnabled.getMethod()) {
-            sb.append("Method    : ").append(Optional.ofNullable(method).orElseGet(s)).append("\n");
+        if (typeEnabled.getMethod() && method != null) {
+            sb.append("Method    : ").append(method).append("\n");
         }
 
-        if (typeEnabled.getHeadParams()) {
-            sb.append("HeadParams: ").append(Optional.ofNullable(headParams).orElseGet(() -> new HashMap<>(1))).append("\n");
+        if (typeEnabled.getHeadParams() && headParams != null) {
+            sb.append("HeadParams: ").append(headParams).append("\n");
         }
 
-        if (typeEnabled.getParams()) {
+        if (typeEnabled.getParams() && params != null) {
             String paramsStr;
             try {
                 paramsStr = objectMapper.writeValueAsString(params);
@@ -120,18 +120,25 @@ public class ApiLog {
             sb.append("Params    : ").append(paramsStr).append("\n");
         }
 
-        if (typeEnabled.getResults()) {
+        if (typeEnabled.getResults() && results != null) {
             // 获取需要打印得长度限制
             int maxResultStrLength = printLogLimit.getResultsLength();
-            try {
-                maxResultStrLength = StringUtil.isNotBlank(headParams.get("x-api-result-length")) ?
-                        Integer.parseInt(headParams.get("x-api-result-length")) : maxResultStrLength;
-            } catch (NumberFormatException e) {
-                log.warn("请求头 x-api-result-length 的内容只能是整数类型");
+            if (headParams != null) {
+                try {
+                    maxResultStrLength = StringUtil.isNotBlank(headParams.get("x-api-result-length")) ?
+                            Integer.parseInt(headParams.get("x-api-result-length")) : maxResultStrLength;
+                } catch (NumberFormatException e) {
+                    log.warn("请求头 x-api-result-length 的内容只能是整数类型");
+                }
             }
+
             String resultStr;           // 打印接口返回值
             try {
-                resultStr = objectMapper.writeValueAsString(Optional.ofNullable(results).orElseGet(s));
+                if (results instanceof String) {
+                    resultStr = results.toString();
+                } else {
+                    resultStr = objectMapper.writeValueAsString(Optional.ofNullable(results).orElseGet(s));
+                }
             } catch (Exception e) {
                 log.warn("序列化results json失败：{}", e.getMessage());
                 resultStr = results.toString();
@@ -144,17 +151,17 @@ public class ApiLog {
             sb.append("Results   : ").append(resultStr).append("\n");
         }
 
-        if (typeEnabled.getTraceId()) {
+        if (typeEnabled.getTraceId() && tranceId != null) {
             sb.append("traceId   : ").append(Optional.ofNullable(tranceId).orElseGet(() -> "null")).append("\n");
         }
 
         // 接口响应
-        if (typeEnabled.getSuccessful()) {
+        if (typeEnabled.getSuccessful() && successful != null) {
             sb.append("successful: ").append(successful).append("\n");
         }
 
         // 接口时间
-        if (typeEnabled.getTime()) {
+        if (typeEnabled.getTime() && time != null) {
             if (time < 1000) {
                 sb.append("Time      : ").append(time).append("ms").append("\n");
             } else {

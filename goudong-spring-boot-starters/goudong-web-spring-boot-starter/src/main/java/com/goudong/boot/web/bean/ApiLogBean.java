@@ -13,10 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 类描述：
- *
+ * api日志
  * @author chenf
  */
 @Slf4j
@@ -29,7 +30,7 @@ public class ApiLogBean {
 
     public ApiLogBean(ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
         if (log.isDebugEnabled()) {
-            log.debug("注入apiLogAop");
+            log.debug("注入apiLogBean");
         }
         this.objectMapper = objectMapper;
         this.apiLogProperties = apiLogProperties;
@@ -42,6 +43,15 @@ public class ApiLogBean {
      * @param result    响应结果
      */
     public void print(Object result) {
+        print(result, null);
+    }
+
+    /**
+     * 打印请求日志
+     * @param result    响应结果
+     * @param traceId   链路追踪id
+     */
+    public void print(Object result, Object traceId) {
         // 开启接口打印时
         if (apiLogProperties.getEnabled()) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -57,7 +67,7 @@ public class ApiLogBean {
             apiLog.setMethod(method);
             apiLog.setHeadParams(requestHead);
             apiLog.setResults(result);
-            apiLog.setTranceId(TraceIdUtil.get());
+            apiLog.setTranceId((String) Optional.ofNullable(traceId).orElseGet(TraceIdUtil::get));
             // 输出接口日志
             apiLog.printLogString(apiLogProperties, objectMapper);
         }
