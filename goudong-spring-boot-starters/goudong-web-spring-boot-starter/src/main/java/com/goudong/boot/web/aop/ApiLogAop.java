@@ -122,6 +122,7 @@ public class ApiLogAop {
             result = joinPoint.proceed();       // 执行方法
             successful = true;                   // 设置本次执行成功
         } catch (BasicException e) {
+            log.error("BasicException");
             result = e;
             logger(joinPoint).error(
                                 "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
@@ -131,7 +132,8 @@ public class ApiLogAop {
             );
             throw e;
         } catch (Exception ex) {
-            result = ex;
+            log.error("Exception");
+            result = ex.getMessage();
             logger(joinPoint).error(
                     "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
                     joinPoint.getSignature().getName(),

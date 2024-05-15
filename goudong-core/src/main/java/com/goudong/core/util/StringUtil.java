@@ -32,17 +32,35 @@ public class StringUtil {
     //==================================================================================================================
     /**
      * 判断字符串是null或者是空串
-     * @param str
-     * @return
+     * @param str   需要判断的字符串
+     * @return      true：字符串是null或者是空串；false：字符串不是null也不是空串
+     */
+    public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
+    /**
+     * 判断字符串不是null也不是空串
+     * @param str   需要判断的字符串
+     * @return      true：字符串不是null且不是空串；false：字符串是null或者是空串
+     */
+    public static boolean isNotEmpty(String str) {
+        return !isEmpty(str);
+    }
+
+    /**
+     * 判断字符串是null或者是空白字符串
+     * @param str   需要判断的字符串
+     * @return      true：字符串是null或者是空白字符串；false：字符串不是null也不是空白字符串
      */
     public static boolean isBlank(String str) {
         return str == null || str.trim().isEmpty();
     }
 
     /**
-     * 字符串不是空串，不是null
-     * @param str
-     * @return
+     * 判断字符串不是null也不是空白字符串，
+     * @param str   需要判断的字符串
+     * @return      true：字符串不是null且不是空白字符串；false：字符串是null或者是空白字符串
      */
     public static boolean isNotBlank(String str) {
         return !isBlank(str);
@@ -54,7 +72,7 @@ public class StringUtil {
      * @param str 需要格式化的字符串
      * @param regex 正则表达式
      * @param args 需要{@code regex}的值
-     * @return
+     * @return  替换后的字符串
      */
     public static String formatByRegex(String str, String regex, Object... args) {
         AssertUtil.isNotNull(regex, () -> new IllegalArgumentException("regex不能为null"));
@@ -78,7 +96,7 @@ public class StringUtil {
      * @return result
      */
     public static List<String> split(char split, String content, int step) {
-        if (content == null || content.length() == 0 || step <= 0) {
+        if (content == null || content.isEmpty() || step <= 0) {
             return new ArrayList<>(0);
         }
         List<String> result = new ArrayList<>();
@@ -117,12 +135,12 @@ public class StringUtil {
 
     /**
      * 切割字符串，每个子串最大都只有 step字符
-     * @param content
-     * @param step
-     * @return
+     * @param content   需要切割的字符串
+     * @param step      切割补偿
+     * @return  将字符串切割后存放的集合
      */
     public static List<String> split(String content, int step) {
-        if (content == null || content.length() == 0 || step <= 0) {
+        if (content == null || content.isEmpty() || step <= 0) {
             return new ArrayList<>(0);
         }
         int length = content.length();
@@ -132,9 +150,9 @@ public class StringUtil {
         while (end < maxEndIndex) {
             // 加上步长
             end += step;
-            end = end > maxEndIndex ? maxEndIndex : end;
+            end = Math.min(end, maxEndIndex);
             String substring;
-            if(end > maxEndIndex) {
+            if(end >= maxEndIndex) {
                 // 截取到末尾
                 substring = content.substring(start);
             } else {
@@ -151,18 +169,18 @@ public class StringUtil {
 
     /**
      * 将{@code iterable}使用分隔符{@code separator}进行拼接
-     * @param iterable
-     * @param separator
-     * @return
+     * @param iterable  实现Iterable接口得对象
+     * @param separator 分隔符
+     * @return  拼接后的字符串
      */
     public static String join(Iterable iterable, final String separator) {
         return join(iterable.iterator(), separator);
     }
     /**
      * 将{@code iterator}使用分隔符{@code separator}进行拼接
-     * @param iterator
-     * @param separator
-     * @return
+     * @param iterator  迭代器，集合
+     * @param separator 分隔符
+     * @return  拼接后的字符串
      */
     public static String join(Iterator iterator, final String separator) {
         // handle null, zero and one elements before building a buffer
