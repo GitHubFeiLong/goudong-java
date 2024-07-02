@@ -44,7 +44,7 @@ final class MybatisPlusPage2PageResultConverter<E> implements PageResultConverte
         Long page = source.getCurrent();
         Long size = source.getSize();
         List content = BeanUtil.copyToList(source.getRecords(), tClazz, CopyOptions.create());
-        Long totalPage = (long)Math.ceil(total / size);
+        Long totalPage = (long)Math.ceil(total * 1.0 / size);
 
         return new PageResult<E>(total, totalPage, page, size,content);
     }
