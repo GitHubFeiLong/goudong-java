@@ -1,5 +1,6 @@
 package com.goudong.core.lang;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,7 +38,31 @@ public class PageResult<T> {
      */
     private List<T> content;
 
+    /**
+     * 构造空的分页结果
+     * @return  分页结果
+     */
+    public static <T> PageResult<T> ofEmpty() {
+        return new PageResult<>(0L, 0L, 1L, 10L, new ArrayList<>(0));
+    }
+
+    /**
+     * 构造空的分页结果
+     * @return  分页结果
+     */
+    public static <T> PageResult<T> ofEmpty(Long page, Long size) {
+        return new PageResult<>(0L, 0L, page, size, new ArrayList<>(0));
+    }
+
     public PageResult(List<T> content) {
+        this.content = content;
+    }
+
+    public PageResult(Number total, Number totalPage, Number page, Number size, List<T> content) {
+        this.total = total.longValue();
+        this.totalPage = totalPage.longValue();
+        this.page = page.longValue();
+        this.size = size.longValue();
         this.content = content;
     }
 
