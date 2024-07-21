@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.persist.StateMachinePersister;
+import org.springframework.statemachine.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,11 +26,12 @@ public class TbOrderServiceImpl extends ServiceImpl<TbOrderMapper, TbOrder>
     @Resource
     private StateMachine<TbOrder.OrderStatus, TbOrder.OrderStatusChangeEvent> orderStateMachine;
     @Resource
-    private StateMachinePersister<TbOrder.OrderStatus, TbOrder.OrderStatusChangeEvent, String> stateMachineMemPersister;
+    // private StateMachinePersister<TbOrder.OrderStatus, TbOrder.OrderStatusChangeEvent, String> stateMachineMemPersister;
+    private RedisStateMachinePersister<TbOrder.OrderStatus, TbOrder.OrderStatusChangeEvent> stateMachineRedisPersister;
     @Resource
     private TbOrderMapper orderMapper;
     /**
-     * 创建订单  
+     * 创建订单
      *
      * @param order
      * @return
@@ -41,7 +42,7 @@ public class TbOrderServiceImpl extends ServiceImpl<TbOrderMapper, TbOrder>
         return order;
     }
     /**
-     * 对订单进行支付  
+     * 对订单进行支付
      *
      * @param id
      * @return
@@ -56,7 +57,7 @@ public class TbOrderServiceImpl extends ServiceImpl<TbOrderMapper, TbOrder>
         return order;
     }
     /**
-     * 对订单进行发货  
+     * 对订单进行发货
      *
      * @param id
      * @return
@@ -71,7 +72,7 @@ public class TbOrderServiceImpl extends ServiceImpl<TbOrderMapper, TbOrder>
         return order;
     }
     /**
-     * 对订单进行确认收货  
+     * 对订单进行确认收货
      *
      * @param id
      * @return
@@ -86,8 +87,8 @@ public class TbOrderServiceImpl extends ServiceImpl<TbOrderMapper, TbOrder>
         return order;
     }
     /**
-     * 发送订单状态转换事件  
-     * synchronized修饰保证这个方法是线程安全的  
+     * 发送订单状态转换事件
+     * synchronized修饰保证这个方法是线程安全的
      *
      * @param changeEvent
      * @param order
@@ -97,14 +98,15 @@ public class TbOrderServiceImpl extends ServiceImpl<TbOrderMapper, TbOrder>
         boolean result = false;
         try {
             log.info("sendEvent");
-            //启动状态机  
+            //启动状态机
             orderStateMachine.start();
-            //尝试恢复状态机状态  
-            stateMachineMemPersister.restore(orderStateMachine, String.valueOf(order.getId()));
+            String key = "tboredr:stats:" + String.valueOf(order.getId());
+            //尝试恢复状态机状态
+            stateMachineRedisPersister.restore(orderStateMachine, key);
             Message message = MessageBuilder.withPayload(changeEvent).setHeader("order", order).build();
             result = orderStateMachine.sendEvent(message);
-            //持久化状态机状态  
-            stateMachineMemPersister.persist(orderStateMachine, String.valueOf(order.getId()));
+            //持久化状态机状态
+            stateMachineRedisPersister.persist(orderStateMachine, key);
         } catch (Exception e) {
             log.error("订单操作失败:{}", e);
         } finally {

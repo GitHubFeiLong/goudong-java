@@ -2,10 +2,9 @@ package com.goudong.spring.statemachine.demo.controller;
 
 import com.goudong.spring.statemachine.demo.domain.TbOrder;
 import com.goudong.spring.statemachine.demo.service.TbOrderService;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -17,6 +16,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/order")
+@Api(tags = "订单接口")
 public class OrderController {
     @Resource
     private TbOrderService orderService;
@@ -25,7 +25,8 @@ public class OrderController {
      *
      * @return
      */
-    @RequestMapping("/getById")
+    @GetMapping("/getById")
+    @ApiOperation("获取订单")
     public TbOrder getById(@RequestParam("id") Long id) {
         //根据id查询订单
         TbOrder order = orderService.getById(id);
@@ -36,11 +37,12 @@ public class OrderController {
      *
      * @return
      */
-    @RequestMapping("/create")
-    public String create(@RequestBody TbOrder order) {
+    @PostMapping("/create")
+    @ApiOperation("创建订单")
+    public TbOrder create(@RequestBody TbOrder order) {
         //创建订单
         orderService.create(order);
-        return "sucess";
+        return order;
     }
     /**
      * 对订单进行支付
@@ -48,7 +50,8 @@ public class OrderController {
      * @param id
      * @return
      */
-    @RequestMapping("/pay")
+    @PostMapping("/pay")
+    @ApiOperation("对订单进行支付")
     public String pay(@RequestParam("id") Long id) {
         //对订单进行支付
         orderService.pay(id);
@@ -61,7 +64,8 @@ public class OrderController {
      * @param id
      * @return
      */
-    @RequestMapping("/deliver")
+    @PostMapping("/deliver")
+    @ApiOperation("对订单进行发货")
     public String deliver(@RequestParam("id") Long id) {
         //对订单进行确认收货
         orderService.deliver(id);
@@ -73,7 +77,8 @@ public class OrderController {
      * @param id
      * @return
      */
-    @RequestMapping("/receive")
+    @PostMapping("/receive")
+    @ApiOperation("对订单进行确认收货")
     public String receive(@RequestParam("id") Long id) {
         //对订单进行确认收货
         orderService.receive(id);

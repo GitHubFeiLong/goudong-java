@@ -33,7 +33,9 @@ public class OrderStateMachineConfig extends StateMachineConfigurerAdapter<TbOrd
         states
                 .withStates()
                 .initial(TbOrder.OrderStatus.WAIT_PAYMENT)
-                .states(EnumSet.allOf(TbOrder.OrderStatus.class));
+                .end(TbOrder.OrderStatus.FINISH)
+                .states(EnumSet.allOf(TbOrder.OrderStatus.class))
+        ;
     }
     /**
      * 配置状态转换事件关系

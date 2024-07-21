@@ -58,8 +58,8 @@ public class Persist<E, S> {
      * @return
      */
     @Bean(name = "stateMachineRedisPersister")
-    public RedisStateMachinePersister<E, S> getRedisPersister() {
-        RedisStateMachineContextRepository<E, S> repository = new RedisStateMachineContextRepository<>(redisConnectionFactory);
+    public RedisStateMachinePersister<S, E> getRedisPersister() {
+        RedisStateMachineContextRepository<S, E> repository = new RedisStateMachineContextRepository<>(redisConnectionFactory);
         RepositoryStateMachinePersist p = new RepositoryStateMachinePersist<>(repository);
         return new RedisStateMachinePersister<>(p);
     }

@@ -28,7 +28,6 @@
         <module>mongo-spring-boot</module>
         <module>easyexcel-demo</module>
         <module>netty</module>
-        <module>authentication</module>
         <module>spring-statemachine-demo</module>
         <module>magic</module>
     </modules>
