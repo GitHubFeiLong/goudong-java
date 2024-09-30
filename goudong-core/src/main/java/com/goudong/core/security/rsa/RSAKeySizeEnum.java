@@ -2,10 +2,9 @@ package com.goudong.core.security.rsa;
 
 /**
  * 枚举描述：
- *
+ * RSA 密钥长度枚举
  * @author msi
  * @version 1.0
- * @date 2022/2/12 13:09
  */
 public enum RSAKeySizeEnum {
     RSA1024(1024, 117, 128),
@@ -16,17 +15,17 @@ public enum RSAKeySizeEnum {
     /**
      * key长度
      */
-    private int keySize;
+    private final int keySize;
 
     /**
      * 最大编码块大小
      */
-    private int maxEncryptBlock;
+    private final int maxEncryptBlock;
 
     /**
      * 最大解码块大小
      */
-    private int maxDecryptBlock;
+    private final int maxDecryptBlock;
 
     //~methods
     //==================================================================================================================
@@ -38,8 +37,8 @@ public enum RSAKeySizeEnum {
 
     /**
      * 根据keySize获取枚举
-     * @param keySize
-     * @return
+     * @param keySize   长度
+     * @return  枚举
      */
     public static RSAKeySizeEnum getByKeySize(int keySize) {
         for (RSAKeySizeEnum value : RSAKeySizeEnum.values()) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goudong.boot.web.properties.ApiLogProperties;
 import com.goudong.core.util.AssertUtil;
 import com.goudong.core.util.StringUtil;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,15 +20,12 @@ import java.util.function.Supplier;
 
 /**
  * 类描述：
- *
+ * api接口日志对象
  * @author cfl
  * @version 1.0
- * @date 2023/4/15 17:24
  */
-@Getter
-@Setter
 @Slf4j
-@ToString
+@Data
 public class ApiLog {
     //~fields
     //==================================================================================================================
@@ -76,9 +74,9 @@ public class ApiLog {
 
     /**
      * 转成日志字符串
-     * @param apiLogProperties
-     * @param objectMapper
-     * @return
+     * @param apiLogProperties  apiLong配置对象
+     * @param objectMapper      对象映射器
+     * @return  string 日志字符串
      */
     public String toLogString(ApiLogProperties apiLogProperties, ObjectMapper objectMapper) {
         AssertUtil.isTrue(apiLogProperties.getEnabled(), () -> new RuntimeException("未开启接口日志打印"));
@@ -134,7 +132,7 @@ public class ApiLog {
 
             String resultStr;           // 打印接口返回值
             try {
-                if (results instanceof String) {
+                if (results instanceof String || results instanceof Exception) {
                     resultStr = results.toString();
                 } else {
                     resultStr = objectMapper.writeValueAsString(Optional.ofNullable(results).orElseGet(s));
@@ -176,8 +174,8 @@ public class ApiLog {
 
     /**
      * 打印日志
-     * @param apiLogProperties
-     * @param objectMapper
+     * @param apiLogProperties  apiLong配置对象
+     * @param objectMapper  对象映射器
      */
     public void printLogString(ApiLogProperties apiLogProperties, ObjectMapper objectMapper) {
         String logStr = toLogString(apiLogProperties, objectMapper);

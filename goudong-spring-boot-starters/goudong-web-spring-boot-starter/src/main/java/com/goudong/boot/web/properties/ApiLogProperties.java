@@ -14,7 +14,6 @@ import java.util.Optional;
  * api接口打印的内容
  * @author cfl
  * @version 1.0
- * @date 2023/4/15 17:05
  */
 @Data
 @ConfigurationProperties(prefix = "goudong.web.api-log")
@@ -61,7 +60,6 @@ public class ApiLogProperties {
      * 类描述：
      * 输出类型的开关配置
      * @author cfl
-     * @date 2023/4/16 9:00
      * @version 1.0
      */
     @Data
@@ -108,7 +106,6 @@ public class ApiLogProperties {
      * 类描述：
      * 对某些输出进行限制
      * @author cfl
-     * @date 2023/4/16 9:04
      * @version 1.0
      */
     @Data
@@ -118,7 +115,7 @@ public class ApiLogProperties {
          * 接口请求头参数打印配置
          * <ol>
          *   <li>接口携带的请求头参数包含key，且{@code headParams.get(key) = true}时</li>
-         *    <li>接口携带的请求头包含`x-`开头的参数，且{@code headParams.get(key) != false}时</li>
+         *   <li>接口携带的请求头包含`x-`开头的参数，且{@code headParams.get(key) != false}时</li>
          * </ol>
          */
         private Map<String, Boolean> headParams = new HashMap<>();
@@ -135,10 +132,12 @@ public class ApiLogProperties {
 
         /**
          * 将其key设置成小写，并进行简单的过滤
-         * @param headParams
+         * @param headParams    请求头参数
          */
         public void setHeadParams(Map<String, Boolean> headParams) {
-            if (headParams != null && headParams.isEmpty()) {
+            if (headParams == null) {
+                this.headParams = new HashMap<>();
+            } else if (headParams.isEmpty()) {
                 this.headParams = headParams;
             } else {
                 this.headParams = new HashMap<>(headParams.size());

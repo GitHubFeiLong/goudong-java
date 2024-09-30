@@ -9,8 +9,6 @@ import java.util.Objects;
  * 类描述：
  * String工具类
  * @author cfl
- * @version 1.0
- * @date 2022/10/23 20:48
  */
 public class StringUtil {
     //~fields
@@ -78,8 +76,8 @@ public class StringUtil {
         AssertUtil.isNotNull(regex, () -> new IllegalArgumentException("regex不能为null"));
 
         if (args != null && args.length > 0 && StringUtil.isNotBlank(str)) {
-            for (int i = 0; i < args.length; i++) {
-                str = str.replaceFirst(regex, String.valueOf(args[i]));
+            for (Object arg : args) {
+                str = str.replaceFirst(regex, String.valueOf(arg));
             }
 
             return str;
@@ -173,7 +171,7 @@ public class StringUtil {
      * @param separator 分隔符
      * @return  拼接后的字符串
      */
-    public static String join(Iterable iterable, final String separator) {
+    public static String join(Iterable<?> iterable, final String separator) {
         return join(iterable.iterator(), separator);
     }
     /**
@@ -182,7 +180,7 @@ public class StringUtil {
      * @param separator 分隔符
      * @return  拼接后的字符串
      */
-    public static String join(Iterator iterator, final String separator) {
+    public static String join(Iterator<?> iterator, final String separator) {
         // handle null, zero and one elements before building a buffer
         if (iterator == null) {
             return null;

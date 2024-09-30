@@ -2,10 +2,8 @@ package com.goudong.core.security.aes;
 
 /**
  * 枚举描述：
- *
+ * AES长度枚举
  * @author msi
- * @version 1.0
- * @date 2022/2/12 13:09
  */
 public enum AESKeySizeEnum {
     AES128(128),
@@ -17,7 +15,7 @@ public enum AESKeySizeEnum {
     /**
      * key长度
      */
-    private int keySize;
+    private final int keySize;
 
 
     //~methods
@@ -28,8 +26,8 @@ public enum AESKeySizeEnum {
 
     /**
      * 根据keySize获取枚举
-     * @param keySize
-     * @return
+     * @param keySize   长度
+     * @return  枚举对象
      */
     public static AESKeySizeEnum getByKeySize(int keySize) {
         for (AESKeySizeEnum value : AESKeySizeEnum.values()) {

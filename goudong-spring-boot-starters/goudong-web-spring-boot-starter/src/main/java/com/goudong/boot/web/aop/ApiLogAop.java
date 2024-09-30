@@ -19,7 +19,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.core.env.Environment;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -31,27 +30,22 @@ import java.util.stream.Stream;
 
 /**
  * 类描述：
- * 打印接口请求日志
+ * 打印接口请求日志切面
  * @author msi
- * @date 2021/8/25 20:13
- * @version 1.0
  */
 @Aspect
 @Slf4j
 @ConditionalOnClass(name = {"org.aspectj.lang.JoinPoint"})
 public class ApiLogAop {
 
-    private final Environment env;
-
     private final ObjectMapper objectMapper;
 
     private final ApiLogProperties apiLogProperties;
 
-    public ApiLogAop(Environment env, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
+    public ApiLogAop(ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
         if (log.isDebugEnabled()) {
             log.debug("注入apiLogAop");
         }
-        this.env = env;
         this.objectMapper = objectMapper;
         this.apiLogProperties = apiLogProperties;
     }
@@ -100,7 +94,7 @@ public class ApiLogAop {
         if (apiLogProperties.getEnabled()) {
             stopWatch = new StopWatch();  // 创建计时器
             stopWatch.start();
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String ip = IpUtil.getStringIp(request);
             String requestURI = request.getRequestURI();
             String method = request.getMethod();
@@ -125,7 +119,7 @@ public class ApiLogAop {
             log.error("BasicException");
             result = e;
             logger(joinPoint).error(
-                                "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
+                    "BasicException in {}() with cause = '{}' and exception = '{}'",
                                 joinPoint.getSignature().getName(),
                                 e.getCause() != null ? e.getCause() : "NULL",
                                 e.getMessage()
@@ -135,17 +129,17 @@ public class ApiLogAop {
             log.error("Exception");
             result = ex.getMessage();
             logger(joinPoint).error(
-                    "Exception in {}() with cause = \'{}\' and exception = \'{}\'",
+                    "Exception in {}() with cause = '{}' and exception = '{}'",
                     joinPoint.getSignature().getName(),
                     ex.getCause() != null ? ex.getCause() : "NULL",
                     ex.getMessage()
             );
             throw ex;
         } finally {
-
             if (apiLogProperties.getEnabled()) {
+                assert stopWatch != null;
                 stopWatch.stop();
-                long time = stopWatch != null ? stopWatch.getTotalTimeMillis() : -1;
+                long time = stopWatch.getTotalTimeMillis();
                 apiLog.setResults(result);
 
                 apiLog.setTranceId(TraceIdUtil.get());
@@ -161,17 +155,17 @@ public class ApiLogAop {
 
     /**
      * 获取请求参数
-     * @param invocation
-     * @return
+     * @param invocation    方法
+     * @return  args 请求参数
      */
     private List<Object> getArgs(MethodInvocation invocation) {
-        List<Class> filter = ListUtil.newArrayList(
+        List<Class<?>> filter = ListUtil.newArrayList(
                 RequestFacade.class,
                 ResponseFacade.class
         );
         Object[] argsArr = invocation.getArguments();
         // Stream.of(null).collect(Collectors.toList()) 会出现NPE
-        if (argsArr != null && argsArr.length > 0) {
+        if (argsArr.length > 0) {
             log.debug("argsArr ＝{}", argsArr);
             // 过滤掉大对象，避免转json报错
             return Stream.of(argsArr)
@@ -185,8 +179,8 @@ public class ApiLogAop {
 
     /**
      * 获取请求参数
-     * @param joinPoint
-     * @return
+     * @param joinPoint 切点
+     * @return  请求参数
      */
     private List<Object> getArgs(ProceedingJoinPoint joinPoint) {
         Object[] argsArr = joinPoint.getArgs();
@@ -205,8 +199,8 @@ public class ApiLogAop {
 
     /**
      * 获取x-开头的head参数和Authorization参数
-     * @param request
-     * @return
+     * @param request   请求对象
+     * @return  map key是请求头，value是请求头值
      */
     private Map<String, String> getRequestHead(HttpServletRequest request){
         //获取请求参数

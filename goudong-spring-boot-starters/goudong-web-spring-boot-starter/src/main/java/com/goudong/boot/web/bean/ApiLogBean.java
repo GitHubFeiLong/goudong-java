@@ -75,8 +75,8 @@ public class ApiLogBean {
 
     /**
      * 获取x-开头的head参数和Authorization参数
-     * @param request
-     * @return
+     * @param request   请求对象
+     * @return  请求头参数
      */
     private Map<String, String> getRequestHead(HttpServletRequest request){
         //获取请求参数

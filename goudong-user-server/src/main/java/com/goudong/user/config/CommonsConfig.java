@@ -54,12 +54,11 @@ public class CommonsConfig {
 
     /**
      * 接口日志切面
-     * @param environment
      * @return
      */
     @Bean
-    public ApiLogAop apiLogAop(Environment environment, ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
-        return new ApiLogAop(environment, objectMapper, apiLogProperties);
+    public ApiLogAop apiLogAop(ObjectMapper objectMapper, ApiLogProperties apiLogProperties) {
+        return new ApiLogAop(objectMapper, apiLogProperties);
     }
 
     /**

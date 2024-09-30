@@ -4,8 +4,6 @@ package com.goudong.core.util;
  * 类描述：
  * 判断类型是否是基本类型
  * @author msi
- * @version 1.0
- * @date 2022/1/22 21:48
  */
 public class PrimitiveTypeUtil {
 
@@ -17,8 +15,8 @@ public class PrimitiveTypeUtil {
 
     /**
      * 判断对象是否是基本类型或基本类型对应的包装类型。
-     * @param obj
-     * @return
+     * @param obj   判断对象
+     * @return  true-是基本类型或基本类型对应的包装类型，false-不是基本类型或基本类型对应的包装类型
      */
     public static boolean isBasicType (Object obj) {
         if (obj instanceof String) {

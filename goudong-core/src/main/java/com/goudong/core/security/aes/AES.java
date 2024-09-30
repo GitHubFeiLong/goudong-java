@@ -7,8 +7,6 @@ import javax.crypto.spec.SecretKeySpec;
  * 类描述：
  * AES算法加密解密
  * @author msi
- * @version 1.0
- * @date 2022/2/12 14:52
  */
 public class AES {
 
@@ -17,7 +15,7 @@ public class AES {
     /**
      * 默认128
      */
-    private AESKeySizeEnum keySizeEnum = AESKeySizeEnum.AES128;
+    private final AESKeySizeEnum keySizeEnum = AESKeySizeEnum.AES128;
 
     /**
      * 密钥
@@ -36,7 +34,7 @@ public class AES {
 
     /**
      * 创建一个AES对象
-     * @return
+     * @return  aes对象
      */
     public static AES build() {
         return new AES();
@@ -44,12 +42,11 @@ public class AES {
 
     /**
      * 生成随机的128密钥
-     * @return
+     * @return  aes对象
      */
     public AES generateKeypair(){
         try {
-            SecretKey secretKey = AESUtil.generateKeypair(this.keySizeEnum);
-            this.secretKey = secretKey;
+            this.secretKey = AESUtil.generateKeypair(this.keySizeEnum);
             return this;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -58,8 +55,8 @@ public class AES {
 
     /**
      * 生成随机的指定长度的密钥
-     * @param keySizeEnum
-     * @return
+     * @param keySizeEnum   长度枚举
+     * @return  aes对象
      */
     public AES generateKeypair(AESKeySizeEnum keySizeEnum){
         try {
@@ -73,7 +70,7 @@ public class AES {
     /**
      * 设置密钥
      * @param key 密钥字符串
-     * @return
+     * @return aes对象
      */
     public AES secretKey(String key) {
         this.secretKey = new SecretKeySpec(key.getBytes(), AESUtil.ALGORITHM);
@@ -83,7 +80,7 @@ public class AES {
     /**
      * 设置密钥
      * @param secretKey AES密钥
-     * @return
+     * @return aes对象
      */
     public AES secretKey(SecretKey secretKey) {
         this.secretKey = secretKey;
@@ -93,7 +90,7 @@ public class AES {
     /**
      * 加密
      * @param data 加密字符串
-     * @return
+     * @return 加密后的字符串
      */
     public String encrypt(String data) {
         if (this.secretKey == null) {
@@ -109,7 +106,7 @@ public class AES {
     /**
      * 解密
      * @param base64 Base64编码密文后的字符串
-     * @return
+     * @return  解密后字符串
      */
     public String decrypt(String base64) {
         if (this.secretKey == null) {

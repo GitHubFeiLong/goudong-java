@@ -2,21 +2,21 @@ package com.goudong.core.security.cer;
 
 import sun.security.x509.*;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.cert.*;
-import java.security.cert.Certificate;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
 /**
  * 类描述：
- *
+ * 证书工具类
  * @author chenf
- * @version 1.0
  */
 public class CertificateUtil {
     //~fields
@@ -76,11 +76,6 @@ public class CertificateUtil {
             cert.sign(keyPair.getPrivate(), "SHA256withRSA");
             String encode = Base64.getEncoder().encodeToString(cert.getEncoded());
             System.out.println(encode);
-
-            // 将证书保存到文件
-           // OutputStream outputStream = new FileOutputStream("certificate.cer");
-           // outputStream.write(Base64.getDecoder().decode(encode));
-           // outputStream.close();
 
             System.out.println("证书生成成功！");
             return new Cer(cert, keyPair);

@@ -9,13 +9,13 @@ import java.util.Base64;
 
 /**
  * 类描述：
- * AES加密工具类,AES不指定模式和填充，默认为 ECB/PKCS5Padding
- * ECB，CBC，CFB，OFB和CTR
- * 在除ECB以外的所有加密方式中，都需要用到IV对加密结果进行随机化。在使用同一种加密同一个密钥时不应该使用相同的IV
- * 填充：NoPadding, PKCS#5, PKCS#7, ISO 10126, ANSI X9.23和ZerosPadding （PKCS#5, PKCS#7 没太大区别）
+ * <pre>
+ *     AES加密工具类,AES不指定模式和填充，默认为 ECB/PKCS5Padding
+ *     ECB，CBC，CFB，OFB和CTR
+ *     在除ECB以外的所有加密方式中，都需要用到IV对加密结果进行随机化。在使用同一种加密同一个密钥时不应该使用相同的IV
+ *     填充：NoPadding, PKCS#5, PKCS#7, ISO 10126, ANSI X9.23和ZerosPadding （PKCS#5, PKCS#7 没太大区别）
+ * </pre>
  * @author msi
- * @version 1.0
- * @date 2022/2/12 12:55
  */
 public class AESUtil {
 
@@ -34,8 +34,8 @@ public class AESUtil {
 
     /**
      * 生成随机的AES密钥
-     * @param keySizeEnum
-     * @return
+     * @param keySizeEnum   长度
+     * @return  密钥
      */
     public static SecretKey generateKeypair(AESKeySizeEnum keySizeEnum){
         try {
@@ -49,8 +49,8 @@ public class AESUtil {
 
     /**
      * 根据密钥字符串获取密钥对象
-     * @param key
-     * @return
+     * @param key   key
+     * @return  密钥
      */
     public static SecretKey getSecretKey(String key) {
         //5.根据字节数组生成AES密钥

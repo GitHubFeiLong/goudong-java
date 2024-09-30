@@ -6,8 +6,6 @@ import java.util.*;
  * 类描述：
  * 集合相关工具类
  * @author cfl
- * @version 1.0
- * @date 2022/10/26 21:00
  */
 public class CollectionUtil {
     //~fields
@@ -21,19 +19,19 @@ public class CollectionUtil {
 
     /**
      * 判断集合是否是空集合
-     * @param coll
-     * @return
+     * @param coll  集合
+     * @return  true-空集合，false-非空集合
      */
-    public static boolean isEmpty(Collection coll) {
+    public static boolean isEmpty(Collection<?> coll) {
         return (coll == null || coll.isEmpty());
     }
 
     /**
      * 判断集合是否不是空集合
-     * @param coll
-     * @return
+     * @param coll  集合
+     * @return  true-非空集合，false-空集合
      */
-    public static boolean isNotEmpty(Collection coll) {
+    public static boolean isNotEmpty(Collection<?> coll) {
         return !CollectionUtil.isEmpty(coll);
     }
 
@@ -42,10 +40,10 @@ public class CollectionUtil {
 
     /**
      * 初始化一个ArrayList
-     * @param elements
-     * @return
-     * @param <E>
+     * @param elements  参数
+     * @return  list
      */
+    @SafeVarargs
     public static <E> ArrayList<E> newArrayList(E... elements) {
         return ListUtil.newArrayList(elements);
     }
@@ -53,7 +51,6 @@ public class CollectionUtil {
      * 初始化一个ArrayList，内容是[start, end] 之间的所有整数
      * @param start 起始值
      * @param end 结束值
-     * @return
      */
     public static List<Integer> newArrayListByRange(int start, int end) {
         return ListUtil.newArrayListByRange(start, end);
@@ -62,10 +59,10 @@ public class CollectionUtil {
 
     /**
      * 初始化一个ArrayList
-     * @param elements
-     * @return
-     * @param <E>
+     * @param elements  参数
+     * @return  set
      */
+    @SafeVarargs
     public static <E> Set<E> newHashSet(E... elements) {
         AssertUtil.isNotEmpty(elements);
         Set<E> set = new HashSet<>(elements.length);
@@ -85,12 +82,11 @@ public class CollectionUtil {
      * @param a 目标集合
      * @param b 与之计算差集的集合
      * @return 返回差集{@code list}
-     * @param <O>
      */
-    public static <O>Collection<O> subtract(final Collection<O> a, final Collection<O> b) {
-        ArrayList list = new ArrayList(a);
-        for (Iterator it = b.iterator(); it.hasNext();) {
-            list.remove(it.next());
+    public static <T> Collection<T> subtract(final Collection<T> a, final Collection<T> b) {
+        List<T> list = new ArrayList<>(a);
+        for (T o : b) {
+            list.remove(o);
         }
         return list;
     }
